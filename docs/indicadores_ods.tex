@@ -1,0 +1,286 @@
+% phpMyAdmin LaTeX Dump
+% version 3.3.9
+% http://www.phpmyadmin.net
+%
+% Servidor: localhost
+% Tiempo de generación: 06-10-2016 a las 19:42:42
+% Versión del servidor: 5.5.8
+% Versión de PHP: 5.3.5
+% 
+% Base de datos: 'indicadores_ods'
+% 
+
+%
+% Estructura: desgloces
+%
+ \begin{longtable}{|l|c|c|c|l|l|} 
+ \caption{Estructura de la tabla desgloces} \label{tab:desgloces-structure} \\
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline
+\endfirsthead
+ \caption{Estructura de la tabla desgloces (continúa)} \\ 
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline \endhead \endfoot 
+\textbf{\textit{id\_desgloce}} & int(10)  & No &  &  &  \\ \hline 
+descripcion & varchar(5000) & No &  & descripcion del desgloce &  \\ \hline 
+ \end{longtable}
+
+%
+% Datos: desgloces
+%
+ \begin{longtable}{|l|l|} 
+ \hline \endhead \hline \endfoot \hline 
+ \caption{Contenido de la tabla desgloces} \label{tab:desgloces-data} \\\hline \multicolumn{1}{|c|}{\textbf{id\_desgloce}} & \multicolumn{1}{|c|}{\textbf{descripcion}} \\ \hline \hline  \endfirsthead 
+\caption{Contenido de la tabla desgloces (continúa)} \\ \hline \multicolumn{1}{|c|}{\textbf{id\_desgloce}} & \multicolumn{1}{|c|}{\textbf{descripcion}} \\ \hline \hline \endhead \endfoot
+ \end{longtable}
+
+%
+% Estructura: desgloces
+%
+ \begin{longtable}{|l|c|c|c|l|l|} 
+ \caption{Estructura de la tabla desgloces} \label{tab:desgloces-structure} \\
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline
+\endfirsthead
+ \caption{Estructura de la tabla desgloces (continúa)} \\ 
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline \endhead \endfoot 
+\textbf{\textit{id\_desgloce}} & int(10)  & No &  &  &  \\ \hline 
+descripcion & varchar(5000) & No &  & descripcion del desgloce &  \\ \hline 
+ \end{longtable}
+
+%
+% Estructura: etiquetas
+%
+ \begin{longtable}{|l|c|c|c|l|l|l|} 
+ \caption{Estructura de la tabla etiquetas} \label{tab:etiquetas-structure} \\
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline
+\endfirsthead
+ \caption{Estructura de la tabla etiquetas (continúa)} \\ 
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline \endhead \endfoot 
+\textbf{\textit{id\_etiqueta}} & int(10)  & No &  &  &  &  \\ \hline 
+descripcion & varchar(5000) & No &  &  & descripcion de la etiqueta &  \\ \hline 
+fk\_id\_desgloce & int(10)  & No &  & desgloces (id\_desgloce) & clave foranea desgloce &  \\ \hline 
+ \end{longtable}
+
+%
+% Datos: etiquetas
+%
+ \begin{longtable}{|l|l|l|} 
+ \hline \endhead \hline \endfoot \hline 
+ \caption{Contenido de la tabla etiquetas} \label{tab:etiquetas-data} \\\hline \multicolumn{1}{|c|}{\textbf{id\_etiqueta}} & \multicolumn{1}{|c|}{\textbf{descripcion}} & \multicolumn{1}{|c|}{\textbf{fk\_id\_desgloce}} \\ \hline \hline  \endfirsthead 
+\caption{Contenido de la tabla etiquetas (continúa)} \\ \hline \multicolumn{1}{|c|}{\textbf{id\_etiqueta}} & \multicolumn{1}{|c|}{\textbf{descripcion}} & \multicolumn{1}{|c|}{\textbf{fk\_id\_desgloce}} \\ \hline \hline \endhead \endfoot
+ \end{longtable}
+
+%
+% Estructura: etiquetas
+%
+ \begin{longtable}{|l|c|c|c|l|l|l|} 
+ \caption{Estructura de la tabla etiquetas} \label{tab:etiquetas-structure} \\
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline
+\endfirsthead
+ \caption{Estructura de la tabla etiquetas (continúa)} \\ 
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline \endhead \endfoot 
+\textbf{\textit{id\_etiqueta}} & int(10)  & No &  &  &  &  \\ \hline 
+descripcion & varchar(5000) & No &  &  & descripcion de la etiqueta &  \\ \hline 
+fk\_id\_desgloce & int(10)  & No &  & desgloces (id\_desgloce) & clave foranea desgloce &  \\ \hline 
+ \end{longtable}
+
+%
+% Estructura: indicadores
+%
+ \begin{longtable}{|l|c|c|c|l|l|l|} 
+ \caption{Estructura de la tabla indicadores} \label{tab:indicadores-structure} \\
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline
+\endfirsthead
+ \caption{Estructura de la tabla indicadores (continúa)} \\ 
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline \endhead \endfoot 
+\textbf{\textit{id\_indicador}} & int(10)  & No &  &  &  &  \\ \hline 
+descripcion & varchar(5000) & No &  &  & descripcion del indicador &  \\ \hline 
+fk\_id\_meta & int(10)  & No &  & metas (id\_meta) & clave foranea meta &  \\ \hline 
+tipo & enum('porcentual', 'entero', 'real') & No &  &  & tipo de indicador &  \\ \hline 
+val\_min & bigint(20) & No &  &  & valor minimo dentro del dominio &  \\ \hline 
+val\_max & bigint(20) & No &  &  & valor maximo dentro del dominio &  \\ \hline 
+ambito & enum('N', 'P', 'M') & No &  &  & ambito al que pertenece el indicador &  \\ \hline 
+visibilidad & bit(3) & No &  &  & mascara de visibilidad del indicador &  \\ \hline 
+ \end{longtable}
+
+%
+% Datos: indicadores
+%
+ \begin{longtable}{|l|l|l|l|l|l|l|l|} 
+ \hline \endhead \hline \endfoot \hline 
+ \caption{Contenido de la tabla indicadores} \label{tab:indicadores-data} \\\hline \multicolumn{1}{|c|}{\textbf{id\_indicador}} & \multicolumn{1}{|c|}{\textbf{descripcion}} & \multicolumn{1}{|c|}{\textbf{fk\_id\_meta}} & \multicolumn{1}{|c|}{\textbf{tipo}} & \multicolumn{1}{|c|}{\textbf{val\_min}} & \multicolumn{1}{|c|}{\textbf{val\_max}} & \multicolumn{1}{|c|}{\textbf{ambito}} & \multicolumn{1}{|c|}{\textbf{visibilidad}} \\ \hline \hline  \endfirsthead 
+\caption{Contenido de la tabla indicadores (continúa)} \\ \hline \multicolumn{1}{|c|}{\textbf{id\_indicador}} & \multicolumn{1}{|c|}{\textbf{descripcion}} & \multicolumn{1}{|c|}{\textbf{fk\_id\_meta}} & \multicolumn{1}{|c|}{\textbf{tipo}} & \multicolumn{1}{|c|}{\textbf{val\_min}} & \multicolumn{1}{|c|}{\textbf{val\_max}} & \multicolumn{1}{|c|}{\textbf{ambito}} & \multicolumn{1}{|c|}{\textbf{visibilidad}} \\ \hline \hline \endhead \endfoot
+ \end{longtable}
+
+%
+% Estructura: indicadores
+%
+ \begin{longtable}{|l|c|c|c|l|l|l|} 
+ \caption{Estructura de la tabla indicadores} \label{tab:indicadores-structure} \\
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline
+\endfirsthead
+ \caption{Estructura de la tabla indicadores (continúa)} \\ 
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline \endhead \endfoot 
+\textbf{\textit{id\_indicador}} & int(10)  & No &  &  &  &  \\ \hline 
+descripcion & varchar(5000) & No &  &  & descripcion del indicador &  \\ \hline 
+fk\_id\_meta & int(10)  & No &  & metas (id\_meta) & clave foranea meta &  \\ \hline 
+tipo & enum('porcentual', 'entero', 'real') & No &  &  & tipo de indicador &  \\ \hline 
+val\_min & bigint(20) & No &  &  & valor minimo dentro del dominio &  \\ \hline 
+val\_max & bigint(20) & No &  &  & valor maximo dentro del dominio &  \\ \hline 
+ambito & enum('N', 'P', 'M') & No &  &  & ambito al que pertenece el indicador &  \\ \hline 
+visibilidad & bit(3) & No &  &  & mascara de visibilidad del indicador &  \\ \hline 
+ \end{longtable}
+
+%
+% Estructura: metas
+%
+ \begin{longtable}{|l|c|c|c|l|l|l|} 
+ \caption{Estructura de la tabla metas} \label{tab:metas-structure} \\
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline
+\endfirsthead
+ \caption{Estructura de la tabla metas (continúa)} \\ 
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline \endhead \endfoot 
+\textbf{\textit{id\_meta}} & int(10)  & No &  &  &  &  \\ \hline 
+descripcion & varchar(5000) & No &  &  & descripcion de la meta &  \\ \hline 
+fk\_id\_objetivo & int(10)  & No &  & objetivos (id\_objetivo) & clave foranea tabla objetivos &  \\ \hline 
+ \end{longtable}
+
+%
+% Datos: metas
+%
+ \begin{longtable}{|l|l|l|} 
+ \hline \endhead \hline \endfoot \hline 
+ \caption{Contenido de la tabla metas} \label{tab:metas-data} \\\hline \multicolumn{1}{|c|}{\textbf{id\_meta}} & \multicolumn{1}{|c|}{\textbf{descripcion}} & \multicolumn{1}{|c|}{\textbf{fk\_id\_objetivo}} \\ \hline \hline  \endfirsthead 
+\caption{Contenido de la tabla metas (continúa)} \\ \hline \multicolumn{1}{|c|}{\textbf{id\_meta}} & \multicolumn{1}{|c|}{\textbf{descripcion}} & \multicolumn{1}{|c|}{\textbf{fk\_id\_objetivo}} \\ \hline \hline \endhead \endfoot
+ \end{longtable}
+
+%
+% Estructura: metas
+%
+ \begin{longtable}{|l|c|c|c|l|l|l|} 
+ \caption{Estructura de la tabla metas} \label{tab:metas-structure} \\
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline
+\endfirsthead
+ \caption{Estructura de la tabla metas (continúa)} \\ 
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline \endhead \endfoot 
+\textbf{\textit{id\_meta}} & int(10)  & No &  &  &  &  \\ \hline 
+descripcion & varchar(5000) & No &  &  & descripcion de la meta &  \\ \hline 
+fk\_id\_objetivo & int(10)  & No &  & objetivos (id\_objetivo) & clave foranea tabla objetivos &  \\ \hline 
+ \end{longtable}
+
+%
+% Estructura: objetivos
+%
+ \begin{longtable}{|l|c|c|c|l|l|} 
+ \caption{Estructura de la tabla objetivos} \label{tab:objetivos-structure} \\
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline
+\endfirsthead
+ \caption{Estructura de la tabla objetivos (continúa)} \\ 
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline \endhead \endfoot 
+\textbf{\textit{id\_objetivo}} & int(10)  & No &  &  &  \\ \hline 
+descripcion & varchar(5000) & No &  & descripcion del objtivo &  \\ \hline 
+ \end{longtable}
+
+%
+% Datos: objetivos
+%
+ \begin{longtable}{|l|l|} 
+ \hline \endhead \hline \endfoot \hline 
+ \caption{Contenido de la tabla objetivos} \label{tab:objetivos-data} \\\hline \multicolumn{1}{|c|}{\textbf{id\_objetivo}} & \multicolumn{1}{|c|}{\textbf{descripcion}} \\ \hline \hline  \endfirsthead 
+\caption{Contenido de la tabla objetivos (continúa)} \\ \hline \multicolumn{1}{|c|}{\textbf{id\_objetivo}} & \multicolumn{1}{|c|}{\textbf{descripcion}} \\ \hline \hline \endhead \endfoot
+ \end{longtable}
+
+%
+% Estructura: objetivos
+%
+ \begin{longtable}{|l|c|c|c|l|l|} 
+ \caption{Estructura de la tabla objetivos} \label{tab:objetivos-structure} \\
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline
+\endfirsthead
+ \caption{Estructura de la tabla objetivos (continúa)} \\ 
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline \endhead \endfoot 
+\textbf{\textit{id\_objetivo}} & int(10)  & No &  &  &  \\ \hline 
+descripcion & varchar(5000) & No &  & descripcion del objtivo &  \\ \hline 
+ \end{longtable}
+
+%
+% Estructura: ref_geografica
+%
+ \begin{longtable}{|l|c|c|c|l|l|l|} 
+ \caption{Estructura de la tabla ref\_geografica} \label{tab:ref_geografica-structure} \\
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline
+\endfirsthead
+ \caption{Estructura de la tabla ref\_geografica (continúa)} \\ 
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline \endhead \endfoot 
+\textbf{\textit{id\_refgeografica}} & int(10)  & No &  &  &  &  \\ \hline 
+descripcion & varchar(5000) & No &  &  & descripcion de la referencia geografica &  \\ \hline 
+ambito & enum('P', 'M') & No &  &  & ambito de la ref. geografica &  \\ \hline 
+agrupa & int(10)  & No &  & ref\_geografica (id\_refgeografica) & id de la ref. geogr. por la cual es agrupada &  \\ \hline 
+ \end{longtable}
+
+%
+% Datos: ref_geografica
+%
+ \begin{longtable}{|l|l|l|l|} 
+ \hline \endhead \hline \endfoot \hline 
+ \caption{Contenido de la tabla ref\_geografica} \label{tab:ref_geografica-data} \\\hline \multicolumn{1}{|c|}{\textbf{id\_refgeografica}} & \multicolumn{1}{|c|}{\textbf{descripcion}} & \multicolumn{1}{|c|}{\textbf{ambito}} & \multicolumn{1}{|c|}{\textbf{agrupa}} \\ \hline \hline  \endfirsthead 
+\caption{Contenido de la tabla ref\_geografica (continúa)} \\ \hline \multicolumn{1}{|c|}{\textbf{id\_refgeografica}} & \multicolumn{1}{|c|}{\textbf{descripcion}} & \multicolumn{1}{|c|}{\textbf{ambito}} & \multicolumn{1}{|c|}{\textbf{agrupa}} \\ \hline \hline \endhead \endfoot
+ \end{longtable}
+
+%
+% Estructura: ref_geografica
+%
+ \begin{longtable}{|l|c|c|c|l|l|l|} 
+ \caption{Estructura de la tabla ref\_geografica} \label{tab:ref_geografica-structure} \\
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline
+\endfirsthead
+ \caption{Estructura de la tabla ref\_geografica (continúa)} \\ 
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline \endhead \endfoot 
+\textbf{\textit{id\_refgeografica}} & int(10)  & No &  &  &  &  \\ \hline 
+descripcion & varchar(5000) & No &  &  & descripcion de la referencia geografica &  \\ \hline 
+ambito & enum('P', 'M') & No &  &  & ambito de la ref. geografica &  \\ \hline 
+agrupa & int(10)  & No &  & ref\_geografica (id\_refgeografica) & id de la ref. geogr. por la cual es agrupada &  \\ \hline 
+ \end{longtable}
+
+%
+% Estructura: valores_indicadores
+%
+ \begin{longtable}{|l|c|c|c|l|l|l|} 
+ \caption{Estructura de la tabla valores\_indicadores} \label{tab:valores_indicadores-structure} \\
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline
+\endfirsthead
+ \caption{Estructura de la tabla valores\_indicadores (continúa)} \\ 
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline \endhead \endfoot 
+\textbf{\textit{id\_indicador}} & int(10)  & No &  & indicadores (id\_indicador) &  &  \\ \hline 
+\textbf{\textit{id\_etiqueta}} & int(10)  & No &  & etiquetas (id\_etiqueta) &  &  \\ \hline 
+\textbf{\textit{id\_refgeografica}} & int(10)  & No &  & ref\_geografica (id\_refgeografica) &  &  \\ \hline 
+anio & year(4) & No &  &  &  &  \\ \hline 
+mes & tinyint(3)  & No &  &  &  &  \\ \hline 
+valor & decimal(10,2) & No &  &  &  &  \\ \hline 
+aprobado & tinyint(1) & No &  &  &  &  \\ \hline 
+ \end{longtable}
+
+%
+% Datos: valores_indicadores
+%
+ \begin{longtable}{|l|l|l|l|l|l|l|} 
+ \hline \endhead \hline \endfoot \hline 
+ \caption{Contenido de la tabla valores\_indicadores} \label{tab:valores_indicadores-data} \\\hline \multicolumn{1}{|c|}{\textbf{id\_indicador}} & \multicolumn{1}{|c|}{\textbf{id\_etiqueta}} & \multicolumn{1}{|c|}{\textbf{id\_refgeografica}} & \multicolumn{1}{|c|}{\textbf{anio}} & \multicolumn{1}{|c|}{\textbf{mes}} & \multicolumn{1}{|c|}{\textbf{valor}} & \multicolumn{1}{|c|}{\textbf{aprobado}} \\ \hline \hline  \endfirsthead 
+\caption{Contenido de la tabla valores\_indicadores (continúa)} \\ \hline \multicolumn{1}{|c|}{\textbf{id\_indicador}} & \multicolumn{1}{|c|}{\textbf{id\_etiqueta}} & \multicolumn{1}{|c|}{\textbf{id\_refgeografica}} & \multicolumn{1}{|c|}{\textbf{anio}} & \multicolumn{1}{|c|}{\textbf{mes}} & \multicolumn{1}{|c|}{\textbf{valor}} & \multicolumn{1}{|c|}{\textbf{aprobado}} \\ \hline \hline \endhead \endfoot
+ \end{longtable}
+
+%
+% Estructura: valores_indicadores
+%
+ \begin{longtable}{|l|c|c|c|l|l|l|} 
+ \caption{Estructura de la tabla valores\_indicadores} \label{tab:valores_indicadores-structure} \\
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline
+\endfirsthead
+ \caption{Estructura de la tabla valores\_indicadores (continúa)} \\ 
+ \hline \multicolumn{1}{|c|}{\textbf{Campo}} & \multicolumn{1}{|c|}{\textbf{Tipo}} & \multicolumn{1}{|c|}{\textbf{Nulo}} & \multicolumn{1}{|c|}{\textbf{Predeterminado}} & \multicolumn{1}{|c|}{\textbf{Enlaces a}} & \multicolumn{1}{|c|}{\textbf{Comentarios}} & \multicolumn{1}{|c|}{\textbf{MIME}} \\ \hline \hline \endhead \endfoot 
+\textbf{\textit{id\_indicador}} & int(10)  & No &  & indicadores (id\_indicador) &  &  \\ \hline 
+\textbf{\textit{id\_etiqueta}} & int(10)  & No &  & etiquetas (id\_etiqueta) &  &  \\ \hline 
+\textbf{\textit{id\_refgeografica}} & int(10)  & No &  & ref\_geografica (id\_refgeografica) &  &  \\ \hline 
+anio & year(4) & No &  &  &  &  \\ \hline 
+mes & tinyint(3)  & No &  &  &  &  \\ \hline 
+valor & decimal(10,2) & No &  &  &  &  \\ \hline 
+aprobado & tinyint(1) & No &  &  &  &  \\ \hline 
+ \end{longtable}
