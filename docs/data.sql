@@ -1,3 +1,4 @@
+use indicadores_ods;
 SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO';
 INSERT INTO objetivos (descripcion) VALUES ("Probreza Cero");
 INSERT INTO metas (descripcion, fkIdObjetivo) VALUES ("De aquí a 2030", 1);
@@ -20,11 +21,11 @@ INSERT INTO refGeografica (descripcion, ambito, agrupa) VALUES ("Luján", "P", 1
 INSERT INTO refGeografica (descripcion, ambito, agrupa) VALUES ("Sta. Rosa", "P", 2);
 INSERT INTO refGeografica (descripcion, ambito, agrupa) VALUES ("Macachín", "P", 2);
 INSERT INTO refGeografica (descripcion, ambito, agrupa) VALUES ("Gral. Pico", "P", 2);
-INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, anio, mes, valor, aprobado) VALUES (1, 1, 3, 2010, 6, 32, 0);
-INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, anio, mes, valor, aprobado) VALUES (1, 2, 3, 2010, 6, 68, 0);
-INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, anio, mes, valor, aprobado) VALUES (1, 3, 5, 2010, 6, 10, 0);
-INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, anio, mes, valor, aprobado) VALUES (1, 5, 5, 2010, 6, 90, 0);
-INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, anio, mes, valor, aprobado) VALUES (2, 0, 3, 2010, 6, 33, 1);
+INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, 1, 3, '2010-06-01', 32, 0);
+INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, 2, 3, '2010-06-01', 68, 0);
+INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, 3, 5, '2010-06-01', 10, 0);
+INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, 5, 5, '2010-06-01', 90, 0);
+INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (2, 0, 3, '2010-06-01', 33, 1);
 
 
 
