@@ -83,6 +83,11 @@ class IndicadoresController extends Controller
      */
     public function editAction(Request $request, Indicadores $indicadore)
     {
+        // Hack de Agustín para castear un string en un boolean (ya no hace falta)
+        //echo var_dump($indicadore->getVisiblenacional());
+        //$nac = ($indicadore->getVisiblenacional()) ? true : false;
+        //$indicadore->setVisiblenacional($nac);
+        
         $deleteForm = $this->createDeleteForm($indicadore);
         $editForm = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore);
         $editForm->handleRequest($request);

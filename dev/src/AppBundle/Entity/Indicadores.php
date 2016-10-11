@@ -35,17 +35,17 @@ class Indicadores
     private $ambito;
 
     /**
-     * @var string
+     * @var boolean
      */
     private $visiblenacional;
 
     /**
-     * @var string
+     * @var boolean
      */
     private $visibleprovincial;
 
     /**
-     * @var string
+     * @var boolean
      */
     private $visiblemunicipal;
 
@@ -178,7 +178,7 @@ class Indicadores
     /**
      * Set visiblenacional
      *
-     * @param string $visiblenacional
+     * @param boolean $visiblenacional
      * @return Indicadores
      */
     public function setVisiblenacional($visiblenacional)
@@ -191,7 +191,7 @@ class Indicadores
     /**
      * Get visiblenacional
      *
-     * @return string 
+     * @return boolean 
      */
     public function getVisiblenacional()
     {
@@ -201,7 +201,7 @@ class Indicadores
     /**
      * Set visibleprovincial
      *
-     * @param string $visibleprovincial
+     * @param boolean $visibleprovincial
      * @return Indicadores
      */
     public function setVisibleprovincial($visibleprovincial)
@@ -214,7 +214,7 @@ class Indicadores
     /**
      * Get visibleprovincial
      *
-     * @return string 
+     * @return boolean 
      */
     public function getVisibleprovincial()
     {
@@ -224,7 +224,7 @@ class Indicadores
     /**
      * Set visiblemunicipal
      *
-     * @param string $visiblemunicipal
+     * @param boolean $visiblemunicipal
      * @return Indicadores
      */
     public function setVisiblemunicipal($visiblemunicipal)
@@ -237,7 +237,7 @@ class Indicadores
     /**
      * Get visiblemunicipal
      *
-     * @return string 
+     * @return boolean 
      */
     public function getVisiblemunicipal()
     {

@@ -83,9 +83,9 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
   `valMin` bigint(20) NOT NULL COMMENT 'valor minimo dentro del dominio',
   `valMax` bigint(20) NOT NULL COMMENT 'valor maximo dentro del dominio',
   `ambito` enum('N','P','M') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito al que pertenece el indicador',
-  `visibleNacional` varchar(1) NOT NULL COMMENT 'Visibilidad del indicador a nivel Nacional',
-  `visibleProvincial` varchar(1) NOT NULL COMMENT 'Visibilidad del indicador a nivel Provincial',
-  `visibleMunicipal` varchar(1) NOT NULL COMMENT 'Visibilidad del indicador a nivel Municipal',
+  `visibleNacional` boolean NOT NULL default 0 COMMENT 'Visibilidad del indicador a nivel Nacional',
+  `visibleProvincial` boolean NOT NULL default 0  COMMENT 'Visibilidad del indicador a nivel Provincial',
+  `visibleMunicipal` boolean NOT NULL default 0  COMMENT 'Visibilidad del indicador a nivel Municipal',
   PRIMARY KEY (`id`),
   KEY `fkIdMeta` (`fkIdMeta`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;

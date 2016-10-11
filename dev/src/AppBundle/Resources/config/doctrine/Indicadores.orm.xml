@@ -12,9 +12,9 @@
     <field name="valmin" type="bigint" column="valMin" nullable="false"/>
     <field name="valmax" type="bigint" column="valMax" nullable="false"/>
     <field name="ambito" type="string" column="ambito" nullable="false"/>
-    <field name="visiblenacional" type="string" column="visibleNacional" length="1" nullable="false"/>
-    <field name="visibleprovincial" type="string" column="visibleProvincial" length="1" nullable="false"/>
-    <field name="visiblemunicipal" type="string" column="visibleMunicipal" length="1" nullable="false"/>
+    <field name="visiblenacional" type="boolean" column="visibleNacional" length="1" nullable="false"/>
+    <field name="visibleprovincial" type="boolean" column="visibleProvincial" length="1" nullable="false"/>
+    <field name="visiblemunicipal" type="boolean" column="visibleMunicipal" length="1" nullable="false"/>
     <many-to-one field="fkidmeta" target-entity="Metas">
       <join-columns>
         <join-column name="fkIdMeta" referenced-column-name="id"/>
