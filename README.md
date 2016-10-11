@@ -35,3 +35,21 @@ CNCPS
  * Crear Base de Datos ```$ mysqladmin -u root -p create indicadores_ods```
  * Importar Esquema de la Base de Datos:  ```$ mysql -u root -p indicadores_ods < indicadores_ods.sql```
 
+
+
+#### Otra config necesaria:
+ * Doctrine - en app/config/config.yml
+
+        mapping_types:
+            enum:   string
+            bit:    string
+
+
+    Luego,
+        php app/console doctrine:mapping:import --force AppBundle xml
+        
+        php app/console doctrine:generate:entities AppBundle
+
+        php app/console generate:doctrine:crud --entity=AppBundle:Objetivos --with-write
+
+        

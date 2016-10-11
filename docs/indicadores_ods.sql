@@ -6,7 +6,9 @@
 -- Tiempo de generación: 06-10-2016 a las 19:38:17
 -- Versión del servidor: 5.5.8
 -- Versión de PHP: 5.3.5
-
+drop database `indicadores_ods`;
+create database `indicadores_ods`;
+use indicadores_ods;
 --
 -- base de datos ods
 --
@@ -109,8 +111,7 @@ CREATE TABLE IF NOT EXISTS `metas` (
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la meta',
   `fk_id_objetivo` int(10) unsigned NOT NULL COMMENT 'clave foranea tabla objetivos',
   PRIMARY KEY (`id_meta`),
-  KEY `fk_id_objetivo` (`fk_id_objetivo`),
-  KEY `fk_id_objetivo_2` (`fk_id_objetivo`)
+  KEY `fk_id_objetivo` (`fk_id_objetivo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
 
 --
@@ -132,9 +133,9 @@ CREATE TABLE IF NOT EXISTS `metas` (
 
 DROP TABLE IF EXISTS `objetivos`;
 CREATE TABLE IF NOT EXISTS `objetivos` (
-  `id_objetivo` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del objtivo',
-  PRIMARY KEY (`id_objetivo`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
 
 --
@@ -224,7 +225,7 @@ ALTER TABLE `indicadores`
 -- Filtros para la tabla `metas`
 --
 ALTER TABLE `metas`
-  ADD CONSTRAINT `metas_ibfk_1` FOREIGN KEY (`fk_id_objetivo`) REFERENCES `objetivos` (`id_objetivo`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `metas_ibfk_1` FOREIGN KEY (`fk_id_objetivo`) REFERENCES `objetivos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `valores_indicadores`
