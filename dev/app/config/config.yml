@@ -34,6 +34,9 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+    form:
+      resources: ['bootstrap_3_layout.html.twig']
+
 
 # Doctrine Configuration
 doctrine:
@@ -53,7 +56,8 @@ doctrine:
         #     path:     "%database_path%"
         mapping_types:
             enum:   string
-            bit:    string    
+            bit:    string
+            year:   string
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
         naming_strategy: doctrine.orm.naming_strategy.underscore
