@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Metas</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Descripcion</th>
+                <td>{{ meta.descripcion }}</td>
+            </tr>
+            <tr>
+                <th>Id</th>
+                <td>{{ meta.id }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('admin_crud_metas_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('admin_crud_metas_edit', { 'id': meta.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}
