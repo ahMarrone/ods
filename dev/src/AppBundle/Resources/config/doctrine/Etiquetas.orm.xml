@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Etiquetas" table="etiquetas">
+    <indexes>
+      <index name="fk_id_desgloce" columns="fk_id_desgloce"/>
+    </indexes>
+    <id name="idEtiqueta" type="integer" column="id_etiqueta">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="descripcion" type="string" column="descripcion" length="5000" nullable="false"/>
+    <many-to-one field="fkDesgloce" target-entity="Desgloces">
+      <join-columns>
+        <join-column name="fk_id_desgloce" referenced-column-name="id_desgloce"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

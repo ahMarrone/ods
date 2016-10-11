@@ -18,4 +18,25 @@ class DefaultController extends Controller
             'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
         ));
     }
+
+
+
+    /**
+     * @Route("/explora", name="explora")
+     */
+    public function exploraAction(Request $request)
+    {
+        // replace this example code with whatever you need
+        return $this->render('default/indicadores.html.twig', array(
+            'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
+            'usuario' => "tolosoft",
+        ));
+    }
+
+
+
+
+
+
+
 }

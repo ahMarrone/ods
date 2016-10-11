@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Indicadores" table="indicadores">
+    <indexes>
+      <index name="id_meta" columns="fk_id_meta"/>
+    </indexes>
+    <id name="idIndicador" type="integer" column="id_indicador">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="descripcion" type="string" column="descripcion" length="5000" nullable="false"/>
+    <field name="tipo" type="string" column="tipo" nullable="false"/>
+    <field name="valMin" type="bigint" column="val_min" nullable="false"/>
+    <field name="valMax" type="bigint" column="val_max" nullable="false"/>
+    <field name="ambito" type="string" column="ambito" nullable="false"/>
+    <field name="visibilidad" type="string" column="visibilidad" length="3" nullable="false"/>
+    <many-to-one field="fkMeta" target-entity="Metas">
+      <join-columns>
+        <join-column name="fk_id_meta" referenced-column-name="id_meta"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
