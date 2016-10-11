@@ -6,7 +6,7 @@
 -- Tiempo de generación: 06-10-2016 a las 19:38:17
 -- Versión del servidor: 5.5.8
 -- Versión de PHP: 5.3.5
-drop database `indicadores_ods`;
+drop database IF EXISTS `indicadores_ods`;
 create database `indicadores_ods`;
 use indicadores_ods;
 --
@@ -32,9 +32,9 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 DROP TABLE IF EXISTS `desgloces`;
 CREATE TABLE IF NOT EXISTS `desgloces` (
-  `id_desgloce` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del desgloce',
-  PRIMARY KEY (`id_desgloce`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
 
 --
@@ -50,11 +50,11 @@ CREATE TABLE IF NOT EXISTS `desgloces` (
 
 DROP TABLE IF EXISTS `etiquetas`;
 CREATE TABLE IF NOT EXISTS `etiquetas` (
-  `id_etiqueta` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la etiqueta',
-  `fk_id_desgloce` int(10) unsigned NOT NULL COMMENT 'clave foranea desgloce',
-  PRIMARY KEY (`id_etiqueta`),
-  KEY `fk_id_desgloce` (`fk_id_desgloce`)
+  `fkIdDesgloce` int(10) unsigned NOT NULL COMMENT 'clave foranea desgloce',
+  PRIMARY KEY (`id`),
+  KEY `fkIdDesgloce` (`fkIdDesgloce`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
 
 --
@@ -76,16 +76,16 @@ CREATE TABLE IF NOT EXISTS `etiquetas` (
 
 DROP TABLE IF EXISTS `indicadores`;
 CREATE TABLE IF NOT EXISTS `indicadores` (
-  `id_indicador` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del indicador',
-  `fk_id_meta` int(10) unsigned NOT NULL COMMENT 'clave foranea meta',
+  `fkIdMeta` int(10) unsigned NOT NULL COMMENT 'clave foranea meta',
   `tipo` enum('porcentual','entero','real') COLLATE utf8_spanish_ci NOT NULL COMMENT 'tipo de indicador',
-  `val_min` bigint(20) NOT NULL COMMENT 'valor minimo dentro del dominio',
-  `val_max` bigint(20) NOT NULL COMMENT 'valor maximo dentro del dominio',
+  `valMin` bigint(20) NOT NULL COMMENT 'valor minimo dentro del dominio',
+  `valMax` bigint(20) NOT NULL COMMENT 'valor maximo dentro del dominio',
   `ambito` enum('N','P','M') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito al que pertenece el indicador',
   `visibilidad` bit(3) NOT NULL COMMENT 'mascara de visibilidad del indicador',
-  PRIMARY KEY (`id_indicador`),
-  KEY `id_meta` (`fk_id_meta`)
+  PRIMARY KEY (`id`),
+  KEY `fkIdMeta` (`fkIdMeta`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
 
 --
@@ -107,11 +107,11 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
 
 DROP TABLE IF EXISTS `metas`;
 CREATE TABLE IF NOT EXISTS `metas` (
-  `id_meta` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la meta',
-  `fk_id_objetivo` int(10) unsigned NOT NULL COMMENT 'clave foranea tabla objetivos',
-  PRIMARY KEY (`id_meta`),
-  KEY `fk_id_objetivo` (`fk_id_objetivo`)
+  `fkIdObjetivo` int(10) unsigned NOT NULL COMMENT 'clave foranea tabla objetivos',
+  PRIMARY KEY (`id`),
+  KEY `fkIdObjetivo` (`fkIdObjetivo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
 
 --
@@ -149,13 +149,13 @@ CREATE TABLE IF NOT EXISTS `objetivos` (
 -- Estructura de tabla para la tabla `ref_geografica`
 --
 
-DROP TABLE IF EXISTS `ref_geografica`;
-CREATE TABLE IF NOT EXISTS `ref_geografica` (
-  `id_refgeografica` int(10) unsigned NOT NULL AUTO_INCREMENT,
+DROP TABLE IF EXISTS `refGeografica`;
+CREATE TABLE IF NOT EXISTS `refGeografica` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la referencia geografica',
   `ambito` enum('P','M') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito de la ref. geografica',
   `agrupa` int(10) unsigned NOT NULL COMMENT 'id de la ref. geogr. por la cual es agrupada',
-  PRIMARY KEY (`id_refgeografica`),
+  PRIMARY KEY (`id`),
   KEY `agrupa` (`agrupa`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
 
@@ -176,18 +176,18 @@ CREATE TABLE IF NOT EXISTS `ref_geografica` (
 -- Estructura de tabla para la tabla `valores_indicadores`
 --
 
-DROP TABLE IF EXISTS `valores_indicadores`;
-CREATE TABLE IF NOT EXISTS `valores_indicadores` (
-  `id_indicador` int(10) unsigned NOT NULL,
-  `id_etiqueta` int(10) unsigned NOT NULL,
-  `id_refgeografica` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `valoresIndicadores`;
+CREATE TABLE IF NOT EXISTS `valoresIndicadores` (
+  `idIndicador` int(10) unsigned NOT NULL,
+  `idEtiqueta` int(10) unsigned NOT NULL,
+  `idRefGeografica` int(10) unsigned NOT NULL,
   `anio` year(4) NOT NULL,
   `mes` tinyint(3) unsigned NOT NULL,
   `valor` decimal(10,2) NOT NULL,
   `aprobado` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id_indicador`,`id_etiqueta`,`id_refgeografica`),
-  KEY `id_etiqueta` (`id_etiqueta`),
-  KEY `id_refgeografica` (`id_refgeografica`)
+  PRIMARY KEY (`idIndicador`,`idEtiqueta`,`idRefGeografica`),
+  KEY `idEtiqueta` (`idEtiqueta`),
+  KEY `idRefGeografica` (`idRefGeografica`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 --
@@ -213,24 +213,24 @@ CREATE TABLE IF NOT EXISTS `valores_indicadores` (
 -- Filtros para la tabla `etiquetas`
 --
 ALTER TABLE `etiquetas`
-  ADD CONSTRAINT `etiquetas_ibfk_1` FOREIGN KEY (`fk_id_desgloce`) REFERENCES `desgloces` (`id_desgloce`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `etiquetas_ibfk_1` FOREIGN KEY (`fkIdDesgloce`) REFERENCES `desgloces` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `indicadores`
 --
 ALTER TABLE `indicadores`
-  ADD CONSTRAINT `indicadores_ibfk_1` FOREIGN KEY (`fk_id_meta`) REFERENCES `metas` (`id_meta`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `indicadores_ibfk_1` FOREIGN KEY (`fkIdMeta`) REFERENCES `metas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `metas`
 --
 ALTER TABLE `metas`
-  ADD CONSTRAINT `metas_ibfk_1` FOREIGN KEY (`fk_id_objetivo`) REFERENCES `objetivos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `metas_ibfk_1` FOREIGN KEY (`fkIdObjetivo`) REFERENCES `objetivos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `valores_indicadores`
 --
-ALTER TABLE `valores_indicadores`
-  ADD CONSTRAINT `valores_indicadores_ibfk_3` FOREIGN KEY (`id_refgeografica`) REFERENCES `ref_geografica` (`id_refgeografica`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `valores_indicadores_ibfk_1` FOREIGN KEY (`id_indicador`) REFERENCES `indicadores` (`id_indicador`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `valores_indicadores_ibfk_2` FOREIGN KEY (`id_etiqueta`) REFERENCES `etiquetas` (`id_etiqueta`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `valoresIndicadores`
+  ADD CONSTRAINT `valoresIndicadores_ibfk_3` FOREIGN KEY (`idRefGeografica`) REFERENCES `refGeografica` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `valoresIndicadores_ibfk_1` FOREIGN KEY (`idIndicador`) REFERENCES `indicadores` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `valoresIndicadores_ibfk_2` FOREIGN KEY (`idEtiqueta`) REFERENCES `etiquetas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
