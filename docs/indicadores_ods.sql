@@ -213,24 +213,24 @@ CREATE TABLE IF NOT EXISTS `valoresIndicadores` (
 -- Filtros para la tabla `etiquetas`
 --
 ALTER TABLE `etiquetas`
-  ADD CONSTRAINT `etiquetas_ibfk_1` FOREIGN KEY (`fkIdDesgloce`) REFERENCES `desgloces` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `etiquetas_ibfk_1` FOREIGN KEY (`fkIdDesgloce`) REFERENCES `desgloces` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `indicadores`
 --
 ALTER TABLE `indicadores`
-  ADD CONSTRAINT `indicadores_ibfk_1` FOREIGN KEY (`fkIdMeta`) REFERENCES `metas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `indicadores_ibfk_1` FOREIGN KEY (`fkIdMeta`) REFERENCES `metas` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `metas`
 --
 ALTER TABLE `metas`
-  ADD CONSTRAINT `metas_ibfk_1` FOREIGN KEY (`fkIdObjetivo`) REFERENCES `objetivos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `metas_ibfk_1` FOREIGN KEY (`fkIdObjetivo`) REFERENCES `objetivos` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `valores_indicadores`
 --
 ALTER TABLE `valoresIndicadores`
-  ADD CONSTRAINT `valoresIndicadores_ibfk_3` FOREIGN KEY (`idRefGeografica`) REFERENCES `refGeografica` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `valoresIndicadores_ibfk_1` FOREIGN KEY (`idIndicador`) REFERENCES `indicadores` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `valoresIndicadores_ibfk_2` FOREIGN KEY (`idEtiqueta`) REFERENCES `etiquetas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `valoresIndicadores_ibfk_3` FOREIGN KEY (`idRefGeografica`) REFERENCES `refGeografica` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `valoresIndicadores_ibfk_1` FOREIGN KEY (`idIndicador`) REFERENCES `indicadores` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `valoresIndicadores_ibfk_2` FOREIGN KEY (`idEtiqueta`) REFERENCES `etiquetas` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
