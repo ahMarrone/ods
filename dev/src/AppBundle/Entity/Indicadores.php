@@ -37,7 +37,17 @@ class Indicadores
     /**
      * @var string
      */
-    private $visibilidad;
+    private $visiblenacional;
+
+    /**
+     * @var string
+     */
+    private $visibleprovincial;
+
+    /**
+     * @var string
+     */
+    private $visiblemunicipal;
 
     /**
      * @var integer
@@ -166,26 +176,72 @@ class Indicadores
     }
 
     /**
-     * Set visibilidad
+     * Set visiblenacional
      *
-     * @param string $visibilidad
+     * @param string $visiblenacional
      * @return Indicadores
      */
-    public function setVisibilidad($visibilidad)
+    public function setVisiblenacional($visiblenacional)
     {
-        $this->visibilidad = $visibilidad;
+        $this->visiblenacional = $visiblenacional;
 
         return $this;
     }
 
     /**
-     * Get visibilidad
+     * Get visiblenacional
      *
      * @return string 
      */
-    public function getVisibilidad()
+    public function getVisiblenacional()
     {
-        return $this->visibilidad;
+        return $this->visiblenacional;
+    }
+
+    /**
+     * Set visibleprovincial
+     *
+     * @param string $visibleprovincial
+     * @return Indicadores
+     */
+    public function setVisibleprovincial($visibleprovincial)
+    {
+        $this->visibleprovincial = $visibleprovincial;
+
+        return $this;
+    }
+
+    /**
+     * Get visibleprovincial
+     *
+     * @return string 
+     */
+    public function getVisibleprovincial()
+    {
+        return $this->visibleprovincial;
+    }
+
+    /**
+     * Set visiblemunicipal
+     *
+     * @param string $visiblemunicipal
+     * @return Indicadores
+     */
+    public function setVisiblemunicipal($visiblemunicipal)
+    {
+        $this->visiblemunicipal = $visiblemunicipal;
+
+        return $this;
+    }
+
+    /**
+     * Get visiblemunicipal
+     *
+     * @return string 
+     */
+    public function getVisiblemunicipal()
+    {
+        return $this->visiblemunicipal;
     }
 
     /**

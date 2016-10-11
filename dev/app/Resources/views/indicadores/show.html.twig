@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Indicadores</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Descripcion</th>
+                <td>{{ indicadore.descripcion }}</td>
+            </tr>
+            <tr>
+                <th>Tipo</th>
+                <td>{{ indicadore.tipo }}</td>
+            </tr>
+            <tr>
+                <th>Valmin</th>
+                <td>{{ indicadore.valmin }}</td>
+            </tr>
+            <tr>
+                <th>Valmax</th>
+                <td>{{ indicadore.valmax }}</td>
+            </tr>
+            <tr>
+                <th>Ambito</th>
+                <td>{{ indicadore.ambito }}</td>
+            </tr>
+            <tr>
+                <th>Visiblenacional</th>
+                <td>{{ indicadore.visiblenacional }}</td>
+            </tr>
+            <tr>
+                <th>Visibleprovincial</th>
+                <td>{{ indicadore.visibleprovincial }}</td>
+            </tr>
+            <tr>
+                <th>Visiblemunicipal</th>
+                <td>{{ indicadore.visiblemunicipal }}</td>
+            </tr>
+            <tr>
+                <th>Id</th>
+                <td>{{ indicadore.id }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('admin_crud_indicadores_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('admin_crud_indicadores_edit', { 'id': indicadore.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}
