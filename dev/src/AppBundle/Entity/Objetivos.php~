@@ -5,9 +5,9 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Metas
+ * Objetivos
  */
-class Metas
+class Objetivos
 {
     /**
      * @var string
@@ -19,17 +19,12 @@ class Metas
      */
     private $id;
 
-    /**
-     * @var \AppBundle\Entity\Objetivos
-     */
-    private $fkidobjetivo;
-
 
     /**
      * Set descripcion
      *
      * @param string $descripcion
-     * @return Metas
+     * @return Objetivos
      */
     public function setDescripcion($descripcion)
     {
@@ -56,28 +51,5 @@ class Metas
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set fkidobjetivo
-     *
-     * @param \AppBundle\Entity\Objetivos $fkidobjetivo
-     * @return Metas
-     */
-    public function setFkidobjetivo(\AppBundle\Entity\Objetivos $fkidobjetivo = null)
-    {
-        $this->fkidobjetivo = $fkidobjetivo;
-
-        return $this;
-    }
-
-    /**
-     * Get fkidobjetivo
-     *
-     * @return \AppBundle\Entity\Objetivos 
-     */
-    public function getFkidobjetivo()
-    {
-        return $this->fkidobjetivo;
     }
 }

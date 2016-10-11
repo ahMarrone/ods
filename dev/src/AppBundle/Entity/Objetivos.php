@@ -52,4 +52,12 @@ class Objetivos
     {
         return $this->id;
     }
+
+
+
+    public function __toString()
+    {
+        return (string) $this->id . " - " . substr($this->getDescripcion(), 0, 15);  
+    }
+
 }
