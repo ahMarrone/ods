@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
   `ambito` enum('N','P','M') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito al que pertenece el indicador',
   `visibleNacional` varchar(1) NOT NULL COMMENT 'Visibilidad del indicador a nivel Nacional',
   `visibleProvincial` varchar(1) NOT NULL COMMENT 'Visibilidad del indicador a nivel Provincial',
-  `visibleMunicipio` varchar(1) NOT NULL COMMENT 'Visibilidad del indicador a nivel Municipal',
+  `visibleMunicipal` varchar(1) NOT NULL COMMENT 'Visibilidad del indicador a nivel Municipal',
   PRIMARY KEY (`id`),
   KEY `fkIdMeta` (`fkIdMeta`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
