@@ -54,10 +54,12 @@ class Objetivos
     }
 
 
+    // Ojo! Acá tuve que 'tocar' lo que retorna __toString() porque necesito solo el 'Id' en el CRUD de 'Indicadores'.
+    // Hay que ver bien cómo controlar esto.-
 
     public function __toString()
     {
-        return (string) $this->id . " - " . substr($this->getDescripcion(), 0, 15);  
+        //return (string) $this->id . " - " . substr($this->getDescripcion(), 0, 15);  
+        return (string) $this->id;  
     }
-
 }

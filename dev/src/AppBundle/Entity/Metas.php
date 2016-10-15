@@ -26,6 +26,12 @@ class Metas
 
 
     /**
+    * @var string
+    */
+    private $ido;
+
+
+    /**
      * Set descripcion
      *
      * @param string $descripcion
@@ -67,7 +73,6 @@ class Metas
     public function setFkidobjetivo(\AppBundle\Entity\Objetivos $fkidobjetivo = null)
     {
         $this->fkidobjetivo = $fkidobjetivo;
-
         return $this;
     }
 
@@ -81,7 +86,21 @@ class Metas
         return $this->fkidobjetivo;
     }
 
+
     public function __toString(){
         return (string) $this->getId() . ' - ' . substr($this->getDescripcion(), 0, 15);
+    }
+
+
+
+    /**
+     * Get fkidobjetivo
+     *
+     * @return string
+     */
+    public function getIdobjetivo_str()
+    {
+        $this->ido = (string) $this->fkidobjetivo;
+        return $this->ido;
     }
 }

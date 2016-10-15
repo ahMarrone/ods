@@ -12,9 +12,13 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
+
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+//use Symfony\Component\Form\Event\FormEvent;
+//use Symfony\Component\Form\Event\DataEvent;
 
+//use Symfony\Component\Form\FormEvents;
 
 class IndicadoresType extends AbstractType
 {
@@ -32,8 +36,24 @@ class IndicadoresType extends AbstractType
         $ambitoSeleccionado = $options['data']->getAmbito();
 
         $builder
-            ->add('objetivo', EntityType::class, array('label' => 'Objetivo', 'mapped' => false, 'class' => 'AppBundle:Objetivos', 'choice_label' => 'descripcion', ))
-            ->add('fkidmeta', EntityType::class, array('label' => 'Meta', 'class' => 'AppBundle:Metas', 'choice_label' => 'descripcion', ))
+            //->add('objetivo', EntityType::class, array('label' => 'Objetivo', 'mapped' => false, 'class' => 'AppBundle:Objetivos', 'choice_label' => 'descripcion', ))
+
+            ->add('objetivo', EntityType::class, array('label' => 'Objetivo', 'mapped' => false, 'class' => 'AppBundle:Objetivos', //'placeholder' => 'Seleccione un Objetivo',
+                'choice_label' => function ($objetivo) {
+                return $objetivo->getId(). "." . $objetivo->getDescripcion();
+                }, ))
+
+            //->add('fkidmeta', EntityType::class, array('label' => 'Meta', 'class' => 'AppBundle:Metas', 'choice_label' => 'descripcion', ))
+            ->add('fkidmeta', EntityType::class, array('label' => 'Meta', 'class' => 'AppBundle:Metas', 'property' => 'name', 'placeholder' => 'Seleccione una Meta',
+                'choice_label' => function ($fkidmeta) {
+                return $fkidmeta->getIdobjetivo_str() . "-" . $fkidmeta->getDescripcion();
+                }, 
+                //'choice_name' => function ($fkidmeta) {
+                //return $fkidmeta->getIdobjetivo_str() . "-" . $fkidmeta->getDescripcion();
+                //},
+                ))            
+
+
             ->add('descripcion', TextareaType::class , array('label'  => 'Descripción', 'attr' => array('max_length' => 10, ),))
             ->add('tipo', ChoiceType::class, array('label'  => 'Tipo', 'expanded'=>true, 'required'=>true, 'choices' => array('Porcentual' => 'porcentual', 'Entero' => 'entero', 'Real' => 'real', ), 'data' => $tipoSeleccionado, 'choices_as_values' => true, ))
             //->add('tipo', ChoiceType::class, array('label'  => 'Tipo2', 'choices_as_values' => true, ))
@@ -47,36 +67,7 @@ class IndicadoresType extends AbstractType
             ->add('visiblemunicipal', 'checkbox', array('label'  => 'Municipal', 'required'  => false))
             //->add('fkidmeta')
         ;
-
-
-
-
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            // ... adding the name field if needed
-            //$product = $event->getData();
-
-
-             $form = $event->getForm();
-             $data = $event->getData();
-
-            echo "name: ".$form->get('objetivo')->getData();
-            
-
-            $indicador = $event->getData();
-
-            $form = $event->getForm();
-            $unmappedField = $form['objetivo']->getData();
-
-            echo "Unmmapped: ". $unmappedField;
-
-            $tipo = $indicador->getTipo();
-
-            //echo $tipo;
-
-            // echo $user['objetivo'];
-            //echo var_dump(array_keys($event->getData()) );
-        });
-      }
+    }
 
     /**
      * @param OptionsResolver $resolver
@@ -86,5 +77,8 @@ class IndicadoresType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'AppBundle\Entity\Indicadores'
         ));
-    }
+    }  
+
+
+
 }
