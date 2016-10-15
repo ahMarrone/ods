@@ -9,8 +9,7 @@
     <id name="idrefgeografica" association-key="true"/>
     <id name="idindicador" association-key="true"/>
     <id name="idetiqueta" association-key="true"/>
-    <field name="anio" type="date" column="anio" nullable="false"/>
-    <field name="mes" type="boolean" column="mes" nullable="false"/>
+    <field name="fecha" type="date" column="fecha" nullable="true"/>
     <field name="valor" type="decimal" column="valor" precision="10" scale="2" nullable="false"/>
     <field name="aprobado" type="boolean" column="aprobado" nullable="false"/>
     <one-to-one field="idetiqueta" target-entity="Etiquetas">

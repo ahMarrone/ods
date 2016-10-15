@@ -15,11 +15,6 @@ class Valoresindicadores
     private $anio;
 
     /**
-     * @var boolean
-     */
-    private $mes;
-
-    /**
      * @var string
      */
     private $valor;
@@ -66,29 +61,6 @@ class Valoresindicadores
     public function getAnio()
     {
         return $this->anio;
-    }
-
-    /**
-     * Set mes
-     *
-     * @param boolean $mes
-     * @return Valoresindicadores
-     */
-    public function setMes($mes)
-    {
-        $this->mes = $mes;
-
-        return $this;
-    }
-
-    /**
-     * Get mes
-     *
-     * @return boolean 
-     */
-    public function getMes()
-    {
-        return $this->mes;
     }
 
     /**
@@ -204,5 +176,33 @@ class Valoresindicadores
     public function getIdrefgeografica()
     {
         return $this->idrefgeografica;
+    }
+    /**
+     * @var \DateTime
+     */
+    private $fecha;
+
+
+    /**
+     * Set fecha
+     *
+     * @param \DateTime $fecha
+     * @return Valoresindicadores
+     */
+    public function setFecha($fecha)
+    {
+        $this->fecha = $fecha;
+
+        return $this;
+    }
+
+    /**
+     * Get fecha
+     *
+     * @return \DateTime 
+     */
+    public function getFecha()
+    {
+        return $this->fecha;
     }
 }
