@@ -80,4 +80,9 @@ class Etiquetas
     {
         return $this->fkiddesgloce;
     }
+
+    public function __toString(){
+        return (string) $this->getId() . ' - ' . substr($this->getDescripcion(), 0, 20);
+    }
+    
 }
