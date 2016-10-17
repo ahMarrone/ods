@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+  <style type="text/css">
+    body {
+      padding: 0;
+      margin: 0;
+    }
+    html, body, #mi-mapa {
+      height: 100%;
+    }
+	.info {
+		padding: 6px 8px;
+		font: 14px/16px Arial, Helvetica, sans-serif;
+		background: white;
+		background: rgba(255,255,255,0.8);
+		box-shadow: 0 0 15px rgba(0,0,0,0.2);
+		border-radius: 5px;
+	}
+	.info h4 {
+		margin: 0 0 5px;
+		color: #777;
+	}
+	.legend {
+		line-height: 18px;
+		color: #555;
+	}
+	.legend i {
+		width: 18px;
+		height: 18px;
+		float: left;
+		margin-right: 8px;
+		opacity: 0.7;
+	}
+	.myClass {
+		padding-top: 5%;
+		padding-left: 5%;
+		opacity: 0.7;
+	}
+  </style>
+  <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+  <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+</head>
+
+<body>
+  
+  <div id="mi-mapa"></div>
+  
+   
+  
+  <script>
+  
+    // Add OpenStreetMap tile layer to map element
+	var miMapaTiles = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png' , { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' });
+    
+	// http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png
+	// http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png
+	// http://{s}.tiles.mapbox.com/v3/spatial.map-qgihrqg5/{z}/{x}/{y}.png
+	// http://{s}.tiles.mapbox.com/v3/mapbox.blue-marble-topo-bathy-jul/{z}/{x}/{y}.png
+	// var mi-mapa-Tiles = L.tileLayer('http://a.tiles.mapbox.com/v3/lyzidiamond.map-ietb6srb/{z}/{x}/{y}.png'
+    // var mi-mapa-Tiles = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+
+	$.getJSON("provincias.js", function(data) {
+     var geojson = L.geoJson(data, 
+	   {onEachFeature: function (feature, layer) {
+        layer.bindPopup(feature.properties.nombre+" "+feature.properties.viviendas);
+       }, style: style, onEachFeature: onEachFeature
+	   } 
+    )
+    
+	
+	function style(feature) {
+    return {
+        fillColor: getColor(feature.properties.viviendas),
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7
+     };
+    }
+
+	function getColor(d) {
+    return d > 4000000 ? '#800026' :
+           d > 3000000  ? '#BD0026' :
+           d > 2000000  ? '#E31A1C' :
+           d > 1000000  ? '#FC4E2A' :
+           d > 500000   ? '#FD8D3C' :
+           d > 100000   ? '#FEB24C' :
+           d > 50000    ? '#FED976' :
+                          '#FFEDA0' ;
+    }
+
+
+//////////////////////////////////////////////////	
+	
+	function highlightFeature(e) {
+    var layer = e.target;
+
+      layer.setStyle({
+        weight: 1,
+        color: '#646',
+        dashArray: '',
+        fillOpacity: 0.3
+      });
+	  
+	  if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+        layer.bringToFront();
+      }
+	  info.update(layer.feature.properties);
+    }
+	
+	function resetHighlight(e) {
+      geojson.resetStyle(e.target);
+	  info.update();
+    }
+	
+	function zoomToFeature(e) {
+		//map.fitBounds(e.target.getBounds());
+	}
+
+	function onEachFeature(feature, layer) {
+		layer.on({
+			mouseover: highlightFeature,
+			mouseout: resetHighlight,
+			click: zoomToFeature
+		});
+	}
+
+//////////////////////////////
+
+	var info = L.control();
+
+	info.onAdd = function (map) {
+		this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+		this.update();
+		return this._div;
+	};
+
+	// method that we will use to update the control based on feature properties passed
+	info.update = function (props) {
+		this._div.innerHTML = '<h4>UNIPE: Observatorio Educativo<hr>Indicador VIVIENDAS</h4>' +  (props ?
+        'Provincia: <b>' + props.nombre + '</b><br />Viviendas: ' + props.viviendas 
+        : 'Desplazarse sobre una provincia');
+	};
+
+/////////////////////////////////////
+
+var legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function (map) {
+
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = [0, 50000, 100000, 500000, 1000000, 2000000, 3000000, 4000000],
+        labels = [];
+		div.innerHTML = '<b>Viviendas</b><hr>'
+
+    // loop through our density intervals and generate a label with a colored square for each interval
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+    }
+
+    return div;
+};
+
+/////////////////////////////////////
+
+	var logo= L.control({
+		position : 'bottomleft'
+	});
+	
+	logo.onAdd = function(map) {
+		this._div = L.DomUtil.create('div', 'myControl');
+		var img_log = "<div class=\"myClass\"><img src=\"logo.jpg\"></img></div>";
+
+		this._div.innerHTML = img_log;
+		this._div.innerHTML += '<hr>Educación pública para todos.'
+		
+		return this._div;
+	}
+
+
+/////////////////////////////////////
+	
+	// Create variable to hold map element, give initial settings to map
+	// ejemplo base http://leafletjs.com/examples/choropleth.html
+	// http://duspviz.mit.edu/web-map-workshop/map-symbolization/
+	
+    var map = L.map('mi-mapa').fitBounds(geojson.getBounds());
+      miMapaTiles.addTo(map);
+      geojson.addTo(map);
+	  info.addTo(map);  
+	  legend.addTo(map);	  
+	  logo.addTo(map);	  	  
+    });
+  
+   
+    
+  
+  
+  
+  </script>
+  
+</body>
+</html>
+
