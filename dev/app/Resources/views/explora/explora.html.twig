@@ -111,18 +111,20 @@
 
 
 $(document).ready(function() {
-  mapear('pobreza_h');  
+  mapear('pobreza_h', "Porcentaje de hombres desempleados");  
 });
 
 $('#indicadores li').on('click', function() {
-  mapear($(this).attr('id'));
+  mapear($(this).attr('id'), $(this).text());
 });
 </script>
 
 <script>
-  function mapear(selected) {
+  var map = L.map('map_canvas');
+  var geojsonLayer = 0;
+  function mapear(selected, text) {
     // Add OpenStreetMap tile layer to map element
-    var miMapaTiles = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png' , { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' });
+    var mapTiles = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png' , { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' });
     
     // http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png
     // http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png
@@ -131,152 +133,109 @@ $('#indicadores li').on('click', function() {
     // var mi-mapa-Tiles = L.tileLayer('http://a.tiles.mapbox.com/v3/lyzidiamond.map-ietb6srb/{z}/{x}/{y}.png'
     // var mi-mapa-Tiles = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 
-    $.getJSON("provincias.js", function(data) {
-     var geojson = L.geoJson(data, 
-       {onEachFeature: function (feature, layer) {
-        layer.bindPopup(feature.properties.nombre+" "+feature.properties[selected]);
-       }, style: style, onEachFeature: onEachFeature
-       } 
-    )
-    
-    
+    $.getJSON("provincias.js", drawPolygons);
+     
+
     function style(feature) {
-    return {
-        fillColor: getColor(feature.properties[selected]),
-        weight: 2,
-        opacity: 1,
-        color: 'white',
-        dashArray: '3',
-        fillOpacity: 0.7
-     };
+        return {
+            fillColor: getColor(feature.properties[selected]),
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: 0.7
+            };
     }
 
-    // function getColor(d) {
-    // return d > 4000000 ? '#034e7b' :
-    //        d > 3000000  ? '#0570b0' :
-    //        d > 2000000  ? '#3690c0' :
-    //        d > 1000000  ? '#74a9cf' :
-    //        d > 500000   ? '#a6bddb' :
-    //        d > 100000   ? '#d0d1e6' :
-    //        d > 50000    ? '#ece7f2' :
-    //                       '#fff7fb' ;
-    // }
-function getColor(d) {
-    return d > 80 ? '#045a8d' :
-           d > 60 ? '#2b8cbe' :
-           d > 40 ? '#74a9cf' :
-           d > 20 ? '#bdc9e1' :
-                    '#f1eef6' ;
-    }
-
-//////////////////////////////////////////////////  
-    
-    function highlightFeature(e) {
-    var layer = e.target;
-
-      layer.setStyle({
-        weight: 1,
-        color: '#646',
-        dashArray: '',
-        fillOpacity: 0.3
-      });
-      
-      if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-        layer.bringToFront();
-      }
-      info.update(layer.feature.properties);
+    function getColor(d) {
+        return d > 80 ? '#045a8d' :
+               d > 60 ? '#2b8cbe' :
+               d > 40 ? '#74a9cf' :
+               d > 20 ? '#bdc9e1' :
+                        '#f1eef6' ;
     }
     
-    function resetHighlight(e) {
-      geojson.resetStyle(e.target);
-      info.update();
-    }
-    
-    function zoomToFeature(e) {
-        //map.fitBounds(e.target.getBounds());
-    }
+    // Ajax Callback Function Data
+    function drawPolygons(geoData) {
+        map.removeLayer(geojsonLayer);
+        geojsonLayer = L.geoJson(geoData, {onEachFeature: onEachFeature, style: style})
+        var info = L.control();
+        var legend = L.control({position: 'bottomright'});
+        map.fitBounds(geojsonLayer.getBounds());
+        
+        info.onAdd = addDivInfo;
+        info.update = updateDivInfo;
+        legend.onAdd = addDivLegend;
 
-    function onEachFeature(feature, layer) {
-        layer.on({
-            mouseover: highlightFeature,
-            mouseout: resetHighlight,
-            click: zoomToFeature
-        });
-    }
+        mapTiles.addTo(map);
+        geojsonLayer.addTo(map);        
+        info.addTo(map);  
+        legend.addTo(map);      
 
-//////////////////////////////
-
-    var info = L.control();
-
-    info.onAdd = function (map) {
+    function addDivInfo (map) {
         this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
         this.update();
         return this._div;
-    };
+    }
 
     // method that we will use to update the control based on feature properties passed
-    info.update = function (props) {
+    function updateDivInfo (props) {
         this._div.innerHTML = '<h4>Indicador<hr>pobreza</h4>' +  (props ?
         'Provincia: <b>' + props.nombre + '</b><br />pobreza: ' + props[selected]
         : 'Desplazarse sobre una provincia');
-    };
-
-/////////////////////////////////////
-
-var legend = L.control({position: 'bottomright'});
-
-legend.onAdd = function (map) {
-
-    var div = L.DomUtil.create('div', 'info legend'),
-        // grades = [0, 50000, 100000, 500000, 1000000, 2000000, 3000000, 4000000],
-        grades = [0, 20, 40, 60, 80, 100],
-        labels = [];
-        div.innerHTML = '<b>Pobreza</b><hr>'
-
-    // loop through our density intervals and generate a label with a colored square for each interval
-    for (var i = 0; i < grades.length; i++) {
-        div.innerHTML +=
-            '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
-            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
     }
 
-    return div;
-};
+    function addDivLegend (map) {
+        var div = L.DomUtil.create('div', 'info legend'),
+            grades = [0, 20, 40, 60, 80, 100],
+            labels = [];
+            div.innerHTML = '<b>' + text + ' </b><hr>'
 
-/////////////////////////////////////
+        // loop through our density intervals and generate a label with a colored square for each interval
+        for (var i = 0; i < grades.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        }
 
-    var logo= L.control({
-        position : 'bottomleft'
-    });
-    
-    logo.onAdd = function(map) {
-        this._div = L.DomUtil.create('div', 'myControl');
-        var img_log = "<div class=\"myClass\"><img src=\"logo.jpg\"></img></div>";
-
-        this._div.innerHTML = img_log;
-        this._div.innerHTML += '<hr>Educación pública para todos.'
-        
-        return this._div;
+        return div;
     }
 
+    function highlightFeature(e) {
+        var layer = e.target;
+        layer.setStyle({
+            weight: 1,
+            color: '#646',
+            dashArray: '',
+            fillOpacity: 0.3
+        });
+      
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront();
+        }
+        info.update(layer.feature.properties);
+    }
+    
+    function resetHighlight(e) {
+        geojsonLayer.resetStyle(e.target);
+        info.update();
+    }
 
-/////////////////////////////////////
+    function zoomToFeature(e) {
+        // map.fitBounds(e.target.getBounds());
+    }
+
+    function onEachFeature(feature, layer) {
+        layer.bindPopup(feature.properties.nombre + " " + feature.properties[selected]);
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight
+            // click: zoomToFeature
+        });
+    }
+
+}  
     
-    // Create variable to hold map element, give initial settings to map
-    // ejemplo base http://leafletjs.com/examples/choropleth.html
-    // http://duspviz.mit.edu/web-map-workshop/map-symbolization/
-    
-    var map = L.map('map_canvas').fitBounds(geojson.getBounds());
-      miMapaTiles.addTo(map);
-      geojson.addTo(map);
-      info.addTo(map);  
-      legend.addTo(map);      
-      logo.addTo(map);        
-    });
-  
-   
-    
-  
   
 }  
   </script>
