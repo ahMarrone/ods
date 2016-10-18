@@ -32,33 +32,20 @@
         } 
         else 
         {
-            //$ddl.find("option").show(); $ddl.val('');
             $ddl.find("option").hide(); // hide all options
-            // show only those options which contain the selected value, 
-            // set the selected property to true for the only remaining ones
-            //$ddl.find("option[value*='" + sel + "']").show().prop('selected', true);
-            //alert("option[value*='" + sel + "']");
-
-            //var localObjetivo = document.getElementById('indicadores_fkidmeta');
             var selObjetivo = document.getElementById("indicadores_objetivo").options;
             var index = document.getElementById("indicadores_objetivo").selectedIndex;
             var otro = selObjetivo[index].value;
-
-            //alert(selObjetivo+"-"+ otro);
             var localMetas = document.getElementById('indicadores_fkidmeta');
-            //alert(localMetas);
 
             for(var i=0; i < localMetas.length; i++)
             {
-                    var x = localMetas.options[i].text;
-                    var this_value = parseInt(x.substr(0,5));
-                //alert(x+"-"+y);
-                //alert(parseInt(y));
-                //alert(y);
+                var x = localMetas.options[i].text;
+                var this_value = parseInt(x.substr(0,5));
+
                 if (this_value == otro)
                 {
                     var this_select_value = localMetas.options[i].value;
-                    //alert(this_value+"-->"+this_select_value); 
                     $ddl.find("option[value*='" + this_select_value + "']").show();
                 }
 
@@ -76,14 +63,10 @@
         var index = document.getElementById("indicadores_fkidmeta").selectedIndex;
         var idobj = selMeta[index].text;
         var this_value = parseInt(idobj.substr(0,5));
-        //alert("obj: " + this_value)
         $ddl.find("option[value*='" + this_value + "']").prop('selected', true);
-        //alert("option[value*='" + idobj + "']");
-
 
         // Filtro la lista de "Metas" de acuerdo al "Objetivo" que corresponde.
         // Este código repite el script de arriba, hay que mejorar la presentación en una función.
-
         sel = $(this).val(), 
         $ddl = $("#indicadores_fkidmeta");
         $ddl.find("option").hide(); // hide all options

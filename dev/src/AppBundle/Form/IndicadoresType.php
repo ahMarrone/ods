@@ -51,9 +51,7 @@ class IndicadoresType extends AbstractType
                 //'choice_name' => function ($fkidmeta) {
                 //return $fkidmeta->getIdobjetivo_str() . "-" . $fkidmeta->getDescripcion();
                 //},
-                ))            
-
-
+                ))
             ->add('descripcion', TextareaType::class , array('label'  => 'Descripción', 'attr' => array('max_length' => 10, ),))
             ->add('tipo', ChoiceType::class, array('label'  => 'Tipo', 'expanded'=>true, 'required'=>true, 'choices' => array('Porcentual' => 'porcentual', 'Entero' => 'entero', 'Real' => 'real', ), 'data' => $tipoSeleccionado, 'choices_as_values' => true, ))
             //->add('tipo', ChoiceType::class, array('label'  => 'Tipo2', 'choices_as_values' => true, ))

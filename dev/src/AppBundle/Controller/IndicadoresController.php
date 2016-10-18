@@ -24,7 +24,10 @@ class IndicadoresController extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
+        print_r("sopa");
+        $em = $this->getDoctrine()->getManager();   
+
+
 
         $indicadores = $em->getRepository('AppBundle:Indicadores')->findAll();
 
@@ -49,7 +52,7 @@ class IndicadoresController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($indicadore);
             $em->flush();
-
+            //return $this->redirectToRoute('/');
             return $this->redirectToRoute('admin_crud_desglocesporindicador_new', array('id_indicador' => $indicadore->getId()));
         }
 

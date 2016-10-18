@@ -20,15 +20,5 @@
         <join-column name="fkIdMeta" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-many field="iddesgloce" target-entity="Desgloces" inversed-by="idindicador">
-      <join-table name="desglocesindicadores">
-        <join-columns>
-          <join-column name="idIndicador" referenced-column-name="id"/>
-        </join-columns>
-        <inverse-join-columns>
-          <join-column name="idDesgloce" referenced-column-name="id"/>
-        </inverse-join-columns>
-      </join-table>
-    </many-to-many>
   </entity>
 </doctrine-mapping>

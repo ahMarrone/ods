@@ -28,13 +28,13 @@ class DesglocesPorIndicadorType extends AbstractType
             $newkey = $value->getId() . ". ". $value->getDescripcion();
             $choice_desgloces[$key]=$newkey;
         }
-            
+         
         $builder
             //->add('objetivo', EntityType::class, array('label' => 'Objetivo', 'mapped' => false, 'class' => 'AppBundle:Objetivos', //'placeholder' => 'Seleccione un Objetivo',
             //    'choice_label' => function ($objetivo) {
             //    return $objetivo->getId(). "." . $objetivo->getDescripcion();
             //    }, ))
-            ->add('tipo',  ChoiceType::class, array('label'  => 'Desgloces', 'required'=>true, 'choices' => $choice_desgloces,  'expanded'=>true, 'multiple'=>true, ))  
+            ->add('desglocesSeleccionados',  ChoiceType::class, array('mapped' => false, 'label'  => 'Desgloces', 'required'=>true, 'choices' => $choice_desgloces,  'expanded'=>true, 'multiple'=>true, ))  
         ;
     }
 

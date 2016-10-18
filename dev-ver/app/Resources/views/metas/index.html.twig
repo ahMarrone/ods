@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Metas list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Descripcion</th>
+                <th>Id</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for meta in metas %}
+            <tr>
+                <td><a href="{{ path('admin_crud_metas_show', { 'id': meta.id }) }}">{{ meta.descripcion }}</a></td>
+                <td>{{ meta.id }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('admin_crud_metas_show', { 'id': meta.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('admin_crud_metas_edit', { 'id': meta.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('admin_crud_metas_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

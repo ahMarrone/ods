@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Valoresindicadores" table="valoresIndicadores">
+    <indexes>
+      <index name="idEtiqueta" columns="idEtiqueta"/>
+      <index name="idRefGeografica" columns="idRefGeografica"/>
+      <index name="IDX_CB6229C931F81595" columns="idIndicador"/>
+    </indexes>
+    <id name="idindicador" association-key="true"/>
+    <id name="idetiqueta" association-key="true"/>
+    <id name="idrefgeografica" association-key="true"/>
+    <field name="fecha" type="date" column="fecha" nullable="true"/>
+    <field name="valor" type="decimal" column="valor" precision="10" scale="2" nullable="false"/>
+    <field name="aprobado" type="boolean" column="aprobado" nullable="false"/>
+    <one-to-one field="idrefgeografica" target-entity="Refgeografica">
+      <join-columns>
+        <join-column name="idRefGeografica" referenced-column-name="id"/>
+      </join-columns>
+    </one-to-one>
+    <one-to-one field="idetiqueta" target-entity="Etiquetas">
+      <join-columns>
+        <join-column name="idEtiqueta" referenced-column-name="id"/>
+      </join-columns>
+    </one-to-one>
+    <one-to-one field="idindicador" target-entity="Indicadores">
+      <join-columns>
+        <join-column name="idIndicador" referenced-column-name="id"/>
+      </join-columns>
+    </one-to-one>
+  </entity>
+</doctrine-mapping>
