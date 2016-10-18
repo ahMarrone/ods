@@ -201,7 +201,7 @@ CREATE TABLE IF NOT EXISTS `valoresIndicadores` (
   `fecha` date,
   `valor` decimal(10,2) NOT NULL,
   `aprobado` tinyint(1) NOT NULL,
-  PRIMARY KEY (`idIndicador`,`idEtiqueta`,`idRefGeografica`),
+  PRIMARY KEY (`idIndicador`,`idEtiqueta`,`idRefGeografica`, `fecha`),
   KEY `idEtiqueta` (`idEtiqueta`),
   KEY `idRefGeografica` (`idRefGeografica`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
