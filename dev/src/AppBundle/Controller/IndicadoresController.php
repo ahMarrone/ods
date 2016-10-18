@@ -50,7 +50,7 @@ class IndicadoresController extends Controller
             $em->persist($indicadore);
             $em->flush();
 
-            return $this->redirectToRoute('admin_crud_indicadores_show', array('id' => $indicadore->getId()));
+            return $this->redirectToRoute('admin_crud_desglocesporindicador_new', array('id_indicador' => $indicadore->getId()));
         }
 
         return $this->render('indicadores/new.html.twig', array(
