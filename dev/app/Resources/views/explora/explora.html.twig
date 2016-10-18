@@ -1,0 +1,245 @@
+{% extends 'base.html.twig' %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+{% endblock %}    
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style type="text/css">
+    body {
+        padding-top: 150px;
+    }
+
+    html, body, #map_canvas {
+      height: 100%;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .info {
+        padding: 6px 8px;
+        font: 14px/16px Arial, Helvetica, sans-serif;
+        background: white;
+        background: rgba(255,255,255,0.8);
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        border-radius: 5px;
+    }
+    .info h4 {
+        margin: 0 0 5px;
+        color: #777;
+    }
+    .legend {
+        line-height: 18px;
+        color: #555;
+    }
+    .legend i {
+        width: 18px;
+        height: 18px;
+        float: left;
+        margin-right: 8px;
+        opacity: 0.7;
+    }
+    .myClass {
+        padding-top: 5%;
+        padding-left: 5%;
+        opacity: 0.7;
+    }
+
+
+
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="http://www.politicassociales.gob.ar/public/css/estilo_cncps.css" rel="stylesheet">
+    <link href="http://www.politicassociales.gob.ar/public/css/font-awesome.min.css" rel="stylesheet" >
+    <!-- Estilo del Slider -->
+    <link rel="stylesheet" type="text/css" href="http://www.politicassociales.gob.ar/public/css/styles.css" media="all"/>
+    <!-- Leaflet  -->
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+    
+{% endblock %}
+
+{% block body %}
+
+<header>
+   <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-sm-7 col-md-6">
+          <div class="logoConsejo pull-left"><a href="http://www.politicassociales.gob.ar/Index"><img class="center-block" alt="Logo Consejo Nacional de Coordinaci&oacute;n de Pol&iacute;ticas Sociales" src="http://www.politicassociales.gob.ar/public/images/LogoConsejo.png"></a></div>
+          <div class="logoPresidencia"><img alt="Logo Presidencia de la Nación" src="http://www.politicassociales.gob.ar/public/images/LogoPresidenciaWhite.png"></div>
+        </div>
+        <div class="col-xs-12 col-sm-5 col-md-6">         
+          <p class="mensajeAnoyFecha">            
+              <strong>
+              2016 - Año del Bicentenario de la Declaración de la Independencia Nacional</strong><br>
+          </p>
+        </div>  
+      </div>
+    </div>  
+</header> 
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        <img alt="" src="...">
+      </a>
+    </div>
+  </div>
+</nav>
+
+
+<div class="container">
+<div class="dropdown" id="indicadores">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    Indicadores Disponibles
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <li id='pobreza_h'><a href="#">Porcentaje de hombres desempleados</a></li>
+    <li id='probreza_m'><a href="#" >Porcentaje de mujeres desempleadas</a></li>
+  </ul>
+</div>
+<br>
+</div>
+
+<div id="map_canvas" class="container"></div>
+
+<script type="text/javascript">
+
+
+$(document).ready(function() {
+  mapear('pobreza_h', "Porcentaje de hombres desempleados");  
+});
+
+$('#indicadores li').on('click', function() {
+  mapear($(this).attr('id'), $(this).text());
+});
+</script>
+
+<script>
+  var map = L.map('map_canvas');
+  var geojsonLayer = 0;
+  function mapear(selected, text) {
+    // Add OpenStreetMap tile layer to map element
+    var mapTiles = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png' , { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' });
+    
+    // http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png
+    // http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png
+    // http://{s}.tiles.mapbox.com/v3/spatial.map-qgihrqg5/{z}/{x}/{y}.png
+    // http://{s}.tiles.mapbox.com/v3/mapbox.blue-marble-topo-bathy-jul/{z}/{x}/{y}.png
+    // var mi-mapa-Tiles = L.tileLayer('http://a.tiles.mapbox.com/v3/lyzidiamond.map-ietb6srb/{z}/{x}/{y}.png'
+    // var mi-mapa-Tiles = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+
+    $.getJSON("provincias.js", drawPolygons);
+     
+
+    function style(feature) {
+        return {
+            fillColor: getColor(feature.properties[selected]),
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: 0.7
+            };
+    }
+
+    function getColor(d) {
+        return d > 80 ? '#045a8d' :
+               d > 60 ? '#2b8cbe' :
+               d > 40 ? '#74a9cf' :
+               d > 20 ? '#bdc9e1' :
+                        '#f1eef6' ;
+    }
+    
+    // Ajax Callback Function Data
+    function drawPolygons(geoData) {
+        map.removeLayer(geojsonLayer);
+        geojsonLayer = L.geoJson(geoData, {onEachFeature: onEachFeature, style: style})
+        var info = L.control();
+        var legend = L.control({position: 'bottomright'});
+        map.fitBounds(geojsonLayer.getBounds());
+        
+        info.onAdd = addDivInfo;
+        info.update = updateDivInfo;
+        legend.onAdd = addDivLegend;
+
+        mapTiles.addTo(map);
+        geojsonLayer.addTo(map);        
+        info.addTo(map);  
+        legend.addTo(map);      
+
+    function addDivInfo (map) {
+        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this.update();
+        return this._div;
+    }
+
+    // method that we will use to update the control based on feature properties passed
+    function updateDivInfo (props) {
+        this._div.innerHTML = '<h4>Indicador<hr>pobreza</h4>' +  (props ?
+        'Provincia: <b>' + props.nombre + '</b><br />pobreza: ' + props[selected]
+        : 'Desplazarse sobre una provincia');
+    }
+
+    function addDivLegend (map) {
+        var div = L.DomUtil.create('div', 'info legend'),
+            grades = [0, 20, 40, 60, 80, 100],
+            labels = [];
+            div.innerHTML = '<b>' + text + ' </b><hr>'
+
+        // loop through our density intervals and generate a label with a colored square for each interval
+        for (var i = 0; i < grades.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        }
+
+        return div;
+    }
+
+    function highlightFeature(e) {
+        var layer = e.target;
+        layer.setStyle({
+            weight: 1,
+            color: '#646',
+            dashArray: '',
+            fillOpacity: 0.3
+        });
+      
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront();
+        }
+        info.update(layer.feature.properties);
+    }
+    
+    function resetHighlight(e) {
+        geojsonLayer.resetStyle(e.target);
+        info.update();
+    }
+
+    function zoomToFeature(e) {
+        // map.fitBounds(e.target.getBounds());
+    }
+
+    function onEachFeature(feature, layer) {
+        layer.bindPopup(feature.properties.nombre + " " + feature.properties[selected]);
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight
+            // click: zoomToFeature
+        });
+    }
+
+}  
+    
+  
+}  
+  </script>
+
+
+{% endblock %}
+
