@@ -1,0 +1,330 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('css/bootstrap-datepicker3.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/valoresindicadores.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ asset('js/underscore-min.js') }}"></script>
+    <script src="{{ asset('js/backbone-min.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+  <div class="container">
+      <div class="row">
+        <div class="page-header">
+          <h1>Carga valores indicadores <small>{{indicador_desc}}</small></h1>
+        </div>
+      <div class="alert alert-info" class="col-md-3" role="alert">Fecha de carga: {{fecha}}. Desglozando por: {{desgloce}}
+      </div>
+      <div id="panelList"></div>
+        <div class=".panel"></div>
+      </div>
+  </div>
+
+
+<script id="panelListWrapper" type="text/template">
+  <button id="newDataLoader" type="button" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-plus"></span></button>
+</div>
+<button id="saveDataLoaders" type="button" class="btn btn-success pull-left"><span class="glyphicon glyphicon-save"></span></button>
+</div>
+</script>
+
+
+<script id="panelLoader" type="text/template">
+  <div class="panel panel-primary col-md-3 col-sm-3 panelDataLoader pull-left">
+      <div class="panel-heading clearfix">
+        <h4 class="panel-title pull-left" style="padding-top: 7.5px;">Carga de datos</h4>
+      <div class="btn-group pull-right">
+        <a class="btn btn-sm btn-danger btn-sm deleteObject"><span class="glyphicon glyphicon-trash"></span></a>
+      </div>
+      </div>
+      <div class="panel-body"> 
+        <form class="form-horizontal">
+        <div class="form-group">
+        <label class="col-md-3">Ref. geog.</label>
+        <div class="col-sm-9">
+          <select class="form-control refGeogSelect" <% if (model.is_preloaded) { %>disabled="disabled"<% }  %>>
+          <% _.each( collection.refGeograficas, function( ref, i){ %>
+              <% if ( i == model.id_ref_geografica ){ %>
+                <option value="<%= i %>" selected>
+                <%= ref.desc %>
+                </option>
+              <%  } else if (!ref.used){ %>
+                  <option value="<%= i %>">
+                <%= ref.desc %>
+                </option>
+              <% } %>
+          <% }); %>
+          </select>
+          </div>
+        </div>
+        <% _.each( etiquetas, function( label_etiqueta, i){ %>
+        <div class="form-group">
+          <label class="col-md-3"><%= label_etiqueta %></label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control etiquetaInput" data-etiqueta-id="<%= i %>" value="<%= model.valor_etiquetas[i] %>">
+          </div>
+        </div>
+         <% }); %>
+      </div>
+      </form>
+      </div> <!-- CIERRO PANEL BODY -->
+  </div>
+  <%
+    collection.refGeograficas[model.id_ref_geografica].used = true;
+  %>
+</script>
+
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        
+        /*$('#valorIndicadorDate').datepicker({
+    		format: "yyyy-mm-dd"
+		});*/
+        var indicador_id = {{ indicador_id|json_encode|raw}};
+    	  var etiquetas = {{ etiquetas|json_encode|raw}};
+        var fecha = {{ fecha|json_encode|raw}};
+        var valoresEtiquetas = {{ valores_indicadores|json_encode|raw}};
+        var api_urls = {{ api_urls|json_encode|raw}};
+         // lista de todas las referencias geograficas disponibles
+        var refGeograficasList =  {{ ref_geograficas|json_encode|raw}};
+        valoresEtiquetas = _.groupBy(valoresEtiquetas, 'id_ref_geografica');
+
+
+        /////////////////// MODELOS //////////////////////////////7
+
+        // Contiene los datos asociados a una referencia geografica
+        // El objeto tendra un id de referencia geografica, y luego, una lista
+        // de tuplas (id_etiqueta, valor), con los valores de las etiquetas correspondientes (nulo si no existe)
+        var RefGeograficaData = Backbone.Model.extend({
+        	defaults: {
+        		'id_ref_geografica': null,
+        		'valor_etiquetas':{},
+            'is_preloaded':false,
+			},
+		});
+
+        // Coleccion de RefGeograficaData
+		var RefGeograficaCollection = Backbone.Collection.extend({
+  			model: RefGeograficaData,
+        initialize: function(models, options) {
+          options || (options = {});
+          if (options.refGeograficas) {
+              this.refGeograficas = options.refGeograficas;
+              this.fecha = options.fecha;
+              this.id_indicador = options.id_indicador;
+              this.api_urls = options.api_urls;
+          };
+        } 
+		});
+
+		///////////////////// VISTAS //////////////////////////////////7
+
+
+    var RefGeograficaPanelList = Backbone.View.extend({
+            el: '#panelList',
+            template: _.template($('#panelListWrapper').html()),
+            events: {
+              'click #newDataLoader': 'addNewDataLoader',
+              'click #saveDataLoaders': 'saveDataLoaders',
+            },
+            initialize: function(options){
+                this.etiquetas = options.etiquetas;
+                this.refGeograficas = options.refGeograficasList;
+                _.bindAll(this, "renderPanel");
+            },
+            renderPanel: function(model){
+               
+                var panelView = new RefGeograficaPanel({model: model, etiquetas: this.etiquetas, refGeograficas: this.refGeograficas, parent:this});
+                panelView.render();
+                $(this.el).prepend(panelView.el);
+            },
+            render: function(){
+                this.updateRefsUsed();
+                this.$el.html( this.template({}));
+                this.collection.each(this.renderPanel);
+            },
+            getNextUnusedRef: function(){
+              var refID = null;
+                $.each(this.refGeograficas, function(index, value) {
+                  if (!value.used){
+                    refID = index;
+                    return;
+                  }
+                });
+                return refID;
+            },
+            addNewDataLoader: function(){
+              var refID = this.getNextUnusedRef();
+              if (refID){
+                var loader = new RefGeograficaData({id_ref_geografica:refID, is_preloaded:false, valor_etiquetas:{}});
+                this.collection.add(loader);
+                console.log(loader.get("valor_etiquetas"));
+                this.render();
+              }
+            },
+            updateRefsUsed:function(){
+              var that = this;
+                this.collection.each(function(model){
+                    that.collection.refGeograficas[model.get('id_ref_geografica')].used = true;
+                });
+            },
+            saveDataLoaders: function(){
+              var that = this;
+              var data = this.prepareDataToSave(this.collection.toJSON());
+              var url = this.collection.api_urls.edit;
+              $.ajax(url,{
+                  'data': JSON.stringify(data),
+                  'type': 'POST',
+                  'processData': false,
+                  'contentType': 'application/json',
+                   success: function(data) {
+                      if (data.success){
+                        alert("Valores guardados con éxito");
+                        that.saveSuccessCallback();
+                      } else {
+                        alert("NO ha sido posible guardar los valores");
+                      }
+                      //location.reload();
+                  },
+                  error: function(data) {
+                    alert("ERROR! Ocurrió un error mientras se intentaban guardar los datos");
+                  },
+              });
+            },
+            prepareDataToSave: function(models){
+                var saveObjects = {"fecha":this.collection.fecha, "id_indicador":this.collection.id_indicador,"objects":{}};
+                $.each(models, function(i, models_ref_geografica){
+                        saveObjects.objects[models_ref_geografica.id_ref_geografica] = [];
+                        $.each(models_ref_geografica.valor_etiquetas, function(id_etiqueta, etiqueta_value){
+                          var tmpData = {
+                            'id_etiqueta': id_etiqueta,
+                            'value': etiqueta_value,
+                          }
+                          saveObjects.objects[models_ref_geografica.id_ref_geografica].push(tmpData);
+                        });
+                });
+                return saveObjects;
+            },
+            saveSuccessCallback: function(){ // ejecutar cuando se han guardado con éxito los valores
+                this.collection.each(function(model){
+                  if (Object.keys(model.get('valor_etiquetas')).length){
+                    model.set("is_preloaded", true);
+                  }
+                });
+                this.render();
+            },
+            deleteDataLoaders:function(models){
+                console.log(JSON.stringify(models));
+                var url = this.collection.api_urls.delete;
+                $.ajax(url,{
+                  'data': JSON.stringify(models),
+                  'type': 'POST',
+                  'processData': false,
+                  'contentType': 'application/json',
+                   success: function(data) {
+                      if (data.success){
+                        alert("Valores eliminados con éxito");
+                        that.deleteSuccessCallback();
+                      } else {
+                        alert("NO ha sido posible eliminar los valores");
+                      }
+                      //location.reload();
+                  },
+                  error: function(data) {
+                    alert("ERROR! Ocurrió un error mientras se intentaban borrar los datos");
+                  },
+              });
+            }
+        })
+
+
+		var RefGeograficaPanel = Backbone.View.extend({
+      //el: '.panel',
+      tagName: "div",
+      className: "panelLoader",
+			template: _.template($('#panelLoader').html()),
+      events: {
+        "change .refGeogSelect": "refSelected",
+        "click .deleteObject": "deleteObject",
+        "change .etiquetaInput": "etiquetaValueChange"
+    },
+    etiquetaValueChange: function(event){
+      var etiquetaId = $(event.target).data('etiqueta-id');
+      var value = event.target.value;
+      var modelEtiquetas = this.model.get('valor_etiquetas');
+      modelEtiquetas[etiquetaId] = value;
+      this.model.set('valoresEtiquetas',modelEtiquetas);
+    },
+    deleteObject: function(){
+      var models = [this.model];
+      this.parent.deleteDataLoaders(models);
+    },
+    refSelected: function(event){
+        var oldRef = parseInt(this.model.get('id_ref_geografica'));
+        var newRef = event.target.value;
+        this.model.set('id_ref_geografica',event.target.value);
+        this.parent.collection.refGeograficas[oldRef].used = false;
+        this.parent.collection.refGeograficas[newRef].used = true;
+    },
+      initialize: function(options){
+        this.parent = options.parent;
+        this.etiquetas = options.etiquetas;
+        this.refGeograficas = options.refGeograficas;
+      },
+      render: function(){
+        console.log(this.parent.collection);
+        this.$el.html( this.template({
+          collection:this.parent.collection,
+          model:this.model.toJSON(),
+          etiquetas:this.etiquetas
+        }));
+      }  
+		})
+
+
+		//////////////////////////////////////////////////////////////////
+
+		function bindRefGeograficaData(refGeograficaCollection, refGeograficasList){
+			$.each(valoresEtiquetas, function(idRefGeografica, valoresIndicadorValues) {
+    			var ref = new RefGeograficaData({id_ref_geografica:idRefGeografica,is_preloaded:true});
+          refGeograficasList[idRefGeografica].used = true;
+    			var refData = {};
+    			$.each(valoresIndicadorValues, function(index, data) {
+    				refData[data.id_etiqueta] =  data.valor;
+				});
+				ref.set('valor_etiquetas',refData);
+				refGeograficaCollection.add(ref);
+    		});
+		}
+
+  function initLoad(){
+    var refGeograficaCollection = new RefGeograficaCollection([],{
+            refGeograficas: refGeograficasList,
+            fecha: fecha,
+            id_indicador: indicador_id,
+            api_urls: api_urls
+      });
+    bindRefGeograficaData(refGeograficaCollection, refGeograficasList);
+    var refGeograficaPanelList = new RefGeograficaPanelList({collection:refGeograficaCollection, etiquetas, refGeograficasList})
+    refGeograficaPanelList.render();
+  }
+
+
+		initLoad();
+
+
+
+    });
+
+</script>
+
+{% endblock %}
