@@ -5,6 +5,5 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="descripcion" type="string" column="descripcion" length="5000" nullable="false"/>
-    <many-to-many field="idindicador" target-entity="Indicadores" mapped-by="iddesgloce"/>
   </entity>
 </doctrine-mapping>
