@@ -101,6 +101,21 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
 --
 
 
+
+
+--
+-- Estructura de tabla para la tabla `desgloces_indicadores`
+--
+
+DROP TABLE IF EXISTS `desgloces_indicadores`;
+CREATE TABLE IF NOT EXISTS `desgloces_indicadores` (
+  `idIndicador` int(10) unsigned NOT NULL,
+  `idDesgloce` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`idIndicador`, `idDesgloce`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+
+
 -- --------------------------------------------------------
 
 --
@@ -186,7 +201,7 @@ CREATE TABLE IF NOT EXISTS `valoresIndicadores` (
   `fecha` date,
   `valor` decimal(10,2) NOT NULL,
   `aprobado` tinyint(1) NOT NULL,
-  PRIMARY KEY (`idIndicador`,`idEtiqueta`,`idRefGeografica`),
+  PRIMARY KEY (`idIndicador`,`idEtiqueta`,`idRefGeografica`, `fecha`),
   KEY `idEtiqueta` (`idEtiqueta`),
   KEY `idRefGeografica` (`idRefGeografica`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
@@ -235,3 +250,12 @@ ALTER TABLE `valoresIndicadores`
   ADD CONSTRAINT `valoresIndicadores_ibfk_3` FOREIGN KEY (`idRefGeografica`) REFERENCES `refGeografica` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `valoresIndicadores_ibfk_1` FOREIGN KEY (`idIndicador`) REFERENCES `indicadores` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `valoresIndicadores_ibfk_2` FOREIGN KEY (`idEtiqueta`) REFERENCES `etiquetas` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+
+--
+-- Filtros para la tabla `desgloces_indicadores`
+--
+ALTER TABLE `desgloces_indicadores`
+  ADD CONSTRAINT `desgloces_indicadores_ibfk_1` FOREIGN KEY (`idIndicador`) REFERENCES `indicadores` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `desgloces_indicadores_ibfk_2` FOREIGN KEY (`idDesgloce`) REFERENCES `desgloces` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  

@@ -1,9 +1,25 @@
 use indicadores_ods;
 SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO';
-INSERT INTO objetivos (descripcion) VALUES ("Probreza Cero");
-INSERT INTO metas (descripcion, fkIdObjetivo) VALUES ("De aquí a 2030", 1);
-INSERT INTO indicadores (descripcion, fkIdMeta, tipo, valMin, valMax, ambito, visibleNacional, visibleProvincial, visibleMunicipal) VALUES ("Porcentaje de la población bajo umbral probreza", 1, "porcentual", 0, 100, "M", '1', '1', '1');
-INSERT INTO indicadores (descripcion, fkIdMeta, tipo, valMin, valMax, ambito, visibleNacional, visibleProvincial, visibleMunicipal) VALUES ("Porcentaje de la población con agua", 1, "porcentual", 0, 100, "M", '1', '1', '1');
+
+INSERT INTO `objetivos` VALUES  (1,'Probreza Cero + infinito'),
+								(2,'Mejorar medioambiente'),
+								(3,'Distribuir mejor la riqueza'),
+								(4,'Ganar el mundial de Rusia');
+
+INSERT INTO `metas` VALUES  (1,'De aquí a 2030',1),
+							(2,'Mucho mas adelante...',1),
+							(3,'Traer a Robin Hood',3),
+							(4,'Contratar un arquero',4),
+							(5,'Contratar un 11',4),
+							(6,'Sanear el Riachuelo',2),
+							(7,'Controlar a las mineras',2);
+
+INSERT INTO `indicadores` VALUES (1,'Porcentaje de la población bajo umbral probreza',1,'porcentual',0,100,'M',0,1,1),
+                                 (2,'Porcentaje de la población con agua',1,'porcentual',0,100,'M',1,1,1),
+                                 (3,'Este es el indicador favorito',1,'porcentual',0,100,'N',1,1,1),
+                                 (4,'Distancia del pueblo a BsAs',4,'real',2,3,'P',0,1,0),
+                                 (5,'goles/partido',5,'porcentual',0,100,'N',0,0,0),
+                                 (6,'% impuestos a los ricos',3,'porcentual',0,100,'N',1,0,0);
 INSERT INTO desgloces (id, descripcion) VALUES (0, "Sin desgloce");
 INSERT INTO desgloces (descripcion) VALUES ("Sexo");
 INSERT INTO desgloces (descripcion) VALUES ("Raza");
@@ -26,6 +42,3 @@ INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha,
 INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, 3, 5, '2010-06-01', 10, 0);
 INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, 5, 5, '2010-06-01', 90, 0);
 INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (2, 0, 3, '2010-06-01', 33, 1);
-
-
-

@@ -12,12 +12,7 @@ class Valoresindicadores
     /**
      * @var \DateTime
      */
-    private $anio;
-
-    /**
-     * @var boolean
-     */
-    private $mes;
+    private $fecha;
 
     /**
      * @var string
@@ -30,6 +25,11 @@ class Valoresindicadores
     private $aprobado;
 
     /**
+     * @var \AppBundle\Entity\Refgeografica
+     */
+    private $idrefgeografica;
+
+    /**
      * @var \AppBundle\Entity\Etiquetas
      */
     private $idetiqueta;
@@ -39,56 +39,28 @@ class Valoresindicadores
      */
     private $idindicador;
 
-    /**
-     * @var \AppBundle\Entity\Refgeografica
-     */
-    private $idrefgeografica;
-
 
     /**
-     * Set anio
+     * Set fecha
      *
-     * @param \DateTime $anio
+     * @param \DateTime $fecha
      * @return Valoresindicadores
      */
-    public function setAnio($anio)
+    public function setFecha($fecha)
     {
-        $this->anio = $anio;
+        $this->fecha = $fecha;
 
         return $this;
     }
 
     /**
-     * Get anio
+     * Get fecha
      *
      * @return \DateTime 
      */
-    public function getAnio()
+    public function getFecha()
     {
-        return $this->anio;
-    }
-
-    /**
-     * Set mes
-     *
-     * @param boolean $mes
-     * @return Valoresindicadores
-     */
-    public function setMes($mes)
-    {
-        $this->mes = $mes;
-
-        return $this;
-    }
-
-    /**
-     * Get mes
-     *
-     * @return boolean 
-     */
-    public function getMes()
-    {
-        return $this->mes;
+        return $this->fecha;
     }
 
     /**
@@ -138,6 +110,29 @@ class Valoresindicadores
     }
 
     /**
+     * Set idrefgeografica
+     *
+     * @param \AppBundle\Entity\Refgeografica $idrefgeografica
+     * @return Valoresindicadores
+     */
+    public function setIdrefgeografica(\AppBundle\Entity\Refgeografica $idrefgeografica)
+    {
+        $this->idrefgeografica = $idrefgeografica;
+
+        return $this;
+    }
+
+    /**
+     * Get idrefgeografica
+     *
+     * @return \AppBundle\Entity\Refgeografica 
+     */
+    public function getIdrefgeografica()
+    {
+        return $this->idrefgeografica;
+    }
+
+    /**
      * Set idetiqueta
      *
      * @param \AppBundle\Entity\Etiquetas $idetiqueta
@@ -181,28 +176,5 @@ class Valoresindicadores
     public function getIdindicador()
     {
         return $this->idindicador;
-    }
-
-    /**
-     * Set idrefgeografica
-     *
-     * @param \AppBundle\Entity\Refgeografica $idrefgeografica
-     * @return Valoresindicadores
-     */
-    public function setIdrefgeografica(\AppBundle\Entity\Refgeografica $idrefgeografica)
-    {
-        $this->idrefgeografica = $idrefgeografica;
-
-        return $this;
-    }
-
-    /**
-     * Get idrefgeografica
-     *
-     * @return \AppBundle\Entity\Refgeografica 
-     */
-    public function getIdrefgeografica()
-    {
-        return $this->idrefgeografica;
     }
 }

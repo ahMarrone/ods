@@ -18,7 +18,7 @@
 
 
 
-    <script type="text/javascript">
+<script type="text/javascript">
 $("#indicadores_objetivo").on("change", function() 
 { 
     var sel = $(this).val(), 
@@ -30,34 +30,19 @@ $("#indicadores_objetivo").on("change", function()
     } 
     else 
     {
-        //$ddl.find("option").show(); $ddl.val('');
         $ddl.find("option").hide(); // hide all options
-        // show only those options which contain the selected value, 
-        // set the selected property to true for the only remaining ones
-        //$ddl.find("option[value*='" + sel + "']").show().prop('selected', true);
-        //alert("option[value*='" + sel + "']");
-
-        //var localObjetivo = document.getElementById('indicadores_fkidmeta');
         var selObjetivo = document.getElementById("indicadores_objetivo").options;
         var index = document.getElementById("indicadores_objetivo").selectedIndex;
         var otro = selObjetivo[index].value;
-
-        alert(selObjetivo+"-"+ otro);
         var localMetas = document.getElementById('indicadores_fkidmeta');
-        alert(localMetas);
 
         for(var i=0; i < localMetas.length; i++)
         {
-            //alert(selectedTrends.options[i].text) 
             var x = localMetas.options[i].text;
             var this_value = parseInt(x.substr(0,5));
-            //alert(x+"-"+y);
-            //alert(parseInt(y));
-            //alert(y);
             if (this_value == otro)
             {
                 var this_select_value = localMetas.options[i].value;
-                //alert(this_value+"-->"+this_select_value); 
                 $ddl.find("option[value*='" + this_select_value + "']").show();
             }
 
@@ -66,6 +51,4 @@ $("#indicadores_objetivo").on("change", function()
     }
 });
 </script>
-
-
 {% endblock %}
