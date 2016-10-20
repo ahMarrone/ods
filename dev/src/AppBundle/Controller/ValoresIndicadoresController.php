@@ -118,7 +118,6 @@ class ValoresIndicadoresController extends Controller
     private function initSaveObjects($data){
         $idIndicador = $data["id_indicador"];
         $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
-        $indicador->setId($idIndicador);
         $etiquetasMemoization = array();
         $fecha = $data["fecha"];
         $objects = $data["objects"];
@@ -188,7 +187,46 @@ class ValoresIndicadoresController extends Controller
      * @Method("POST")
      */
     public function deleteObjectsAction(Request $request){
-       
+        $content = $this->get("request")->getContent();
+        if (!empty($content)){
+            $delete_data = json_decode($content, true); // 2nd param to get as array
+            $response = $this->initDeleteObjects($delete_data);
+            return new JsonResponse($response);
+        }
+    }
+
+    // inicia delete de valores indicadores
+    // Los datos vienen en una lista. Cada elemento tiene asociado una
+    // id_ref_geografica. Se eliminan todas los valoresindicadores de esa referencia
+    private function initDeleteObjects($data){
+        $response = array("success"=>false);
+        $idIndicador = $data["id_indicador"];
+        $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
+        $fecha = $data["fecha"];
+        $objects = $data["objects"];
+        $refGeografica = null;
+        $em = $this->getDoctrine()->getManager();
+        try {
+            $em->getConnection()->beginTransaction();
+            // elimino todas las tuplas de ese, indicador, para esa fecha, y de esa ref_geografica
+            foreach ($objects as $refGeograficaID){  
+                $valoresindicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')
+                                    ->findByMultipleKey($idIndicador, $refGeograficaID, $fecha);
+                foreach ($valoresindicadores as $valorindicador) {
+                    $em->remove($valorindicador);
+                }
+            }
+            $em->flush();
+            $em->getConnection()->commit();
+            $response["success"] = true;
+        } catch (\Exception $e) {
+            $em->getConnection()->rollback();
+            $response["success"] = false;
+            $response["msg"] = "No se han podido eliminar los objetos";
+            $response["exception"] = $e;
+            throw $e;
+        }
+        return $response;
     }
 
 
