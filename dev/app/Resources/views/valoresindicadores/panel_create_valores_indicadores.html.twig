@@ -28,8 +28,6 @@
 
 
 <script id="panelListWrapper" type="text/template">
-<%= this.collection.countRefsUsed() %>
-<%= this.collection.isRefLeft() %>
  <% if (this.collection.isRefLeft()) { %>
   <button id="newDataLoader" type="button" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-plus"></span></button>
   <% }  %>
@@ -132,7 +130,6 @@
         },
         countRefsUsed: function(){
           var count = 0;
-          console.log("a");
           $.each(this.refGeograficas, function(i){
               if (this.used){
                 count += 1;
@@ -182,7 +179,6 @@
               if (refID){
                 var loader = new RefGeograficaData({id_ref_geografica:refID, is_preloaded:false, valor_etiquetas:{}});
                 this.collection.add(loader);
-                console.log(loader.get("valor_etiquetas"));
                 this.render();
               }
             },
@@ -239,7 +235,6 @@
             },
             deleteDataLoaders:function(models){
                 var data = this.prepareDataToDelete(models);
-                console.log(models);
                 var that = this;
                 var url = this.collection.api_urls.delete;
                 $.ajax(url,{
@@ -262,10 +257,8 @@
               });
             },
             prepareDataToDelete: function(models){
-                console.log(models);
                 var deleteObjects = {"fecha":this.collection.fecha, "id_indicador":this.collection.id_indicador,"objects":[]};
                   $.each(models, function(i){
-                        console.log(i);
                         deleteObjects["objects"].push(models[i].get('id_ref_geografica'));
                   });
                 return deleteObjects;
@@ -315,7 +308,6 @@
         this.refGeograficas = options.refGeograficas;
       },
       render: function(){
-        console.log(this.parent.collection);
         this.$el.html( this.template({
           collection:this.parent.collection,
           model:this.model.toJSON(),
