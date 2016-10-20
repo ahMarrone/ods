@@ -6,13 +6,14 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Valoresindicadores
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\ValoresindicadoresRepository")
  */
 class Valoresindicadores
 {
     /**
-     * @var \DateTime
+     * @var \string
      */
-    private $anio;
+    private $fecha;
 
     /**
      * @var string
@@ -41,26 +42,26 @@ class Valoresindicadores
 
 
     /**
-     * Set anio
+     * Set fecha
      *
-     * @param \DateTime $anio
+     * @param string $fecha
      * @return Valoresindicadores
      */
-    public function setAnio($anio)
+    public function setFecha($fecha)
     {
-        $this->anio = $anio;
+        $this->fecha = $fecha;
 
         return $this;
     }
 
     /**
-     * Get anio
+     * Get fecha
      *
-     * @return \DateTime 
+     * @return \string 
      */
-    public function getAnio()
+    public function getFecha()
     {
-        return $this->anio;
+        return $this->fecha;
     }
 
     /**
@@ -177,32 +178,5 @@ class Valoresindicadores
     {
         return $this->idrefgeografica;
     }
-    /**
-     * @var \DateTime
-     */
-    private $fecha;
 
-
-    /**
-     * Set fecha
-     *
-     * @param \DateTime $fecha
-     * @return Valoresindicadores
-     */
-    public function setFecha($fecha)
-    {
-        $this->fecha = $fecha;
-
-        return $this;
-    }
-
-    /**
-     * Get fecha
-     *
-     * @return \DateTime 
-     */
-    public function getFecha()
-    {
-        return $this->fecha;
-    }
 }

@@ -3,14 +3,12 @@
 {% block stylesheets %}
     {{ parent() }}
 
-    <link href="{{ asset('css/bootstrap-datepicker3.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/valoresindicadores.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
 
-    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('js/underscore-min.js') }}"></script>
     <script src="{{ asset('js/backbone-min.js') }}"></script>
 {% endblock %}
@@ -30,10 +28,12 @@
 
 
 <script id="panelListWrapper" type="text/template">
+<%= this.collection.countRefsUsed() %>
+<%= this.collection.isRefLeft() %>
+ <% if (this.collection.isRefLeft()) { %>
   <button id="newDataLoader" type="button" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-plus"></span></button>
-</div>
+  <% }  %>
 <button id="saveDataLoaders" type="button" class="btn btn-success pull-left"><span class="glyphicon glyphicon-save"></span></button>
-</div>
 </script>
 
 
@@ -123,7 +123,23 @@
               this.id_indicador = options.id_indicador;
               this.api_urls = options.api_urls;
           };
-        } 
+        },
+        isRefLeft: function(){
+          if (this.countRefsUsed() == Object.keys(this.refGeograficas).length){
+            return false;
+          }
+          return true;
+        },
+        countRefsUsed: function(){
+          var count = 0;
+          console.log("a");
+          $.each(this.refGeograficas, function(i){
+              if (this.used){
+                count += 1;
+              }
+          });
+          return count;
+        }
 		});
 
 		///////////////////// VISTAS //////////////////////////////////7
@@ -142,14 +158,13 @@
                 _.bindAll(this, "renderPanel");
             },
             renderPanel: function(model){
-               
                 var panelView = new RefGeograficaPanel({model: model, etiquetas: this.etiquetas, refGeograficas: this.refGeograficas, parent:this});
                 panelView.render();
                 $(this.el).prepend(panelView.el);
             },
             render: function(){
                 this.updateRefsUsed();
-                this.$el.html( this.template({}));
+                this.$el.html( this.template({collection: this.collection}));
                 this.collection.each(this.renderPanel);
             },
             getNextUnusedRef: function(){
@@ -223,17 +238,19 @@
                 this.render();
             },
             deleteDataLoaders:function(models){
-                console.log(JSON.stringify(models));
+                var data = this.prepareDataToDelete(models);
+                console.log(models);
+                var that = this;
                 var url = this.collection.api_urls.delete;
                 $.ajax(url,{
-                  'data': JSON.stringify(models),
+                  'data': JSON.stringify(data),
                   'type': 'POST',
                   'processData': false,
                   'contentType': 'application/json',
                    success: function(data) {
                       if (data.success){
                         alert("Valores eliminados con éxito");
-                        that.deleteSuccessCallback();
+                        that.deleteSuccessCallback(models);
                       } else {
                         alert("NO ha sido posible eliminar los valores");
                       }
@@ -243,6 +260,23 @@
                     alert("ERROR! Ocurrió un error mientras se intentaban borrar los datos");
                   },
               });
+            },
+            prepareDataToDelete: function(models){
+                console.log(models);
+                var deleteObjects = {"fecha":this.collection.fecha, "id_indicador":this.collection.id_indicador,"objects":[]};
+                  $.each(models, function(i){
+                        console.log(i);
+                        deleteObjects["objects"].push(models[i].get('id_ref_geografica'));
+                  });
+                return deleteObjects;
+            },
+            deleteSuccessCallback: function(models){
+              $.each(models, function(i){
+                  var modelObject = models[i];
+                  this.collection.refGeograficas[modelObject.get("id_ref_geografica")].used = false;
+                  this.collection.remove(modelObject);
+              });
+              this.render();
             }
         })
 
@@ -314,7 +348,7 @@
             api_urls: api_urls
       });
     bindRefGeograficaData(refGeograficaCollection, refGeograficasList);
-    var refGeograficaPanelList = new RefGeograficaPanelList({collection:refGeograficaCollection, etiquetas, refGeograficasList})
+    var refGeograficaPanelList = new RefGeograficaPanelList({collection:refGeograficaCollection, etiquetas: etiquetas, refGeograficasList: refGeograficasList})
     refGeograficaPanelList.render();
   }
 
