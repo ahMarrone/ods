@@ -150,11 +150,11 @@ CREATE TABLE IF NOT EXISTS `objetivos` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `refgeografica`
+-- Estructura de tabla para la tabla `refGeografica`
 --
 
-DROP TABLE IF EXISTS `refgeografica`;
-CREATE TABLE IF NOT EXISTS `refgeografica` (
+DROP TABLE IF EXISTS `refGeografica`;
+CREATE TABLE IF NOT EXISTS `refGeografica` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la referencia geografica',
   `ambito` enum('P','M') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito de la ref. geografica',
@@ -164,7 +164,7 @@ CREATE TABLE IF NOT EXISTS `refgeografica` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
 
 --
--- Volcar la base de datos para la tabla `refgeografica`
+-- Volcar la base de datos para la tabla `refGeografica`
 --
 
 
@@ -174,8 +174,8 @@ CREATE TABLE IF NOT EXISTS `refgeografica` (
 -- Estructura de tabla para la tabla `valoresindicadores`
 --
 
-DROP TABLE IF EXISTS `valoresindicadores`;
-CREATE TABLE IF NOT EXISTS `valoresindicadores` (
+DROP TABLE IF EXISTS `valoresIndicadores`;
+CREATE TABLE IF NOT EXISTS `valoresIndicadores` (
   `idIndicador` int(10) unsigned NOT NULL,
   `idEtiqueta` varchar(30) COLLATE utf8_spanish_ci NOT NULL COMMENT 'Clave en formato string que representa el cruce de etuqietas del registro',
   `idRefGeografica` int(10) unsigned NOT NULL,
@@ -188,7 +188,7 @@ CREATE TABLE IF NOT EXISTS `valoresindicadores` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 --
--- Volcar la base de datos para la tabla `valoresindicadores`
+-- Volcar la base de datos para la tabla `valoresIndicadores`
 --
 
 
@@ -222,8 +222,8 @@ ALTER TABLE `metas`
   ADD CONSTRAINT `metas_ibfk_1` FOREIGN KEY (`fkIdObjetivo`) REFERENCES `objetivos` (`id`) ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `valoresindicadores`
+-- Filtros para la tabla `valoresIndicadores`
 --
-ALTER TABLE `valoresindicadores`
+ALTER TABLE `valoresIndicadores`
   ADD CONSTRAINT `valoresindicadores_ibfk_2` FOREIGN KEY (`idIndicador`) REFERENCES `indicadores` (`id`),
-  ADD CONSTRAINT `valoresindicadores_ibfk_1` FOREIGN KEY (`idRefGeografica`) REFERENCES `refgeografica` (`id`);
+  ADD CONSTRAINT `valoresindicadores_ibfk_1` FOREIGN KEY (`idRefGeografica`) REFERENCES `refGeografica` (`id`);
