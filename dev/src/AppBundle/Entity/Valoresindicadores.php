@@ -26,7 +26,7 @@ class Valoresindicadores
     private $aprobado;
 
     /**
-     * @var \AppBundle\Entity\Etiquetas
+     * @var string
      */
     private $idetiqueta;
 
@@ -113,10 +113,10 @@ class Valoresindicadores
     /**
      * Set idetiqueta
      *
-     * @param \AppBundle\Entity\Etiquetas $idetiqueta
+     * @param string $idetiqueta
      * @return Valoresindicadores
      */
-    public function setIdetiqueta(\AppBundle\Entity\Etiquetas $idetiqueta)
+    public function setIdetiqueta($idetiqueta)
     {
         $this->idetiqueta = $idetiqueta;
 
@@ -126,7 +126,7 @@ class Valoresindicadores
     /**
      * Get idetiqueta
      *
-     * @return \AppBundle\Entity\Etiquetas 
+     * @return string
      */
     public function getIdetiqueta()
     {
