@@ -3,14 +3,15 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: localhost
--- Tiempo de generación: 06-10-2016 a las 19:38:17
+-- Tiempo de generación: 22-10-2016 a las 04:43:39
 -- Versión del servidor: 5.5.8
 -- Versión de PHP: 5.3.5
+
 drop database IF EXISTS `indicadores_ods`;
 create database `indicadores_ods`;
 use indicadores_ods;
 --
--- base de datos ods
+-- BD indicadores. Cruce etiquetas
 --
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -35,10 +36,29 @@ CREATE TABLE IF NOT EXISTS `desgloces` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del desgloce',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=0;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
 
 --
 -- Volcar la base de datos para la tabla `desgloces`
+--
+
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `desgloces_indicadores`
+--
+
+DROP TABLE IF EXISTS `desgloces_indicadores`;
+CREATE TABLE IF NOT EXISTS `desgloces_indicadores` (
+  `idIndicador` int(10) unsigned NOT NULL,
+  `idDesgloce` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`idIndicador`,`idDesgloce`),
+  KEY `desgloces_indicadores_ibfk_2` (`idDesgloce`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcar la base de datos para la tabla `desgloces_indicadores`
 --
 
 
@@ -56,12 +76,6 @@ CREATE TABLE IF NOT EXISTS `etiquetas` (
   PRIMARY KEY (`id`),
   KEY `fkIdDesgloce` (`fkIdDesgloce`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
-
---
--- RELACIONES PARA LA TABLA `etiquetas`:
---   `fk_id_desgloce`
---       `desgloces` -> `id_desgloce`
---
 
 --
 -- Volcar la base de datos para la tabla `etiquetas`
@@ -83,37 +97,16 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
   `valMin` bigint(20) NOT NULL COMMENT 'valor minimo dentro del dominio',
   `valMax` bigint(20) NOT NULL COMMENT 'valor maximo dentro del dominio',
   `ambito` enum('N','P','M') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito al que pertenece el indicador',
-  `visibleNacional` boolean NOT NULL default 0 COMMENT 'Visibilidad del indicador a nivel Nacional',
-  `visibleProvincial` boolean NOT NULL default 0  COMMENT 'Visibilidad del indicador a nivel Provincial',
-  `visibleMunicipal` boolean NOT NULL default 0  COMMENT 'Visibilidad del indicador a nivel Municipal',
+  `visibleNacional` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Visibilidad del indicador a nivel Nacional',
+  `visibleProvincial` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Visibilidad del indicador a nivel Provincial',
+  `visibleMunicipal` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Visibilidad del indicador a nivel Municipal',
   PRIMARY KEY (`id`),
   KEY `fkIdMeta` (`fkIdMeta`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
 
 --
--- RELACIONES PARA LA TABLA `indicadores`:
---   `fk_id_meta`
---       `metas` -> `id_meta`
---
-
---
 -- Volcar la base de datos para la tabla `indicadores`
 --
-
-
-
-
---
--- Estructura de tabla para la tabla `desgloces_indicadores`
---
-
-DROP TABLE IF EXISTS `desgloces_indicadores`;
-CREATE TABLE IF NOT EXISTS `desgloces_indicadores` (
-  `idIndicador` int(10) unsigned NOT NULL,
-  `idDesgloce` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`idIndicador`, `idDesgloce`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-
 
 
 -- --------------------------------------------------------
@@ -130,12 +123,6 @@ CREATE TABLE IF NOT EXISTS `metas` (
   PRIMARY KEY (`id`),
   KEY `fkIdObjetivo` (`fkIdObjetivo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
-
---
--- RELACIONES PARA LA TABLA `metas`:
---   `fk_id_objetivo`
---       `objetivos` -> `id_objetivo`
---
 
 --
 -- Volcar la base de datos para la tabla `metas`
@@ -163,11 +150,11 @@ CREATE TABLE IF NOT EXISTS `objetivos` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `ref_geografica`
+-- Estructura de tabla para la tabla `refgeografica`
 --
 
-DROP TABLE IF EXISTS `refGeografica`;
-CREATE TABLE IF NOT EXISTS `refGeografica` (
+DROP TABLE IF EXISTS `refgeografica`;
+CREATE TABLE IF NOT EXISTS `refgeografica` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la referencia geografica',
   `ambito` enum('P','M') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito de la ref. geografica',
@@ -177,47 +164,31 @@ CREATE TABLE IF NOT EXISTS `refGeografica` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
 
 --
--- RELACIONES PARA LA TABLA `ref_geografica`:
---   `agrupa`
---       `ref_geografica` -> `id_refgeografica`
---
-
---
--- Volcar la base de datos para la tabla `ref_geografica`
+-- Volcar la base de datos para la tabla `refgeografica`
 --
 
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `valores_indicadores`
+-- Estructura de tabla para la tabla `valoresindicadores`
 --
 
-DROP TABLE IF EXISTS `valoresIndicadores`;
-CREATE TABLE IF NOT EXISTS `valoresIndicadores` (
+DROP TABLE IF EXISTS `valoresindicadores`;
+CREATE TABLE IF NOT EXISTS `valoresindicadores` (
   `idIndicador` int(10) unsigned NOT NULL,
-  `idEtiqueta` int(10) unsigned NOT NULL,
+  `idEtiqueta` varchar(30) COLLATE utf8_spanish_ci NOT NULL COMMENT 'Clave en formato string que representa el cruce de etuqietas del registro',
   `idRefGeografica` int(10) unsigned NOT NULL,
-  `fecha` date,
+  `fecha` date NOT NULL DEFAULT '0000-00-00',
   `valor` decimal(10,2) NOT NULL,
   `aprobado` tinyint(1) NOT NULL,
-  PRIMARY KEY (`idIndicador`,`idEtiqueta`,`idRefGeografica`, `fecha`),
-  KEY `idEtiqueta` (`idEtiqueta`),
-  KEY `idRefGeografica` (`idRefGeografica`)
+  PRIMARY KEY (`idIndicador`,`idEtiqueta`,`idRefGeografica`,`fecha`),
+  KEY `idRefGeografica` (`idRefGeografica`),
+  KEY `idEtiqueta` (`idEtiqueta`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 --
--- RELACIONES PARA LA TABLA `valores_indicadores`:
---   `id_refgeografica`
---       `ref_geografica` -> `id_refgeografica`
---   `id_indicador`
---       `indicadores` -> `id_indicador`
---   `id_etiqueta`
---       `etiquetas` -> `id_etiqueta`
---
-
---
--- Volcar la base de datos para la tabla `valores_indicadores`
+-- Volcar la base de datos para la tabla `valoresindicadores`
 --
 
 
@@ -226,36 +197,33 @@ CREATE TABLE IF NOT EXISTS `valoresIndicadores` (
 --
 
 --
+-- Filtros para la tabla `desgloces_indicadores`
+--
+ALTER TABLE `desgloces_indicadores`
+  ADD CONSTRAINT `desgloces_indicadores_ibfk_1` FOREIGN KEY (`idIndicador`) REFERENCES `indicadores` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `desgloces_indicadores_ibfk_2` FOREIGN KEY (`idDesgloce`) REFERENCES `desgloces` (`id`) ON UPDATE CASCADE;
+
+--
 -- Filtros para la tabla `etiquetas`
 --
 ALTER TABLE `etiquetas`
-  ADD CONSTRAINT `etiquetas_ibfk_1` FOREIGN KEY (`fkIdDesgloce`) REFERENCES `desgloces` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `etiquetas_ibfk_1` FOREIGN KEY (`fkIdDesgloce`) REFERENCES `desgloces` (`id`) ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `indicadores`
 --
 ALTER TABLE `indicadores`
-  ADD CONSTRAINT `indicadores_ibfk_1` FOREIGN KEY (`fkIdMeta`) REFERENCES `metas` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `indicadores_ibfk_1` FOREIGN KEY (`fkIdMeta`) REFERENCES `metas` (`id`) ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `metas`
 --
 ALTER TABLE `metas`
-  ADD CONSTRAINT `metas_ibfk_1` FOREIGN KEY (`fkIdObjetivo`) REFERENCES `objetivos` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `metas_ibfk_1` FOREIGN KEY (`fkIdObjetivo`) REFERENCES `objetivos` (`id`) ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `valores_indicadores`
+-- Filtros para la tabla `valoresindicadores`
 --
-ALTER TABLE `valoresIndicadores`
-  ADD CONSTRAINT `valoresIndicadores_ibfk_3` FOREIGN KEY (`idRefGeografica`) REFERENCES `refGeografica` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  ADD CONSTRAINT `valoresIndicadores_ibfk_1` FOREIGN KEY (`idIndicador`) REFERENCES `indicadores` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  ADD CONSTRAINT `valoresIndicadores_ibfk_2` FOREIGN KEY (`idEtiqueta`) REFERENCES `etiquetas` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
-
---
--- Filtros para la tabla `desgloces_indicadores`
---
-ALTER TABLE `desgloces_indicadores`
-  ADD CONSTRAINT `desgloces_indicadores_ibfk_1` FOREIGN KEY (`idIndicador`) REFERENCES `indicadores` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  ADD CONSTRAINT `desgloces_indicadores_ibfk_2` FOREIGN KEY (`idDesgloce`) REFERENCES `desgloces` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-  
+ALTER TABLE `valoresindicadores`
+  ADD CONSTRAINT `valoresindicadores_ibfk_2` FOREIGN KEY (`idIndicador`) REFERENCES `indicadores` (`id`),
+  ADD CONSTRAINT `valoresindicadores_ibfk_1` FOREIGN KEY (`idRefGeografica`) REFERENCES `refgeografica` (`id`);

@@ -37,8 +37,13 @@ INSERT INTO refGeografica (descripcion, ambito, agrupa) VALUES ("Luján", "P", 1
 INSERT INTO refGeografica (descripcion, ambito, agrupa) VALUES ("Sta. Rosa", "P", 2);
 INSERT INTO refGeografica (descripcion, ambito, agrupa) VALUES ("Macachín", "P", 2);
 INSERT INTO refGeografica (descripcion, ambito, agrupa) VALUES ("Gral. Pico", "P", 2);
-INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, 1, 3, '2010-06-01', 32, 0);
-INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, 2, 3, '2010-06-01', 68, 0);
-INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, 3, 5, '2010-06-01', 10, 0);
-INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, 5, 5, '2010-06-01', 90, 0);
-INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (2, 0, 3, '2010-06-01', 33, 1);
+INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, "1:3", 3, '2010-06-01', 30, 0);
+INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, "1:4", 3, '2010-06-01', 40, 0);
+INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, "1:5", 3, '2010-06-01', 20, 0);
+INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, "1:6", 3, '2010-06-01', 10, 0);
+INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, "2:3", 3, '2010-06-01', 25, 0);
+INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, "2:4", 3, '2010-06-01', 25, 0);
+INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, "2:5", 3, '2010-06-01', 30, 0);
+INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, "1:3", 5, '2010-06-01', 10, 0);
+INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (1, "2:3", 5, '2010-06-01', 90, 0);
+INSERT INTO valoresIndicadores (idIndicador, idEtiqueta, idRefGeografica, fecha, valor, aprobado) VALUES (2, "0", 3, '2010-06-01', 33, 1);
