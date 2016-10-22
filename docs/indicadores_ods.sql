@@ -199,7 +199,7 @@ CREATE TABLE IF NOT EXISTS `valoresIndicadores` (
 --
 -- Filtros para la tabla `desgloces_indicadores`
 --
-ALTER TABLE `desgloces_indicadores`
+ALTER TABLE `desglocesIndicadores`
   ADD CONSTRAINT `desgloces_indicadores_ibfk_1` FOREIGN KEY (`idIndicador`) REFERENCES `indicadores` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `desgloces_indicadores_ibfk_2` FOREIGN KEY (`idDesgloce`) REFERENCES `desgloces` (`id`) ON UPDATE CASCADE;
 
