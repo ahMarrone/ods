@@ -46,11 +46,11 @@ CREATE TABLE IF NOT EXISTS `desgloces` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `desgloces_indicadores`
+-- Estructura de tabla para la tabla `desglocesIndicadores`
 --
 
-DROP TABLE IF EXISTS `desgloces_indicadores`;
-CREATE TABLE IF NOT EXISTS `desgloces_indicadores` (
+DROP TABLE IF EXISTS `desglocesIndicadores`;
+CREATE TABLE IF NOT EXISTS `desglocesIndicadores` (
   `idIndicador` int(10) unsigned NOT NULL,
   `idDesgloce` int(10) unsigned NOT NULL,
   PRIMARY KEY (`idIndicador`,`idDesgloce`),

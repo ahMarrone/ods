@@ -30,6 +30,8 @@ INSERT INTO etiquetas (descripcion, fkIdDesgloce) VALUES ("Aria", 2);
 INSERT INTO etiquetas (descripcion, fkIdDesgloce) VALUES ("Mestizo", 2);
 INSERT INTO etiquetas (descripcion, fkIdDesgloce) VALUES ("Amarillo", 2);
 INSERT INTO etiquetas (descripcion, fkIdDesgloce) VALUES ("Morocho", 2);
+INSERT INTO desglocesIndicadores (idIndicador, idDesgloce) VALUES (1, 1);
+INSERT INTO desglocesIndicadores (idIndicador, idDesgloce) VALUES (1, 2);
 INSERT INTO refGeografica (descripcion, ambito, agrupa) VALUES ("BsAs", "P", 0);
 INSERT INTO refGeografica (descripcion, ambito, agrupa) VALUES ("La Pampa", "P", 0);
 INSERT INTO refGeografica (descripcion, ambito, agrupa) VALUES ("Chivilcoy", "P", 1);
