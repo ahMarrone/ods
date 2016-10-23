@@ -135,7 +135,7 @@ $(document).ready(function() {
     // $('#sel').selectpicker('render');
     // $('#sel').selectpicker('val', 'Ketchup');
 
-  inicializarMapa('pobreza_h', "Porcentaje de hombres desempleados");
+  inicializarMapa($('#selectorDesgloce').children(":selected").attr("id"), $('#selectorDesgloce').val());
 });
 
 // $('#indicadores li').on('click', function() {
@@ -147,12 +147,11 @@ $('#selectorDesgloce').on('change', function() {
 </script>
 
 <script>
-  var map = L.map(document.getElementById('map_canvas'));
-  var capa;
-  var mapTiles = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png' , { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' });
-  mapTiles.addTo(map);
-  var info = L.control();
-  var legend = L.control({position: 'bottomright'});
+  var map;
+  var capaActiva;
+  var baseTile = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png' , { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' });
+  var info;
+  var legend;
 
   var selected = '';
   var text = '';
@@ -160,7 +159,7 @@ $('#selectorDesgloce').on('change', function() {
 function inicializarMapa(s, t) {
     selected = s;
     text = t;
-    $.getJSON("provincias.js", crearCapa);
+    $.getJSON("geoData.js", crearCapa);
 }
 
 function style(feature) {
@@ -224,23 +223,65 @@ function actualizarCapa(s, t) {
     info.addTo(map);  
     legend.addTo(map);
 
-    capa.eachLayer(function (layer) {
+    capaActiva.eachLayer(function (layer) {
         layer.setStyle(style(layer.feature))
     });
 }
 
-function crearCapa(geoJsonData) {
-    capa = L.geoJson(geoJsonData, {onEachFeature: onEachFeature, style: style})
-    map.fitBounds(capa.getBounds());
+function onOverlayAdd(e){
+  capaActiva = e.layer;
+  capaActiva.eachLayer(function (layer) {
+      layer.setStyle(style(layer.feature))
+    });
+}
 
+function crearCapa(geoJsonData) {
+
+    /* Crear Capas 
+    */
+    
+    var baseMaps = {};
+    var capas = [];
+
+    if (geoJsonData['provincia']) {
+      baseMaps["Provincia"] = L.geoJson(geoJsonData['provincia'], {onEachFeature: onEachFeature, style: style});  
+    }
+
+    if (geoJsonData['nacion']) {
+      baseMaps["Nación"] = L.geoJson(geoJsonData['nacion'], {onEachFeature: onEachFeature, style: style});  
+    }
+
+    $.each(baseMaps, function(key, value) {
+      capas.push(value);
+    });
+
+    capaActiva = capas[0];
+    
+    /* Crear 'Objeto Mapa', asignar a Div y definir capa base */
+    map = L.map(document.getElementById('map_canvas'), {
+      layers: [capaActiva],
+      doubleClickZoom: false});
+    /* Agregar Mapa de Base */
+    baseTile.addTo(map);
+    /* Controles sobre el Mapa */
+    info = L.control({position: 'topright'});
+    legend = L.control({position: 'bottomright'});
+    L.control.layers(baseMaps, null, {position: 'topleft', collapsed: true}).addTo(map);
+    // L.control.scale().addTo(map);
+
+    /* Definir métodos de Creación y Actualización */
     info.onAdd = addDivInfo;
     info.update = updateDivInfo;
     legend.onAdd = addDivLegend;
-    
-    capa.addTo(map);
-    info.addTo(map);  
-    legend.addTo(map);
 
+    /*Definiciones sobre 'map.on' */
+    map.on('baselayerchange', onOverlayAdd);
+
+    // Definir centro de mapa a partir de capa por defecto
+    map.fitBounds(capas[0].getBounds());
+    /* Agregar capas y otros */
+    info.addTo(map);
+    legend.addTo(map);
 
     function highlightFeature(e) {
         var layer = e.target;
@@ -258,7 +299,7 @@ function crearCapa(geoJsonData) {
     }
 
     function resetHighlight(e) {
-        capa.resetStyle(e.target);
+        capaActiva.resetStyle(e.target);
         info.update();
     }
 
@@ -266,12 +307,17 @@ function crearCapa(geoJsonData) {
         map.fitBounds(e.target.getBounds());
     }
 
+    function zoomOut(e) {
+      map.fitBounds(capaActiva.getBounds());
+    }
+
     function onEachFeature(feature, layer) {
-        layer.bindPopup(feature.properties.nombre + " " + feature.properties[selected]);
+        // layer.bindPopup(feature.properties.nombre + " " + feature.properties[selected]);
         layer.on({
             mouseover: highlightFeature,
             mouseout: resetHighlight,
-            click: zoomToFeature
+            click: zoomToFeature,
+            dblclick: zoomOut
         });
     }
 }
