@@ -46,25 +46,24 @@ class ValoresIndicadoresController extends Controller
     public function newAction(Request $request)
     {
         $idIndicador =  $request->query->get('id_indicador', NULL);
-        $idDesgloce =  $request->query->get('id_desgloce', NULL);
         $fecha =  $request->query->get('fecha', NULL);
         if ($idIndicador){
             $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findById($idIndicador)[0];
-            //echo var_dump($indicador);
-            $desgloce = $this->getDoctrine()->getRepository('AppBundle:Desgloces')->findOneById($idDesgloce);
-            $etiquetas =  $this->getEtiquetasDesgloce($idDesgloce);
-            //$ref_geograficas = $this->filterRefGeograficas($indicador->getAmbito());
-            $ref_geograficas = $this->getRefGeograficas();
+            $indicadorDesgloces = $this->getDoctrine()->getRepository('AppBundle:Desglocesindicadores')->findByIdindicador($idIndicador);
+            //$desglocesEtiquetas =  $this->getEtiquetasDesgloce($indicadorDesgloces);
+            list($desgloces, $etiquetasDesgloces) =   $this->getEtiquetasDesgloce($indicadorDesgloces);
+            $refGeograficas = $this->getRefGeograficas();
             $valoresindicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')
-                               ->filterByIndicadorFechaDesgloce($idIndicador, $fecha, $idDesgloce);
+                               ->filterByIndicadorFecha($idIndicador, $fecha);
+            $valoresindicadores = $this->parseEntityValoresindicadores($valoresindicadores);
             return $this->render('valoresindicadores/panel_create_valores_indicadores.html.twig', array(
                 'fecha' => $fecha,
                 'indicador_id' => $indicador->getId(),
                 'indicador_desc' => $indicador->getDescripcion(),
-                'desgloce' => $desgloce->getDescripcion(),
-                'etiquetas' => $etiquetas,    
-                'ref_geograficas' => $ref_geograficas,
-                'valores_indicadores' => $this->parseEntityValoresindicadores($valoresindicadores),
+                'desgloces' => $desgloces,
+                'etiquetas_desgloces' => $etiquetasDesgloces,
+                'ref_geograficas' => $refGeograficas,
+                'valores_indicadores' => $valoresindicadores,
                 'api_urls' => array('edit'=> $this->generateUrl('admin_crud_valoresindicadores_saveobjects'), 
                                     'delete'=> $this->generateUrl('admin_crud_valoresindicadores_deleteobjects')
                 )
@@ -78,7 +77,7 @@ class ValoresIndicadoresController extends Controller
         $ret = array();
         foreach ($valoresindicadores as $vi){
             $data = array(
-                'id_etiqueta' => $vi->getIdetiqueta()->getId(),
+                'id_etiqueta' => $vi->getIdetiqueta(),
                 'id_ref_geografica' => $vi->getIdrefgeografica()->getId(),
                 'valor' => $vi->getValor(),
             );
@@ -129,10 +128,8 @@ class ValoresIndicadoresController extends Controller
                 $refgeografica = $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findOneById($refId);
                 foreach ($refGeograficaObjects as $valorIndicadorData) { 
                     $vi = new Valoresindicadores();
-                    $etiqueta = $this->memoizeEtiquetas($etiquetasMemoization, $valorIndicadorData["id_etiqueta"]);
-                    //$etiqueta->setId($valorIndicadorData["id_etiqueta"]);
                     $vi->setValor($valorIndicadorData["value"]);
-                    $vi->setIdEtiqueta($etiqueta);
+                    $vi->setIdEtiqueta($valorIndicadorData["id_etiqueta"]);
                     $vi->setIdindicador($indicador);
                     $vi->setIdrefgeografica($refgeografica);
                     $vi->setAprobado(false);
@@ -154,12 +151,13 @@ class ValoresIndicadoresController extends Controller
         return $response;
     }
 
+    /*
     private function memoizeEtiquetas(&$list, $id){
         if (!array_key_exists($id, $list)){
             $list[$id] = $this->getDoctrine()->getRepository('AppBundle:Etiquetas')->findOneById($id);
         }
         return $list[$id];
-    }
+    }*/
 
     private function getRefGeograficas(){
         $ret = array();
@@ -170,14 +168,21 @@ class ValoresIndicadoresController extends Controller
         return $ret;
     }
 
-    // Retorna diccionario, con etiquetas como claves, y lista de sus etiquetas como valor
-    private function getEtiquetasDesgloce($idDesgloce){
+    // 
+    private function getEtiquetasDesgloce($desglocesIndicador){
+        $desgloces = array();
         $etiquetasDesgloce = array();
-        $etiquetas =  $this->getDoctrine()->getRepository('AppBundle:Etiquetas')->findByFkiddesgloce($idDesgloce);
-        foreach ($etiquetas as $e) {
-                $etiquetasDesgloce[$e->getId()] = $e->getDescripcion();
+        foreach ($desglocesIndicador as $desgloceIndicador) {
+            $desgloce = $this->getDoctrine()->getRepository('AppBundle:Desgloces')->findOneById($desgloceIndicador->getIddesgloce());
+            $etiquetas =  $this->getDoctrine()->getRepository('AppBundle:Etiquetas')->findByFkiddesgloce($desgloce);
+            array_push($desgloces,$desgloce->getDescripcion());
+            $tmpEtiquetas = array();
+            foreach ($etiquetas as $e) {
+                array_push($tmpEtiquetas, array("id_etiqueta"=>$e->getId(), "desc"=>$e->getDescripcion()));
+            }
+            array_push($etiquetasDesgloce, $tmpEtiquetas);
         }
-        return $etiquetasDesgloce;
+        return array($desgloces, $etiquetasDesgloce);
     }
 
     /**

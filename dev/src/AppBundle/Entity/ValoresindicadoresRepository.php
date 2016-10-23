@@ -7,17 +7,14 @@ use Doctrine\ORM\EntityRepository;
 
 class ValoresindicadoresRepository extends EntityRepository
 {
-    public function filterByIndicadorFechaDesgloce($idIndicador, $fecha, $idDesgloce){
+    public function filterByIndicadorFecha($idIndicador, $fecha){
         return $this->getEntityManager()
             ->createQuery(
              'SELECT p FROM AppBundle:Valoresindicadores p where 
              		p.idindicador = :idIndicador 
-             		and p.fecha = :fecha
-					and p.idetiqueta IN 
-						(SELECT e.id FROM AppBundle:Etiquetas e WHERE e.fkiddesgloce = :idDesgloce)'
+             		and p.fecha = :fecha'
             )->setParameter('idIndicador', $idIndicador)
 	         ->setParameter('fecha', $fecha)
-	         ->setParameter('idDesgloce', $idDesgloce)
             ->getResult();
     }
 

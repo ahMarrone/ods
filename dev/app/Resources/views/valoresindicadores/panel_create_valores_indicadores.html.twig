@@ -19,7 +19,7 @@
         <div class="page-header">
           <h1>Carga valores indicadores <small>{{indicador_desc}}</small></h1>
         </div>
-      <div class="alert alert-info" class="col-md-3" role="alert">Fecha de carga: {{fecha}}. Desglozando por: {{desgloce}}
+      <div class="alert alert-info" class="col-md-3" role="alert">Fecha de carga: {{fecha}}. Desglozando por:
       </div>
       <div id="panelList"></div>
         <div class=".panel"></div>
@@ -28,15 +28,17 @@
 
 
 <script id="panelListWrapper" type="text/template">
+<div class="row">
  <% if (this.collection.isRefLeft()) { %>
   <button id="newDataLoader" type="button" class="btn btn-primary pull-left"><span class="glyphicon glyphicon-plus"></span></button>
   <% }  %>
 <button id="saveDataLoaders" type="button" class="btn btn-success pull-left"><span class="glyphicon glyphicon-save"></span></button>
+  </div>
 </script>
 
 
 <script id="panelLoader" type="text/template">
-  <div class="panel panel-primary col-md-3 col-sm-3 panelDataLoader pull-left">
+  <div class="panel panel-primary col-md-3 col-sm-4 panelDataLoader pull-left">
       <div class="panel-heading clearfix">
         <h4 class="panel-title pull-left" style="padding-top: 7.5px;">Carga de datos</h4>
       <div class="btn-group pull-right">
@@ -44,10 +46,10 @@
       </div>
       </div>
       <div class="panel-body"> 
-        <form class="form-horizontal">
+        <form>
         <div class="form-group">
-        <label class="col-md-3">Ref. geog.</label>
-        <div class="col-sm-9">
+        <label>Ref. geog.</label>
+        <div>
           <select class="form-control refGeogSelect" <% if (model.is_preloaded) { %>disabled="disabled"<% }  %>>
           <% _.each( collection.refGeograficas, function( ref, i){ %>
               <% if ( i == model.id_ref_geografica ){ %>
@@ -63,11 +65,13 @@
           </select>
           </div>
         </div>
-        <% _.each( etiquetas, function( label_etiqueta, i){ %>
+        <% _.each( etiquetas, function( etiquetas_id, i){ %>
+          <% console.log(model.valor_etiquetas) %>
+          <% id_formatted = parent.formatEtiquetaID(etiquetas_id) %>
         <div class="form-group">
-          <label class="col-md-3"><%= label_etiqueta %></label>
-          <div class="col-sm-9">
-            <input type="text" class="form-control etiquetaInput" data-etiqueta-id="<%= i %>" value="<%= model.valor_etiquetas[i] %>">
+          <label><%= parent.contructLabelEtiqueta(etiquetas_id) %></label>
+          <div>
+            <input type="text" class="form-control etiquetaInput" data-etiqueta-id="<%= id_formatted %>" value="<%= model.valor_etiquetas[id_formatted] %>">
           </div>
         </div>
          <% }); %>
@@ -84,18 +88,97 @@
 
     $(document).ready(function() {
         
+
+      function cartesianProductOf() {
+          return _.reduce(arguments, function(a, b) {
+              return _.flatten(_.map(a, function(x) {
+                  return _.map(b, function(y) {
+                      return x.concat([y]);
+                  });
+              }), true);
+          }, [ [] ]);
+      };
+
+
+      // Recibe:
+      //   [
+      //       [ {"id":1, "desc":"Femenino"},
+      //         {"id":2, "desc":"Masculino"}
+      //         ],
+      //       [
+      //         {"id":3, "desc":"Amarillo"},
+      //         {"id":4, "desc":"Morocho"},
+      //         {"id":5, "desc":"Aria"},
+      //         {"id":6, "desc":"Mestizo"},
+      //       ]
+      //   ] 
+      //    y retorna un array con 2 valores (una lista de listas y un diccionario)
+      //   [  
+      //       [
+      //         [1,2],
+      //         [3,4,5,6]
+      //       ],
+      //       {
+      //          1:"Femenino",
+      //          2:"Masculino"
+      //          3:"Amarillo"
+      //            ...
+      //        }
+      //    ]
+      function getEtiquetasData(etiquetasDesgloces){
+        var etiquetasGroup = [];
+        var etiquetasMetadata = {};
+        $.each(etiquetasDesgloces, function( i, etiquetas_list ) {
+            var tmpList = [];
+            $.each(etiquetas_list, function( j, etiqueta_data ) {
+                tmpList.push(etiqueta_data.id_etiqueta);
+                etiquetasMetadata[etiqueta_data.id_etiqueta] = etiqueta_data.desc;
+            });
+            etiquetasGroup.push(tmpList);
+        });
+        return [etiquetasGroup,etiquetasMetadata];
+      }
+
+
+       // Obtengo la lista de etiquetas del indicador
+       function getEtiquetasDictionary(desglocesEtiquetas){
+          var dicc_etiquetas = {};
+          /*$.each(desglocesEtiquetas, function( id_desgloce, desgloce_data ) {
+              $.each(desgloce_data.etiquetas, function( id_etiqueta, etiqueta_data ) {
+                  //alert(id_etiqueta +":"+etiqueta_data.desc);
+                  dicc_etiquetas[etiqueta_data.id_etiqueta] = etiqueta_data.desc;
+              });
+          });*/
+          dicc_etiquetas = [
+              [ {"id":1, "desc":"Femenino"},
+                {"id":2, "desc":"Masculino"}
+                ],
+              [
+                {"id":3, "desc":"Amarillo"},
+                {"id":4, "desc":"Morocho"},
+                {"id":5, "desc":"Aria"},
+                {"id":6, "desc":"Mestizo"},
+              ]
+          ]
+          return dicc_etiquetas;
+       }
+
         /*$('#valorIndicadorDate').datepicker({
     		format: "yyyy-mm-dd"
 		});*/
         var indicador_id = {{ indicador_id|json_encode|raw}};
-    	  var etiquetas = {{ etiquetas|json_encode|raw}};
+    	  var desgloces = {{ desgloces|json_encode|raw}};
+        var etiquetasDesgloces = {{ etiquetas_desgloces|json_encode|raw}};
+        var etiquetasData = getEtiquetasData(etiquetasDesgloces);
+        console.log(etiquetasData[0]);
+        var etiquetas = cartesianProductOf.apply(this,etiquetasData[0]);
+        var etiquetasMetadata = etiquetasData[1];
         var fecha = {{ fecha|json_encode|raw}};
         var valoresEtiquetas = {{ valores_indicadores|json_encode|raw}};
         var api_urls = {{ api_urls|json_encode|raw}};
          // lista de todas las referencias geograficas disponibles
         var refGeograficasList =  {{ ref_geograficas|json_encode|raw}};
         valoresEtiquetas = _.groupBy(valoresEtiquetas, 'id_ref_geografica');
-
 
         /////////////////// MODELOS //////////////////////////////7
 
@@ -107,8 +190,8 @@
         		'id_ref_geografica': null,
         		'valor_etiquetas':{},
             'is_preloaded':false,
-			},
-		});
+			     },
+		    });
 
         // Coleccion de RefGeograficaData
 		var RefGeograficaCollection = Backbone.Collection.extend({
@@ -151,11 +234,12 @@
             },
             initialize: function(options){
                 this.etiquetas = options.etiquetas;
+                this.etiquetas_metadata = options.etiquetas_metadata;
                 this.refGeograficas = options.refGeograficasList;
                 _.bindAll(this, "renderPanel");
             },
             renderPanel: function(model){
-                var panelView = new RefGeograficaPanel({model: model, etiquetas: this.etiquetas, refGeograficas: this.refGeograficas, parent:this});
+                var panelView = new RefGeograficaPanel({model: model, etiquetas: this.etiquetas,refGeograficas: this.refGeograficas, parent:this});
                 panelView.render();
                 $(this.el).prepend(panelView.el);
             },
@@ -270,6 +354,17 @@
                   this.collection.remove(modelObject);
               });
               this.render();
+            },
+            contructLabelEtiqueta: function(etiquetasIDList){
+              var labels = [];
+              var that = this;
+              $.each(etiquetasIDList, function(i, et_id){
+                labels.push(that.etiquetas_metadata[et_id]);                        
+              });
+              return labels.join("/");
+            },
+            formatEtiquetaID: function(etiquetasIDList){
+              return etiquetasIDList.join(":");
             }
         })
 
@@ -309,6 +404,7 @@
       },
       render: function(){
         this.$el.html( this.template({
+          parent: this.parent,
           collection:this.parent.collection,
           model:this.model.toJSON(),
           etiquetas:this.etiquetas
@@ -340,7 +436,7 @@
             api_urls: api_urls
       });
     bindRefGeograficaData(refGeograficaCollection, refGeograficasList);
-    var refGeograficaPanelList = new RefGeograficaPanelList({collection:refGeograficaCollection, etiquetas: etiquetas, refGeograficasList: refGeograficasList})
+    var refGeograficaPanelList = new RefGeograficaPanelList({collection:refGeograficaCollection, etiquetas: etiquetas, etiquetas_metadata: etiquetasMetadata, refGeograficasList: refGeograficasList})
     refGeograficaPanelList.render();
   }
 

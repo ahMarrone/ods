@@ -6,11 +6,12 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Valoresindicadores
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\ValoresindicadoresRepository")
  */
 class Valoresindicadores
 {
     /**
-     * @var \DateTime
+     * @var \string
      */
     private $fecha;
 
@@ -25,11 +26,6 @@ class Valoresindicadores
     private $aprobado;
 
     /**
-     * @var \AppBundle\Entity\Refgeografica
-     */
-    private $idrefgeografica;
-
-    /**
      * @var \AppBundle\Entity\Etiquetas
      */
     private $idetiqueta;
@@ -39,11 +35,16 @@ class Valoresindicadores
      */
     private $idindicador;
 
+    /**
+     * @var \AppBundle\Entity\Refgeografica
+     */
+    private $idrefgeografica;
+
 
     /**
      * Set fecha
      *
-     * @param \DateTime $fecha
+     * @param string $fecha
      * @return Valoresindicadores
      */
     public function setFecha($fecha)
@@ -56,7 +57,7 @@ class Valoresindicadores
     /**
      * Get fecha
      *
-     * @return \DateTime 
+     * @return \string 
      */
     public function getFecha()
     {
@@ -110,29 +111,6 @@ class Valoresindicadores
     }
 
     /**
-     * Set idrefgeografica
-     *
-     * @param \AppBundle\Entity\Refgeografica $idrefgeografica
-     * @return Valoresindicadores
-     */
-    public function setIdrefgeografica(\AppBundle\Entity\Refgeografica $idrefgeografica)
-    {
-        $this->idrefgeografica = $idrefgeografica;
-
-        return $this;
-    }
-
-    /**
-     * Get idrefgeografica
-     *
-     * @return \AppBundle\Entity\Refgeografica 
-     */
-    public function getIdrefgeografica()
-    {
-        return $this->idrefgeografica;
-    }
-
-    /**
      * Set idetiqueta
      *
      * @param \AppBundle\Entity\Etiquetas $idetiqueta
@@ -177,4 +155,28 @@ class Valoresindicadores
     {
         return $this->idindicador;
     }
+
+    /**
+     * Set idrefgeografica
+     *
+     * @param \AppBundle\Entity\Refgeografica $idrefgeografica
+     * @return Valoresindicadores
+     */
+    public function setIdrefgeografica(\AppBundle\Entity\Refgeografica $idrefgeografica)
+    {
+        $this->idrefgeografica = $idrefgeografica;
+
+        return $this;
+    }
+
+    /**
+     * Get idrefgeografica
+     *
+     * @return \AppBundle\Entity\Refgeografica 
+     */
+    public function getIdrefgeografica()
+    {
+        return $this->idrefgeografica;
+    }
+
 }
