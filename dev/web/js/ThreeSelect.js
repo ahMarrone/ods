@@ -19,6 +19,7 @@ var template_select = [
 	'<% }); %>',
     '</select>',
     '</div>',
+    '<% if (model.get("indicadores").length ){ %>',
     '<div class="form-group">',
 	'<label>Indicadores</label>',
     '<select class="form-control selectThree">',
@@ -29,6 +30,7 @@ var template_select = [
 	'<% }); %>',
     '</select>',
     '</div>',
+    '<% } %>',
 ].join("\n");
 
 
@@ -47,7 +49,9 @@ var ThreeSelectView = Backbone.View.extend({
 	initialize: function() {
 		this.model.set('objetivo_selected',this.model.get('objetivos')[0].id);
 		this.model.set('meta_selected',this.model.get('metas')[0].id);
-        this.model.set('indicador_selected',this.model.get('indicadores')[0].id);
+        if (this.model.get('indicadores').length) {
+            this.model.set('indicador_selected',this.model.get('indicadores')[0].id);
+        }
 		this.model.on('change:objetivo_selected', this.render, this);
         this.model.on('change:meta_selected', this.render, this);
        	this.render();
@@ -60,7 +64,6 @@ var ThreeSelectView = Backbone.View.extend({
     render:function(){
 		var tpl = _.template(template_select);
 	    this.$el.html(tpl({model:this.model}));
-        //alert(this.model.get('indicador_selected'));
 	    return this;
     },
     objetivoSelected: function(e){
@@ -69,10 +72,11 @@ var ThreeSelectView = Backbone.View.extend({
     },
     metaSelected: function(e){
     	this.model.set("meta_selected",$(this.el).find('.selectTwo').val());
-        this.indicadorSelected();
+        if (this.model.get('indicadores').length){
+            this.indicadorSelected();
+        }
     },
     indicadorSelected: function(e){
     	this.model.set("indicador_selected",$(this.el).find('.selectThree').val());
-        //console.log(this.model.get('indicador_selected'));
     }
 })
