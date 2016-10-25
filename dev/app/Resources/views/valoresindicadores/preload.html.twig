@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('css/bootstrap-datepicker3.min.css') }}" rel="stylesheet" />
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="{{ asset('js/underscore-min.js') }}"></script>
+    <script src="{{ asset('js/backbone-min.js') }}"></script>
+    <script src="{{ asset('js/ThreeSelect.js') }}"></script>
+    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+<div class="row">
+    <div class="page-header">
+          <h1>Carga de valores indicadores <small></small></h1>
+        </div>
+</div>
+<div class="row" class="col-md-10">
+<form class="form-horizontal">
+    <div>
+        <div id="selects"></div>
+    </div>
+    <div class="form-group">
+        <div class="input-group date">
+        <label>Fecha</label>
+          <input id="valorIndicadorDate" type="text" class="form-control">
+        </div>
+    </div>
+</form>
+
+</div>
+<div class="row">
+<button id="saveDataLoaders" type="button" class="btn btn-success pull-left">Siguiente</button>
+</div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function() {
+
+        $('#valorIndicadorDate').datepicker({
+    format: "mm/yyyy",
+    minViewMode: 1,
+    daysOfWeekDisabled: "1,2,3,4,5,6",
+    autoclose: true
+});
+
+        var objetivos = {{ objetivos|json_encode|raw}};
+        var metas = {{ metas|json_encode|raw}};
+        var indicadores = {{ indicadores|json_encode|raw}};
+
+    	var model = new ThreeSelectData({
+    		'objetivos': objetivos,
+    		'metas': metas,
+    		'indicadores': indicadores
+    	});
+    	var view = new ThreeSelectView({el: $("#selects") ,model:model});
+
+        $('#saveDataLoaders').click(function(){
+            alert(model.get('indicador_selected'));
+        });
+
+
+
+    });
+</script>
+
+{% endblock %}

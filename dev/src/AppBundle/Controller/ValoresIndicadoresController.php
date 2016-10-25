@@ -91,10 +91,51 @@ class ValoresIndicadoresController extends Controller
      * PRELOAD ValoresIndicadores entity.
      *
      * @Route("/preload", name="admin_crud_valoresindicadores_preload")
-     * @Method({"GET", "POST"})
+     * @Method({"GET"})
      */
     public function preloadAction(Request $request){
+        list($objetivos, $metas, $indicadores) = $this->preparePreloadData();
+        return $this->render('valoresindicadores/preload.html.twig', array(
+            'objetivos'=>$objetivos,
+            'metas'=>$metas,
+            'indicadores'=>$indicadores,
+        ));
+    }
 
+    // Retorna lista de objetivos, metas e indicadores. Relacionados mediante sus id's. (Mejorar)
+    private function preparePreloadData(){
+        $objetivosList = $this->getObjetivosPreload();
+        $metasList = $this->getMetasPreload();
+        $indicadoresList = $this->getIndicadoresPreload();
+        return array($objetivosList,$metasList,$indicadoresList);
+    }
+
+    private function getObjetivosPreload(){
+        $list = array();
+        $objetivos =  $this->getDoctrine()->getRepository('AppBundle:Objetivos')->findAll();
+        foreach ($objetivos as $o) {
+            array_push($list, array('id'=>$o->getId(),'desc'=>$o->getDescripcion()));
+        }
+        return $list;
+    }
+
+    private function getMetasPreload(){
+        $list = array();
+        $metas =  $this->getDoctrine()->getRepository('AppBundle:Metas')->findAll();
+        foreach ($metas as $m) {
+            array_push($list, array('id'=>$m->getId(),'desc'=>$m->getDescripcion(),'id_objetivo'=>$m->getFkidobjetivo()->getId()));
+        }
+        return $list;
+    }
+
+    private function getIndicadoresPreload(){
+        $list = array();
+        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findAll();
+        foreach ($indicadores as $i) {
+            array_push($list, array('id'=>$i->getId(),'desc'=>$i->getDescripcion(),'id_meta'=>$i->getFkidmeta()->getId()));
+        }
+        return $list;
+        
     }
 
     /**
