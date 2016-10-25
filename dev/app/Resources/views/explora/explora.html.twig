@@ -149,22 +149,34 @@ $('#selectorDesgloce').on('change', function() {
 <script>
   var map;
   var capaActiva;
+  var ambito = "";
+  var baseMaps = {};
   var baseTile = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png' , { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' });
   var info;
   var legend;
 
   var selected = '';
   var text = '';
+  var valoresIndicadores;
+  var ambito;
 
 function inicializarMapa(s, t) {
     selected = s;
     text = t;
-    $.getJSON("geoData.js", crearCapa);
+    $.getJSON("geoData.js", function (geoJsonData) {
+      crearCapas(geoJsonData);
+      $.getJSON("data.js", function ( data ) {
+        valoresIndicadores = data;
+        inicializarValoresIndicadores;
+        actualizarCapa(s, t);
+      });
+    });
 }
 
 function style(feature) {
     return {
-        fillColor: getColor(feature.properties[selected]),
+        fillColor: getColor(feature.properties.value),
+        // fillColor: getColor(valoresIndicadores['provincia'][refGeoId]['2015'][selected]),
         weight: 2,
         opacity: 1,
         color: 'white',
@@ -207,8 +219,19 @@ function addDivInfo (map) {
 function updateDivInfo (props) {
     textoIndicador = $('#selectorIndicador').children(":selected").val();
     this._div.innerHTML = '<h4>' + textoIndicador +'<hr>pobreza</h4>' +  (props ?
-    'Provincia: <b>' + props.nombre + '</b><br />pobreza: ' + props[selected]
+    'Provincia: <b>' + props.refGeo + '</b><br />pobreza: ' + valoresIndicadores[ambito][props.id]['2015'][selected]
     : 'Desplazarse sobre una provincia');
+}
+
+function inicializarValoresIndicadores () {
+  $.each(baseMaps, function(ambito, capa) {
+    /* Si es capa actual, pinto */
+      capa.eachLayer(function (layer) {
+        refGeoId = layer.feature.properties.id;
+        valor = valoresIndicadores[ambito][refGeoId]['2015'][selected];
+        layer.feature.properties.valor = valor;
+      });
+  });
 }
 
 function actualizarCapa(s, t) {
@@ -224,39 +247,48 @@ function actualizarCapa(s, t) {
     legend.addTo(map);
 
     capaActiva.eachLayer(function (layer) {
-        layer.setStyle(style(layer.feature))
+        refGeoId = layer.feature.properties.id;
+        valor = valoresIndicadores[ambito][refGeoId]['2015'][selected];
+        layer.feature.properties.valor = valor;
+        layer.setStyle({fillColor: getColor(valor)})
     });
 }
 
-function onOverlayAdd(e){
-  capaActiva = e.layer;
+function onOverlayAdd(selectedBaseLayer){
+  ambito = selectedBaseLayer.name;
+  capaActiva = selectedBaseLayer.layer;
   capaActiva.eachLayer(function (layer) {
-      layer.setStyle(style(layer.feature))
+    /* Sólo pintar */
+      // layer.setStyle(style(layer.feature))
+      console.log(layer.feature.properties.valor);
+      layer.setStyle({fillColor: getColor(layer.feature.properties.valor)})
     });
 }
 
-function crearCapa(geoJsonData) {
+function crearCapas(geoJsonData) {
 
-    /* Crear Capas 
-    */
+    /* Crear Capas */
     
-    var baseMaps = {};
+    // var baseMaps = {};
     var capas = [];
 
-    if (geoJsonData['provincia']) {
-      baseMaps["Provincia"] = L.geoJson(geoJsonData['provincia'], {onEachFeature: onEachFeature, style: style});  
+    if (geoJsonData['Provincia']) {
+      baseMaps["Provincia"] = L.geoJson(geoJsonData['Provincia'], {onEachFeature: onEachFeature, style: style});  
     }
 
-    if (geoJsonData['nacion']) {
-      baseMaps["Nación"] = L.geoJson(geoJsonData['nacion'], {onEachFeature: onEachFeature, style: style});  
+    if (geoJsonData['Nación']) {
+      baseMaps["Nación"] = L.geoJson(geoJsonData['Nación'], {onEachFeature: onEachFeature, style: style});  
     }
 
     $.each(baseMaps, function(key, value) {
+      if (ambito == "") {
+        ambito = key;
+      }
       capas.push(value);
     });
 
     capaActiva = capas[0];
-    
+
     /* Crear 'Objeto Mapa', asignar a Div y definir capa base */
     map = L.map(document.getElementById('map_canvas'), {
       layers: [capaActiva],
@@ -267,21 +299,23 @@ function crearCapa(geoJsonData) {
     info = L.control({position: 'topright'});
     legend = L.control({position: 'bottomright'});
     L.control.layers(baseMaps, null, {position: 'topleft', collapsed: true}).addTo(map);
+    
     // L.control.scale().addTo(map);
+
 
     /* Definir métodos de Creación y Actualización */
     info.onAdd = addDivInfo;
     info.update = updateDivInfo;
     legend.onAdd = addDivLegend;
 
-    /*Definiciones sobre 'map.on' */
-    map.on('baselayerchange', onOverlayAdd);
-
     // Definir centro de mapa a partir de capa por defecto
     map.fitBounds(capas[0].getBounds());
     /* Agregar capas y otros */
     info.addTo(map);
     legend.addTo(map);
+
+    /*Definiciones sobre 'map.on' */
+    map.on('baselayerchange', onOverlayAdd);
 
     function highlightFeature(e) {
         var layer = e.target;
