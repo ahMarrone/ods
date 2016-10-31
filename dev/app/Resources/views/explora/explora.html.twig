@@ -55,6 +55,12 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="{{ asset('leaflet/leaflet.css') }}" />
     <link rel="stylesheet" href="{{ asset('bootstrap-select/dist/css/bootstrap-select.css') }}" />
+    <style type="text/css">
+      .leaflet-left .leaflet-control-scale {
+      display: inline-block;
+      float: none;
+    }
+    </style>
     <!-- Custom styles for this template -->
     <link href="http://www.politicassociales.gob.ar/public/css/estilo_cncps.css" rel="stylesheet">
     <link href="http://www.politicassociales.gob.ar/public/css/font-awesome.min.css" rel="stylesheet" >
@@ -125,6 +131,19 @@
         <div id="map_canvas" style="width: 1000px; height: 500px"></div>
         </div>
     </div>
+    <br>
+    <div class="row">
+     <div class="col-md-4">
+     </div>
+     <div class="col-md-4">
+     <select id="selectorPeriodo" class="selectpicker">
+        <option id='2015'>2015</option>
+        <option id='2014'>2014</option>
+      </select>
+      </div>
+    </div>
+
+
 </div>
 <!-- <div id="map_canvas" class="leaflet-container leaflet-fade-anim"></div> -->
 
@@ -135,40 +154,54 @@ $(document).ready(function() {
     // $('#sel').selectpicker('render');
     // $('#sel').selectpicker('val', 'Ketchup');
 
-  inicializarMapa($('#selectorDesgloce').children(":selected").attr("id"), $('#selectorDesgloce').val());
+  var idIndicador = $('#selectorDesgloce').children(":selected").attr("id");
+  var descripcionIndicador = $('#selectorDesgloce').val();
+  var periodo = $('#selectorPeriodo').children(":selected").attr("id");
+  inicializarMapa(idIndicador, descripcionIndicador, periodo);
 });
 
 // $('#indicadores li').on('click', function() {
 //   actualizarCapa($(this).attr('id'), $(this).text());
 // });
 $('#selectorDesgloce').on('change', function() {
-  actualizarCapa($(this).children(":selected").attr("id"), $(this).val());
+  var idIndicador = $(this).children(":selected").attr("id");
+  var descripcionIndicador = $(this).val();
+  var periodo = $('#selectorPeriodo').children(":selected").attr("id");
+  actualizarCapa(idIndicador, descripcionIndicador, periodo);
+});
+
+$('#selectorPeriodo').on('change', function() {
+  var idIndicador = $('#selectorDesgloce').children(":selected").attr("id");
+  var descripcionIndicador = $('#selectorDesgloce').val();
+  var periodo = $(this).children(":selected").attr("id");
+  actualizarCapa(idIndicador, descripcionIndicador, periodo);
 });
 </script>
 
 <script>
   var map;
   var capaActiva;
-  var ambito = "";
+  var ambitoActivo = "";
   var baseMaps = {};
-  var baseTile = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png' , { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' });
+  var baseTile = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png');
   var info;
   var legend;
 
   var selected = '';
   var text = '';
+  var period = '';
   var valoresIndicadores;
   var ambito;
 
-function inicializarMapa(s, t) {
+function inicializarMapa(s, t, p) {
     selected = s;
     text = t;
+    period = p;
     $.getJSON("geoData.js", function (geoJsonData) {
       crearCapas(geoJsonData);
       $.getJSON("data.js", function ( data ) {
         valoresIndicadores = data;
-        inicializarValoresIndicadores;
-        actualizarCapa(s, t);
+        inicializarValoresIndicadores();
       });
     });
 }
@@ -193,18 +226,45 @@ function getColor(d) {
                     '#f1eef6' ;
 }
 
+function getLegend() {
+  var grades = [0, 20, 40, 60, 80];
+  var table = '<table class="table"><tbody>';
+  var trColors = '<tr>';
+  var trLabels = '<tr>';
+
+  // loop through our density intervals and generate a label with a colored square for each interval
+  for (var i = 0; i < grades.length; i++) {
+      trColors += '<td style="background-color: ' + getColor(grades[i] + 1) + ';"></td>';
+      trLabels += '<td>' + grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] : '+') + '</td>';
+  }
+
+  trColors += "</tr>";
+  trLabels += "</tr>";
+  table += trColors + trLabels + "</tbody></table>";
+
+  return table;
+}
+
 function addDivLegend (map) {
-    var div = L.DomUtil.create('div', 'info legend'),
-        grades = [0, 20, 40, 60, 80, 100],
-        labels = [];
-        div.innerHTML = '<b>' + text + ' </b><hr>'
+    var div = L.DomUtil.create('div', 'info legend');
+    var grades = [0, 20, 40, 60, 80];
+    div.innerHTML = '<b>' + text + ' </b><hr>'
+    var table = '<table class="table"><tbody>';
+    var trColors = '<tr>';
+    var trLabels = '<tr>';
 
     // loop through our density intervals and generate a label with a colored square for each interval
     for (var i = 0; i < grades.length; i++) {
-        div.innerHTML +=
-            '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
-            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        trColors += '<td style="background-color: ' + getColor(grades[i] + 1) + ';"></td>';
+            // '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+            // grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        trLabels += '<td>' + grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] : '+') + '</td>';
     }
+
+    trColors += "</tr>";
+    trLabels += "</tr>";
+    table += trColors + trLabels + "</tbody></table>";
+    div.innerHTML += table;
 
     return div;
 }
@@ -217,52 +277,70 @@ function addDivInfo (map) {
 
 // method that we will use to update the control based on feature properties passed
 function updateDivInfo (props) {
-    textoIndicador = $('#selectorIndicador').children(":selected").val();
-    this._div.innerHTML = '<h4>' + textoIndicador +'<hr>pobreza</h4>' +  (props ?
-    'Provincia: <b>' + props.refGeo + '</b><br />pobreza: ' + valoresIndicadores[ambito][props.id]['2015'][selected]
-    : 'Desplazarse sobre una provincia');
+    if (props) {
+      var text = $('#selectorIndicador').children(":selected").val();
+      var open = '<table class="table"><tbody><tr>';
+      var content = '<td class="col-xs-4">' + props.valor + '</td><td class="col-xs-8">' + text + '</td>';
+      var close = '</tr></tbody></table>';
+      
+      var divHead = '<p><b>' + props.refGeo +'</b></p>';
+      var divContent = open + content + close;
+      var divLegend = getLegend();
+
+      this._div.innerHTML = divHead + divContent + divLegend;
+    }
 }
 
 function inicializarValoresIndicadores () {
+
+  // if (baseMaps['Provincia']) {
+  //   ambitoActivo = 'Provincia';
+  // } else if (baseMaps['Nación']) {
+  //   ambitoActivo = 'Nación';
+  // }
+
   $.each(baseMaps, function(ambito, capa) {
     /* Si es capa actual, pinto */
+    /* id numérico y no string */
       capa.eachLayer(function (layer) {
         refGeoId = layer.feature.properties.id;
-        valor = valoresIndicadores[ambito][refGeoId]['2015'][selected];
+        valor = valoresIndicadores[ambito][refGeoId][period][selected];
         layer.feature.properties.valor = valor;
+        if (ambito == ambitoActivo) {
+          layer.setStyle({fillColor: getColor(valor)});
+        }
       });
   });
 }
 
-function actualizarCapa(s, t) {
-    map.removeControl(legend);
+function actualizarCapa(s, t, p) {
     map.removeControl(info);
     selected = s;
     text = t;
+    period = p;
 
     info.onAdd = addDivInfo;
     info.update = updateDivInfo;
-    legend.onAdd = addDivLegend;
-    info.addTo(map);  
-    legend.addTo(map);
+    info.addTo(map);
 
     capaActiva.eachLayer(function (layer) {
         refGeoId = layer.feature.properties.id;
-        valor = valoresIndicadores[ambito][refGeoId]['2015'][selected];
+        valor = valoresIndicadores[ambitoActivo][refGeoId][period][selected];
         layer.feature.properties.valor = valor;
         layer.setStyle({fillColor: getColor(valor)})
     });
 }
 
 function onOverlayAdd(selectedBaseLayer){
-  ambito = selectedBaseLayer.name;
+  ambitoActivo = selectedBaseLayer.name;
   capaActiva = selectedBaseLayer.layer;
-  capaActiva.eachLayer(function (layer) {
-    /* Sólo pintar */
-      // layer.setStyle(style(layer.feature))
-      console.log(layer.feature.properties.valor);
-      layer.setStyle({fillColor: getColor(layer.feature.properties.valor)})
-    });
+  // capaActiva.eachLayer(function (layer) {
+  //   /* Sólo pintar */
+  //     // layer.setStyle(style(layer.feature))
+  //     // console.log(layer.feature.properties.valor);
+  //     layer.setStyle({fillColor: getColor(layer.feature.properties.valor)})
+  //   });
+  actualizarCapa(selected, text, period);
 }
 
 function crearCapas(geoJsonData) {
@@ -272,22 +350,28 @@ function crearCapas(geoJsonData) {
     // var baseMaps = {};
     var capas = [];
 
-    if (geoJsonData['Provincia']) {
-      baseMaps["Provincia"] = L.geoJson(geoJsonData['Provincia'], {onEachFeature: onEachFeature, style: style});  
+    if (geoJsonData["Provincia"]) {
+      baseMaps["Provincia"] = L.geoJson(geoJsonData["Provincia"], {onEachFeature: onEachFeature, style: style});
+      ambitoActivo = "Provincia";
+      capaActiva = baseMaps["Provincia"];
     }
 
     if (geoJsonData['Nación']) {
-      baseMaps["Nación"] = L.geoJson(geoJsonData['Nación'], {onEachFeature: onEachFeature, style: style});  
+      baseMaps["Nación"] = L.geoJson(geoJsonData['Nación'], {onEachFeature: onEachFeature, style: style});
+      if (ambitoActivo == "") {
+        ambitoActivo = "Nación";
+        baseMaps["Nación"];
+      }
     }
 
-    $.each(baseMaps, function(key, value) {
-      if (ambito == "") {
-        ambito = key;
-      }
-      capas.push(value);
-    });
+    // $.each(baseMaps, function(key, value) {
+    //   // if (ambito == "") {
+    //   //   ambito = key;
+    //   // }
+    //   capas.push(value);
+    // });
 
-    capaActiva = capas[0];
+    // capaActiva = capas[0];
 
     /* Crear 'Objeto Mapa', asignar a Div y definir capa base */
     map = L.map(document.getElementById('map_canvas'), {
@@ -297,22 +381,18 @@ function crearCapas(geoJsonData) {
     baseTile.addTo(map);
     /* Controles sobre el Mapa */
     info = L.control({position: 'topright'});
-    legend = L.control({position: 'bottomright'});
     L.control.layers(baseMaps, null, {position: 'topleft', collapsed: true}).addTo(map);
     
     // L.control.scale().addTo(map);
 
-
     /* Definir métodos de Creación y Actualización */
     info.onAdd = addDivInfo;
     info.update = updateDivInfo;
-    legend.onAdd = addDivLegend;
 
     // Definir centro de mapa a partir de capa por defecto
-    map.fitBounds(capas[0].getBounds());
+    map.fitBounds(capaActiva.getBounds());
     /* Agregar capas y otros */
     info.addTo(map);
-    legend.addTo(map);
 
     /*Definiciones sobre 'map.on' */
     map.on('baselayerchange', onOverlayAdd);
@@ -334,6 +414,7 @@ function crearCapas(geoJsonData) {
 
     function resetHighlight(e) {
         capaActiva.resetStyle(e.target);
+        e.target.setStyle({fillColor: getColor(e.target.feature.properties.valor)});
         info.update();
     }
 
