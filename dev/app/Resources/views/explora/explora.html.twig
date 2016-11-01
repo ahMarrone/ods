@@ -4,6 +4,10 @@
     {{ parent() }}
     <script src="{{ asset('leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('bootstrap-select/dist/js/bootstrap-select.js') }}"></script>
+    <!-- Load d3.js and c3.js -->
+    <script src="{{ asset('d3/d3.js') }}" charset="utf-8"></script>
+    <script src="{{ asset('c3/c3.js') }}"></script>
+
 <!--     <script src="http://maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
     <script src="http://matchingnotes.com/javascripts/leaflet-google.js"></script> -->
 {% endblock %}    
@@ -43,6 +47,7 @@
     <link rel="stylesheet" href="{{ asset('leaflet/leaflet.css') }}" />
     <link rel="stylesheet" href="{{ asset('bootstrap-select/dist/css/bootstrap-select.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/miscStyle.css') }}" />
+    <link rel="stylesheet" href="{{ asset('c3/c3.css') }}" />
     <style type="text/css">
       .leaflet-left .leaflet-control-scale {
       display: inline-block;
@@ -286,10 +291,13 @@ function updateDivInfo (props) {
       // var divHead = '<h4>' + props.refGeo +'</h4>';
       var divHead = '<div style="margin-bottom: 8px;" class="row"><div class="col-xs-9"><div class="unit-name">' + props.refGeo + '</div><div class="edo-name"></div></div></div>'
 
+      var divChart = '<div id="infobox-line-chart" class="c3" style="max-height: 160px; max-width: 250px; position: relative;"></div>';
       var divContent = open + content + close;
       var divLegend = getLegend();
 
-      this._div.innerHTML = divHead + divContent + divLegend;
+      this._div.innerHTML = divHead + divContent + divChart + divLegend;
+      // console.log(valoresIndicadores);
+      plot(props.id);
     }
 }
 
@@ -437,6 +445,37 @@ function crearCapas(geoJsonData) {
             dblclick: zoomOut
         });
     }
+}
+
+function plot(refGeoId){
+  var chartData = ['indicador'];
+  $.each(valoresIndicadores[ambitoActivo][refGeoId], function(key, value) {
+      chartData.push(value[selected]);
+    });
+
+  var chart = c3.generate({
+    bindto: '#infobox-line-chart',
+    data: {
+      x: 'x',
+      columns: [
+        ['x', '2014', '2015'],
+        chartData
+      ]
+    },
+    // axis: {
+    //     y: {
+    //         tick: {
+    //             count: 5,
+    //             max: 100,
+    //             min: 0,
+    //             padding: {top:0, bottom:0}
+    //         }
+    //     }
+    // },
+    legend: {
+        show: false
+    }
+});
 }
 
 

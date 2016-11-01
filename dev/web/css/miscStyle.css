@@ -59,7 +59,7 @@ table#legend-colors tr td.legend-breaks {
 }
 .values-row {
     display: table;
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
 }
 .values-row div {
     display: table-cell;
@@ -68,4 +68,32 @@ table#legend-colors tr td.legend-breaks {
 .indicador-nombre, .indicador-nombre-b {
     font-weight: 300;
     margin-bottom: 10px;
+}
+
+/* Line charts */
+body.page-node .c3 svg {
+    font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', sans-serif;
+    font-size: 12px;
+    font-weight: 200;
+}
+body.page-node .infobox .c3 svg {
+    font-size: 8px;
+}
+body.page-node .c3 svg text {
+    fill: #aaa;
+}
+body.page-node .c3 svg g.tick line {
+    stroke: #fff;
+    stroke-opacity: 0;
+}
+body.page-node .c3 svg g.c3-ygrids line {
+    stroke: #fff;
+    stroke-dasharray: 1;
+    stroke-opacity: 1;
+}
+#chart svg g.c3-lines path.c3-line:hover {
+    stroke: #00cc99;
+}
+#chart svg g.c3-lines path.c3-line {
+    fill-opacity: 0;
 }
