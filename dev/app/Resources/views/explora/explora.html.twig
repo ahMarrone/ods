@@ -20,34 +20,6 @@
       overflow: hidden;
       width: 100%;
     }
-
-    .info {
-        /*padding: 6px 8px;*/
-        /*font: 14px/16px Arial, Helvetica, sans-serif;*/
-     /*   font: 12px/14px Roboto;
-        background: white;
-        background: rgba(255,255,255,0.8);
-        box-shadow: 0 0 15px rgba(0,0,0,0.2);
-        border-radius: 5px;
-        opacity: 0.7;*/
-    background-color: rgba(255, 255, 255, 0.8);
-    font-family: "Open Sans","Helvetica Neue","Helvetica",sans-serif;
-    padding: 10px;
-    position: absolute;
-    right: 10px;
-    top: 60px;
-    width: 280px;
-    z-index: 100;
-    }
-    .info h4 {
-        margin: 0 0 5px;
-        color: #777;
-    }
-    .info h3 {
-        /*margin: 0 0 5px;*/
-        color: #2b8cbe;
-        opacity: 0.7;
-    }
     .legend {
         line-height: 18px;
         color: #555;
@@ -70,6 +42,7 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="{{ asset('leaflet/leaflet.css') }}" />
     <link rel="stylesheet" href="{{ asset('bootstrap-select/dist/css/bootstrap-select.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/miscStyle.css') }}" />
     <style type="text/css">
       .leaflet-left .leaflet-control-scale {
       display: inline-block;
@@ -254,14 +227,14 @@ function getColor(d) {
 
 function getLegend() {
   var grades = [0, 20, 40, 60, 80];
-  var table = '<table class="table"><tbody>';
+  var table = '<div class="map-legend"><table id="legend-colors"><tbody>';
   var trColors = '<tr>';
   var trLabels = '<tr>';
 
   // loop through our density intervals and generate a label with a colored square for each interval
   for (var i = 0; i < grades.length; i++) {
-      trColors += '<td style="background-color: ' + getColor(grades[i] + 1) + ';"></td>';
-      trLabels += '<td>' + grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] : '+') + '</td>';
+      trColors += '<td class="legend-color" style="background-color: ' + getColor(grades[i] + 1) + ';"></td>';
+      trLabels += '<td class="legend-breaks">' + grades[i] + (grades[i + 1] ? ' &#45; ' + grades[i + 1] : ' &#45; 100') + '</td>';
   }
 
   trColors += "</tr>";
@@ -275,13 +248,13 @@ function addDivLegend (map) {
     var div = L.DomUtil.create('div', 'info legend');
     var grades = [0, 20, 40, 60, 80];
     div.innerHTML = '<b>' + text + ' </b><hr>'
-    var table = '<table class="table"><tbody>';
+    var table = '<table class="table" style="border-collapse: collapse;"><tbody>';
     var trColors = '<tr>';
     var trLabels = '<tr>';
 
     // loop through our density intervals and generate a label with a colored square for each interval
     for (var i = 0; i < grades.length; i++) {
-        trColors += '<td style="background-color: ' + getColor(grades[i] + 1) + ';"></td>';
+        trColors += '<td style="background-color: ' + getColor(grades[i] + 1) + ';style="word-wrap:break-word;padding:0; margin:0;"></td>';
             // '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
             // grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
         trLabels += '<td>' + grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] : '+') + '</td>';
@@ -296,7 +269,7 @@ function addDivLegend (map) {
 }
 
 function addDivInfo (map) {
-        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this._div = L.DomUtil.create('div', 'infobox'); // create a div with a class "info"
         this.update();
         return this._div;
     }
@@ -305,12 +278,14 @@ function addDivInfo (map) {
 function updateDivInfo (props) {
     if (props) {
       var text = $('#selectorIndicador').children(":selected").val();
-      var open = '<table style="width:250px;table-layout:fixed;" class="table"><tbody><tr>';
-      var content = '<td style="word-wrap:break-word;">' + "<h3>" + props.valor + "</h3>" + '</td><td class="col-xs-8">' + text + ' (' + period + ')' + '</td>';
-      var close = '</tr></tbody></table>';
+      var open = '<div class="row values-row"><table><tbody><tr>';
+      var content = '<td class="col-xs-4 indicador-valor">' +  props.valor + '</td><td class="col-xs-8 indicador-nombre">' + text + ' (' + period + ')' + '</td>';
+      var close = '</tr></tbody></table></div>';
       
       // var divHead = '<p><b>' + props.refGeo +'</b></p>';
-      var divHead = '<h4>' + props.refGeo +'</h4>';
+      // var divHead = '<h4>' + props.refGeo +'</h4>';
+      var divHead = '<div style="margin-bottom: 8px;" class="row"><div class="col-xs-9"><div class="unit-name">' + props.refGeo + '</div><div class="edo-name"></div></div></div>'
+
       var divContent = open + content + close;
       var divLegend = getLegend();
 

@@ -6,8 +6,8 @@
             "2015": {"pobreza_h": 90, "pobreza_m": 10}
             },
         "1":{
-            "2014": {"pobreza_h": 80, "pobreza_m": 10},
-            "2015": {"pobreza_h": 10, "pobreza_m": 80}
+            "2014": {"pobreza_h": 30, "pobreza_m": 10},
+            "2015": {"pobreza_h": 10, "pobreza_m": 30}
             },
         "2":{
             "2014": {"pobreza_h": 40, "pobreza_m": 90},
@@ -96,8 +96,8 @@
     },
     "Nación":{
         "23":{
-         "2014": {"pobreza_h": 5, "pobreza_m": 95},
-         "2015": {"pobreza_h": 95, "pobreza_m": 5}              
+         "2014": {"pobreza_h": 8, "pobreza_m": 25},
+         "2015": {"pobreza_h": 25, "pobreza_m": 8}              
         }
     }        
 }

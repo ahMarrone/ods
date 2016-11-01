@@ -1,0 +1,71 @@
+.infobox {
+    font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', sans-serif;
+    z-index: 100;
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    width: 280px;
+    padding: 10px;
+    background-color: rgba(255,255,255,0.8);
+    display: block;
+}
+
+.infobox h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
+.infobox h3 {
+    /*margin: 0 0 5px;*/
+    color: #2b8cbe;
+    opacity: 0.7;
+}
+
+.infobox .unit-name {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+.infobox .edo-name {
+    font-weight: 700;
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: #aaa;
+}
+.infobox .edo-image {
+    width: 40px;
+    height: 40px;
+}
+.infobox table#legend-colors {
+    width: 100%;
+}
+table#legend-colors tr td.legend-color {
+    height: 12px;
+    opacity: 0.7;
+    cursor: pointer;
+}
+/*table#legend-colors tr td.legend-color:hover {
+    background-color: yellow !important;
+}*/
+table#legend-colors tr td.legend-breaks {
+    text-align: center;
+    font-size: 10px;
+    padding-top: 5px;
+}
+.indicador-valor, .indicador-valor-b {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2b8cbe;
+    text-align: center;
+}
+.values-row {
+    display: table;
+    margin-bottom: 10px;
+}
+.values-row div {
+    display: table-cell;
+    vertical-align: middle;
+}
+.indicador-nombre, .indicador-nombre-b {
+    font-weight: 300;
+    margin-bottom: 10px;
+}
