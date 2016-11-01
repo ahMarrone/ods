@@ -1,9 +1,22 @@
 {% extends 'base.html.twig' %}
 
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="{{ asset('js/underscore-min.js') }}"></script>
+    <script src="{{ asset('js/backbone-min.js') }}"></script>
+    <script src="{{ asset('js/ThreeSelect.js') }}"></script>
+{% endblock %}
+
 {% block body %}
     <h1>Indicadores creation</h1>
 
     {{ form_start(form) }}
+
+        <div>
+           <div id="selects"></div>
+        </div>
+
         {{ form_widget(form) }}
         <input type="submit" value="Create" />
     {{ form_end(form) }}
@@ -15,41 +28,26 @@
     </ul>
 
 
-
-
-
 <script type="text/javascript">
-$("#indicadores_objetivo").on("change", function() 
-{ 
-    var sel = $(this).val(), 
-        $ddl = $("#indicadores_fkidmeta");
 
-    if (!sel) 
-    { // if there is no value means first option is selected
-        $ddl.find("option").show(); $ddl.val(''); // show all options and reset the value
-    } 
-    else 
-    {
-        $ddl.find("option").hide(); // hide all options
-        var selObjetivo = document.getElementById("indicadores_objetivo").options;
-        var index = document.getElementById("indicadores_objetivo").selectedIndex;
-        var otro = selObjetivo[index].value;
-        var localMetas = document.getElementById('indicadores_fkidmeta');
+    $(document).ready(function() {
+        var objetivos = {{ objetivos|json_encode|raw}};
+        var metas = {{ metas|json_encode|raw}};
 
-        for(var i=0; i < localMetas.length; i++)
-        {
-            var x = localMetas.options[i].text;
-            var this_value = parseInt(x.substr(0,5));
+        var model = new ThreeSelectData({
+            'objetivos': objetivos,
+            'metas': metas
+        });
+        var view = new ThreeSelectView({el: $("#selects") ,model:model});
 
-            if (this_value == otro)
-            {
-                var this_select_value = localMetas.options[i].value;
-                $ddl.find("option[value*='" + this_select_value + "']").show();
-            }
+        $('form[name="indicadores"]').submit(function() {
+            var meta = model.get('meta_selected');
+            $('form #indicadores_fkidmeta').val(meta)
 
-        }
-        localMetas.selectedIndex = "0";
-    }
-});
+        });
+    });
 </script>
+
+
+
 {% endblock %}

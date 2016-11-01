@@ -9,16 +9,11 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-
-
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-//use Symfony\Component\Form\Event\FormEvent;
-//use Symfony\Component\Form\Event\DataEvent;
-
-//use Symfony\Component\Form\FormEvents;
 
 class IndicadoresType extends AbstractType
 {
@@ -38,20 +33,22 @@ class IndicadoresType extends AbstractType
         $builder
             //->add('objetivo', EntityType::class, array('label' => 'Objetivo', 'mapped' => false, 'class' => 'AppBundle:Objetivos', 'choice_label' => 'descripcion', ))
 
-            ->add('objetivo', EntityType::class, array('label' => 'Objetivo', 'mapped' => false, 'class' => 'AppBundle:Objetivos', //'placeholder' => 'Seleccione un Objetivo',
+            /*->add('objetivo', EntityType::class, array('label' => 'Objetivo', 'mapped' => false, 'class' => 'AppBundle:Objetivos', //'placeholder' => 'Seleccione un Objetivo',
                 'choice_label' => function ($objetivo) {
                 return $objetivo->getId(). "." . $objetivo->getDescripcion();
-                }, ))
+                }, ))*/
 
             //->add('fkidmeta', EntityType::class, array('label' => 'Meta', 'class' => 'AppBundle:Metas', 'choice_label' => 'descripcion', ))
-            ->add('fkidmeta', EntityType::class, array('label' => 'Meta', 'class' => 'AppBundle:Metas', 'property' => 'name', 'placeholder' => 'Seleccione una Meta',
+            /*->add('fkidmeta', EntityType::class, array('label' => 'Meta', 'class' => 'AppBundle:Metas', 'property' => 'name', 'placeholder' => 'Seleccione una Meta',
                 'choice_label' => function ($fkidmeta) {
                 return $fkidmeta->getIdobjetivo_str() . "-" . $fkidmeta->getDescripcion();
                 }, 
-                //'choice_name' => function ($fkidmeta) {
-                //return $fkidmeta->getIdobjetivo_str() . "-" . $fkidmeta->getDescripcion();
-                //},
-                ))
+                'choice_name' => function ($fkidmeta) {
+                return $fkidmeta->getIdobjetivo_str() . "-" . $fkidmeta->getDescripcion();
+                },
+                ))*/
+            ->add('fkidmeta','hidden',array('mapped'=>false))
+            // ->add('fkidmeta',ChoiceType::class, array('label' => 'metas', 'mapped' => false))
             ->add('descripcion', TextareaType::class , array('label'  => 'Descripción', 'attr' => array('max_length' => 10, ),))
             ->add('tipo', ChoiceType::class, array('label'  => 'Tipo', 'expanded'=>true, 'required'=>true, 'choices' => array('Porcentual' => 'porcentual', 'Entero' => 'entero', 'Real' => 'real', ), 'data' => $tipoSeleccionado, 'choices_as_values' => true, ))
             //->add('tipo', ChoiceType::class, array('label'  => 'Tipo2', 'choices_as_values' => true, ))
@@ -73,7 +70,8 @@ class IndicadoresType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Indicadores'
+            'data_class' => 'AppBundle\Entity\Indicadores',
+            'allow_extra_fields' => true
         ));
     }  
 

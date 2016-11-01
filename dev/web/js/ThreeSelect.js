@@ -11,7 +11,7 @@ var template_select = [
     '</div>',
     '<div class="form-group">',
 	'<label>Metas</label>',
-    '<select class="form-control selectTwo">',
+    '<select id="indicadores_fkidmeta" class="form-control selectTwo" name="indicadores[fkidmeta]">',
     '<% _.each(model.get("metas"), function( meta, i){ %>',
     '<% if ( meta.id_objetivo == model.get("objetivo_selected") ){ %>',
     '<option value="<%= meta.id %>" <% if (meta.id == model.get("meta_selected")) { %> selected<% }  %>><%= meta.desc %></option>',
