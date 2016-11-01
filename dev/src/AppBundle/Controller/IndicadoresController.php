@@ -45,10 +45,20 @@ class IndicadoresController extends Controller
     public function newAction(Request $request)
     {
         $indicadore = new Indicadores();
+        $params = $this->getRequest()->request->all();
+        //echo var_dump($params);
+        if (isset($params["indicadores"]['fkidmeta'])){
+            //echo "ESTAAAAA";
+            $meta = $this->getDoctrine()->getRepository('AppBundle:Metas')->findOneById($params["indicadores"]['fkidmeta']);
+            //echo $meta->getId();
+            $indicadore->setFkidmeta($meta);
+        }
         $form = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            
             $em = $this->getDoctrine()->getManager();
             $em->persist($indicadore);
             $em->flush();
@@ -59,7 +69,27 @@ class IndicadoresController extends Controller
         return $this->render('indicadores/new.html.twig', array(
             'indicadore' => $indicadore,
             'form' => $form->createView(),
+            'objetivos' => $this->getObjetivosPreload(),
+            'metas' => $this->getMetasPreload()
         ));
+    }
+
+    private function getObjetivosPreload(){
+        $list = array();
+        $objetivos =  $this->getDoctrine()->getRepository('AppBundle:Objetivos')->findAll();
+        foreach ($objetivos as $o) {
+            array_push($list, array('id'=>$o->getId(),'desc'=>$o->getDescripcion()));
+        }
+        return $list;
+    }
+
+    private function getMetasPreload(){
+        $list = array();
+        $metas =  $this->getDoctrine()->getRepository('AppBundle:Metas')->findAll();
+        foreach ($metas as $m) {
+            array_push($list, array('id'=>$m->getId(),'desc'=>$m->getDescripcion(),'id_objetivo'=>$m->getFkidobjetivo()->getId()));
+        }
+        return $list;
     }
 
     /**
