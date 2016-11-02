@@ -1,14 +1,20 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Objetivos list</h1>
+    <ol class="breadcrumb">
+        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        <li class="active">Objetivos</a></li>
+    </ol>
+    <div class="page-header">
+          <h1>Objetivos</h1>
+    </div>
 
-    <table>
+ <table id="objetivosTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr>
                 <th>Descripcion</th>
                 <th>Id</th>
-                <th>Actions</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -19,10 +25,10 @@
                 <td>
                     <ul>
                         <li>
-                            <a href="{{ path('admin_crud_objetivos_show', { 'id': objetivo.id }) }}">show</a>
+                            <a href="{{ path('admin_crud_objetivos_show', { 'id': objetivo.id }) }}">mostrar</a>
                         </li>
                         <li>
-                            <a href="{{ path('admin_crud_objetivos_edit', { 'id': objetivo.id }) }}">edit</a>
+                            <a href="{{ path('admin_crud_objetivos_edit', { 'id': objetivo.id }) }}">editar</a>
                         </li>
                     </ul>
                 </td>
@@ -30,10 +36,16 @@
         {% endfor %}
         </tbody>
     </table>
+            
+    <a class="btn btn-success" href="{{ path('admin_crud_objetivos_new') }}">Crear nuevo objetivo</a>
 
-    <ul>
-        <li>
-            <a href="{{ path('admin_crud_objetivos_new') }}">Create a new entry</a>
-        </li>
-    </ul>
+<script type="text/javascript">
+    $(document).ready(function() {
+    $('#metasTable').DataTable({
+         "language": {
+            "url": "/lang/datatables_spanish.json"
+        }
+    });
+} );
+</script>
 {% endblock %}

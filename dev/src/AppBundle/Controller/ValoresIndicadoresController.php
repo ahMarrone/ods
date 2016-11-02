@@ -41,7 +41,7 @@ class ValoresIndicadoresController extends Controller
      * Crea/Actualiza instancias de ValoresIndicadores.
      *
      * @Route("/new", name="admin_crud_valoresindicadores_new")
-     * @Method({"GET", "POST"})
+     * @Method({"POST"})
      */
     public function newAction(Request $request)
     {
@@ -69,7 +69,8 @@ class ValoresIndicadoresController extends Controller
                 )
         ));
         } else {
-           return $this->redirectToRoute('admin_crud_indicadores_index'); 
+            echo var_dump($this->getRequest()->request->all());
+           //return $this->redirectToRoute('admin_crud_indicadores_index'); 
         }
     }
 

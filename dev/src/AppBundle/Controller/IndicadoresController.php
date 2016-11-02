@@ -24,11 +24,7 @@ class IndicadoresController extends Controller
      */
     public function indexAction()
     {
-        print_r("sopa");
         $em = $this->getDoctrine()->getManager();   
-
-
-
         $indicadores = $em->getRepository('AppBundle:Indicadores')->findAll();
 
         return $this->render('indicadores/index.html.twig', array(

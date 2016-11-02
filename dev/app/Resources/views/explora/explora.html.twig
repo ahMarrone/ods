@@ -11,9 +11,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <style type="text/css">
-    body {
-        padding-top: 150px;
-    }
+    
 
     #map_canvas {
       height: 100%;
@@ -49,43 +47,14 @@
       float: none;
     }
     </style>
-    <!-- Estilo fuente -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet" type="text/css">
-    <!-- Custom styles for this template -->
-    <link href="{{ asset('css/estilo_cncps.css') }}" rel="stylesheet">
-    <link href="http://www.politicassociales.gob.ar/public/css/font-awesome.min.css" rel="stylesheet" >
-    <!-- Estilo del Slider -->
-    <link rel="stylesheet" type="text/css" href="http://www.politicassociales.gob.ar/public/css/styles.css" media="all"/>
+
     
 {% endblock %}
 
 {% block body %}
 
-<header>
-   <div class="container">
-      <div class="row">
-        <div class="col-xs-12 col-sm-7 col-md-6">
-          <div class="logoConsejo pull-left"><a href="http://www.politicassociales.gob.ar/Index"><img class="center-block" alt="Logo Consejo Nacional de Coordinaci&oacute;n de Pol&iacute;ticas Sociales" src="http://www.politicassociales.gob.ar/public/images/LogoConsejo.png"></a></div>
-          <div class="logoPresidencia"><img alt="Logo Presidencia de la Nación" src="http://www.politicassociales.gob.ar/public/images/LogoPresidenciaWhite.png"></div>
-        </div>
-        <div class="col-xs-12 col-sm-5 col-md-6">         
-          <p class="mensajeAnoyFecha">            
-              <strong>
-              2016 - Año del Bicentenario de la Declaración de la Independencia Nacional</strong><br>
-          </p>
-        </div>  
-      </div>
-    </div>  
-</header> 
 
-<nav class="navbar navbar-default navbar-static-top">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="#">
-      </a>
-    </div>
-  </div>
-</nav>
+
 
 
 <div class="container-fluid">

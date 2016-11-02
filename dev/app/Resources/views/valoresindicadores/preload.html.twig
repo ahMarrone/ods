@@ -25,21 +25,20 @@
         </div>
 </div>
 <div class="row" class="col-md-10">
-<form class="form-horizontal">
-    <div>
+<form id="preloaddataForm" action="action_page.php" method="post">
         <div id="selects"></div>
-    </div>
     <div class="form-group">
         <div class="input-group date">
         <label>Fecha</label>
           <input id="valorIndicadorDate" type="text" class="form-control">
         </div>
     </div>
+     <button type="submit" class="btn btn-success">
+ <span class="glyphicon glyphicon-next"></span> Siguiente
+</button>
 </form>
 
-</div>
-<div class="row">
-<button id="saveDataLoaders" type="button" class="btn btn-success pull-left">Siguiente</button>
+
 </div>
 </div>
 
@@ -48,11 +47,11 @@
     $(document).ready(function() {
 
         $('#valorIndicadorDate').datepicker({
-    format: "mm/yyyy",
-    minViewMode: 1,
-    daysOfWeekDisabled: "1,2,3,4,5,6",
-    autoclose: true
-});
+            format: "mm/yyyy",
+            minViewMode: 1,
+            daysOfWeekDisabled: "1,2,3,4,5,6",
+            autoclose: true
+        });
 
         var objetivos = {{ objetivos|json_encode|raw}};
         var metas = {{ metas|json_encode|raw}};
@@ -65,9 +64,19 @@
     	});
     	var view = new ThreeSelectView({el: $("#selects") ,model:model});
 
-        $('#saveDataLoaders').click(function(){
-            alert(model.get('indicador_selected'));
-        });
+        $('#preloaddataForm').submit(function() {
+            alert("sub");
+    // get all the inputs into an array.
+    var $inputs = $('#preloaddataForm :input');
+
+    // not sure if you wanted this, but I thought I'd add it.
+    // get an associative array of just the values.
+    var values = {};
+    $inputs.each(function() {
+        values[this.name] = $(this).val();
+    });
+
+});
 
 
 
