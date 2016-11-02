@@ -1,21 +1,24 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Metas edit</h1>
+
+    <ol class="breadcrumb">
+        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        <li><a href="{{ path('admin_crud_metas_index') }}">Metas</a></li>
+        <li class="active">Edición de meta</a></li>
+    </ol>
+    <div class="page-header">
+          <h1>Editar Meta</h1>
+    </div>
 
     {{ form_start(edit_form) }}
         {{ form_widget(edit_form) }}
-        <input type="submit" value="Edit" />
+        <input class="col-md-1 btn btn-success option-btn" type="submit" value="Editar" />
     {{ form_end(edit_form) }}
 
-    <ul>
-        <li>
-            <a href="{{ path('admin_crud_metas_index') }}">Back to the list</a>
-        </li>
-        <li>
+<div class="row">
             {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
+                <input class="col-md-1 btn btn-danger option-btn" type="submit" value="Eliminar">
             {{ form_end(delete_form) }}
-        </li>
-    </ul>
+</div>
 {% endblock %}

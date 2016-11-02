@@ -1,16 +1,22 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Metas creation</h1>
+
+    <ol class="breadcrumb">
+        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        <li><a href="{{ path('admin_crud_metas_index') }}">Metas</a></li>
+        <li class="active">Nueva meta</a></li>
+    </ol>
+
+    <div class="page-header">
+          <h1>Nueva Meta</h1>
+    </div>
 
     {{ form_start(form) }}
         {{ form_widget(form) }}
-        <input type="submit" value="Create" />
+        <input  class="col-md-1 btn btn-success option-btn"  type="submit" value="Crear" />
     {{ form_end(form) }}
-
-    <ul>
-        <li>
-            <a href="{{ path('admin_crud_metas_index') }}">Back to the list</a>
-        </li>
-    </ul>
+<div class="row">
+            <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_metas_index') }}">Volver atrás</a>
+</div>
 {% endblock %}
