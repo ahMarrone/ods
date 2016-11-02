@@ -8,7 +8,8 @@
         
         /* HEADER */
         header{
-            background-color:#0090D0;
+            /*background-color:#0090D0;*/
+            background-color:#ffff;
             width: 100%;
             top: 0; 
             position: static;
@@ -7818,7 +7819,7 @@
             background-color:#0090D0;
             width: 100%;
             top: 0; 
-            position: fixed;
+            position: static;
             z-index: 1000;
             height: 88px;
         }

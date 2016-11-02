@@ -1,3 +1,38 @@
+body.front .jumbotron {
+    background: #00cc99;
+    background-size: 100% auto;
+}
+.header .jumbotron ul.navbar-nav li a {
+    color: rgb(60,172,144);
+    padding: 0;
+    margin-right: 20px;
+    margin-bottom: 16px;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.jumbotron {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  /*background: #00CC99;*/
+  background: #333;
+  background-size: cover;
+  color: #fff;
+  /*margin-bottom: 0;*/
+}
+
+.header .jumbotron .page-title {
+    text-align: left;
+    font-size: 20px;
+    font-weight: 600;
+    
+}
+.header .jumbotron .page-caption {
+    text-align: left;
+    font-size: 16px;    
+}
+
+
 .infobox {
     font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', sans-serif;
     z-index: 100;
