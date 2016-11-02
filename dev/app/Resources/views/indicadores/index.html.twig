@@ -12,6 +12,7 @@
 <table id="indicadoresTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr>
+                <th>Id</th>
                 <th>Descripcion</th>
                 <th>Tipo</th>
                 <th>Valmin</th>
@@ -20,22 +21,21 @@
                 <th>Visiblenacional</th>
                 <th>Visibleprovincial</th>
                 <th>Visiblemunicipal</th>
-                <th>Id</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
         {% for indicadore in indicadores %}
             <tr>
+                <td>{{ indicadore.id }}</td>
                 <td><a href="{{ path('admin_crud_indicadores_show', { 'id': indicadore.id }) }}">{{ indicadore.descripcion }}</a></td>
                 <td>{{ indicadore.tipo }}</td>
                 <td>{{ indicadore.valmin }}</td>
                 <td>{{ indicadore.valmax }}</td>
                 <td>{{ indicadore.ambito }}</td>
-                <td>{{ indicadore.visiblenacional }}</td>
-                <td>{{ indicadore.visibleprovincial }}</td>
-                <td>{{ indicadore.visiblemunicipal }}</td>
-                <td>{{ indicadore.id }}</td>
+                <td>{{ indicadore.visiblenacional ? "Si" : "No"}}</td>
+                <td>{{ indicadore.visibleprovincial  ? "Si" : "No"}}</td>
+                <td>{{ indicadore.visiblemunicipal  ? "Si" : "No"}}</td>
                 <td>
                     <ul>
                         <li>

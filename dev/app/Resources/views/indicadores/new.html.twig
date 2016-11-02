@@ -9,7 +9,16 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Indicadores creation</h1>
+
+    <ol class="breadcrumb">
+        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        <li><a href="{{ path('admin_crud_indicadores_index') }}">Indicadores</a></li>
+        <li class="active">Nuevo indicador</a></li>
+    </ol>
+
+    <div class="page-header">
+          <h1>Nuevo Indicador</h1>
+    </div>
 
     {{ form_start(form) }}
 
@@ -18,14 +27,13 @@
         </div>
 
         {{ form_widget(form) }}
-        <input type="submit" value="Create" />
+        <input class="col-md-1 btn btn-success option-btn" type="submit" value="Crear" />
     {{ form_end(form) }}
 
-    <ul>
-        <li>
-            <a href="{{ path('admin_crud_indicadores_index') }}">Back to the list</a>
-        </li>
-    </ul>
+<div class="row">
+<a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_index') }}">Volver atrás</a>
+</div>
+
 
 
 <script type="text/javascript">

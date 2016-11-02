@@ -1,60 +1,59 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Indicadores</h1>
 
-    <table>
-        <tbody>
-            <tr>
-                <th>Descripcion</th>
-                <td>{{ indicadore.descripcion }}</td>
-            </tr>
-            <tr>
-                <th>Tipo</th>
-                <td>{{ indicadore.tipo }}</td>
-            </tr>
-            <tr>
-                <th>Valmin</th>
-                <td>{{ indicadore.valmin }}</td>
-            </tr>
-            <tr>
-                <th>Valmax</th>
-                <td>{{ indicadore.valmax }}</td>
-            </tr>
-            <tr>
-                <th>Ambito</th>
-                <td>{{ indicadore.ambito }}</td>
-            </tr>
-            <tr>
-                <th>Visiblenacional</th>
-                <td>{{ indicadore.visiblenacional }}</td>
-            </tr>
-            <tr>
-                <th>Visibleprovincial</th>
-                <td>{{ indicadore.visibleprovincial }}</td>
-            </tr>
-            <tr>
-                <th>Visiblemunicipal</th>
-                <td>{{ indicadore.visiblemunicipal }}</td>
-            </tr>
-            <tr>
-                <th>Id</th>
-                <td>{{ indicadore.id }}</td>
-            </tr>
-        </tbody>
-    </table>
+<ol class="breadcrumb">
+    <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+    <li><a href="{{ path('admin_crud_indicadores_index') }}">Indicadores</a></li>
+    <li class="active">Detalle de indicador</a></li>
+</ol>
 
-    <ul>
-        <li>
-            <a href="{{ path('admin_crud_indicadores_index') }}">Back to the list</a>
-        </li>
-        <li>
-            <a href="{{ path('admin_crud_indicadores_edit', { 'id': indicadore.id }) }}">Edit</a>
-        </li>
-        <li>
+    <div class="page-header">
+          <h1>Detalle de Indicador</h1>
+    </div>
+
+<dl class="dl-horizontal">
+    <dt>Id</dt>
+    <dd>{{ indicadore.id }}</dd>
+</dl>
+<dl class="dl-horizontal">
+    <dt>Descripcion</dt>
+    <dd>{{ indicadore.descripcion }}</dd>
+</dl>
+<dl class="dl-horizontal">
+    <dt>Tipo</dt>
+    <dd>{{ indicadore.tipo }}</dd>
+</dl>
+<dl class="dl-horizontal">
+    <dt>Valor mínimo</dt>
+    <dd>{{ indicadore.valmin }}</dd>
+</dl>
+<dl class="dl-horizontal">
+    <dt>Valor máximo</dt>
+    <dd>{{ indicadore.valmax }}</dd>
+</dl>
+<dl class="dl-horizontal">
+    <dt>Ámbito</dt>
+    <dd>{{ indicadore.ambito }}</dd>
+</dl>
+<dl class="dl-horizontal">
+    <dt>Visible Nacional</dt>
+    <dd>{{ indicadore.visiblenacional  ? "Si" : "No"}}</dd>
+</dl>
+<dl class="dl-horizontal">
+    <dt>Visible Provincial</dt>
+    <dd>{{ indicadore.visiblenacional  ? "Si" : "No"}}</dd>
+</dl>
+<dl class="dl-horizontal">
+    <dt>Visible Municipal</dt>
+    <dd>{{ indicadore.visiblemunicipal ? "Si" : "No"}}</dd>
+</dl>
+
+<div class="row">
+            <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_index') }}">Volver atrás</a>
+            <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_edit', { 'id': indicadore.id }) }}">Editar</a>
             {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
+                <input class="col-md-1 btn btn-danger option-btn" type="submit" value="Eliminar">
             {{ form_end(delete_form) }}
-        </li>
-    </ul>
+
 {% endblock %}
