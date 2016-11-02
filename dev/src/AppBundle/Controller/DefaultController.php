@@ -28,9 +28,6 @@ class DefaultController extends Controller
     {
         // replace this example code with whatever you need
         // return $this->render('explora/indicadores.html.twig', array(
-        return $this->render('explora/explora.html.twig', array(
-            'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
-            'usuario' => "tolosoft",
-        ));
+        return $this->render('explora/explora.html.twig', array());
     }
 }
