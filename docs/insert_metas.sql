@@ -1,3 +1,4 @@
+USE `indicadores_ods`;
 INSERT INTO metas (descripcion, fkIdObjetivo) VALUES ('1.1 Para 2030, erradicar la pobreza extrema para todas las personas en el mundo, actualmente medida por un ingreso por persona inferior a 1.25 dólares de los Estados Unidos al día',1);
 INSERT INTO metas (descripcion, fkIdObjetivo) VALUES ('1.2 Para 2030, reducir al menos a la mitad la proporción de hombres, mujeres y niños de todas las edades que viven en la pobreza en todas sus dimensiones con arreglo a las definiciones nacionales',1);
 INSERT INTO metas (descripcion, fkIdObjetivo) VALUES ('1.3 Poner en práctica a nivel nacional sistemas y medidas apropiadas de protección social para todos, incluidos niveles mínimos, y, para 20 30, lograr una amplia cobertura de los pobres y los vulnerables',1);

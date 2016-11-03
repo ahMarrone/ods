@@ -1,3 +1,5 @@
+USE `indicadores_ods`;
+
 SET FOREIGN_KEY_CHECKS = 0;
 DELETE FROM objetivos;
 INSERT INTO objetivos (id, descripcion) VALUES (1,'Poner fin a la pobreza en todas sus formas en todo el mundo');
