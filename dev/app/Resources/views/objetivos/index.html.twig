@@ -23,14 +23,10 @@
                 <td>{{ objetivo.id }}</td>
                 <td><a href="{{ path('admin_crud_objetivos_show', { 'id': objetivo.id }) }}">{{ objetivo.descripcion }}</a></td>
                 <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('admin_crud_objetivos_show', { 'id': objetivo.id }) }}">mostrar</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('admin_crud_objetivos_edit', { 'id': objetivo.id }) }}">editar</a>
-                        </li>
-                    </ul>
+
+                    <a class="btn btn-primary" title="Ver" href="{{ path('admin_crud_objetivos_show', { 'id': objetivo.id }) }}"><i class="fa fa-eye fa-fw" aria-hidden="true"></i></a>
+                    <a class="btn btn-warning" title="Editar" href="{{ path('admin_crud_objetivos_edit', { 'id': objetivo.id }) }}"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
+
                 </td>
             </tr>
         {% endfor %}

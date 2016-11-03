@@ -6,7 +6,7 @@
         <li class="active">Valores de indicadores</a></li>
     </ol>
     <div class="page-header">
-          <h1>Lista de valores de indicadores</h1>
+          <h1>Valores de indicadores</h1>
     </div>
 
 <table id="valoresindicadoresTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -22,14 +22,14 @@
 	</tr>
 	</thead>
 	{% for valorindicador in valoresindicadores %}
-	<tr>
+	<tr class="{{ valorindicador.aprobado ?  'success' : 'danger'}}">
 		<td>{{ valorindicador.idIndicador }}</td>
 		<td>{{ valorindicador.idEtiqueta }}</td>
 		<td>{{ valorindicador.idRefgeografica }}</td>
 		<td>{{ valorindicador.fecha|date("m/d/Y") }}</td>
 		<td>{{ valorindicador.valor }}</td>
-		<td>{{ valorindicador.aprobado }}</td>
-		<td>accion 1</td>
+		<td>{{ valorindicador.aprobado ? "Si" : "No"}}</td>
+		<td></td>
 	</tr>
 	{% endfor %}
 </table>
