@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Usuarios" table="usuarios">
+    <unique-constraints>
+      <unique-constraint name="username" columns="username"/>
+    </unique-constraints>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="username" type="string" column="username" length="20" nullable="false"/>
+    <field name="apellido" type="string" column="apellido" length="20" nullable="false"/>
+    <field name="nombre" type="string" column="nombre" length="20" nullable="false"/>
+    <field name="email" type="string" column="email" length="50" nullable="false"/>
+    <field name="domicilio" type="string" column="domicilio" length="50" nullable="false"/>
+    <field name="localidad" type="string" column="localidad" length="50" nullable="false"/>
+    <field name="provincia" type="string" column="provincia" length="30" nullable="false"/>
+    <field name="telefono" type="string" column="telefono" length="30" nullable="false"/>
+    <field name="dependencia" type="string" column="dependencia" length="50" nullable="false"/>
+    <field name="observaciones" type="string" column="observaciones" length="255" nullable="false"/>
+    <field name="rol" type="string" column="rol" length="10" nullable="false"/>
+    <field name="isactive" type="boolean" column="isactive" nullable="false"/>
+    <many-to-many field="idRefgeografica" target-entity="Refgeografica" inversed-by="idUsuario">
+      <join-table name="usuariosrefgeografica">
+        <join-columns>
+          <join-column name="id_usuario" referenced-column-name="id"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="id_refGeografica" referenced-column-name="id"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+  </entity>
+</doctrine-mapping>
