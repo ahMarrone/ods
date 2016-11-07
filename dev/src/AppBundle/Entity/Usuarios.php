@@ -1,3 +1,4 @@
+
 <?php
 // src/AppBundle/Entity/Usuarios.php
 
@@ -18,3 +19,4 @@ class Usuarios extends BaseUser
         // your own logic
     }
 }
+
