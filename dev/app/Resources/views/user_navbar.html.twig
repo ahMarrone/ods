@@ -1,0 +1,8 @@
+{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+<li><a href="{{ path('paneluser_index') }}"><i class="fa fa-bars"></i>  Panel de usuario</a></li>
+<li><a href="{{ path('fos_user_profile_show') }}"><i class="fa fa-user"></i>   Mi Perfil</a></li>
+<li role="separator" class="divider"></li>
+<li><a href="{{ path('fos_user_security_logout') }}"><i class="fa fa-sign-out"></i>   Logout</a></li>
+{% else %}
+	<li><a href="{{ path('fos_user_security_login') }}"><i class="fa fa-sign-in"></i>   Login</a></li>
+{% endif %}

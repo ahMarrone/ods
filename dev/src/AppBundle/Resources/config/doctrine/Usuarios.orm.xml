@@ -9,5 +9,13 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
+    <field name="apellido" type="string" column="apellido" length="50" nullable="false"/>
+    <field name="nombre" type="string" column="nombre" length="50" nullable="false"/>
+    <field name="domicilio" type="string" column="domicilio" length="100" nullable="false"/>
+    <field name="localidad" type="string" column="localidad" length="100" nullable="false"/>
+    <field name="provincia" type="string" column="provincia" length="100" nullable="false"/>
+    <field name="telefono" type="string" column="telefono" length="50" nullable="false"/>
+    <field name="dependencia" type="string" column="dependencia" length="100" nullable="false"/>
+    <field name="observaciones" type="string" column="observaciones" length="255" nullable="true"/>
   </entity>
 </doctrine-mapping>

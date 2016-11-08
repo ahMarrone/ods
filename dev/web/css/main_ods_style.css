@@ -15,6 +15,10 @@ body {
   margin-right: 2px;
 }
 
+.navbar-default .navbar-nav>li>a{
+  color:#FFFFFF;
+}
+
 
 
 body {
