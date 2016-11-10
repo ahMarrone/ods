@@ -24,6 +24,13 @@ class Metas
      */
     private $fkidobjetivo;
 
+
+    /**
+    * @var string
+    */
+    private $ido;
+
+
     /**
      * Set descripcion
      *
@@ -86,61 +93,14 @@ class Metas
 
 
 
-    
     /**
-     * @var string
-     */
-    private $fechamodificacion;
-
-    /**
-     * @var \AppBundle\Entity\Usuarios
-     */
-    private $idusuario;
-
-
-    /**
-     * Set fechamodificacion
+     * Get fkidobjetivo
      *
-     * @param string $fechamodificacion
-     * @return Metas
+     * @return string
      */
-    public function setFechamodificacion($fechamodificacion)
+    public function getIdobjetivo_str()
     {
-        $this->fechamodificacion = $fechamodificacion;
-
-        return $this;
-    }
-
-    /**
-     * Get fechamodificacion
-     *
-     * @return string 
-     */
-    public function getFechamodificacion()
-    {
-        return $this->fechamodificacion;
-    }
-
-    /**
-     * Set idusuario
-     *
-     * @param \AppBundle\Entity\Usuarios $idusuario
-     * @return Metas
-     */
-    public function setIdusuario(\AppBundle\Entity\Usuarios $idusuario = null)
-    {
-        $this->idusuario = $idusuario;
-
-        return $this;
-    }
-
-    /**
-     * Get idusuario
-     *
-     * @return \AppBundle\Entity\Usuarios 
-     */
-    public function getIdusuario()
-    {
-        return $this->idusuario;
+        $this->ido = (string) $this->fkidobjetivo;
+        return $this->ido;
     }
 }

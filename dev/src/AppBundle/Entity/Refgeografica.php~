@@ -108,4 +108,8 @@ class Refgeografica
     {
         return $this->id;
     }
+
+    public function __toString(){
+        return (string) $this->getId() . ' - ' . substr($this->getDescripcion(), 0, 20);
+    }
 }

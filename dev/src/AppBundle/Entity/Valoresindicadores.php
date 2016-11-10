@@ -179,4 +179,60 @@ class Valoresindicadores
         return $this->idrefgeografica;
     }
 
+    /**
+     * @var string
+     */
+    private $fechamodificacion;
+
+    /**
+     * @var \AppBundle\Entity\Usuarios
+     */
+    private $idusuario;
+
+
+    /**
+     * Set fechamodificacion
+     *
+     * @param string $fechamodificacion
+     * @return Valoresindicadores
+     */
+    public function setFechamodificacion($fechamodificacion)
+    {
+        $this->fechamodificacion = $fechamodificacion;
+
+        return $this;
+    }
+
+    /**
+     * Get fechamodificacion
+     *
+     * @return string 
+     */
+    public function getFechamodificacion()
+    {
+        return $this->fechamodificacion;
+    }
+
+    /**
+     * Set idusuario
+     *
+     * @param \AppBundle\Entity\Usuarios $idusuario
+     * @return Valoresindicadores
+     */
+    public function setIdusuario(\AppBundle\Entity\Usuarios $idusuario = null)
+    {
+        $this->idusuario = $idusuario;
+
+        return $this;
+    }
+
+    /**
+     * Get idusuario
+     *
+     * @return \AppBundle\Entity\Usuarios 
+     */
+    public function getIdusuario()
+    {
+        return $this->idusuario;
+    }
 }

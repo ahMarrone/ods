@@ -19,10 +19,6 @@ class Refgeografica
      */
     private $ambito;
 
-    /**
-     * @var integer
-     */
-    private $agrupa;
 
     /**
      * @var integer
@@ -77,29 +73,6 @@ class Refgeografica
     }
 
     /**
-     * Set agrupa
-     *
-     * @param integer $agrupa
-     * @return Refgeografica
-     */
-    public function setAgrupa($agrupa)
-    {
-        $this->agrupa = $agrupa;
-
-        return $this;
-    }
-
-    /**
-     * Get agrupa
-     *
-     * @return integer 
-     */
-    public function getAgrupa()
-    {
-        return $this->agrupa;
-    }
-
-    /**
      * Get id
      *
      * @return integer 
@@ -111,5 +84,89 @@ class Refgeografica
 
     public function __toString(){
         return (string) $this->getId() . ' - ' . substr($this->getDescripcion(), 0, 20);
+    }
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $idUsuario;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $id1;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->idUsuario = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->id1 = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add idUsuario
+     *
+     * @param \AppBundle\Entity\Usuarios $idUsuario
+     * @return Refgeografica
+     */
+    public function addIdUsuario(\AppBundle\Entity\Usuarios $idUsuario)
+    {
+        $this->idUsuario[] = $idUsuario;
+
+        return $this;
+    }
+
+    /**
+     * Remove idUsuario
+     *
+     * @param \AppBundle\Entity\Usuarios $idUsuario
+     */
+    public function removeIdUsuario(\AppBundle\Entity\Usuarios $idUsuario)
+    {
+        $this->idUsuario->removeElement($idUsuario);
+    }
+
+    /**
+     * Get idUsuario
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getIdUsuario()
+    {
+        return $this->idUsuario;
+    }
+
+    /**
+     * Add id1
+     *
+     * @param \AppBundle\Entity\Refgeografica $id1
+     * @return Refgeografica
+     */
+    public function addId1(\AppBundle\Entity\Refgeografica $id1)
+    {
+        $this->id1[] = $id1;
+
+        return $this;
+    }
+
+    /**
+     * Remove id1
+     *
+     * @param \AppBundle\Entity\Refgeografica $id1
+     */
+    public function removeId1(\AppBundle\Entity\Refgeografica $id1)
+    {
+        $this->id1->removeElement($id1);
+    }
+
+    /**
+     * Get id1
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getId1()
+    {
+        return $this->id1;
     }
 }
