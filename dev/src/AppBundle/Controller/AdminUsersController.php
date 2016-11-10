@@ -15,16 +15,21 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class AdminUsersController extends Controller
 {
 
-	/**
-     * ABM de usuarios
+    /**
+     * Lists all Usuarios entities.
      *
-     * @Route("/", name="users_admin")
+     * @Route("/", name="admin_users_index")
      * @Method("GET")
      */
     public function indexAction()
     {
+        $em = $this->getDoctrine()->getManager();
 
-        return $this->render('useradmin/index.html.twig', array());
+        $usuarios = $em->getRepository('AppBundle:Usuarios')->findAll();
+
+        return $this->render('useradmin/index.html.twig', array(
+            'usuarios' => $usuarios,
+        ));
     }
 
 

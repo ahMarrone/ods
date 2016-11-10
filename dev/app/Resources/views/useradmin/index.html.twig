@@ -2,8 +2,66 @@
 
 {% block body %}
 
-<div class="page-header">
-  <h1>Lista de usuarios</h1>
-</div>
+<ol class="breadcrumb">
+    <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+    <li class="active">Administrar usuarios</li>
+</ol>
+
+     <div class="page-header">
+          <h1>Administrar Usuarios</h1>
+    </div>
+
+
+<table id="usuariosTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Apellido</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Dependencia</th>
+                <th>Rol</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for usuario in usuarios %}
+            <tr>
+                <td><a href="{{ path('fos_user_profile_show')}}">{{ usuario.username }}</a></td>
+                <td>{{ usuario.apellido }}</td>
+                <td>{{ usuario.nombre }}</td>
+                <td>{{ usuario.email }}</td>
+                <td>{{ usuario.dependencia }}</td>
+                <td>
+                {% for role in usuario.roles %}
+  					{{ role }}
+				{% endfor %}
+                </td>
+                <td>
+                    <ul>
+                        <li>
+                            
+                        </li>
+                        <li>
+                            
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+            
+    <a class="btn btn-success" href="{{ path('fos_user_registration_register') }}">Registrar nuevo usuario</a>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+    $('#usuariosTable').DataTable({
+         "language": {
+            "url": "/lang/datatables_spanish.json"
+        }
+    });
+} );
+</script>
 
 {% endblock %}
