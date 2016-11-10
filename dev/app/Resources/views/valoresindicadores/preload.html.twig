@@ -20,17 +20,22 @@
 
 <div class="container">
 <div class="row">
+    <ol class="breadcrumb">
+        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        <li class="active">Precarga valores indicadores</a></li>
+    </ol>
+
     <div class="page-header">
           <h1>Carga de valores indicadores <small></small></h1>
         </div>
 </div>
 <div class="row" class="col-md-10">
-<form id="preloaddataForm" action="action_page.php" method="post">
+<form id="preloaddataForm" action="{{ path('admin_crud_valoresindicadores_new') }}" method="post">
         <div id="selects"></div>
     <div class="form-group">
         <div class="input-group date">
         <label>Fecha</label>
-          <input id="valorIndicadorDate" type="text" class="form-control">
+          <input id="valorIndicadorDate" name="fecha" type="text" class="form-control">
         </div>
     </div>
      <button type="submit" class="btn btn-success">
@@ -47,7 +52,7 @@
     $(document).ready(function() {
 
         $('#valorIndicadorDate').datepicker({
-            format: "mm/yyyy",
+            format: "yyyy-mm-dd",
             minViewMode: 1,
             daysOfWeekDisabled: "1,2,3,4,5,6",
             autoclose: true
@@ -63,20 +68,6 @@
     		'indicadores': indicadores
     	});
     	var view = new ThreeSelectView({el: $("#selects") ,model:model});
-
-        $('#preloaddataForm').submit(function() {
-            alert("sub");
-    // get all the inputs into an array.
-    var $inputs = $('#preloaddataForm :input');
-
-    // not sure if you wanted this, but I thought I'd add it.
-    // get an associative array of just the values.
-    var values = {};
-    $inputs.each(function() {
-        values[this.name] = $(this).val();
-    });
-
-});
 
 
 
