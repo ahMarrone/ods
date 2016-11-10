@@ -47,12 +47,6 @@
             'metas': metas
         });
         var view = new ThreeSelectView({el: $("#selects") ,model:model});
-
-        $('form[name="indicadores"]').submit(function() {
-            var meta = model.get('meta_selected');
-            $('form #indicadores_fkidmeta').val(meta)
-
-        });
     });
 </script>
 

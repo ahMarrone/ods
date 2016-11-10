@@ -42,10 +42,9 @@ class IndicadoresController extends Controller
     {
         $indicadore = new Indicadores();
         $params = $this->getRequest()->request->all();
-        //echo var_dump($params);
-        if (isset($params["indicadores"]['fkidmeta'])){
+        if (isset($params['id_meta_selected'])){
             //echo "ESTAAAAA";
-            $meta = $this->getDoctrine()->getRepository('AppBundle:Metas')->findOneById($params["indicadores"]['fkidmeta']);
+            $meta = $this->getDoctrine()->getRepository('AppBundle:Metas')->findOneById($params["id_meta_selected"]);
             //echo $meta->getId();
             $indicadore->setFkidmeta($meta);
         }
