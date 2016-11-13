@@ -43,9 +43,7 @@ class IndicadoresController extends Controller
         $indicadore = new Indicadores();
         $params = $this->getRequest()->request->all();
         if (isset($params['id_meta_selected'])){
-            //echo "ESTAAAAA";
             $meta = $this->getDoctrine()->getRepository('AppBundle:Metas')->findOneById($params["id_meta_selected"]);
-            //echo $meta->getId();
             $indicadore->setFkidmeta($meta);
         }
         $form = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore);
@@ -53,7 +51,7 @@ class IndicadoresController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            
+            $this->addIndicadorMetadata($indicadore);
             $em = $this->getDoctrine()->getManager();
             $em->persist($indicadore);
             $em->flush();
@@ -121,6 +119,7 @@ class IndicadoresController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $this->addIndicadorMetadata($indicadore);
             $em = $this->getDoctrine()->getManager();
             $em->persist($indicadore);
             $em->flush();
@@ -169,5 +168,10 @@ class IndicadoresController extends Controller
             ->setMethod('DELETE')
             ->getForm()
         ;
+    }
+
+    private function addIndicadorMetadata(&$indicador){
+        $indicador->setIdusuario($this->getUser());
+        $indicador->setFechamodificacion(date_format(new \DateTime(), 'Y-m-d H:i:s'));
     }
 }

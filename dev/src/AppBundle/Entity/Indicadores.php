@@ -280,4 +280,105 @@ class Indicadores
     public function __toString(){
         return (string) $this->getId() . ' - ' . substr($this->getDescripcion(), 0, 20);
     }
+    /**
+     * @var \DateTime
+     */
+    private $fechamodificacion;
+
+    /**
+     * @var \AppBundle\Entity\Usuarios
+     */
+    private $idusuario;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $iddesgloce;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->iddesgloce = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Set fechamodificacion
+     *
+     * @param \DateTime $fechamodificacion
+     * @return Indicadores
+     */
+    public function setFechamodificacion($fechamodificacion)
+    {
+        $this->fechamodificacion = $fechamodificacion;
+
+        return $this;
+    }
+
+    /**
+     * Get fechamodificacion
+     *
+     * @return \DateTime 
+     */
+    public function getFechamodificacion()
+    {
+        return $this->fechamodificacion;
+    }
+
+    /**
+     * Set idusuario
+     *
+     * @param \AppBundle\Entity\Usuarios $idusuario
+     * @return Indicadores
+     */
+    public function setIdusuario(\AppBundle\Entity\Usuarios $idusuario = null)
+    {
+        $this->idusuario = $idusuario;
+
+        return $this;
+    }
+
+    /**
+     * Get idusuario
+     *
+     * @return \AppBundle\Entity\Usuarios 
+     */
+    public function getIdusuario()
+    {
+        return $this->idusuario;
+    }
+
+    /**
+     * Add iddesgloce
+     *
+     * @param \AppBundle\Entity\Desgloces $iddesgloce
+     * @return Indicadores
+     */
+    public function addIddesgloce(\AppBundle\Entity\Desgloces $iddesgloce)
+    {
+        $this->iddesgloce[] = $iddesgloce;
+
+        return $this;
+    }
+
+    /**
+     * Remove iddesgloce
+     *
+     * @param \AppBundle\Entity\Desgloces $iddesgloce
+     */
+    public function removeIddesgloce(\AppBundle\Entity\Desgloces $iddesgloce)
+    {
+        $this->iddesgloce->removeElement($iddesgloce);
+    }
+
+    /**
+     * Get iddesgloce
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getIddesgloce()
+    {
+        return $this->iddesgloce;
+    }
 }
