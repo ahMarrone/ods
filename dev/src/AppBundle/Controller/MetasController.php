@@ -46,6 +46,7 @@ class MetasController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->addMetaMetadata($meta);
             $em = $this->getDoctrine()->getManager();
             $em->persist($meta);
             $em->flush();
@@ -88,6 +89,7 @@ class MetasController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $this->addMetaMetadata($meta);
             $em = $this->getDoctrine()->getManager();
             $em->persist($meta);
             $em->flush();
@@ -136,5 +138,11 @@ class MetasController extends Controller
             ->setMethod('DELETE')
             ->getForm()
         ;
+    }
+
+
+    private function addMetaMetadata(&$meta){
+        $meta->setIdusuario($this->getUser());
+        $meta->setFechamodificacion(date_format(new \DateTime(), 'Y-m-d H:i:s'));
     }
 }
