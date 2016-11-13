@@ -45,9 +45,10 @@ class ValoresIndicadoresController extends Controller
      */
     public function newAction(Request $request)
     {
-        $idIndicador =  $request->query->get('id_indicador', NULL);
-        $fecha =  $request->query->get('fecha', NULL);
-        if ($idIndicador){
+        $params = $this->getRequest()->request->all();
+        $idIndicador = (isset($params["id_indicador_selected"])) ? $params["id_indicador_selected"] : NULL;
+        $fecha =  (isset($params["fecha"])) ? $params["fecha"] : NULL;
+        if ($idIndicador && $fecha){
             $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findById($idIndicador)[0];
             $indicadorDesgloces = $this->getDoctrine()->getRepository('AppBundle:Desglocesindicadores')->findByIdindicador($idIndicador);
             //$desglocesEtiquetas =  $this->getEtiquetasDesgloce($indicadorDesgloces);
@@ -80,6 +81,8 @@ class ValoresIndicadoresController extends Controller
             $data = array(
                 'id_etiqueta' => $vi->getIdetiqueta(),
                 'id_ref_geografica' => $vi->getIdrefgeografica()->getId(),
+                'user' => $vi->getIdUsuario()->getUsernameCanonical(),
+                'dateModif' => $vi->getFechamodificacion(),
                 'valor' => $vi->getValor(),
             );
             array_push($ret, $data);
@@ -157,6 +160,7 @@ class ValoresIndicadoresController extends Controller
     // Realiza transaccion para guardar/actualizar las tuplas
     // en la tabla valoresindicadores
     private function initSaveObjects($data){
+        $userLogued = $this->getUser();
         $idIndicador = $data["id_indicador"];
         $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
         $etiquetasMemoization = array();
@@ -166,10 +170,12 @@ class ValoresIndicadoresController extends Controller
         $response = array("success"=>false);
         try {
             $em->getConnection()->beginTransaction();
+            $fechaModif = date_format(new \DateTime(), 'Y-m-d H:i:s');
             foreach ($objects as $refId => $refGeograficaObjects){
                 $refgeografica = $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findOneById($refId);
                 foreach ($refGeograficaObjects as $valorIndicadorData) { 
                     $vi = new Valoresindicadores();
+                    $vi->setIdusuario($userLogued);
                     $vi->setValor($valorIndicadorData["value"]);
                     $vi->setIdEtiqueta($valorIndicadorData["id_etiqueta"]);
                     $vi->setIdindicador($indicador);
@@ -177,12 +183,15 @@ class ValoresIndicadoresController extends Controller
                     $vi->setAprobado(false);
                     $date = new \DateTime($fecha);
                     $vi->setFecha(date_format($date, 'Y-m-d'));
+                    $vi->setFechamodificacion($fechaModif);
                     $em->merge($vi); // persisto valorindicador
                 }
             }
             $em->flush();
             $em->getConnection()->commit();
             $response["success"] = true;
+            $response["user"] = $userLogued->getUsernameCanonical();
+            $response["dateModif"] = $fechaModif;
         } catch (\Exception $e) {
             $em->getConnection()->rollback();
             $response["success"] = false;
