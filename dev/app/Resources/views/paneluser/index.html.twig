@@ -30,22 +30,40 @@
 		</div>
 	</div>
 	<div class="row">
+    <div class="col-md-1">
       <a class="quick-btn" href="{{ path('admin_crud_objetivos_index') }}">
         <i class="fa fa-globe fa-3x"></i>
         <span>Objetivos</span> 
         <span class="label label-primary">{{stats.objetivos_count}}</span>
       </a>
+  </div>
+    <div class="col-md-1">
       <a class="quick-btn" href="{{ path('admin_crud_metas_index') }}">
         <i class="fa fa-map-o fa-3x"></i>
         <span>Metas</span> 
         <span class="label label-warning">{{stats.metas_count}}</span>
       </a>
+    </div>
+      <div class="col-md-1">
       <a class="quick-btn" href="{{ path('admin_crud_indicadores_index') }}">
         <i class="fa fa-map fa-3x"></i>
         <span>Indicadores</span> 
         <span class="label label-success">{{stats.indicadores_count}}</span>
       </a>
-	</div>
+    </div>
+          <div class="col-md-1  col-md-offset-1">
+      <a class="quick-btn" href="{{ path('admin_crud_desgloces_index') }}">
+        <i class="fa fa-pencil fa-3x"></i>
+        <span>Desgloces</span> 
+      </a>
+     </div>
+      <div class="col-md-1">
+      <a class="quick-btn" href="{{ path('admin_crud_etiquetas_index') }}">
+        <i class="fa fa-tags fa-3x"></i>
+        <span>Etiquetas</span> 
+      </a>
+    </div>
+
 </div>
 <div class="row"> 
 <div class="panel-section">
