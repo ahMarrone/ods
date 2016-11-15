@@ -1,16 +1,15 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <ol class="breadcrumb">
+        <ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
-        <li><a href="{{ path('admin_crud_desgloces_index') }}">Desgloces</a></li>
-        <li class="active">Edición de desgloce</a></li>
+        <li><a href="{{ path('admin_crud_desgloces_index') }}">Etiquetas</a></li>
+        <li class="active">Edición de etiqueta</a></li>
     </ol>
 
      <div class="page-header">
-          <h1>Editar Desgloce</h1>
+          <h1>Editar Etiqueta</h1>
     </div>
-
 
     {{ form_start(edit_form) }}
         {{ form_widget(edit_form) }}

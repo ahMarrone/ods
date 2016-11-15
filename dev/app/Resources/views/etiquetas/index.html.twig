@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+        <ol class="breadcrumb">
+        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        <li class="active">Etiquetas</a></li>
+    </ol>
+    <div class="page-header">
+          <h1>Etiquetas</h1>
+    </div>
+
+    <table id="etiquetasTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Descripcion</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for etiqueta in etiquetas %}
+            <tr>
+                <td>{{ etiqueta.id }}</td>
+                <td><a href="{{ path('admin_crud_etiquetas_show', { 'id': etiqueta.id }) }}">{{ etiqueta.descripcion }}</a></td>
+                <td>
+                    <a class="btn btn-primary" title="Ver" href="{{ path('admin_crud_etiquetas_show', { 'id': etiqueta.id }) }}"><i class="fa fa-eye fa-fw" aria-hidden="true"></i></a>
+                    <a class="btn btn-warning" title="Editar" href="{{ path('admin_crud_etiquetas_edit', { 'id': etiqueta.id }) }}"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-success" href="{{ path('admin_crud_etiquetas_new') }}">Crear nueva Etiqueta</a>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+    $('#etiquetasTable').DataTable({
+         "language": {
+            "url": "/lang/datatables_spanish.json"
+        }
+    });
+} );
+</script>
+
+
+{% endblock %}
