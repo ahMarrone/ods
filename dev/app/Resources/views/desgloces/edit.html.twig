@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        <li><a href="{{ path('admin_crud_desgloces_index') }}">Desgloces</a></li>
+        <li class="active">Edición de dsgloce</a></li>
+    </ol>
+
+     <div class="page-header">
+          <h1>Editar Desgloce</h1>
+    </div>
+
+
+    {{ form_start(edit_form) }}
+        {{ form_widget(edit_form) }}
+        <input class="col-md-1 btn btn-success option-btn" type="submit" value="Editar" />
+    {{ form_end(edit_form) }}
+
+<div class="row">
+            {{ form_start(delete_form) }}
+                <input class="col-md-1 btn btn-danger option-btn" type="submit" value="Eliminar">
+            {{ form_end(delete_form) }}
+</div>
+{% endblock %}

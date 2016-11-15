@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        <li class="active">Desgloces</a></li>
+    </ol>
+    <div class="page-header">
+          <h1>Desgloces</h1>
+    </div>
+
+    <table id="desglocesTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for desgloce in desgloces %}
+            <tr>
+                <td>{{ desgloce.id }}</td>
+                <td><a href="{{ path('admin_crud_desgloces_show', { 'id': desgloce.id }) }}">{{ desgloce.descripcion }}</a></td>
+                <td>
+                    <a class="btn btn-primary" title="Ver" href="{{ path('admin_crud_desgloces_show', { 'id': desgloce.id }) }}"><i class="fa fa-eye fa-fw" aria-hidden="true"></i></a>
+                    <a class="btn btn-warning" title="Editar" href="{{ path('admin_crud_desgloces_edit', { 'id': desgloce.id }) }}"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+     <a class="btn btn-success" href="{{ path('admin_crud_desgloces_new') }}">Crear nuevo Desgloce</a>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+    $('#desglocesTable').DataTable({
+         "language": {
+            "url": "/lang/datatables_spanish.json"
+        }
+    });
+} );
+</script>
+{% endblock %}

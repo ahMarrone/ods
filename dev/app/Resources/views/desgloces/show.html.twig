@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        <li><a href="{{ path('admin_crud_desgloces_index') }}">Desgloces</a></li>
+        <li class="active">Detalle de desgloce</a></li>
+    </ol>
+    <div class="page-header">
+          <h1>Detalle de Desgloce</h1>
+    </div>
+
+<dl class="dl-horizontal">
+  <dt>Descripcion</dt>
+  <dd>{{ desgloce.descripcion }}</dd>
+</dl>
+<dl class="dl-horizontal">
+  <dt>Id</dt>
+  <dd>{{ desgloce.id }}</dd>
+</dl>
+
+
+    <div class="row">
+            <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_desgloces_index') }}">Volver atrás</a>
+            <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_desgloces_edit', { 'id': desgloce.id }) }}">Editar</a>
+            {{ form_start(delete_form) }}
+
+                <input class="btn btn-danger col-md-1 option-btn" type="submit" value="Eliminar">
+            {{ form_end(delete_form) }}
+</div>
+{% endblock %}
