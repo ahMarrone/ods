@@ -8,6 +8,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use AppBundle\Entity\Desglocesindicadores;
 use AppBundle\Entity\Desgloces;
+use AppBundle\Entity\Etiquetas;
+
 //use AppBundle\Form\IndicadoresType;
 
 /**
@@ -29,9 +31,32 @@ class DesglocesPorIndicadorController extends Controller
         $em = $this->getDoctrine()->getManager();
         $desgloces = $em->getRepository('AppBundle:Desgloces')->findAll();
         $indicador = $em->getRepository('AppBundle:Indicadores')->findOneById($id_indicador);
+        $etiquetas = $em->getRepository('AppBundle:Etiquetas')->findAll();
+
+        /*var_dump($etiquetas);
+        echo "<hr>";
+        print $etiquetas[1]->getId() ;
+        echo "<hr>";
+        #print $etiquetas[0].getDescripcion();
+        echo "<hr>";
+        */
+        $etiquetas_desgloces = array();
+
+        foreach ($etiquetas as $key => $value) {
+            $etiqueta_descripcion = $value->getDescripcion();
+            $idDesgloce = $value->getFkiddesgloce()->getId();
+            if (isset($etiquetas_desgloces[$idDesgloce]))
+            {
+                $etiquetas_desgloces[$idDesgloce] = $etiquetas_desgloces[$idDesgloce] . " [" . $etiqueta_descripcion . "]"; 
+            }
+            else
+            {
+                $etiquetas_desgloces[$idDesgloce] = "[" . $etiqueta_descripcion . "]";
+            }
+        }
 
         $form = $this->createForm('AppBundle\Form\DesglocesPorIndicadorType', $desgloces, array('idIndicador' => $indicador,
-            'method' => 'GET',)
+            'method' => 'GET', 'label' => $etiquetas_desgloces)
         );
         $form->handleRequest($request);
 

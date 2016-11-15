@@ -24,9 +24,23 @@ class DesglocesPorIndicadorType extends AbstractType
     {
         $this_indicador = $options['idIndicador'];
         $choice_desgloces = array();
+
+
+        $all_etiquetas = $options['label'];
+        //var_dump($this_etiquetas);
+
+
+
         foreach ($options['data'] as $key => $value) {
-            $newkey = $value->getId() . ". ". $value->getDescripcion();
-            $choice_desgloces[$key]=$newkey;
+            $this_id = $value->getId();
+            $newkey = $this_id . ". ". $value->getDescripcion();
+
+            $this_etiquetas = "";
+            if (isset($all_etiquetas[$this_id]))
+            {
+                $this_etiquetas = " " . $all_etiquetas[$this_id];
+            }
+            $choice_desgloces[$key]="". $newkey . $this_etiquetas;
         }
          
         $builder
