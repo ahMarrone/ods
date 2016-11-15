@@ -20,6 +20,13 @@ body {
 }
 
 
+tfoot input {
+        width: 100%;
+        padding: 3px;
+        box-sizing: border-box;
+}
+
+
 
 body {
   transition: all 0.3s ease-in-out;

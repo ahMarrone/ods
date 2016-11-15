@@ -9,39 +9,180 @@
           <h1>Valores de indicadores</h1>
     </div>
 
+
+
+<div class="row">
 <table id="valoresindicadoresTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
 	<thead>
 	<tr>
+		<th>ID Indicador</th>
+		<th>ID Etiqueta</th>
+		<th>ID Usuario</th>	
+		<th>ID Ref</th>
 		<th>Indicador</th>
-		<th>Etiqueta</th>
-		<th>Ref. geográfica</th>
 		<th>Fecha</th>
+		<th>Ref. geográfica</th>
+		<th>Usuario</th>
+		<th>Etiqueta</th>
 		<th>Valor</th>
 		<th>Aprobado</th>
-		<th>Acciones</th>	
 	</tr>
 	</thead>
+	<tfoot>
+	<tr>
+		<th>ID Indicador</th>
+		<th>ID Etiqueta</th>
+		<th>ID Usuario</th>	
+		<th>ID Ref</th>
+		<th>Indicador</th>
+		<th>Fecha</th>
+		<th>Ref. geográfica</th>
+		<th>Usuario</th>
+		<th>Etiqueta</th>
+		<th>Valor</th>
+		<th>Aprobado</th>
+	</tr>
+	</tfoot>
 	{% for valorindicador in valoresindicadores %}
-	<tr class="{{ valorindicador.aprobado ?  'success' : 'danger'}}">
-		<td>{{ valorindicador.idIndicador }}</td>
+	<tr >
+		<td>{{ valorindicador.idIndicador.id }}</td>
 		<td>{{ valorindicador.idEtiqueta }}</td>
+		<td>{{ valorindicador.idUsuario.id }}</td>
+		<td>{{ valorindicador.idRefgeografica.id }}</td>
+		<td>{{ valorindicador.idIndicador }}</td>
+		<td>{{ valorindicador.fecha|date("Y-m-d") }}</td>
 		<td>{{ valorindicador.idRefgeografica }}</td>
-		<td>{{ valorindicador.fecha|date("m/d/Y") }}</td>
+		<td>{{ valorindicador.idUsuario }}</td>
+		<td>{{ valorindicador.idEtiqueta }}</td>
 		<td>{{ valorindicador.valor }}</td>
 		<td>{{ valorindicador.aprobado ? "Si" : "No"}}</td>
-		<td></td>
 	</tr>
 	{% endfor %}
 </table>
+</div>
+
 
 
 <script type="text/javascript">
 	$(document).ready(function() {
-    $('#valoresindicadoresTable').DataTable({
-    	 "language": {
-            "url": "/lang/datatables_spanish.json"
-        }
+
+	var api_urls = {{ api_urls|json_encode|raw}};
+
+
+	function aproveDataRequest(data, rows){
+		console.log(data);
+		var url = api_urls.aproveData;
+		$.ajax(url,{
+          'data': JSON.stringify(data),
+          'type': 'POST',
+          'processData': false,
+          'contentType': 'application/json',
+           success: function(data) {
+              if (data.success){
+                alert("Valores guardados con éxito");
+                updateRowsAproveStatus(rows,data["action"]);
+              } else {
+                alert(data.msg);
+              }
+              location.reload();
+          },
+          error: function(data) {
+            alert("ERROR! Ocurrió un error mientras se intentaban guardar los datos");
+          },
+      });
+	}
+
+
+	function updateRowsAproveStatus(rowsNodes, newStatus){
+	}
+
+
+	// Prepara datos para aprobar/desaprobar
+	function prepareDataToAprove(row){
+		return {
+			"indicador":row[0],
+			"etiqueta":row[1],
+			"refGeografica":row[3],
+			"fecha":row[5]
+		}
+	}
+
+	$.fn.dataTable.ext.buttons.aproveAll = {
+	    text: 'Aprobar seleccionados',
+	    className:'btn-success',
+	    action: function ( e, dt, node, config ) {
+	    	var syncData = {"action":1,"data":[]}
+	    	var rows = [];
+	        dt.rows( { selected: true } ).every( function ( rowIdx, tableLoop, rowLoop ) {
+	    		var rowData = this.data();
+	    		syncData["data"].push(prepareDataToAprove(rowData));
+	    		rows.push(this);
+			} );
+	        aproveDataRequest(syncData, rows);
+	    }
+	};
+
+	$.fn.dataTable.ext.buttons.disaproveAll = {
+	    text: 'Desaprobar seleccionados',
+	    className:'btn-danger',
+	    action: function ( e, dt, node, config ) {
+	    	var syncData = {"action":0,"data":[]}
+	    	var rows = [];
+	        dt.rows( { selected: true } ).every( function ( rowIdx, tableLoop, rowLoop ) {
+	    		var rowData = this.data();
+	    		syncData["data"].push(prepareDataToAprove(rowData));
+	    		rows.push(this);
+			} );
+	        aproveDataRequest(syncData, rows);
+	    }
+	};
+
+	$('#valoresindicadoresTable tfoot th').each( function () {
+        var title = $(this).text();
+        $(this).html( '<input type="text" placeholder="Buscar '+title+'" />' );
+    } );
+
+
+    var table = $('#valoresindicadoresTable').DataTable({
+    	dom: 'Bfrtip',
+    	buttons: [
+        'selectAll',
+        'selectNone',
+        'aproveAll',
+        'disaproveAll',
+    	],
+	    language: {
+	        buttons: {
+	            selectAll: "Seleccionar todos",
+	            selectNone: "Deseleccionar todos"
+	        }
+	    },
+	    "columnDefs": [
+            {
+                "targets": [0,1,2,3],
+                "visible": false
+            }
+        ]
     });
+
+    $('#valoresindicadoresTable tbody').on( 'click', 'tr', function () {
+        var row = table.row( $(this));
+        if ($(this).hasClass('selected')){
+        	row.deselect();	
+        } else {
+        	row.select();
+        }
+    } );
+
+    table.columns().every( function () {
+        var that = this;
+        $( 'input', this.footer() ).on( 'keyup change', function () {
+            if ( that.search() !== this.value ) {
+                that.search( this.value ).draw();
+            }
+        } );
+    } );
+
 } );
 
 </script>

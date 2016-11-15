@@ -31,4 +31,21 @@ class ValoresindicadoresRepository extends EntityRepository
              ->setParameter('idRefgeografica', $idRefgeografica)
             ->getResult();
     }
+
+
+    public function findByFullKey($idIndicador, $idRefgeografica, $fecha, $etiqueta){
+        return $this->getEntityManager()
+            ->createQuery(
+             'SELECT p FROM AppBundle:Valoresindicadores p where 
+                    p.idindicador = :idIndicador 
+                    and p.idrefgeografica = :idRefgeografica
+                    and p.fecha = :fecha
+                    and p.idetiqueta = :idEtiqueta'
+            )->setParameter('idIndicador', $idIndicador)
+             ->setParameter('fecha', $fecha)
+             ->setParameter('idRefgeografica', $idRefgeografica)
+             ->setParameter('idEtiqueta',$etiqueta)
+            ->getResult();
+    }
+
 }

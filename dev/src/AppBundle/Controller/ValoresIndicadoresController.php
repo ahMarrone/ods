@@ -34,6 +34,7 @@ class ValoresIndicadoresController extends Controller
         $valoresindicadores = $em->getRepository('AppBundle:Valoresindicadores')->findAll();
         return $this->render('valoresindicadores/index.html.twig', array(
             'valoresindicadores' => $valoresindicadores,
+            'api_urls' => array('aproveData'=> $this->generateUrl('admin_crud_valoresindicadores_aproveData'))
         ));
     }
 
@@ -279,6 +280,52 @@ class ValoresIndicadoresController extends Controller
             $em->getConnection()->rollback();
             $response["success"] = false;
             $response["msg"] = "No se han podido eliminar los objetos";
+            $response["exception"] = $e;
+            throw $e;
+        }
+        return $response;
+    }
+
+
+
+    /**
+     * Atiende peticiones para aprobar/desaprobar datos
+     *
+     * @Route("/aproveData", name="admin_crud_valoresindicadores_aproveData")
+     * @Method({"POST"})
+     */
+    public function aproveDataAction(Request $request){
+        $content = $this->get("request")->getContent();
+        if (!empty($content)){
+            $data = json_decode($content, true); 
+            $response = $this->initAproveData($data["data"],$data["action"]);
+            return new JsonResponse($response);
+        }
+    }
+
+
+    private function initAproveData($data, $aproveAction){
+        $em = $this->getDoctrine()->getManager();
+        $response = array("success"=>false);
+        try {
+            $em->getConnection()->beginTransaction();
+            foreach ($data as $valorIndicador){
+                $valoresindicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')
+                                    ->findByFullKey($valorIndicador["indicador"],
+                                                    $valorIndicador["refGeografica"], 
+                                                    $valorIndicador["fecha"],
+                                                    $valorIndicador["etiqueta"]);
+                $valoresindicadores = $valoresindicadores[0];
+                $valoresindicadores->setAprobado($aproveAction);
+            }
+            $em->flush();
+            $em->getConnection()->commit();
+            $response["success"] = true;
+            $response["msg"] = "Cambios aplicados con éxito";
+        } catch (\Exception $e) {
+            $em->getConnection()->rollback();
+            $response["success"] = false;
+            $response["msg"] = "Ha ocurrido un error mientras se intentaban dar de alta los valores indicadores";
             $response["exception"] = $e;
             throw $e;
         }
