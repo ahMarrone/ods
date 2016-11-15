@@ -24,8 +24,26 @@ class PanelUserController extends Controller
      */
     public function indexAction()
     {
+        $stats = $this->getStats();
+        return $this->render('paneluser/index.html.twig', array('stats'=>$stats));
+    }
 
-        return $this->render('paneluser/index.html.twig', array());
+
+
+    private function getStats(){
+        $stats = array();
+        $em = $this->getDoctrine()->getManager();
+        $toAprove = $em->getRepository('AppBundle:Valoresindicadores')->findByAprobado(0);
+        $objetivos = $em->getRepository('AppBundle:Objetivos')->findAll();
+        $metas = $em->getRepository('AppBundle:Metas')->findAll();
+        $indicadores = $em->getRepository('AppBundle:Indicadores')->findAll();
+        $stats = array(
+            "toAprove" => count($toAprove),
+            "objetivos_count" => count($objetivos),
+            "metas_count" => count($metas),
+            "indicadores_count" => count($indicadores)
+        );
+        return $stats;
     }
 
 }
