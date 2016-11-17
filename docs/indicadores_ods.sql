@@ -3,13 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: localhost
--- Tiempo de generación: 08-11-2016 a las 11:31:02
+-- Tiempo de generación: 15-11-2016 a las 15:29:29
 -- Versión del servidor: 5.5.53-0ubuntu0.14.04.1
 -- Versión de PHP: 5.5.9-1ubuntu4.20
-
-drop database IF EXISTS `indicadores_ods`;
-create database `indicadores_ods`;
-use indicadores_ods;
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -35,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `agrupamientoRefGeografica` (
   `id_2` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id_1`,`id_2`),
   KEY `refGeografica_ibfk_2` (`id_2`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -47,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `desgloces` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del desgloce',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=5 ;
 
 -- --------------------------------------------------------
 
@@ -74,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `etiquetas` (
   `fkIdDesgloce` int(11) unsigned NOT NULL COMMENT 'clave foranea desgloce',
   PRIMARY KEY (`id`),
   KEY `fkIdDesgloce` (`fkIdDesgloce`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=12 ;
 
 -- --------------------------------------------------------
 
@@ -98,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
   PRIMARY KEY (`id`),
   KEY `fkIdMeta` (`fkIdMeta`),
   KEY `ndxUsuario` (`idUsuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=6 ;
 
 -- --------------------------------------------------------
 
@@ -109,13 +105,14 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
 CREATE TABLE IF NOT EXISTS `metas` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la meta',
+  `ambito` enum('N','P','M','R','D','L') COLLATE utf8_spanish_ci NOT NULL,
   `fkIdObjetivo` int(11) unsigned NOT NULL COMMENT 'clave foranea tabla objetivos',
   `idUsuario` int(11) unsigned NOT NULL,
   `fechaModificacion` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fkIdObjetivo` (`fkIdObjetivo`),
   KEY `ndxUsuario` (`idUsuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=163 ;
 
 -- --------------------------------------------------------
 
@@ -127,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `objetivos` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del objtivo',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=18 ;
 
 -- --------------------------------------------------------
 
@@ -138,9 +135,9 @@ CREATE TABLE IF NOT EXISTS `objetivos` (
 CREATE TABLE IF NOT EXISTS `refGeografica` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la referencia geografica',
-  `ambito` enum('N','P','M','R') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito de la ref. geografica',
+  `ambito` enum('N','P','M','R','D','L') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito de la ref. geografica',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=552 ;
 
 -- --------------------------------------------------------
 
@@ -161,6 +158,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `provincia` varchar(100) CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL,
   `telefono` varchar(50) CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL,
   `dependencia` varchar(100) CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL,
+  `ambito` enum('N','P','M','R','D','L') CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL,
   `observaciones` varchar(255) CHARACTER SET utf8 COLLATE utf8_spanish_ci DEFAULT NULL,
   `enabled` tinyint(1) NOT NULL,
   `salt` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
@@ -179,13 +177,6 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   UNIQUE KEY `UNIQ_957A6479A0D96FBF` (`email_canonical`),
   UNIQUE KEY `UNIQ_957A6479C05FB297` (`confirmation_token`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
-
---
--- Volcado de datos para la tabla `usuarios`
---
-
-INSERT INTO `usuarios` (`id`, `username`, `username_canonical`, `email`, `email_canonical`, `apellido`, `nombre`, `domicilio`, `localidad`, `provincia`, `telefono`, `dependencia`, `observaciones`, `enabled`, `salt`, `password`, `last_login`, `locked`, `expired`, `expires_at`, `confirmation_token`, `password_requested_at`, `roles`, `credentials_expired`, `credentials_expire_at`) VALUES
-(1, 'admin', 'admin', 'admin@admin.com', 'admin@admin.com', '', '', '', '', '', '', '', NULL, 1, 'p004rq1adaso08sw08gskkgcw48o84c', '$2y$13$p004rq1adaso08sw08gskeyrspSFcPvBTyHqX5swLtP1Zxr5RgtaO', '2016-11-06 23:54:25', 0, 0, NULL, NULL, NULL, 'a:1:{i:0;s:10:"ROLE_ADMIN";}', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -229,8 +220,8 @@ CREATE TABLE IF NOT EXISTS `valoresIndicadores` (
 -- Filtros para la tabla `agrupamientoRefGeografica`
 --
 ALTER TABLE `agrupamientoRefGeografica`
-  ADD CONSTRAINT `refGeografica_ibfk_2` FOREIGN KEY (`id_2`) REFERENCES `refGeografica` (`id`),
-  ADD CONSTRAINT `refGeografica_ibfk_1` FOREIGN KEY (`id_1`) REFERENCES `refGeografica` (`id`);
+  ADD CONSTRAINT `refGeografica_ibfk_1` FOREIGN KEY (`id_1`) REFERENCES `refGeografica` (`id`),
+  ADD CONSTRAINT `refGeografica_ibfk_2` FOREIGN KEY (`id_2`) REFERENCES `refGeografica` (`id`);
 
 --
 -- Filtros para la tabla `desglocesIndicadores`
@@ -249,30 +240,30 @@ ALTER TABLE `etiquetas`
 -- Filtros para la tabla `indicadores`
 --
 ALTER TABLE `indicadores`
-  ADD CONSTRAINT `indicadores_ibfk_2` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`),
-  ADD CONSTRAINT `indicadores_ibfk_1` FOREIGN KEY (`fkIdMeta`) REFERENCES `metas` (`id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `indicadores_ibfk_1` FOREIGN KEY (`fkIdMeta`) REFERENCES `metas` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `indicadores_ibfk_2` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`);
 
 --
 -- Filtros para la tabla `metas`
 --
 ALTER TABLE `metas`
-  ADD CONSTRAINT `metas_ibfk_2` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`),
-  ADD CONSTRAINT `metas_ibfk_1` FOREIGN KEY (`fkIdObjetivo`) REFERENCES `objetivos` (`id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `metas_ibfk_1` FOREIGN KEY (`fkIdObjetivo`) REFERENCES `objetivos` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `metas_ibfk_2` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`);
 
 --
 -- Filtros para la tabla `usuariosRefGeografica`
 --
 ALTER TABLE `usuariosRefGeografica`
-  ADD CONSTRAINT `usuariosRefGeografica_ibfk_3` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`),
-  ADD CONSTRAINT `usuariosRefGeografica_ibfk_2` FOREIGN KEY (`id_refGeografica`) REFERENCES `refGeografica` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `usuariosRefGeografica_ibfk_2` FOREIGN KEY (`id_refGeografica`) REFERENCES `refGeografica` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `usuariosRefGeografica_ibfk_3` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`);
 
 --
 -- Filtros para la tabla `valoresIndicadores`
 --
 ALTER TABLE `valoresIndicadores`
-  ADD CONSTRAINT `valoresIndicadores_ibfk_3` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`),
   ADD CONSTRAINT `valoresIndicadores_ibfk_1` FOREIGN KEY (`idIndicador`) REFERENCES `indicadores` (`id`),
-  ADD CONSTRAINT `valoresIndicadores_ibfk_2` FOREIGN KEY (`idRefGeografica`) REFERENCES `refGeografica` (`id`);
+  ADD CONSTRAINT `valoresIndicadores_ibfk_2` FOREIGN KEY (`idRefGeografica`) REFERENCES `refGeografica` (`id`),
+  ADD CONSTRAINT `valoresIndicadores_ibfk_3` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
