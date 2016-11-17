@@ -48,4 +48,14 @@ class ValoresindicadoresRepository extends EntityRepository
             ->getResult();
     }
 
+    // Retorna fechas en las cuales el indicador tiene valoresindicadores cargados
+    public function getIndicadorDates($idIndicador){
+        return $this->getEntityManager()
+            ->createQuery(
+             'SELECT DISTINCT p.fecha FROM AppBundle:Valoresindicadores p where 
+                    p.idindicador = :idIndicador ORDER BY p.fecha'
+            )->setParameter('idIndicador', $idIndicador)
+            ->getResult();
+    }
+
 }

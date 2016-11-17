@@ -104,6 +104,7 @@ class ValoresIndicadoresController extends Controller
             'objetivos'=>$objetivos,
             'metas'=>$metas,
             'indicadores'=>$indicadores,
+            'api_urls' => array('indicador_dates'=> $this->generateUrl('admin_crud_valoresindicadores_indicador_dates'))
         ));
     }
 
@@ -330,6 +331,27 @@ class ValoresIndicadoresController extends Controller
             throw $e;
         }
         return $response;
+    }
+
+
+    /**
+     * Retorna json con las fechas (únicas) en los que el indicador tiene datos cargados
+     *
+     * @Route("/indicador_dates", name="admin_crud_valoresindicadores_indicador_dates")
+     * @Method({"GET"})
+     */
+    public function getIndicadorDatesAction(Request $request){
+        $data = array();
+        $idIndicador = $request->query->get('id_indicador');
+        if (isset($idIndicador)){
+            $rows = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')
+                               ->getIndicadorDates($idIndicador);
+
+            foreach ($rows as $dates) {
+                array_push($data, $dates["fecha"]);
+            }
+        }
+        return new JsonResponse($data);
     }
 
 

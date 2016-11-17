@@ -33,6 +33,7 @@
 <form id="preloaddataForm" action="{{ path('admin_crud_valoresindicadores_new') }}" method="post">
         <div id="selects"></div>
     <div class="form-group">
+        <div id="datesWithData" class="alert alert-info" role="alert"><i class="fa fa-info-circle pull-left"></i><span id="datesDataLabel"><b>Este indicador tiene datos cargados en las fechas: </b></span></i><span id="datesInfo"></span></div>
         <div class="input-group date">
         <label>Fecha</label>
           <input id="valorIndicadorDate" name="fecha" type="text" class="form-control">
@@ -50,6 +51,52 @@
 <script type="text/javascript">
 
     $(document).ready(function() {
+
+
+        var api_urls = {{ api_urls|json_encode|raw}};
+
+        function getSpinnerHTML(){
+            return '<i class="fa fa-spinner fa-spin fa-fw">';
+        }
+
+        // Pregunta al back en cuales fechas el indicador tiene datos cargados
+        function loadIndicadorDates(idIndicador){
+            if (idIndicador){
+                var url = api_urls.indicador_dates + '?id_indicador='+ idIndicador;
+                data = {'id':idIndicador};
+                $('#datesInfo').html(getSpinnerHTML());
+                $.ajax(url,{
+                      'data': JSON.stringify(data),
+                      'type': 'GET',
+                      'processData': false,
+                      'contentType': 'application/json',
+                       success: function(data) {
+                            updateIndicadorDates(data);  
+                       },
+                       error: function(data) {
+                        //alert("ERROR!");
+                      },
+                  });
+            }
+        }
+
+        function renderDates(data){
+            var html = "";
+            for (i in data){
+                html += "<a class='indicadorDate btn btn-default'>"+data[i]+"</a>  ";
+            }
+            return html;
+        }
+
+        function updateIndicadorDates(data){
+            var htmlDates = renderDates(data);
+            if (htmlDates == ""){
+                $('#datesInfo').html("No hay datos cargados por el momento");
+            } else {
+                $('#datesInfo').html(htmlDates);
+            }
+        }
+
 
         $('#valorIndicadorDate').datepicker({
             format: "yyyy-mm-dd",
@@ -69,7 +116,16 @@
     	});
     	var view = new ThreeSelectView({el: $("#selects") ,model:model});
 
+        $('#three_select_indicador').on('change', function() {
+            loadIndicadorDates(this.value);
+        });
 
+        $('#datesInfo').on('click', '.indicadorDate', function() {
+            var date = $(this).text();
+            $('#valorIndicadorDate').datepicker('update', date);
+        });
+
+        loadIndicadorDates($('#three_select_indicador').val());
 
     });
 </script>
