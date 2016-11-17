@@ -3,25 +3,21 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('leaflet/leaflet.js') }}"></script>
-    <script src="{{ asset('bootstrap-select/dist/js/bootstrap-select.js') }}"></script>
     <!-- Load d3.js and c3.js -->
     <script src="{{ asset('d3/d3.js') }}" charset="utf-8"></script>
     <script src="{{ asset('c3/c3.js') }}"></script>
+    <script src="{{ asset('js/underscore-min.js') }}"></script>
+    <script src="{{ asset('js/backbone-min.js') }}"></script>
+    <script src="{{ asset('js/ThreeSelect.js') }}"></script>
 
-<!--     <script src="http://maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
-    <script src="http://matchingnotes.com/javascripts/leaflet-google.js"></script> -->
 {% endblock %}    
 
 {% block stylesheets %}
     {{ parent() }}
     <style type="text/css">
-<<<<<<< HEAD
     /*body {
         padding-top: 150px;
     }*/
-=======
-    
->>>>>>> mejora_estructura_estilo
 
     #map_canvas {
       height: 100%;
@@ -65,8 +61,8 @@
 {% block body %}
 
 
-<div class="container-fluid">
-<form class="form-horizontal" role="form">
+<!-- <div class="container-fluid"> -->
+<!-- <form class="form-horizontal" role="form">
  <div class="form-group">
  <label for="selectorObjetivo" class="col-lg-1 control-label">Objetivo</label>
  <div class="col-lg-4">
@@ -96,9 +92,75 @@
     </select>
    </div>
  </div>
+</form> -->
+
+<div class="container-fluid" id='divFluid'>
+<script id="formLoader" type="text/template">
+<%_.mixin({
+  trim: function(string, max) {
+    var idx = string.indexOf(' ', 0);
+    while ((idx < max) && (idx != -1)) {
+      idx = string.indexOf(' ', idx + 1);
+    }
+    return (idx == -1) ? string : string.substring(0, idx) + '...';
+  }
+});%>
+  <form class="form-horizontal" role="form">
+    <div class="form-group">
+    <label for="selectorObjetivo" class="col-xs-1 control-label">Objetivo</label>
+    <div class="col-xs-4">
+    <select id="selectorObjetivo" class="form-control selectOne">
+      <% _.each(model.get("objetivos"), function( objetivo, i){ %>
+        <option title="<%= objetivo.desc %>" value="<%= objetivo.id %>" <% if (objetivo.id == model.get("objetivo_selected")) { %> selected<% }  %>><%= _(objetivo.desc).trim(60) %></option>
+      <% }); %>
+    </select>
+    </div>
+    <label for="selectorMeta" class="col-xs-1 control-label">Meta</label>
+      <div class="col-xs-4">
+      <select id="selectorMeta" class="form-control selectTwo">
+      <% _.each(model.get("metas"), function( meta, i){ %>',
+        <% if ( meta.id_objetivo == model.get("objetivo_selected") ){ %>
+          <option title="<%= meta.desc %>" value="<%= meta.id %>" <% if (meta.id == model.get("meta_selected")) { %> selected<% }  %>><%= _(meta.desc).trim(60) %></option>
+        <% } %>
+      <% }); %>
+      </select>
+    </div>
+    </div>
+    <div class="form-group">
+    </div>
+    <div class="form-group">
+      <label for="selectorIndicador" class="col-xs-1 control-label">Indicador</label>
+      <div class="col-xs-4">
+        <select id="selectorIndicador" class="form-control selectThree">
+          <% _.each(model.get("indicadores"), function( indicador, i){ %>
+            <% if ( indicador.id_meta == model.get("meta_selected") ){ %>
+              '<option value="<%= indicador.id %>" <% if (indicador.id == model.get("indicador_selected")) { %> selected<% }  %>><%= indicador.desc %></option>'
+            <% } %>
+          <% }); %>
+        </select>
+      </div>
+    </div>
+  </form>  
+</script>
+</div>
+
+
+<!-- <div class="container">
+<div class="row">
+    <div class="page-header">
+          <h1>Carga de valores indicadores <small></small></h1>
+        </div>
+</div>
+<div class="row" class="col-md-10">
+<form id="preloaddataForm">
+        <div id="selects"></div>
 </form>
 
-    <div class="row">
+
+</div>
+</div> -->
+
+    <!-- <div class="row">
     <div class="col-md-1">
     </div>
      <div class="col-md-11">
@@ -107,7 +169,6 @@
     </div>
     <form class="form-horizontal" role="form">
     <div class="form-group">
- <!-- <label for="selectorPeriodo" class="col-lg-1 control-label">Período</label> -->
  <div class="col-lg-5">
  </div>
  <div class="col-lg-2">
@@ -120,38 +181,101 @@
  </div>
   </div>
   </form>
-</div>
+
+<!-- </div> -->
 <!-- <div id="map_canvas" class="leaflet-container leaflet-fade-anim"></div> -->
 
 
 <script type="text/javascript">
-$(document).ready(function() {
-    // $('#sel').val('Relish');
-    // $('#sel').selectpicker('render');
-    // $('#sel').selectpicker('val', 'Ketchup');
+  $(document).ready(function() {
 
-  var idIndicador = $('#selectorDesgloce').children(":selected").attr("id");
-  var descripcionIndicador = $('#selectorDesgloce').val();
-  var periodo = $('#selectorPeriodo').children(":selected").attr("id");
-  inicializarMapa(idIndicador, descripcionIndicador, periodo);
-});
+    var ThreeSelectData = Backbone.Model.extend({
+      defaults: {
+        'objetivos':[],
+        'metas':[],
+        'indicadores':[],
+        'etiquetas': []
+      }
+    });
+
+    var ThreeSelectView = Backbone.View.extend({
+      el: '#divFluid', /* Donde quiero renderizar */
+      template: _.template($('#formLoader').html()), /* Lo que quiero renderizar */
+
+
+      initialize: function() {
+        this.model.set('objetivo_selected',this.model.get('objetivos')[0].id);
+        this.model.set('meta_selected',this.model.get('metas')[0].id);
+            if (this.model.get('indicadores').length) {
+                this.model.set('indicador_selected',this.model.get('indicadores')[0].id);
+            }
+        this.model.on('change:objetivo_selected', this.render, this);
+            this.model.on('change:meta_selected', this.render, this);
+            this.render();
+        },
+        events: {
+                  'change .selectOne': 'objetivoSelected',
+                  'change .selectTwo': 'metaSelected',
+                  'change .selectThree': 'indicadorSelected',
+        },
+        render:function(){
+        // var tpl = _.template(template_select);
+        //   this.$el.html(tpl({model:this.model}));
+          // this.$el.html(this.template({model:this.model}));
+          this.$el.html(this.template({model:this.model}));
+          return this;
+        },
+        objetivoSelected: function(event){
+          this.model.set("objetivo_selected",event.target.value); 
+            this.metaSelected();
+        },
+        metaSelected: function(e){
+          this.model.set("meta_selected",$(this.el).find('.selectTwo').val());
+            if (this.model.get('indicadores').length){
+                this.indicadorSelected();
+            }
+        },
+        indicadorSelected: function(e){
+          this.model.set("indicador_selected",$(this.el).find('.selectThree').val());
+        }
+    })
+
+    var objetivos = {{ objetivos|json_encode|raw}};
+    var metas = {{ metas|json_encode|raw}};
+    var indicadores = {{ indicadores|json_encode|raw}};
+    var etiquetas = {{ etiquetas|json_encode|raw}};
+
+    var model = new ThreeSelectData({
+      'objetivos': objetivos,
+      'metas': metas,
+      'indicadores': indicadores,
+      'etiquetas': etiquetas
+    });
+    // var view = new ThreeSelectView({el: $("#selects"), model:model});
+    var view = new ThreeSelectView({model:model});
+
+    // var idIndicador = $('#selectorDesgloce').children(":selected").attr("id");
+    // var descripcionIndicador = $('#selectorDesgloce').val();
+    // var periodo = $('#selectorPeriodo').children(":selected").attr("id");
+    // inicializarMapa(idIndicador, descripcionIndicador, periodo);
+  });
 
 // $('#indicadores li').on('click', function() {
 //   actualizarCapa($(this).attr('id'), $(this).text());
 // });
-$('#selectorDesgloce').on('change', function() {
-  var idIndicador = $(this).children(":selected").attr("id");
-  var descripcionIndicador = $(this).val();
-  var periodo = $('#selectorPeriodo').children(":selected").attr("id");
-  actualizarCapa(idIndicador, descripcionIndicador, periodo);
-});
+// $('#selectorDesgloce').on('change', function() {
+//   var idIndicador = $(this).children(":selected").attr("id");
+//   var descripcionIndicador = $(this).val();
+//   var periodo = $('#selectorPeriodo').children(":selected").attr("id");
+//   actualizarCapa(idIndicador, descripcionIndicador, periodo);
+// });
 
-$('#selectorPeriodo').on('change', function() {
-  var idIndicador = $('#selectorDesgloce').children(":selected").attr("id");
-  var descripcionIndicador = $('#selectorDesgloce').val();
-  var periodo = $(this).children(":selected").attr("id");
-  actualizarCapa(idIndicador, descripcionIndicador, periodo);
-});
+// $('#selectorPeriodo').on('change', function() {
+//   var idIndicador = $('#selectorDesgloce').children(":selected").attr("id");
+//   var descripcionIndicador = $('#selectorDesgloce').val();
+//   var periodo = $(this).children(":selected").attr("id");
+//   actualizarCapa(idIndicador, descripcionIndicador, periodo);
+// });
 </script>
 
 <script>
