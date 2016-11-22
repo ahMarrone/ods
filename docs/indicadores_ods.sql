@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Nov 22, 2016 at 02:09 PM
+-- Generation Time: Nov 22, 2016 at 03:18 PM
 -- Server version: 5.5.52-0+deb8u1
 -- PHP Version: 5.6.27-0+deb8u1
 
@@ -52,11 +52,23 @@ CREATE TABLE IF NOT EXISTS `desgloces` (
 --
 
 CREATE TABLE IF NOT EXISTS `desglocesIndicadores` (
+  `id` int(11) unsigned NOT NULL,
   `idIndicador` int(11) unsigned NOT NULL,
   `fecha` datetime NOT NULL,
   `desgloces` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `cruzado` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `desglocesSeleccionados`
+--
+
+CREATE TABLE IF NOT EXISTS `desglocesSeleccionados` (
+  `idDesgloce` int(10) unsigned NOT NULL,
+  `idDesglocesIndicadores` int(10) unsigned NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -83,7 +95,7 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
   `tipo` enum('porcentual','entero','real') COLLATE utf8_spanish_ci NOT NULL COMMENT 'tipo de indicador',
   `valMin` bigint(20) NOT NULL COMMENT 'valor minimo dentro del dominio',
   `valMax` bigint(20) NOT NULL COMMENT 'valor maximo dentro del dominio',
-  `ambito` enum('N','P','M') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito al que pertenece el indicador',
+  `ambito` enum('N','P','D') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito al que pertenece el indicador',
   `visibleNacional` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Visibilidad del indicador a nivel Nacional',
   `visibleProvincial` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Visibilidad del indicador a nivel Provincial',
   `visibleMunicipal` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Visibilidad del indicador a nivel Municipal',
@@ -101,7 +113,7 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
 CREATE TABLE IF NOT EXISTS `metas` (
 `id` int(11) unsigned NOT NULL,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la meta',
-  `ambito` enum('N','P','M','R','D','L') COLLATE utf8_spanish_ci NOT NULL,
+  `ambito` enum('N','P','D','L','R') COLLATE utf8_spanish_ci NOT NULL,
   `fkIdObjetivo` int(11) unsigned NOT NULL COMMENT 'clave foranea tabla objetivos',
   `idUsuario` int(11) unsigned NOT NULL,
   `fechaModificacion` datetime NOT NULL
@@ -127,7 +139,7 @@ CREATE TABLE IF NOT EXISTS `objetivos` (
 CREATE TABLE IF NOT EXISTS `refGeografica` (
 `id` int(11) unsigned NOT NULL,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la referencia geografica',
-  `ambito` enum('N','P','M','R','D','L') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito de la ref. geografica'
+  `ambito` enum('N','P','D','L','R') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito de la ref. geografica'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 -- --------------------------------------------------------
@@ -149,7 +161,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `provincia` varchar(100) CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL,
   `telefono` varchar(50) CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL,
   `dependencia` varchar(100) CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL,
-  `ambito` enum('N','P','M','R','D','L') CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL,
+  `ambito` enum('N','P','D','L','R') CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL,
   `observaciones` varchar(255) CHARACTER SET utf8 COLLATE utf8_spanish_ci DEFAULT NULL,
   `enabled` tinyint(1) NOT NULL,
   `salt` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
@@ -183,8 +195,7 @@ CREATE TABLE IF NOT EXISTS `usuariosRefGeografica` (
 --
 
 CREATE TABLE IF NOT EXISTS `valoresIndicadores` (
-  `idIndicador` int(11) unsigned NOT NULL,
-  `fecha` datetime NOT NULL,
+  `idDesglocesIndicadores` int(11) unsigned NOT NULL,
   `idEtiqueta` varchar(30) COLLATE utf8_spanish_ci NOT NULL COMMENT 'Clave en formato string que representa el cruce de etuqietas del registro',
   `idRefGeografica` int(11) unsigned NOT NULL,
   `valor` decimal(10,2) NOT NULL,
@@ -213,7 +224,13 @@ ALTER TABLE `desgloces`
 -- Indexes for table `desglocesIndicadores`
 --
 ALTER TABLE `desglocesIndicadores`
- ADD PRIMARY KEY (`idIndicador`,`fecha`);
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `desglocesIndicadores_uniq_1` (`idIndicador`,`fecha`);
+
+--
+-- Indexes for table `desglocesSeleccionados`
+--
+ALTER TABLE `desglocesSeleccionados`
+ ADD PRIMARY KEY (`idDesgloce`,`idDesglocesIndicadores`), ADD KEY `desglocesSeleccionados_ibfk_2` (`idDesglocesIndicadores`);
 
 --
 -- Indexes for table `etiquetas`
@@ -261,7 +278,7 @@ ALTER TABLE `usuariosRefGeografica`
 -- Indexes for table `valoresIndicadores`
 --
 ALTER TABLE `valoresIndicadores`
- ADD PRIMARY KEY (`idIndicador`,`fecha`,`idRefGeografica`,`idEtiqueta`), ADD KEY `idIndicadorFecha` (`idIndicador`,`fecha`), ADD KEY `idRefGeografica` (`idRefGeografica`), ADD KEY `idEtiqueta` (`idEtiqueta`), ADD KEY `idUsuario` (`idUsuario`);
+ ADD PRIMARY KEY (`idDesglocesIndicadores`,`idRefGeografica`,`idEtiqueta`), ADD KEY `idDesglocesIndicadoresndicadores` (`idDesglocesIndicadores`), ADD KEY `idRefGeografica` (`idRefGeografica`), ADD KEY `idEtiqueta` (`idEtiqueta`), ADD KEY `idUsuario` (`idUsuario`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -320,6 +337,13 @@ ALTER TABLE `desglocesIndicadores`
 ADD CONSTRAINT `desglocesIndicadores_ibfk_1` FOREIGN KEY (`idIndicador`) REFERENCES `indicadores` (`id`);
 
 --
+-- Constraints for table `desglocesSeleccionados`
+--
+ALTER TABLE `desglocesSeleccionados`
+ADD CONSTRAINT `desglocesSeleccionados_ibfk_2` FOREIGN KEY (`idDesglocesIndicadores`) REFERENCES `desgloces` (`id`),
+ADD CONSTRAINT `desglocesSeleccionados_ibfk_1` FOREIGN KEY (`idDesgloce`) REFERENCES `desglocesIndicadores` (`id`);
+
+--
 -- Constraints for table `etiquetas`
 --
 ALTER TABLE `etiquetas`
@@ -350,7 +374,7 @@ ADD CONSTRAINT `usuariosRefGeografica_ibfk_3` FOREIGN KEY (`id_usuario`) REFEREN
 -- Constraints for table `valoresIndicadores`
 --
 ALTER TABLE `valoresIndicadores`
-ADD CONSTRAINT `valoresIndicadores_ibfk_1` FOREIGN KEY (`idIndicador`, `fecha`) REFERENCES `desglocesIndicadores` (`idIndicador`, `fecha`),
+ADD CONSTRAINT `valoresIndicadores_ibfk_1` FOREIGN KEY (`idDesglocesIndicadores`) REFERENCES `desglocesIndicadores` (`id`),
 ADD CONSTRAINT `valoresIndicadores_ibfk_2` FOREIGN KEY (`idRefGeografica`) REFERENCES `refGeografica` (`id`),
 ADD CONSTRAINT `valoresIndicadores_ibfk_3` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`);
 
