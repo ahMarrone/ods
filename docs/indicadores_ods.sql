@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: localhost
--- Tiempo de generación: 29-11-2016 a las 11:35:13
+-- Tiempo de generación: 29-11-2016 a las 13:27:19
 -- Versión del servidor: 5.5.53-0ubuntu0.14.04.1
 -- Versión de PHP: 5.5.9-1ubuntu4.20
 
@@ -93,10 +93,8 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
   `tipo` enum('porcentual','entero','real') COLLATE utf8_spanish_ci NOT NULL COMMENT 'tipo de indicador',
   `valMin` bigint(20) NOT NULL COMMENT 'valor minimo dentro del dominio',
   `valMax` bigint(20) NOT NULL COMMENT 'valor maximo dentro del dominio',
-  `ambito` enum('N','P','D') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito al que pertenece el indicador',
-  `visibleNacional` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Visibilidad del indicador a nivel Nacional',
-  `visibleProvincial` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Visibilidad del indicador a nivel Provincial',
-  `visibleMunicipal` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Visibilidad del indicador a nivel Municipal',
+  `ambito` enum('N','P','D','L','R') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito al que pertenece el indicador',
+  `visible` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Visibilidad del indicador a nivel Nacional',
   `idUsuario` int(11) unsigned NOT NULL,
   `fechaModificacion` datetime NOT NULL,
   `fechasDestacadas` varchar(50) COLLATE utf8_spanish_ci DEFAULT NULL,
@@ -306,9 +304,9 @@ ALTER TABLE `usuariosRefGeografica`
 -- Filtros para la tabla `valoresIndicadores`
 --
 ALTER TABLE `valoresIndicadores`
-  ADD CONSTRAINT `valoresIndicadores_ibfk_4` FOREIGN KEY (`idValoresIndicadoresConfigFecha`) REFERENCES `valoresIndicadoresConfigFecha` (`id`),
   ADD CONSTRAINT `valoresIndicadores_ibfk_2` FOREIGN KEY (`idRefGeografica`) REFERENCES `refGeografica` (`id`),
-  ADD CONSTRAINT `valoresIndicadores_ibfk_3` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`);
+  ADD CONSTRAINT `valoresIndicadores_ibfk_3` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`),
+  ADD CONSTRAINT `valoresIndicadores_ibfk_4` FOREIGN KEY (`idValoresIndicadoresConfigFecha`) REFERENCES `valoresIndicadoresConfigFecha` (`id`);
 
 --
 -- Filtros para la tabla `valoresIndicadoresConfigFecha`
