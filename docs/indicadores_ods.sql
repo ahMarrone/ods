@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: localhost
--- Tiempo de generación: 29-11-2016 a las 13:27:19
+-- Tiempo de generación: 29-11-2016 a las 13:35:25
 -- Versión del servidor: 5.5.53-0ubuntu0.14.04.1
 -- Versión de PHP: 5.5.9-1ubuntu4.20
 
@@ -235,7 +235,7 @@ DROP TABLE IF EXISTS `valoresIndicadoresConfigFecha`;
 CREATE TABLE IF NOT EXISTS `valoresIndicadoresConfigFecha` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `idIndicador` int(11) unsigned NOT NULL,
-  `fecha` datetime NOT NULL,
+  `fecha` date NOT NULL,
   `cruzado` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `desglocesIndicadores_uniq_1` (`idIndicador`,`fecha`)
