@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Valoresindicadoresconfigfecha" table="valoresIndicadoresConfigFecha">
+    <indexes>
+      <index name="IDX_B785F34D31F81595" columns="idIndicador"/>
+    </indexes>
+    <unique-constraints>
+      <unique-constraint name="desglocesIndicadores_uniq_1" columns="idIndicador,fecha"/>
+    </unique-constraints>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="fecha" type="string" column="fecha" nullable="false"/>
+    <field name="cruzado" type="boolean" column="cruzado" nullable="false"/>
+    <many-to-one field="idindicador" target-entity="Indicadores">
+      <join-columns>
+        <join-column name="idIndicador" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-many field="iddesgloce" target-entity="Desgloces" mapped-by="idvaloresindicadoresconfigfecha"/>
+  </entity>
+</doctrine-mapping>
