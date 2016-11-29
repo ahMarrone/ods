@@ -3,11 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: localhost
--- Tiempo de generación: 24-11-2016 a las 16:17:25
+-- Tiempo de generación: 29-11-2016 a las 10:26:43
 -- Versión del servidor: 5.5.53-0ubuntu0.14.04.1
 -- Versión de PHP: 5.5.9-1ubuntu4.20
-
-
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -21,11 +19,8 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `indicadores_ods`
 --
-
-drop database IF EXISTS `indicadores_ods`;
-create database `indicadores_ods`;
-use indicadores_ods;
-
+CREATE DATABASE IF NOT EXISTS `indicadores_ods` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `indicadores_ods`;
 
 -- --------------------------------------------------------
 
@@ -33,6 +28,7 @@ use indicadores_ods;
 -- Estructura de tabla para la tabla `agrupamientoRefGeografica`
 --
 
+DROP TABLE IF EXISTS `agrupamientoRefGeografica`;
 CREATE TABLE IF NOT EXISTS `agrupamientoRefGeografica` (
   `id_1` int(11) unsigned NOT NULL,
   `id_2` int(11) unsigned NOT NULL,
@@ -46,6 +42,7 @@ CREATE TABLE IF NOT EXISTS `agrupamientoRefGeografica` (
 -- Estructura de tabla para la tabla `desgloces`
 --
 
+DROP TABLE IF EXISTS `desgloces`;
 CREATE TABLE IF NOT EXISTS `desgloces` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del desgloce',
@@ -58,6 +55,7 @@ CREATE TABLE IF NOT EXISTS `desgloces` (
 -- Estructura de tabla para la tabla `desglocesIndicadores`
 --
 
+DROP TABLE IF EXISTS `desglocesIndicadores`;
 CREATE TABLE IF NOT EXISTS `desglocesIndicadores` (
   `idIndicador` int(11) unsigned NOT NULL,
   `idDesgloce` int(11) unsigned NOT NULL,
@@ -71,6 +69,7 @@ CREATE TABLE IF NOT EXISTS `desglocesIndicadores` (
 -- Estructura de tabla para la tabla `etiquetas`
 --
 
+DROP TABLE IF EXISTS `etiquetas`;
 CREATE TABLE IF NOT EXISTS `etiquetas` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la etiqueta',
@@ -85,6 +84,7 @@ CREATE TABLE IF NOT EXISTS `etiquetas` (
 -- Estructura de tabla para la tabla `indicadores`
 --
 
+DROP TABLE IF EXISTS `indicadores`;
 CREATE TABLE IF NOT EXISTS `indicadores` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del indicador',
@@ -110,6 +110,7 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
 -- Estructura de tabla para la tabla `metas`
 --
 
+DROP TABLE IF EXISTS `metas`;
 CREATE TABLE IF NOT EXISTS `metas` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la meta',
@@ -128,6 +129,7 @@ CREATE TABLE IF NOT EXISTS `metas` (
 -- Estructura de tabla para la tabla `objetivos`
 --
 
+DROP TABLE IF EXISTS `objetivos`;
 CREATE TABLE IF NOT EXISTS `objetivos` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del objtivo',
@@ -140,6 +142,7 @@ CREATE TABLE IF NOT EXISTS `objetivos` (
 -- Estructura de tabla para la tabla `refGeografica`
 --
 
+DROP TABLE IF EXISTS `refGeografica`;
 CREATE TABLE IF NOT EXISTS `refGeografica` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la referencia geografica',
@@ -153,6 +156,7 @@ CREATE TABLE IF NOT EXISTS `refGeografica` (
 -- Estructura de tabla para la tabla `usuarios`
 --
 
+DROP TABLE IF EXISTS `usuarios`;
 CREATE TABLE IF NOT EXISTS `usuarios` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(180) COLLATE utf8_unicode_ci NOT NULL,
@@ -192,6 +196,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 -- Estructura de tabla para la tabla `usuariosRefGeografica`
 --
 
+DROP TABLE IF EXISTS `usuariosRefGeografica`;
 CREATE TABLE IF NOT EXISTS `usuariosRefGeografica` (
   `id_usuario` int(11) unsigned NOT NULL,
   `id_refGeografica` int(11) unsigned NOT NULL,
@@ -205,16 +210,17 @@ CREATE TABLE IF NOT EXISTS `usuariosRefGeografica` (
 -- Estructura de tabla para la tabla `valoresIndicadores`
 --
 
+DROP TABLE IF EXISTS `valoresIndicadores`;
 CREATE TABLE IF NOT EXISTS `valoresIndicadores` (
-  `idDesglocesIndicadores` int(11) unsigned NOT NULL,
+  `idValoresIndicadoresConfigFecha` int(11) unsigned NOT NULL,
   `idEtiqueta` varchar(30) COLLATE utf8_spanish_ci NOT NULL COMMENT 'Clave en formato string que representa el cruce de etuqietas del registro',
   `idRefGeografica` int(11) unsigned NOT NULL,
   `valor` decimal(10,2) NOT NULL,
   `aprobado` tinyint(1) NOT NULL,
   `idUsuario` int(11) unsigned NOT NULL,
   `fechaModificacion` datetime NOT NULL,
-  PRIMARY KEY (`idDesglocesIndicadores`,`idRefGeografica`,`idEtiqueta`),
-  KEY `idDesglocesIndicadoresndicadores` (`idDesglocesIndicadores`),
+  PRIMARY KEY (`idValoresIndicadoresConfigFecha`,`idRefGeografica`,`idEtiqueta`),
+  KEY `idDesglocesIndicadoresndicadores` (`idValoresIndicadoresConfigFecha`),
   KEY `idRefGeografica` (`idRefGeografica`),
   KEY `idEtiqueta` (`idEtiqueta`),
   KEY `idUsuario` (`idUsuario`)
@@ -226,6 +232,7 @@ CREATE TABLE IF NOT EXISTS `valoresIndicadores` (
 -- Estructura de tabla para la tabla `valoresIndicadoresConfigFecha`
 --
 
+DROP TABLE IF EXISTS `valoresIndicadoresConfigFecha`;
 CREATE TABLE IF NOT EXISTS `valoresIndicadoresConfigFecha` (
   `id` int(11) unsigned NOT NULL,
   `idIndicador` int(11) unsigned NOT NULL,
@@ -241,6 +248,7 @@ CREATE TABLE IF NOT EXISTS `valoresIndicadoresConfigFecha` (
 -- Estructura de tabla para la tabla `valoresIndicadoresConfigFechaDesgloces`
 --
 
+DROP TABLE IF EXISTS `valoresIndicadoresConfigFechaDesgloces`;
 CREATE TABLE IF NOT EXISTS `valoresIndicadoresConfigFechaDesgloces` (
   `idDesgloce` int(11) unsigned NOT NULL,
   `idValoresIndicadoresConfigFecha` int(11) unsigned NOT NULL,
@@ -263,8 +271,8 @@ ALTER TABLE `agrupamientoRefGeografica`
 -- Filtros para la tabla `desglocesIndicadores`
 --
 ALTER TABLE `desglocesIndicadores`
-  ADD CONSTRAINT `desglocesIndicadores_ibfk_2` FOREIGN KEY (`idDesgloce`) REFERENCES `desgloces` (`id`),
-  ADD CONSTRAINT `desglocesIndicadores_ibfk_1` FOREIGN KEY (`idIndicador`) REFERENCES `indicadores` (`id`);
+  ADD CONSTRAINT `desglocesIndicadores_ibfk_1` FOREIGN KEY (`idIndicador`) REFERENCES `indicadores` (`id`),
+  ADD CONSTRAINT `desglocesIndicadores_ibfk_2` FOREIGN KEY (`idDesgloce`) REFERENCES `desgloces` (`id`);
 
 --
 -- Filtros para la tabla `etiquetas`
@@ -297,7 +305,7 @@ ALTER TABLE `usuariosRefGeografica`
 -- Filtros para la tabla `valoresIndicadores`
 --
 ALTER TABLE `valoresIndicadores`
-  ADD CONSTRAINT `valoresIndicadores_ibfk_1` FOREIGN KEY (`idDesglocesIndicadores`) REFERENCES `valoresIndicadoresConfigFecha` (`id`),
+  ADD CONSTRAINT `valoresIndicadores_ibfk_4` FOREIGN KEY (`idValoresIndicadoresConfigFecha`) REFERENCES `valoresIndicadoresConfigFecha` (`id`),
   ADD CONSTRAINT `valoresIndicadores_ibfk_2` FOREIGN KEY (`idRefGeografica`) REFERENCES `refGeografica` (`id`),
   ADD CONSTRAINT `valoresIndicadores_ibfk_3` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`);
 
@@ -311,8 +319,8 @@ ALTER TABLE `valoresIndicadoresConfigFecha`
 -- Filtros para la tabla `valoresIndicadoresConfigFechaDesgloces`
 --
 ALTER TABLE `valoresIndicadoresConfigFechaDesgloces`
-  ADD CONSTRAINT `valoresIndicadoresConfigFechaDesgloces_ibfk_2` FOREIGN KEY (`idValoresIndicadoresConfigFecha`) REFERENCES `valoresIndicadoresConfigFecha` (`id`),
-  ADD CONSTRAINT `valoresIndicadoresConfigFechaDesgloces_ibfk_1` FOREIGN KEY (`idDesgloce`) REFERENCES `desgloces` (`id`);
+  ADD CONSTRAINT `valoresIndicadoresConfigFechaDesgloces_ibfk_1` FOREIGN KEY (`idDesgloce`) REFERENCES `desgloces` (`id`),
+  ADD CONSTRAINT `valoresIndicadoresConfigFechaDesgloces_ibfk_2` FOREIGN KEY (`idValoresIndicadoresConfigFecha`) REFERENCES `valoresIndicadoresConfigFecha` (`id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
