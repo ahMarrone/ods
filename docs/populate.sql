@@ -28,10 +28,6 @@ USE `indicadores_ods`;
 INSERT INTO `usuarios` (`id`, `username`, `username_canonical`, `email`, `email_canonical`, `apellido`, `nombre`, `domicilio`, `localidad`, `provincia`, `telefono`, `dependencia`, `observaciones`, `enabled`, `salt`, `password`, `last_login`, `locked`, `expired`, `expires_at`, `confirmation_token`, `password_requested_at`, `roles`, `credentials_expired`, `credentials_expire_at`) VALUES
 (1, 'admin', 'admin', 'admin@admin.com', 'admin@admin.com', '', '', '', '', '', '', '', NULL, 1, 'p004rq1adaso08sw08gskkgcw48o84c', '$2y$13$p004rq1adaso08sw08gskeyrspSFcPvBTyHqX5swLtP1Zxr5RgtaO', '2016-11-06 23:54:25', 0, 0, NULL, NULL, NULL, 'a:1:{i:0;s:10:"ROLE_ADMIN";}', 0, NULL);
 
-INSERT INTO `desgloces`(`id`, `descripcion`) VALUES(0,'Sin desgloce');
-
-INSERT INTO `etiquetas`(`id`, `descripcion`,`fkIdDesgloce`) VALUES(0,'Sin etiqueta',0);
-
 INSERT INTO `refGeografica` (`id`, `descripcion`, `ambito`) VALUES
 (0, 'PAIS', 'N'),
 (1, 'BUENOS AIRES', 'P'),
@@ -776,8 +772,8 @@ INSERT INTO `metas` (`id`, `descripcion`, `fkIdObjetivo`, `idUsuario`, `fechaMod
 -- Volcado de datos para la tabla `indicadores`
 --
 
-INSERT INTO `indicadores` (`id`, `descripcion`, `fkIdMeta`, `tipo`, `valMin`, `valMax`, `ambito`, `visibleNacional`, `visibleProvincial`, `visibleMunicipal`, `idUsuario`, `fechaModificacion`) VALUES
-(1, '1.1.1 Proporción de la población que vive por debajo del umbral internacional de la pobreza.', 2, 'porcentual', 0, 100, 'P', 0, 0, 0, 1, '2016-11-01 00:00:00');
+INSERT INTO `indicadores` (`id`, `descripcion`, `fkIdMeta`, `tipo`, `valMin`, `valMax`, `ambito`, `visible`, `idUsuario`, `fechaModificacion`) VALUES
+(1, '1.1.1 Proporción de la población que vive por debajo del umbral internacional de la pobreza.', 2, 'porcentual', 0, 100, 'P', 1, 1, '2016-11-01 00:00:00');
 
 --
 -- Volcado de datos para la tabla `agrupamientoRefGeografica`

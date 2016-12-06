@@ -19,6 +19,7 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `indicadores_ods`
 --
+drop database `indicadores_ods`;
 CREATE DATABASE IF NOT EXISTS `indicadores_ods` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 USE `indicadores_ods`;
 
