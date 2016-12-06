@@ -2,8 +2,6 @@
 import sys
 import random
 
-
-
 print "USE indicadores_ods;"
 
 #print "DELETE FROM agrupamientoRefGeografica;"
