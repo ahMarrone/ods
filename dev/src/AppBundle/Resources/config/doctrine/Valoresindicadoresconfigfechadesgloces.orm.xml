@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Valoresindicadoresconfigfechadesgloces" table="valoresIndicadoresConfigFechaDesgloces">
+    <id name="iddesgloce" type="integer" column="idDesgloce"/>
+    <id name="idvaloresindicadoresconfigfecha" type="integer" column="idValoresIndicadoresConfigFecha"/>
+  </entity>
+
+  <one-to-one field="iddesgloce" target-entity="Desgloces">
+      <join-columns>
+        <join-column name="idDesgloce" referenced-column-name="id"/>
+      </join-columns>
+    </one-to-one>
+  <one-to-one field="idvaloresindicadoresconfigfecha" target-entity="Valoresindicadoresconfigfecha">
+      <join-columns>
+        <join-column name="idValoresIndicadoresConfigFecha" referenced-column-name="id"/>
+      </join-columns>
+    </one-to-one>
+</doctrine-mapping>
