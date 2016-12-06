@@ -33,24 +33,302 @@
 <form id="preloaddataForm" action="{{ path('admin_crud_valoresindicadores_new') }}" method="post">
         <div id="selects"></div>
     <div class="form-group">
-        <div id="datesWithData" class="alert alert-info" role="alert"><i class="fa fa-info-circle pull-left"></i><span id="datesDataLabel"><b>Este indicador tiene datos cargados en las fechas: </b></span></i><span id="datesInfo"></span></div>
-        <div class="input-group date">
-        <label>Fecha</label>
-          <input id="valorIndicadorDate" name="fecha" type="text" class="form-control">
-        </div>
+        <div id="panelConfiguration"></div>
     </div>
-     <button type="submit" class="btn btn-success">
+     <button id="preloadDataSubmitBtn" type="submit" class="btn btn-success">
  <span class="glyphicon glyphicon-next"></span> Siguiente
 </button>
 </form>
-
-
 </div>
 </div>
+
+<script id="panelConfigurationTemplate" type="text/template">
+<div class="panel panel-primary">
+      <div class="panel-heading">
+        <% if ( model.status == 1 ){ %>
+            <i class="fa fa-spinner fa-spin fa-fw pull-left"></i>
+        <% } %>
+        <h3 class="panel-title">Configuración</h3>
+      </div>
+      <div class="panel-body">
+                <div id="datesWithData" class="alert alert-info" role="alert"><i class="fa fa-info-circle pull-left"></i><span id="datesDataLabel"><b>Este indicador tiene datos cargados en las fechas: </b></span>
+                <% _.each( model.enabled_dates, function( date, i){ %>
+                    <a class='indicadorDate btn btn-default'><%= date %></a>  
+                <% }); %>
+               </div>
+        <form>
+            <div class="form-group">
+                <div class="input-group date">
+                <label>Elija la fecha en la cual quiere cargar valores:</label>
+                  <input id="valorIndicadorDate" name="fecha" type="text" class="form-control" value="<%= model.date_selected %>">
+                </div>
+            </div>
+        </form>
+        <!-- FORMULARIO CARGA CONFIGURACION DE DESGLOCES DEL INDICADOR -->
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+            <h3 class="panel-title">Configuración desgloses</h3>
+            </div>
+            <div class="panel-body">
+                 <% if ( model.desgloces_request_status == 1 ){ %>
+                    <div class="col-md-8">
+                      <form  id="formDesglocesConfigIndicador">
+                        <fieldset <% if (model.desgloces_has_saved_config) { %>disabled<% }  %>>
+                              <div class="form-group">
+                                <% _.each( model.desgloces_enabled, function( desgloce, id){ %>
+                                    <div class="checkbox">
+                                        <label>
+                                          <input type="checkbox" class="indicadorDesgloceCheckbox" value="<%= id %>" <% if (desgloce.checked) { %>checked<% }  %>> <%= desgloce.label %>
+                                        </label>
+                                      </div>
+                                <% }); %>
+                              </div>
+                              <div class="form-group">
+                                  <div class="checkbox">
+                                            <label>
+                                              <input id="crossDesglocesCheckbox" type="checkbox" <% if (model.desgloces_cross) { %>checked<% }  %>><b>Cruzar desgloces</b>
+                                            </label>
+                                  </div>
+                                </div>
+                                <button id="desglocesConfigSaveBtn" type="button" class="btn btn-danger">Guardar configuración desgloces</button>
+                            </fieldset>
+                      </form>
+                      </div>
+                         <div class="alert alert-warning col-md-4" role="alert">
+                            <b>Etiquetas a completar:</b>
+                            <ul id="labelsToComplete">
+                              <%= this.prepareLabelsListContent() %>
+                            </ul>
+                         </div>
+                    <%  } else if (model.desgloces_request_status == 0) { %>
+                        <i class="fa fa-spinner fa-spin fa-fw"></i>
+                     <% } else { %>
+                        <div class="alert alert-warning col-md-12" role="alert">
+                        <b>Debe seleccioner una fecha para cargar la configuración de los desgloces</b>
+                        </div>
+                      <% } %>
+            </div>
+       </div> <!-- CIERRA PANEL DANGER -->
+       </div>
+</div>
+</script>
 
 <script type="text/javascript">
 
     $(document).ready(function() {
+
+        var configModel = null;
+        var configView = null;
+
+        function cartesianProductOf() {
+          return _.reduce(arguments, function(a, b) {
+              return _.flatten(_.map(a, function(x) {
+                  return _.map(b, function(y) {
+                      return x.concat([y]);
+                  });
+              }), true);
+          }, [ [] ]);
+      };
+
+      function getExhaustiveList(etiquetas){
+        var list = [];
+        for (e in etiquetas){
+          for (i in etiquetas[e]){
+            list.push([etiquetas[e][i]]);
+          }
+        }
+        return list;
+      }
+
+      function getEtiquetasList(etiquetasData, cruzado){
+        if (cruzado){
+          return cartesianProductOf.apply(this, etiquetasData);
+        } else {
+          return getExhaustiveList(etiquetasData);          
+        }
+      }
+
+        var IndicadorConfiguration = Backbone.Model.extend({
+            defaults: {
+                'id_indicador': null,
+                'date_selected': "",
+                'status': 0, // 1 si esta pidiendo datos ajax.
+                'enabled_dates': [], // fechas en las que el indicador tiene datos cargados
+                'desgloces_request_status':-1,
+                'desgloces_has_saved_config':0,
+                'desgloces_enabled':{},
+                'desgloces_cross':false,
+                'labels_full_list':[],
+                'labels_by_desgloce':[],
+             }
+        });
+
+
+        var configurationView = Backbone.View.extend({
+            el: '#panelConfiguration',
+            template: _.template($('#panelConfigurationTemplate').html()),
+            events: {
+                'click .indicadorDate': 'setNewDateIndicador',
+                'change .indicadorDesgloceCheckbox': 'checkDesglocesConfig',
+                'change #crossDesglocesCheckbox': 'updateDesglocesCross',
+                'change #valorIndicadorDate': 'loadDesglocesConfig',
+                'click #desglocesConfigSaveBtn': 'saveDesglocesConfig',
+
+            },
+            initialize: function(options){
+                this.model.on('change', this.render, this);
+                //this.render();
+                this.loadIndicadorDates(this.model.get('id_indicador'));
+            },
+            render: function(){
+                this.$el.html( this.template({model:this.model.toJSON()}));                
+                this.initializeDatePicker();
+            },
+            initializeDatePicker: function(){
+                $('#valorIndicadorDate').datepicker({
+                    format: "yyyy-mm-dd",
+                    minViewMode: 1,
+                    daysOfWeekDisabled: "1,2,3,4,5,6",
+                    autoclose: true
+                });
+            },
+            loadIndicadorDates: function(){
+                var idIndicador = this.model.get('id_indicador');
+                var that = this;
+                if (idIndicador){
+                    that.model.set('status',1);
+                    that.model.set('enabled_dates',[]);
+                    var url = api_urls.indicador_dates + '?id_indicador='+ idIndicador;
+                    data = {'id':idIndicador};
+                    $('#datesInfo').html(getSpinnerHTML());
+                    $.ajax(url,{
+                          'data': JSON.stringify(data),
+                          'type': 'GET',
+                          'processData': false,
+                          'contentType': 'application/json',
+                           success: function(data) {
+                                that.model.set('enabled_dates',data);
+                                that.model.set('status',0);
+                           },
+                           error: function(data) {
+                            that.model.set('status',0);
+                          },
+                      });
+                }
+            },
+            setNewDateIndicador: function(ev){
+                var date = $(ev.currentTarget).text();
+                $('#valorIndicadorDate').datepicker('update', date);
+            },
+            checkDesglocesConfig: function(ev){
+                var checkbox = $(ev.currentTarget);
+                if (checkbox.val()==0){
+                    $('.indicadorDesgloceCheckbox').each(function () {
+                        if ($(this).val()!=0)
+                            $(this).attr("checked", false);
+                    });
+                    $("#crossDesglocesCheckbox").attr("checked", false);
+                }
+                else{
+                    $('.indicadorDesgloceCheckbox').each(function () {
+                        if ($(this).val()==0)
+                            $(this).attr("checked", false);
+                    });
+                }
+                // Al cambiar la vista, necesito sincronizarla con el modelo
+                this.syncDesglocesCheckboxs();
+            },
+            syncDesglocesCheckboxs: function(){
+              var that = this;
+              var desglocesEnabledClone = _.clone(this.model.get('desgloces_enabled'));
+              $('.indicadorDesgloceCheckbox').each(function () {
+                  var desgloceID = $(this).val();
+                  var desgloceStatus = $(this).is(':checked');
+                  desglocesEnabledClone[desgloceID].checked = desgloceStatus;
+              });
+              console.log(desglocesEnabledClone);
+              this.model.set('desgloces_enabled',desglocesEnabledClone);
+              this.model.set('desgloces_cross',($("#crossDesglocesCheckbox").is(':checked')));
+              this.setLabelsList();
+            },
+            updateDesglocesCross: function(){
+              this.model.set('desgloces_cross',($("#crossDesglocesCheckbox").is(':checked')));
+            },
+            loadDesglocesConfig: function(){
+                var idIndicador = this.model.get('id_indicador');
+                var url_config = api_urls.indicador_desgloces_config;
+                var date = $('#valorIndicadorDate').val();
+                var data = {"id_indicador":idIndicador,"fecha":date};
+                var that = this;
+                this.model.set('desgloces_request_status',0);
+                that.model.set('date_selected',date);
+                $.ajax(url_config,{
+                  'data': data,
+                  'type': 'GET',
+                  'contentType': 'application/json',
+                   success: function(data) {
+                      that.model.set('desgloces_has_saved_config',data.has_saved_config);
+                      that.model.set('desgloces_enabled',data.desgloces_enabled);
+                      that.model.set('desgloces_cross',data.desgloces_cross);
+                      that.setLabelsList();
+                      that.updatePreloadDataForm();
+                   },
+                   error: function(data) {
+                   },
+                   complete: function() {
+                        that.model.set('desgloces_request_status', 1);      
+                   },
+              });
+            },
+            setLabelsList: function(){
+              var labelsFullList = {};
+              var labelsByDesgloce = [];
+              var desgloces = this.model.get("desgloces_enabled");
+              $.each(desgloces, function(i, desgloce) {
+                 if (desgloce.checked){
+                   var tmpLabels = [];
+                   $.each(desgloce.etiquetas, function(k, etiqueta) {
+                      labelsFullList[etiqueta.id_etiqueta] = etiqueta.desc;
+                      tmpLabels.push(etiqueta.id_etiqueta);
+                   });
+                   labelsByDesgloce.push(tmpLabels);
+                 }
+              });
+              this.model.set("labels_full_list",labelsFullList);
+              this.model.set("labels_by_desgloce",labelsByDesgloce);
+            },
+            updateActiveLabels: function(){
+
+            },
+            updatePreloadDataForm: function(){
+                if (this.model.get('desgloces_has_saved_config')){
+                    $('#preloadDataSubmitBtn').removeAttr("disabled");
+                } else {
+                    $('#preloadDataSubmitBtn').attr("disabled", true);
+                }
+            },
+            saveDesglocesConfig: function(){
+                // TODO
+                this.model.set('desgloces_has_saved_config',true);
+                this.updatePreloadDataForm();
+            },
+            prepareLabelsListContent: function(){
+              var content = "";
+              var labelsCrossData = getEtiquetasList(this.model.get('labels_by_desgloce'),this.model.get('desgloces_cross'));
+              var labelsFullList = this.model.get('labels_full_list');
+              $.each(labelsCrossData, function(i, labelsIDList){
+                content += "<li>";
+                var labelsText = [];
+                $.each(labelsIDList, function(m, idLabel){
+                  labelsText.push(labelsFullList[idLabel]);
+                });
+                content +=  labelsText.join("/");
+                content += "</li>";
+              });
+              return content;
+            }
+        });
+
 
 
         var api_urls = {{ api_urls|json_encode|raw}};
@@ -59,51 +337,6 @@
             return '<i class="fa fa-spinner fa-spin fa-fw">';
         }
 
-        // Pregunta al back en cuales fechas el indicador tiene datos cargados
-        function loadIndicadorDates(idIndicador){
-            if (idIndicador){
-                var url = api_urls.indicador_dates + '?id_indicador='+ idIndicador;
-                data = {'id':idIndicador};
-                $('#datesInfo').html(getSpinnerHTML());
-                $.ajax(url,{
-                      'data': JSON.stringify(data),
-                      'type': 'GET',
-                      'processData': false,
-                      'contentType': 'application/json',
-                       success: function(data) {
-                            updateIndicadorDates(data);  
-                       },
-                       error: function(data) {
-                        //alert("ERROR!");
-                      },
-                  });
-            }
-        }
-
-        function renderDates(data){
-            var html = "";
-            for (i in data){
-                html += "<a class='indicadorDate btn btn-default'>"+data[i]+"</a>  ";
-            }
-            return html;
-        }
-
-        function updateIndicadorDates(data){
-            var htmlDates = renderDates(data);
-            if (htmlDates == ""){
-                $('#datesInfo').html("No hay datos cargados por el momento");
-            } else {
-                $('#datesInfo').html(htmlDates);
-            }
-        }
-
-
-        $('#valorIndicadorDate').datepicker({
-            format: "yyyy-mm-dd",
-            minViewMode: 1,
-            daysOfWeekDisabled: "1,2,3,4,5,6",
-            autoclose: true
-        });
 
         var objetivos = {{ objetivos|json_encode|raw}};
         var metas = {{ metas|json_encode|raw}};
@@ -117,15 +350,19 @@
     	var view = new ThreeSelectView({el: $("#selects") ,model:model});
 
         $('#three_select_indicador').on('change', function() {
-            loadIndicadorDates(this.value);
+            configModel.set('id_indicador',this.value);
+            configView.loadIndicadorDates();
+            if (configModel.get('desgloces_request_status') != -1){
+              configView.loadDesglocesConfig();
+            }
         });
 
-        $('#datesInfo').on('click', '.indicadorDate', function() {
-            var date = $(this).text();
-            $('#valorIndicadorDate').datepicker('update', date);
-        });
+        init();
 
-        loadIndicadorDates($('#three_select_indicador').val());
+        function init(){
+            configModel = new IndicadorConfiguration({id_indicador:$('#three_select_indicador').val()});
+            configView = new configurationView({model:configModel});
+        }
 
     });
 </script>

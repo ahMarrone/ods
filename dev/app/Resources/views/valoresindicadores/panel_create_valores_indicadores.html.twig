@@ -147,35 +147,33 @@
       }
 
 
-       // Obtengo la lista de etiquetas del indicador
-       function getEtiquetasDictionary(desglocesEtiquetas){
-          var dicc_etiquetas = {};
-          /*$.each(desglocesEtiquetas, function( id_desgloce, desgloce_data ) {
-              $.each(desgloce_data.etiquetas, function( id_etiqueta, etiqueta_data ) {
-                  //alert(id_etiqueta +":"+etiqueta_data.desc);
-                  dicc_etiquetas[etiqueta_data.id_etiqueta] = etiqueta_data.desc;
-              });
-          });*/
-          dicc_etiquetas = [
-              [ {"id":1, "desc":"Femenino"},
-                {"id":2, "desc":"Masculino"}
-                ],
-              [
-                {"id":3, "desc":"Amarillo"},
-                {"id":4, "desc":"Morocho"},
-                {"id":5, "desc":"Aria"},
-                {"id":6, "desc":"Mestizo"},
-              ]
-          ]
-          return dicc_etiquetas;
-       }
+      function getExhaustiveList(etiquetas){
+        var list = [];
+        for (e in etiquetas){
+          for (i in etiquetas[e]){
+            list.push([etiquetas[e][i]]);
+          }
+        }
+        return list;
+      }
+
+
+      function getEtiquetasList(etiquetasData, cruzado){
+        if (cruzado){
+          return cartesianProductOf.apply(this, etiquetasData);
+        } else {
+          return getExhaustiveList(etiquetasData);          
+        }
+      }
 
         var indicador_id = {{ indicador_id|json_encode|raw}};
     	  var desgloces = {{ desgloces|json_encode|raw}};
         var etiquetasDesgloces = {{ etiquetas_desgloces|json_encode|raw}};
         var etiquetasData = getEtiquetasData(etiquetasDesgloces);
+        var cruzado = 1;
         console.log(etiquetasData[0]);
-        var etiquetas = cartesianProductOf.apply(this,etiquetasData[0]);
+        var etiquetas = getEtiquetasList(etiquetasData[0], cruzado);
+        console.log(etiquetas);
         var etiquetasMetadata = etiquetasData[1];
         var fecha = {{ fecha|json_encode|raw}};
         var valoresEtiquetas = {{ valores_indicadores|json_encode|raw}};
@@ -378,13 +376,13 @@
 
 		var RefGeograficaPanel = Backbone.View.extend({
       //el: '.panel',
-      tagName: "div",
-      className: "panelLoader",
-			template: _.template($('#panelLoader').html()),
-      events: {
-        "change .refGeogSelect": "refSelected",
-        "click .deleteObject": "deleteObject",
-        "change .etiquetaInput": "etiquetaValueChange"
+    tagName: "div",
+    className: "panelLoader",
+		template: _.template($('#panelLoader').html()),
+    events: {
+      "change .refGeogSelect": "refSelected",
+      "click .deleteObject": "deleteObject",
+      "change .etiquetaInput": "etiquetaValueChange"
     },
     etiquetaValueChange: function(event){
       var etiquetaId = $(event.target).data('etiqueta-id');
@@ -430,7 +428,7 @@
 
 		function bindRefGeograficaData(refGeograficaCollection, refGeograficasList){
 			$.each(valoresEtiquetas, function(idRefGeografica, valoresIndicadorValues) {
-        console.log(valoresIndicadorValues);
+          //console.log(valoresIndicadorValues);
     			var ref = new RefGeograficaData({id_ref_geografica:idRefGeografica,is_preloaded:true});
           refGeograficasList[idRefGeografica].used = true;
     			var refData = {};

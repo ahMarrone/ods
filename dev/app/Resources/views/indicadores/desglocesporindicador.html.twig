@@ -1,39 +1,27 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Desgloces por Indicador: {{ nombre_indicador }}</h1>
+    
+    <ol class="breadcrumb">
+        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        <li><a href="{{ path('admin_crud_indicadores_index') }}">Indicadores</a></li>
+        <li class="active">Desgloces indicador</a></li>
+    </ol>
+
+    <div class="page-header">
+          <h1>Desgloces por Indicador: {{ nombre_indicador }}</h1>
+    </div>
+
+    <div class="alert alert-warning" class="col-md-3" role="alert"><i class="fa fa-warning pull-left"></i>Por favor, defina cuales serán los desgloces permitidos para el nuevo indicador
+    </div>
 
     {{ form_start(edit_form) }}
         {{ form_widget(edit_form) }}
-        <input type="submit" value="Edit" />
+        <input  class="col-md-1 btn btn-success option-btn"  type="submit" value="Crear" />
     {{ form_end(edit_form) }}
 
-    <ul>
-        <li>
-            <a href="{{ path('admin_crud_indicadores_index') }}">Back to the list</a>
-        </li>
-    </ul>
+<div class="row">
+            <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_index') }}">Volver atrás</a>
+</div>
 
-
-
-    <script type="text/javascript">
-        $( document ).ready(function() {
-            $('input:checkbox').change(function(){
-                if ($(this).val()==0)
-                {
-                    $('input[type=checkbox]').each(function () {
-                        if ($(this).val()!=0)
-                            $(this).attr("checked", false);
-                    });
-                }
-                else
-                {
-                    $('input[type=checkbox]').each(function () {
-                        if ($(this).val()==0)
-                            $(this).attr("checked", false);
-                    });
-                }
-            });
-        });
-    </script>
 {% endblock %}
