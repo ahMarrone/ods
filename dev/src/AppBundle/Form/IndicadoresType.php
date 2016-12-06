@@ -57,9 +57,9 @@ class IndicadoresType extends AbstractType
             //->add('ambito')
             ->add('ambito', ChoiceType::class, array('label'  => 'Ámbito', 'expanded'=>true, 'required'=>true, 'choices' => array('Nacional' => 'N', 'Provincial' => 'P', 'Municipal' => 'M', ), 'data' => $ambitoSeleccionado, 'choices_as_values' => true, ))
             //->add('visiblenacional', CheckboxType::class, array('label' => 'Show this entry publicly?', ))
-            ->add('visiblenacional', 'checkbox', array('label'  => 'Nacional', 'required'  => false))   
-            ->add('visibleprovincial', 'checkbox', array('label'  => 'Provincial', 'required'  => false))   
-            ->add('visiblemunicipal', 'checkbox', array('label'  => 'Municipal', 'required'  => false))
+            ->add('visible', 'checkbox', array('label'  => 'Visible', 'required'  => false))   
+            //->add('visibleprovincial', 'checkbox', array('label'  => 'Provincial', 'required'  => false))   
+            //->add('visiblemunicipal', 'checkbox', array('label'  => 'Municipal', 'required'  => false))
             //->add('fkidmeta')
         ;
     }

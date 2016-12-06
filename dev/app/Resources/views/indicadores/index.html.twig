@@ -18,9 +18,7 @@
                 <th>Valmin</th>
                 <th>Valmax</th>
                 <th>Ambito</th>
-                <th>Visiblenacional</th>
-                <th>Visibleprovincial</th>
-                <th>Visiblemunicipal</th>
+                <th>Visible</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -33,9 +31,7 @@
                 <td>{{ indicadore.valmin }}</td>
                 <td>{{ indicadore.valmax }}</td>
                 <td>{{ indicadore.ambito }}</td>
-                <td>{{ indicadore.visiblenacional ? "Si" : "No"}}</td>
-                <td>{{ indicadore.visibleprovincial  ? "Si" : "No"}}</td>
-                <td>{{ indicadore.visiblemunicipal  ? "Si" : "No"}}</td>
+                <td>{{ indicadore.visible ? "Si" : "No"}}</td>
                 <td>
                             <a class="btn btn-primary" title="Ver" href="{{ path('admin_crud_indicadores_show', { 'id': indicadore.id }) }}"><i class="fa fa-eye fa-fw" aria-hidden="true"></i></a>
                             <a class="btn btn-warning" title="Editar" href="{{ path('admin_crud_indicadores_edit', { 'id': indicadore.id }) }}"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
