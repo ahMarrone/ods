@@ -13,10 +13,9 @@
     <field name="valmin" type="bigint" column="valMin" nullable="false"/>
     <field name="valmax" type="bigint" column="valMax" nullable="false"/>
     <field name="ambito" type="string" column="ambito" nullable="false"/>
-    <field name="visiblenacional" type="boolean" column="visibleNacional" nullable="false"/>
-    <field name="visibleprovincial" type="boolean" column="visibleProvincial" nullable="false"/>
-    <field name="visiblemunicipal" type="boolean" column="visibleMunicipal" nullable="false"/>
+    <field name="visible" type="boolean" column="visible" nullable="false"/>
     <field name="fechamodificacion" type="string" column="fechaModificacion" nullable="false"/>
+    <field name="fechasdestacadas" type="string" column="fechasDestacadas" length="50" nullable="true"/>
     <many-to-one field="fkidmeta" target-entity="Metas">
       <join-columns>
         <join-column name="fkIdMeta" referenced-column-name="id"/>

@@ -35,19 +35,29 @@ class Indicadores
     private $ambito;
 
     /**
-     * @var boolean
+     * @var string
      */
-    private $visiblenacional;
+    private $fechamodificacion;
+
+    /**
+     * @var \AppBundle\Entity\Usuarios
+     */
+    private $idusuario;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $iddesgloce;
 
     /**
      * @var boolean
      */
-    private $visibleprovincial;
+    private $visible;
 
     /**
-     * @var boolean
+     * @var string
      */
-    private $visiblemunicipal;
+    private $fechasdestacadas;
 
     /**
      * @var integer
@@ -280,20 +290,6 @@ class Indicadores
     public function __toString(){
         return (string) $this->getId() . ' - ' . substr($this->getDescripcion(), 0, 20);
     }
-    /**
-     * @var \DateTime
-     */
-    private $fechamodificacion;
-
-    /**
-     * @var \AppBundle\Entity\Usuarios
-     */
-    private $idusuario;
-
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $iddesgloce;
 
     /**
      * Constructor
@@ -306,7 +302,7 @@ class Indicadores
     /**
      * Set fechamodificacion
      *
-     * @param \DateTime $fechamodificacion
+     * @param string $fechamodificacion
      * @return Indicadores
      */
     public function setFechamodificacion($fechamodificacion)
@@ -319,7 +315,7 @@ class Indicadores
     /**
      * Get fechamodificacion
      *
-     * @return \DateTime 
+     * @return string 
      */
     public function getFechamodificacion()
     {
@@ -380,5 +376,51 @@ class Indicadores
     public function getIddesgloce()
     {
         return $this->iddesgloce;
+    }
+
+    /**
+     * Set visible
+     *
+     * @param boolean $visible
+     * @return Indicadores
+     */
+    public function setVisible($visible)
+    {
+        $this->visible = $visible;
+
+        return $this;
+    }
+
+    /**
+     * Get visible
+     *
+     * @return boolean 
+     */
+    public function getVisible()
+    {
+        return $this->visible;
+    }
+
+    /**
+     * Set fechasdestacadas
+     *
+     * @param string $fechasdestacadas
+     * @return Indicadores
+     */
+    public function setFechasdestacadas($fechasdestacadas)
+    {
+        $this->fechasdestacadas = $fechasdestacadas;
+
+        return $this;
+    }
+
+    /**
+     * Get fechasdestacadas
+     *
+     * @return string 
+     */
+    public function getFechasdestacadas()
+    {
+        return $this->fechasdestacadas;
     }
 }
