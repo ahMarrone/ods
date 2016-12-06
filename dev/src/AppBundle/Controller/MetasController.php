@@ -19,17 +19,31 @@ class MetasController extends Controller
     /**
      * Lists all Metas entities.
      *
-     * @Route("/", name="admin_crud_metas_index")
+     * @Route("/", requirements={"admin_crud_metas_index":"\d+"}, name="admin_crud_metas_index")
+     * @Route("/{id_objetivo}", requirements={"admin_crud_metas_index_idObjetivo":"\d+"}, name="admin_crud_metas_index_idObjetivo", defaults={"admin_crud_metas_index_idObjetivo" = 0})
      * @Method("GET")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
+        $id_objetivo = $request->get('id_objetivo');
         $em = $this->getDoctrine()->getManager();
+        
+        if (intval($id_objetivo) == 0)
+        {
+            $metas = $em->getRepository('AppBundle:Metas')->findAll();
+            $titulo_objetivo = "TODOS";
+        }
+        else
+        {
 
-        $metas = $em->getRepository('AppBundle:Metas')->findAll();
+            $objetivo = $em->getRepository('AppBundle:Objetivos')->findOneById($id_objetivo);
+            $titulo_objetivo = $objetivo->getDescripcion();
+            $metas = $em->getRepository('AppBundle:Metas')->findByfkidobjetivo($id_objetivo);            
+        }
 
         return $this->render('metas/index.html.twig', array(
             'metas' => $metas,
+            'titulo_objetivo' => $titulo_objetivo,
         ));
     }
 
@@ -63,7 +77,7 @@ class MetasController extends Controller
     /**
      * Finds and displays a Metas entity.
      *
-     * @Route("/{id}", name="admin_crud_metas_show")
+     * @Route("/detail/{id}", name="admin_crud_metas_show")
      * @Method("GET")
      */
     public function showAction(Metas $meta)

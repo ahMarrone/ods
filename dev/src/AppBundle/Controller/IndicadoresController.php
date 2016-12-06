@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use AppBundle\Entity\Indicadores;
+use AppBundle\Entity\Metas;
 use AppBundle\Form\IndicadoresType;
 
 /**
@@ -20,15 +21,35 @@ class IndicadoresController extends Controller
      * Lists all Indicadores entities.
      *
      * @Route("/", name="admin_crud_indicadores_index")
+     * @Route("/{id_meta}", requirements={"admin_crud_indicadores_index_idMeta":"\d+"}, name="admin_crud_indicadores_index_idMeta", defaults={"admin_crud_indicadores_index_idMeta" = 0})
      * @Method("GET")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
+
+        $id_meta = $request->get('id_meta');
         $em = $this->getDoctrine()->getManager();   
-        $indicadores = $em->getRepository('AppBundle:Indicadores')->findAll();
+        
+        if (intval($id_meta) == 0)
+        {
+            $indicadores = $em->getRepository('AppBundle:Indicadores')->findAll();
+            $titulo_meta = "TODAS";
+        }
+        else
+        {
+            //
+            $meta = $em->getRepository('AppBundle:Metas')->findOneById($id_meta);
+            $titulo_meta = $meta->getDescripcion();
+            //
+            $id_objetivo = $meta->getfkidObjetivo();
+            //print "OBJ:" . $id_objetivo;
+            //print "MET:" . $id_meta;
+            $indicadores = $em->getRepository('AppBundle:Indicadores')->findByfkidmeta($id_meta);            
+        }
 
         return $this->render('indicadores/index.html.twig', array(
             'indicadores' => $indicadores,
+            'titulo_meta' => $titulo_meta,            
         ));
     }
 
@@ -88,7 +109,7 @@ class IndicadoresController extends Controller
     /**
      * Finds and displays a Indicadores entity.
      *
-     * @Route("/{id}", name="admin_crud_indicadores_show")
+     * @Route("/detail/{id}", name="admin_crud_indicadores_show")
      * @Method("GET")
      */
     public function showAction(Indicadores $indicadore)
