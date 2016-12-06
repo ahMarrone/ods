@@ -62,22 +62,15 @@ class DesglocesPorIndicadorController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-/*$var = $form->getdata();
 
-            foreach ($var as $key => $value) {
-                print_r($key);
-                print_r(" >>>>> ");
-                print_r($value);
-                print_r("<br>");    
-                print_r($value->getDescripcion());
-
-            }
-            print_r("<br>--------------------<br>");
-  */
-            $desglocesSeleccionados = $form['desglocesSeleccionados']->getdata();
+            // Grabo la relacion "Sin desgloce"
+            $thisDI = new Desglocesindicadores();
+            $thisDI->setIdindicador($indicador->getId());
+            $thisDI->setIddesgloce(0);
+            $em->persist($thisDI);
             // Por cada desgloce seleccionado, grabo en la relación
+            $desglocesSeleccionados = $form['desglocesSeleccionados']->getdata();
             foreach ($desglocesSeleccionados as $key => $value) {
-                //print_r($key); print_r("-"); print_r($value); print_r("<br>");
                 // Crear instancia de Desglocesindicadores
                 $thisDI = new Desglocesindicadores();
                 // Setear valores
@@ -87,7 +80,6 @@ class DesglocesPorIndicadorController extends Controller
                 $em->persist($thisDI);
             }
             $em->flush();
-            //
             return $this->redirectToRoute('admin_crud_indicadores_show', array('id' => $indicador->getId()));
         }
 

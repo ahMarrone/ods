@@ -59,7 +59,7 @@ class Objetivos
 
     public function __toString()
     {
-        //return (string) $this->id . " - " . substr($this->getDescripcion(), 0, 15);  
-        return (string) $this->id;  
+        return $this->getDescripcion();  
+        
     }
 }

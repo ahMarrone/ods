@@ -5,5 +5,16 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="descripcion" type="string" column="descripcion" length="5000" nullable="false"/>
+    <many-to-many field="idvaloresindicadoresconfigfecha" target-entity="Valoresindicadoresconfigfecha" inversed-by="iddesgloce">
+      <join-table name="valoresindicadoresconfigfechadesgloces">
+        <join-columns>
+          <join-column name="idDesgloce" referenced-column-name="id"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="idValoresIndicadoresConfigFecha" referenced-column-name="id"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+    <many-to-many field="idindicador" target-entity="Indicadores" mapped-by="iddesgloce"/>
   </entity>
 </doctrine-mapping>

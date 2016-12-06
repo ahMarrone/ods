@@ -53,7 +53,8 @@ class ValoresIndicadoresController extends Controller
             $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findById($idIndicador)[0];
             $indicadorDesgloces = $this->getDoctrine()->getRepository('AppBundle:Desglocesindicadores')->findByIdindicador($idIndicador);
             //$desglocesEtiquetas =  $this->getEtiquetasDesgloce($indicadorDesgloces);
-            list($desgloces, $etiquetasDesgloces) =   $this->getEtiquetasDesgloce($indicadorDesgloces);
+            list($desgloces, $etiquetasDesgloces) = $this->getEtiquetasDesgloce($indicadorDesgloces);
+            //echo var_dump($desgloces);
             $refGeograficas = $this->getRefGeograficas();
             $valoresindicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')
                                ->filterByIndicadorFecha($idIndicador, $fecha);
@@ -104,7 +105,10 @@ class ValoresIndicadoresController extends Controller
             'objetivos'=>$objetivos,
             'metas'=>$metas,
             'indicadores'=>$indicadores,
-            'api_urls' => array('indicador_dates'=> $this->generateUrl('admin_crud_valoresindicadores_indicador_dates'))
+            'api_urls' => array(
+                'indicador_dates'=> $this->generateUrl('admin_crud_valoresindicadores_indicador_dates'),
+                'indicador_desgloces_config' => $this->generateUrl('admin_crud_valoresindicadores_indicador_desgloces_config')
+            )
         ));
     }
 
@@ -355,5 +359,97 @@ class ValoresIndicadoresController extends Controller
     }
 
 
+    /**
+     * Retorna json con las fechas (únicas) en los que el indicador tiene datos cargados
+     *
+     * @Route("/indicador_desgloces_config", name="admin_crud_valoresindicadores_indicador_desgloces_config")
+     * @Method({"GET","POST"})
+     */
+    public function getIndicadorDesglocesConfig(Request $request){
+        $em = $this->getDoctrine()->getManager();
+        $id_indicador = $request->query->get('id_indicador');
+        $fecha = $request->query->get('fecha');
+        $data = array();
+        $userDesgloces = array();
+        $configfecha = $this->getIndicadorConfigByKey($id_indicador, $fecha);
+        if ($configfecha){
+            $data["has_saved_config"] = true;
+            $data["desgloces_cross"] = $configfecha->getCruzado();
+            $userDesgloces = $this->flatUserDesgloces($this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfechadesgloces')->findByIdvaloresindicadoresconfigfecha($configfecha->getId()));
+        } else {
+            $data["has_saved_config"] = false;
+            $data["desgloces_cross"] = false;
+        }
+        $adminDesgloces = $this->getDoctrine()->getRepository('AppBundle:Desglocesindicadores')->findByIdindicador($id_indicador);
+        //echo var_dump($userDesgloces);
+        list($desgloces, $etiquetasDesgloces) = $this->getEtiquetasDesgloce($adminDesgloces);
+        $data['desgloces_enabled'] = $this->constructDesglocesConfig($adminDesgloces, $userDesgloces, $desgloces, $etiquetasDesgloces);
+        //echo var_dump($etiquetasDesgloces);
+        /*$data = array(
+            "has_saved_config" => false,
+            "desgloces_enabled" => array(
+                0 => array(
+                      "label"=>"Sin desgloce",
+                      "checked"=>false,
+                      "etiquetas"=>array(
+                        array("id"=>0,"label"=>"Sin etiqueta")
+                      )
+                ),
+                1 =>  array(
+                      "label"=>"Sexo",
+                      "checked"=>true,
+                      "etiquetas"=>array(
+                        array("id"=>1,"label"=>"Masculino"),
+                        array("id"=>2,"label"=>"Femenino"),
+                      )
+                ),
+                5 => array(
+                      "label"=>"Raza",
+                      "checked"=>true,
+                      "etiquetas"=> array(
+                        array("id"=>3,"label"=>"Negro"),
+                        array("id"=>4,"label"=>"Blanco"),
+                        array("id"=>5,"label"=>"Amarillo"),
+                      )
+                ),
+            ),
+            "desgloces_cross" => true
+        );*/
+        return new JsonResponse($data);
+    }
+
+
+
+    private function getIndicadorConfigByKey($idIndicador, $fecha){
+        $em = $this->getDoctrine()->getManager();
+        $config = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfecha')
+                               ->findByMultipleKey($idIndicador, $fecha);
+        if ($config){
+            return $config[0];
+        }         
+        return NULL;
+    }
+
+    private function constructDesglocesConfig($adminDesgloces, $userDesgloces, $desgloces, $etiquetasDesgloces){
+        $desglocesConfig = array();
+        foreach ($adminDesgloces as $adminDesgloce) {
+            $configFechaDesgloce = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfechadesgloces');
+            $desglocesConfig[$adminDesgloce->getIddesgloce()] = array(
+                "label" => $desgloces[$adminDesgloce->getIddesgloce()],
+                "checked" => in_array($adminDesgloce->getIddesgloce(), $userDesgloces),
+                "etiquetas"=> $etiquetasDesgloces[$adminDesgloce->getIddesgloce()]
+            );
+        }
+        return $desglocesConfig;
+    }
+
+
+    private function flatUserDesgloces($desgloces){
+        $list = array();
+        foreach ($desgloces as $desgloce) {
+            array_push($list, $desgloce->getIddesgloce());
+        }
+        return $list;
+    }
 
 }

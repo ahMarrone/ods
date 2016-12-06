@@ -8,13 +8,19 @@ use Doctrine\ORM\EntityRepository;
 class ValoresindicadoresRepository extends EntityRepository
 {
     public function filterByIndicadorFecha($idIndicador, $fecha){
+        $idConfig = $this->getEntityManager()
+            ->createQuery(
+             'SELECT p.id FROM AppBundle:Valoresindicadoresconfigfecha p where 
+                    p.idindicador = :idIndicador 
+                    and p.fecha = :fecha'
+            )->setParameter('idIndicador', $idIndicador)
+             ->setParameter('fecha', $fecha)
+            ->getResult();
         return $this->getEntityManager()
             ->createQuery(
              'SELECT p FROM AppBundle:Valoresindicadores p where 
-             		p.idindicador = :idIndicador 
-             		and p.fecha = :fecha'
-            )->setParameter('idIndicador', $idIndicador)
-	         ->setParameter('fecha', $fecha)
+             		p.idvaloresindicadoresconfigfecha = :idvaloresindicadoresconfigfecha' 
+            )->setParameter('idvaloresindicadoresconfigfecha', $idConfig)
             ->getResult();
     }
 
@@ -52,7 +58,7 @@ class ValoresindicadoresRepository extends EntityRepository
     public function getIndicadorDates($idIndicador){
         return $this->getEntityManager()
             ->createQuery(
-             'SELECT DISTINCT p.fecha FROM AppBundle:Valoresindicadores p where 
+             'SELECT DISTINCT p.fecha FROM AppBundle:Valoresindicadoresconfigfecha p where 
                     p.idindicador = :idIndicador ORDER BY p.fecha'
             )->setParameter('idIndicador', $idIndicador)
             ->getResult();

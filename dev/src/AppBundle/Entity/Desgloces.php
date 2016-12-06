@@ -21,6 +21,17 @@ class Desgloces
 
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $idvaloresindicadoresconfigfecha;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $idindicador;
+
+
+    /**
      * Set descripcion
      *
      * @param string $descripcion
@@ -56,5 +67,81 @@ class Desgloces
 
     public function __toString(){
         return $this->getDescripcion();
+    }
+
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->idvaloresindicadoresconfigfecha = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->idindicador = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add idvaloresindicadoresconfigfecha
+     *
+     * @param \AppBundle\Entity\Valoresindicadoresconfigfecha $idvaloresindicadoresconfigfecha
+     * @return Desgloces
+     */
+    public function addIdvaloresindicadoresconfigfecha(\AppBundle\Entity\Valoresindicadoresconfigfecha $idvaloresindicadoresconfigfecha)
+    {
+        $this->idvaloresindicadoresconfigfecha[] = $idvaloresindicadoresconfigfecha;
+
+        return $this;
+    }
+
+    /**
+     * Remove idvaloresindicadoresconfigfecha
+     *
+     * @param \AppBundle\Entity\Valoresindicadoresconfigfecha $idvaloresindicadoresconfigfecha
+     */
+    public function removeIdvaloresindicadoresconfigfecha(\AppBundle\Entity\Valoresindicadoresconfigfecha $idvaloresindicadoresconfigfecha)
+    {
+        $this->idvaloresindicadoresconfigfecha->removeElement($idvaloresindicadoresconfigfecha);
+    }
+
+    /**
+     * Get idvaloresindicadoresconfigfecha
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getIdvaloresindicadoresconfigfecha()
+    {
+        return $this->idvaloresindicadoresconfigfecha;
+    }
+
+    /**
+     * Add idindicador
+     *
+     * @param \AppBundle\Entity\Indicadores $idindicador
+     * @return Desgloces
+     */
+    public function addIdindicador(\AppBundle\Entity\Indicadores $idindicador)
+    {
+        $this->idindicador[] = $idindicador;
+
+        return $this;
+    }
+
+    /**
+     * Remove idindicador
+     *
+     * @param \AppBundle\Entity\Indicadores $idindicador
+     */
+    public function removeIdindicador(\AppBundle\Entity\Indicadores $idindicador)
+    {
+        $this->idindicador->removeElement($idindicador);
+    }
+
+    /**
+     * Get idindicador
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getIdindicador()
+    {
+        return $this->idindicador;
     }
 }

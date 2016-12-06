@@ -8,12 +8,12 @@
     <id name="iddesgloce" type="integer" column="idDesgloce"/>
   </entity>
 
-	<one-to-one field="idindicador" target-entity="Indicadores">
+  <one-to-one field="idindicador" target-entity="Indicadores">
       <join-columns>
         <join-column name="idIndicador" referenced-column-name="id"/>
       </join-columns>
     </one-to-one>
-	<one-to-one field="iddesgloce" target-entity="Desgloces">
+  <one-to-one field="iddesgloce" target-entity="Desgloces">
       <join-columns>
         <join-column name="idDesgloce" referenced-column-name="id"/>
       </join-columns>

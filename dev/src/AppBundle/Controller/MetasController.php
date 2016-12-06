@@ -42,7 +42,9 @@ class MetasController extends Controller
     public function newAction(Request $request)
     {
         $meta = new Metas();
-        $form = $this->createForm('AppBundle\Form\MetasType', $meta);
+        $form = $this->createForm('AppBundle\Form\MetasType', $meta, array(
+            'scopes_enabled' => $this->getEnabledScopes(),
+        ));
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -85,7 +87,9 @@ class MetasController extends Controller
     public function editAction(Request $request, Metas $meta)
     {
         $deleteForm = $this->createDeleteForm($meta);
-        $editForm = $this->createForm('AppBundle\Form\MetasType', $meta);
+        $editForm = $this->createForm('AppBundle\Form\MetasType', $meta, array(
+            'scopes_enabled' => array('N'=>false,'P'=>false,'D'=>false), // en modo edicion, no se puede cambiar el ambito de la meta
+        ));
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -144,5 +148,11 @@ class MetasController extends Controller
     private function addMetaMetadata(&$meta){
         $meta->setIdusuario($this->getUser());
         $meta->setFechamodificacion(date_format(new \DateTime(), 'Y-m-d H:i:s'));
+    }
+
+
+    private function getEnabledScopes(){
+        $scope = $this->get('app.utils.scopes_service');
+        return $scope->getMetasScopes();
     }
 }

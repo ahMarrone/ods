@@ -10,10 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Valoresindicadores
 {
-    /**
-     * @var \string
-     */
-    private $fecha;
 
     /**
      * @var string
@@ -30,10 +26,6 @@ class Valoresindicadores
      */
     private $idetiqueta;
 
-    /**
-     * @var \AppBundle\Entity\Indicadores
-     */
-    private $idindicador;
 
     /**
      * @var \AppBundle\Entity\Refgeografica
@@ -41,28 +33,23 @@ class Valoresindicadores
     private $idrefgeografica;
 
 
-    /**
-     * Set fecha
-     *
-     * @param string $fecha
-     * @return Valoresindicadores
-     */
-    public function setFecha($fecha)
-    {
-        $this->fecha = $fecha;
-
-        return $this;
-    }
 
     /**
-     * Get fecha
-     *
-     * @return \string 
+     * @var string
      */
-    public function getFecha()
-    {
-        return $this->fecha;
-    }
+    private $fechamodificacion;
+
+    /**
+     * @var \AppBundle\Entity\Usuarios
+     */
+    private $idusuario;
+
+        /**
+     * @var \AppBundle\Entity\Valoresindicadoresconfigfecha
+     */
+    private $idvaloresindicadoresconfigfecha;
+
+
 
     /**
      * Set valor
@@ -133,28 +120,6 @@ class Valoresindicadores
         return $this->idetiqueta;
     }
 
-    /**
-     * Set idindicador
-     *
-     * @param \AppBundle\Entity\Indicadores $idindicador
-     * @return Valoresindicadores
-     */
-    public function setIdindicador(\AppBundle\Entity\Indicadores $idindicador)
-    {
-        $this->idindicador = $idindicador;
-
-        return $this;
-    }
-
-    /**
-     * Get idindicador
-     *
-     * @return \AppBundle\Entity\Indicadores 
-     */
-    public function getIdindicador()
-    {
-        return $this->idindicador;
-    }
 
     /**
      * Set idrefgeografica
@@ -178,16 +143,6 @@ class Valoresindicadores
     {
         return $this->idrefgeografica;
     }
-
-    /**
-     * @var string
-     */
-    private $fechamodificacion;
-
-    /**
-     * @var \AppBundle\Entity\Usuarios
-     */
-    private $idusuario;
 
 
     /**
@@ -234,5 +189,29 @@ class Valoresindicadores
     public function getIdusuario()
     {
         return $this->idusuario;
+    }
+
+
+    /**
+     * Set idvaloresindicadoresconfigfecha
+     *
+     * @param \AppBundle\Entity\Valoresindicadoresconfigfecha $idvaloresindicadoresconfigfecha
+     * @return Valoresindicadores
+     */
+    public function setIdvaloresindicadoresconfigfecha(\AppBundle\Entity\Valoresindicadoresconfigfecha $idvaloresindicadoresconfigfecha)
+    {
+        $this->idvaloresindicadoresconfigfecha = $idvaloresindicadoresconfigfecha;
+
+        return $this;
+    }
+
+    /**
+     * Get idvaloresindicadoresconfigfecha
+     *
+     * @return \AppBundle\Entity\Valoresindicadoresconfigfecha 
+     */
+    public function getIdvaloresindicadoresconfigfecha()
+    {
+        return $this->idvaloresindicadoresconfigfecha;
     }
 }

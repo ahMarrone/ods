@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
   <entity name="AppBundle\Entity\Valoresindicadores" table="valoresIndicadores" repository-class="AppBundle\Entity\ValoresindicadoresRepository">
-    <indexes> 
+    <indexes>
+      <index name="idDesglocesIndicadoresndicadores" columns="idValoresIndicadoresConfigFecha"/>
       <index name="idRefGeografica" columns="idRefGeografica"/>
       <index name="idEtiqueta" columns="idEtiqueta"/>
       <index name="idUsuario" columns="idUsuario"/>
-      <index name="IDX_CB6229C931F81595" columns="idIndicador"/>
     </indexes>
-    <id name="fecha" type="string" column="fecha"/>
     <id name="idetiqueta" type="string" column="idEtiqueta" length="30"/>
-    <id name="idindicador" association-key="true"/>
+    <id name="idvaloresindicadoresconfigfecha" association-key="true"/>
     <id name="idrefgeografica" association-key="true"/>
     <field name="valor" type="decimal" column="valor" precision="10" scale="2" nullable="false"/>
     <field name="aprobado" type="boolean" column="aprobado" nullable="false"/>
-    <field name="fechamodificacion" type="string" column="fechaModificacion" nullable="false"/>
+    <field name="fechamodificacion" type="datetime" column="fechaModificacion" nullable="false"/>
+    <one-to-one field="idvaloresindicadoresconfigfecha" target-entity="Valoresindicadoresconfigfecha">
+      <join-columns>
+        <join-column name="idValoresIndicadoresConfigFecha" referenced-column-name="id"/>
+      </join-columns>
+    </one-to-one>
     <one-to-one field="idrefgeografica" target-entity="Refgeografica">
       <join-columns>
         <join-column name="idRefGeografica" referenced-column-name="id"/>
-      </join-columns>
-    </one-to-one>
-    <one-to-one field="idindicador" target-entity="Indicadores">
-      <join-columns>
-        <join-column name="idIndicador" referenced-column-name="id"/>
       </join-columns>
     </one-to-one>
     <many-to-one field="idusuario" target-entity="Usuarios">
