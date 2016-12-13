@@ -104,7 +104,7 @@
                         <i class="fa fa-spinner fa-spin fa-fw"></i>
                      <% } else { %>
                         <div class="alert alert-warning col-md-12" role="alert">
-                        <b>Debe seleccioner una fecha para cargar la configuración de los desgloces</b>
+                        <b>Debe seleccionar una fecha para cargar la configuración de los desgloces</b>
                         </div>
                       <% } %>
             </div>
@@ -246,7 +246,6 @@
                   var desgloceStatus = $(this).is(':checked');
                   desglocesEnabledClone[desgloceID].checked = desgloceStatus;
               });
-              console.log(desglocesEnabledClone);
               this.model.set('desgloces_enabled',desglocesEnabledClone);
               this.model.set('desgloces_cross',($("#crossDesglocesCheckbox").is(':checked')));
               this.setLabelsList();
@@ -297,9 +296,6 @@
               this.model.set("labels_full_list",labelsFullList);
               this.model.set("labels_by_desgloce",labelsByDesgloce);
             },
-            updateActiveLabels: function(){
-
-            },
             updatePreloadDataForm: function(){
                 if (this.model.get('desgloces_has_saved_config')){
                     $('#preloadDataSubmitBtn').removeAttr("disabled");
@@ -307,10 +303,53 @@
                     $('#preloadDataSubmitBtn').attr("disabled", true);
                 }
             },
+            getCheckedDesgloces: function(){ // Retorna desgloces que fueron seleccionados por el usuario
+              var activeDesgloces = [];
+              var desgloces = this.model.get('desgloces_enabled');
+              $.each(desgloces, function(idDesgloce, desgloceData){
+                  if (desgloceData.checked){
+                    activeDesgloces.push(idDesgloce);
+                  }
+              });
+              return activeDesgloces;
+            },
+            getConfigData: function(){
+              var config = {};
+              config.id_indicador = this.model.get('id_indicador');
+              config.fecha = this.model.get('date_selected');
+              config.desgloces_active = this.getCheckedDesgloces();
+              config.desgloces_cross = this.model.get('desgloces_cross');
+              return config;
+            },
             saveDesglocesConfig: function(){
-                // TODO
-                this.model.set('desgloces_has_saved_config',true);
-                this.updatePreloadDataForm();
+                // Guardo config desgloces
+                var that = this;
+                var url_save_config = api_urls.save_desgloces_config;
+                var newConfigData = this.getConfigData();
+                if (newConfigData.desgloces_active.length){
+                  $.ajax(url_save_config,{
+                    'data': JSON.stringify(newConfigData),
+                    'type': 'POST',
+                    'contentType': 'application/json',
+                     success: function(data) {
+                        if (data.success){
+                          alert("Configuración guardada con éxito");
+                          that.model.set('desgloces_has_saved_config',true);
+                        } else {
+                          alert("No se pudo guardar la configuración");
+                        }
+                     },
+                     error: function(data) {
+                        alert("Ha ocurrido un error mientras se intentaba guardar la configuración");
+                        that.model.set('desgloces_has_saved_config',false);
+                     },
+                     complete: function() {
+                          that.updatePreloadDataForm();  
+                     }
+                   });
+                } else {
+                  alert("Debe seleccionar alguno de los desgloces disponibles");
+                }
             },
             prepareLabelsListContent: function(){
               var content = "";

@@ -9,6 +9,9 @@
       <join-columns>
         <join-column name="idDesgloce" referenced-column-name="id"/>
       </join-columns>
+      <cascade>
+            <cascade-persist/>
+        </cascade>
     </one-to-one>
   <one-to-one field="idvaloresindicadoresconfigfecha" target-entity="Valoresindicadoresconfigfecha">
       <join-columns>

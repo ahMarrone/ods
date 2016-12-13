@@ -8,6 +8,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use AppBundle\Entity\Valoresindicadores;
+use AppBundle\Entity\Valoresindicadoresconfigfecha;
+use AppBundle\Entity\Valoresindicadoresconfigfechadesgloces;
 use AppBundle\Entity\Indicadores;
 use AppBundle\Entity\Etiquetas;
 use AppBundle\Entity\Refgeografica;
@@ -115,7 +117,8 @@ class ValoresIndicadoresController extends Controller
             'indicadores'=>$indicadores,
             'api_urls' => array(
                 'indicador_dates'=> $this->generateUrl('admin_crud_valoresindicadores_indicador_dates'),
-                'indicador_desgloces_config' => $this->generateUrl('admin_crud_valoresindicadores_indicador_desgloces_config')
+                'indicador_desgloces_config' => $this->generateUrl('admin_crud_valoresindicadores_indicador_desgloces_config'),
+                'save_desgloces_config' => $this->generateUrl('admin_crud_valoresindicadores_indicador_save_desgloces_config')
             )
         ));
     }
@@ -396,40 +399,8 @@ class ValoresIndicadoresController extends Controller
             $data["desgloces_cross"] = false;
         }
         $adminDesgloces = $this->getDoctrine()->getRepository('AppBundle:Desglocesindicadores')->findByIdindicador($id_indicador);
-        //echo var_dump($userDesgloces);
         list($desgloces, $etiquetasDesgloces) = $this->getEtiquetasDesgloce($adminDesgloces);
         $data['desgloces_enabled'] = $this->constructDesglocesConfig($adminDesgloces, $userDesgloces, $desgloces, $etiquetasDesgloces);
-        //echo var_dump($etiquetasDesgloces);
-        /*$data = array(
-            "has_saved_config" => false,
-            "desgloces_enabled" => array(
-                0 => array(
-                      "label"=>"Sin desgloce",
-                      "checked"=>false,
-                      "etiquetas"=>array(
-                        array("id"=>0,"label"=>"Sin etiqueta")
-                      )
-                ),
-                1 =>  array(
-                      "label"=>"Sexo",
-                      "checked"=>true,
-                      "etiquetas"=>array(
-                        array("id"=>1,"label"=>"Masculino"),
-                        array("id"=>2,"label"=>"Femenino"),
-                      )
-                ),
-                5 => array(
-                      "label"=>"Raza",
-                      "checked"=>true,
-                      "etiquetas"=> array(
-                        array("id"=>3,"label"=>"Negro"),
-                        array("id"=>4,"label"=>"Blanco"),
-                        array("id"=>5,"label"=>"Amarillo"),
-                      )
-                ),
-            ),
-            "desgloces_cross" => true
-        );*/
         return new JsonResponse($data);
     }
 
@@ -465,6 +436,69 @@ class ValoresIndicadoresController extends Controller
             array_push($list, $desgloce->getIddesgloce());
         }
         return $list;
+    }
+
+
+    
+    /**
+     * 
+     *
+     * @Route("/indicador_save_desgloces_config", name="admin_crud_valoresindicadores_indicador_save_desgloces_config")
+     * @Method({"POST"})
+     */
+    public function saveDesglocesConfigAction(Request $request){
+        $content = $this->get("request")->getContent();
+        if (!empty($content)){
+            $data = json_decode($content, true);
+            $response = $this->initSaveDesglocesConfig($data);
+            return new JsonResponse($response);
+        }
+    }
+
+
+    private function initSaveDesglocesConfig($data){
+        $em = $this->getDoctrine()->getManager();
+        $response = array("success"=>false);
+        $idIndicador = $data["id_indicador"];
+        $fecha = $data["fecha"];
+        $desgloces = $data["desgloces_active"];
+        $cruzado = $data["desgloces_cross"];
+        $configfecha = $this->getIndicadorConfigByKey($idIndicador, $fecha);
+        if (!$configfecha){ // solo sigo si NO hay una configuracion ya existente
+            try {
+                $em->getConnection()->beginTransaction();
+                $indicador = $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
+                $valoresindicadoresconfigfecha = new Valoresindicadoresconfigfecha();
+                $valoresindicadoresconfigfecha->setIdindicador($indicador);
+                $valoresindicadoresconfigfecha->setFecha($fecha);
+                $valoresindicadoresconfigfecha->setCruzado($cruzado);
+                $em->persist($valoresindicadoresconfigfecha);
+                $em->flush();
+                if (count($desgloces)){
+                    foreach ($desgloces as $idDesgloce){
+                        $cfd = new Valoresindicadoresconfigfechadesgloces();
+                        $cfd->setIddesgloce($idDesgloce);
+                        $cfd->setIdvaloresindicadoresconfigfecha($valoresindicadoresconfigfecha->getId());
+                        $em->persist($cfd);
+                    }
+                } else { // Si no se recibio ningun desgloce, se setea el desgloce 0 'Sin desgloce'
+                    $cfd = new Valoresindicadoresconfigfechadesgloces();
+                        $cfd->setIddesgloce(0);
+                        $cfd->setIdvaloresindicadoresconfigfecha($valoresindicadoresconfigfecha->getId());
+                        $em->persist($cfd);
+                }
+                $em->flush();
+                $em->getConnection()->commit();
+                $response["success"] = true;
+                $response["msg"] = "Configuración guardada con éxito";
+            } catch(\Exception $e){
+                $em->getConnection()->rollback();
+                $response["success"] = false;
+                $response["msg"] = "Ha ocurrido un error mientras se intentaba guardar la configuración";
+                $response["exception"] = $e;
+            }
+        }
+        return $response;
     }
 
 }
