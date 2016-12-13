@@ -1,0 +1,92 @@
+var southWest = L.latLng(-53.748710796898976, -107.57812500000001),
+    northEast = L.latLng(-19.642587534013032, -19.687500000000004),
+    bounds = L.latLngBounds(southWest, northEast),
+    minZoom = 4;
+
+function fill(data) {
+    var features = data.features;
+    for (var i = 0; i < features.length; i++) {
+        features[i].properties['value'] = 10 + i;
+    }
+}
+
+function mapMe(geoJsonData) {
+    var base = L.tileLayer.wms('http://wms.ign.gob.ar/geoserver/wms?', {layers: 'ign:capabaseargenmap_gwc'});
+    var capa = L.geoJson(geoJsonData, {onEachFeature: onEachFeature, style: style});    
+
+    /* Crear 'Objeto Mapa'*/
+    map = L.map(document.getElementById('mapCanvas'), {doubleClickZoom: false});
+    /* Agregar Mapa de Base */
+    base.addTo(map);
+    /* Controles sobre el Mapa */
+    // info = L.control({position: 'topright'});
+    // info.onAdd = addDivInfo;
+    // info.update = updateDivInfo;
+
+    /* Definir centro de mapa a partir de capa definida */
+    map.fitBounds(bounds);
+    map.setMaxBounds(capa.getBounds());
+    map.setMinZoom(minZoom);
+
+    /* Agregar capas y otros */
+    // info.addTo(map);
+    capa.addTo(map);
+    return capa;
+}
+
+function onEachFeature(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlight,
+        click: zoomToFeature,
+        dblclick: zoomOut
+    });
+}
+
+function style(feature) {
+return {
+    fillColor: getColor(feature.properties.value),
+    weight: 2,
+    opacity: 1,
+    color: 'white',
+    dashArray: '3',
+    fillOpacity: 0.7
+    };
+}
+
+function getColor(i) {
+    return i > 80 ? '#045a8d' :
+           i > 60 ? '#2b8cbe' :
+           i > 40 ? '#74a9cf' :
+           i > 20 ? '#bdc9e1' :
+                    '#f1eef6' ;
+}
+
+function highlightFeature(event) {
+    var layer = event.target;
+    layer.setStyle({
+        weight: 1,
+        color: '#646',
+        dashArray: '',
+        fillOpacity: 0.3
+    });
+  
+    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+        layer.bringToFront();
+    }
+    /*info.update(layer.feature.properties);*/
+}
+
+function resetHighlight(event) {
+    var layer = event.target;
+    event.target.setStyle(style(event.target.feature));
+    /*info.update();*/
+}
+
+function zoomToFeature(event) {
+    map.fitBounds(event.target.getBounds());
+}
+
+function zoomOut(event) {
+  map.fitBounds(bounds);
+}

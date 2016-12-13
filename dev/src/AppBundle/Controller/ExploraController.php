@@ -17,13 +17,20 @@ class ExploraController extends Controller
 
         /* Recuperar Metas, Objetivos, Indicadores y Etiquetas para rellenar 'selects' */
 
+        $reverseSearchResult = $this->reverseSearchByIndicador($idIndicador)[0];
+        $idObjetivoSeleccionado = $reverseSearchResult['objetivo'];
+        $idMetaSeleccionada = $reverseSearchResult['meta'];
+
         return $this->render('explora/explora.html.twig', array(
             'objetivos' => $this->getObjetivosPreload(),
             'metas' => $this->getMetasPreload(),
-            'indicadores' => $this->getIndicadoresPreload(1),
+            'indicadores' => $this->getIndicadoresPreload($idMetaSeleccionada),
+            'desgloses' => $this->getDesglosesByIndicadorPreload($idIndicador),
             'etiquetas' => $this->getEtiquetasByIndicadorPreload($idIndicador),
-            'indicador' => $this->$idIndicador
-            // 'indicadorSeleccionado' => $idIndicador
+            'valoresIndicadoresDesgloses' => $this->getValoresIndicadoresDesgloses($idIndicador),
+            'idObjetivoSeleccionado' => $idObjetivoSeleccionado,
+            'idMetaSeleccionada' => $idMetaSeleccionada,
+            'idIndicadorSeleccionado' => $idIndicador
         ));
     }
 
@@ -33,7 +40,7 @@ class ExploraController extends Controller
         foreach ($objetivos as $o) {
             array_push($list, array(
                 'id'=>$o->getId(),
-                'desc'=>$o->getDescripcion())
+                'descripcion'=>$o->getDescripcion())
             );
         }
         return $list;
@@ -45,7 +52,7 @@ class ExploraController extends Controller
         foreach ($metas as $m) {
             array_push($list, array(
                 'id'=>$m->getId(),
-                'desc'=>$m->getDescripcion(),
+                'descripcion'=>$m->getDescripcion(),
                 'id_objetivo'=>$m->getFkidobjetivo()->getId())
             );
         }
@@ -54,12 +61,15 @@ class ExploraController extends Controller
 
     private function getIndicadoresPreload($idMeta){
         $list = array();
-        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idMeta);
+        /* Si se desean filtrar por los indicadores por meta seleccionada  */
+        /*$indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByFkidmeta($idMeta);*/
+        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findall();
         foreach ($indicadores as $i) {
             array_push($list, array(
                 'id'=>$i->getId(),
-                'desc'=>$i->getDescripcion(),
-                'id_meta'=>$i->getFkidmeta()->getId()));
+                'descripcion'=>$i->getDescripcion(),
+                'id_meta'=>$i->getFkidmeta()->getId())
+                );
         }
         return $list;
     }
@@ -70,11 +80,48 @@ class ExploraController extends Controller
         foreach ($etiquetasEntity as $e){
             array_push($etiquetas, array(
                 'idEtiqueta' => $e->getId(),
-                'descripcion' => $e->getDescripcion())
+                'descripcion' => $e->getDescripcion(),
+                'id_desglose' => $e->getFkiddesgloce()->getId())
             );
             
         }
         return $etiquetas;
+    }
+
+    private function getDesglosesByIndicadorPreload($idIndicador){
+        $desglosesEntity = $this->filterDesglosesByIndicador($idIndicador);
+        $desgloses = array();
+        foreach ($desglosesEntity as $d){
+            array_push($desgloses, array(
+                'id' => $d->getId(),
+                'descripcion' => $d->getDescripcion())
+            );
+            
+        }
+        return $desgloses;
+    }
+
+    private function getValoresIndicadoresDesgloses($idIndicador){
+        $entidad = $this->filterValoresIndicadoresConfigFechaByIndicador($idIndicador);
+        $atributos = array();
+        /* ORDENARLOS POR IDS! */
+        $idsValoresIndicadoresConfigFecha = array(); /* Lista de IDs */
+
+        foreach ($entidad as $e){
+            $id = $e->getId();
+            array_push($idsValoresIndicadoresConfigFecha, $id);
+            /* Parsear 'fecha', conservando solo el año */
+            $anio = explode('-', $e->getFecha())[0];
+            $atributos[$id] = array('fecha' => $anio, 'id_desgloses' => array());
+        }
+
+        $entidad = $this->filterValoresIndicadoresConfigDesglosesFechaByIdsSet($idsValoresIndicadoresConfigFecha);
+        foreach ($entidad as $e){
+            $idValoresIndicadoresConfigFecha = $e->getIdValoresIndicadoresConfigFecha();
+            $idDesglose = $e->getIdDesgloce();
+            array_push($atributos[$idValoresIndicadoresConfigFecha]['id_desgloses'], $idDesglose);            
+        }
+        return $atributos;
     }
 
     /* Consultas */
@@ -89,13 +136,39 @@ class ExploraController extends Controller
                 ->getResult();
     }
 
-    private function filterIndicadoresByMetas($idMeta) {
+    private function filterDesglosesByIndicador($idIndicador) {
         return $this->getDoctrine()->getManager()->createQuery(
-                'SELECT i FROM AppBundle:Indicadores i WHERE 
-                i.fkidmeta = :idMeta)'
-                )->setParameter('idMeta', $idMeta)
+                'SELECT d FROM AppBundle:Desgloces d WHERE 
+                d.id IN (
+                    SELECT di.iddesgloce FROM AppBundle:Desglocesindicadores di WHERE
+                    di.idindicador = :idIndicador)'
+                )->setParameter('idIndicador', $idIndicador)
                 ->getResult();
     }
 
+    private function filterValoresIndicadoresConfigFechaByIndicador($idIndicador) {
+        return $this->getDoctrine()->getManager()->createQuery(
+                'SELECT e FROM AppBundle:Valoresindicadoresconfigfecha e WHERE 
+                e.idindicador = :idIndicador'
+                )->setParameter('idIndicador', $idIndicador)
+                ->getResult();
+    }
+
+    private function filterValoresIndicadoresConfigDesglosesFechaByIdsSet($idsSet) {
+        return $this->getDoctrine()->getManager()->createQuery(
+                'SELECT e FROM AppBundle:Valoresindicadoresconfigfechadesgloces e WHERE 
+                e.iddesgloce IN (:idsSet)'
+                )->setParameter('idsSet', $idsSet)
+                ->getResult();
+    }
+
+    private function reverseSearchByIndicador($idIndicador) {
+        return $this->getDoctrine()->getManager()->createQuery(
+                'SELECT IDENTITY(m.fkidobjetivo) as objetivo, m.id as meta FROM AppBundle:Metas m WHERE 
+                m.id = (SELECT IDENTITY (i.fkidmeta) FROM AppBundle:Indicadores i WHERE 
+                i.id = :idIndicador)'
+                )->setParameter('idIndicador', $idIndicador)
+                ->getResult();
+    }
 }
 // http://librosweb.es/libro/symfony_2_x/capitulo_8/buscando_objetos.html
