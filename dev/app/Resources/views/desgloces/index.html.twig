@@ -25,6 +25,8 @@
                 <td>
                     <a class="btn btn-primary" title="Ver" href="{{ path('admin_crud_desgloces_show', { 'id': desgloce.id }) }}"><i class="fa fa-eye fa-fw" aria-hidden="true"></i></a>
                     <a class="btn btn-warning" title="Editar" href="{{ path('admin_crud_desgloces_edit', { 'id': desgloce.id }) }}"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
+
+                    <a class="btn btn-info" title="Ver Etiquetas" href="{{ path('admin_crud_etiquetas_index_idDesgloce', { 'id_desgloce': desgloce.id }) }}"><i class="fa fa-tags fa-fw" aria-hidden="true"></i></a>
                 </td>
             </tr>
         {% endfor %}

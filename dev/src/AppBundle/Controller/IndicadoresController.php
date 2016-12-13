@@ -42,8 +42,6 @@ class IndicadoresController extends Controller
             $titulo_meta = $meta->getDescripcion();
             //
             $id_objetivo = $meta->getfkidObjetivo();
-            //print "OBJ:" . $id_objetivo;
-            //print "MET:" . $id_meta;
             $indicadores = $em->getRepository('AppBundle:Indicadores')->findByfkidmeta($id_meta);            
         }
 

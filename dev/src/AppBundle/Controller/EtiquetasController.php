@@ -20,16 +20,26 @@ class EtiquetasController extends Controller
      * Lists all Etiquetas entities.
      *
      * @Route("/", name="admin_crud_etiquetas_index")
+     * @Route("/{id_desgloce}", requirements={"admin_crud_etiquetas_index_idDesgloce":"\d+"}, name="admin_crud_etiquetas_index_idDesgloce", defaults={"admin_crud_etiquetas_index_idDesgloce" = 0})
      * @Method("GET")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+        $id_desgloce = $request->get('id_desgloce');
 
-        $etiquetas = $em->getRepository('AppBundle:Etiquetas')->findAll();
+        if (intval($id_desgloce) == 0){
+            $etiquetas = $em->getRepository('AppBundle:Etiquetas')->findAll();
+            $titulo_desgloces = "TODOS";
+        } else {
+            $desgloce = $em->getRepository('AppBundle:Desgloces')->findOneById($id_desgloce);
+            $etiquetas = $em->getRepository('AppBundle:Etiquetas')->findByfkiddesgloce($id_desgloce);
+            $titulo_desgloces = $desgloce->getDescripcion();
+        }
 
         return $this->render('etiquetas/index.html.twig', array(
             'etiquetas' => $etiquetas,
+            'titulo_desgloces' => $titulo_desgloces,
         ));
     }
 
