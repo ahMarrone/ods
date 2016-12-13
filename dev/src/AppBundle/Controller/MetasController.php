@@ -19,8 +19,8 @@ class MetasController extends Controller
     /**
      * Lists all Metas entities.
      *
-     * @Route("/", requirements={"admin_crud_metas_index":"\d+"}, name="admin_crud_metas_index")
-     * @Route("/{id_objetivo}", requirements={"admin_crud_metas_index_idObjetivo":"\d+"}, name="admin_crud_metas_index_idObjetivo", defaults={"admin_crud_metas_index_idObjetivo" = 0})
+     * @Route("/list", requirements={"admin_crud_metas_index":"\d+"}, name="admin_crud_metas_index")
+     * @Route("/list/{id_objetivo}", requirements={"admin_crud_metas_index_idObjetivo":"\d+"}, name="admin_crud_metas_index_idObjetivo", defaults={"admin_crud_metas_index_idObjetivo" = 0})
      * @Method("GET")
      */
     public function indexAction(Request $request)

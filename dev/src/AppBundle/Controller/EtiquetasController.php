@@ -19,8 +19,8 @@ class EtiquetasController extends Controller
     /**
      * Lists all Etiquetas entities.
      *
-     * @Route("/", name="admin_crud_etiquetas_index")
-     * @Route("/{id_desgloce}", requirements={"admin_crud_etiquetas_index_idDesgloce":"\d+"}, name="admin_crud_etiquetas_index_idDesgloce", defaults={"admin_crud_etiquetas_index_idDesgloce" = 0})
+     * @Route("/list", name="admin_crud_etiquetas_index")
+     * @Route("/list/{id_desgloce}", requirements={"admin_crud_etiquetas_index_idDesgloce":"\d+"}, name="admin_crud_etiquetas_index_idDesgloce", defaults={"admin_crud_etiquetas_index_idDesgloce" = 0})
      * @Method("GET")
      */
     public function indexAction(Request $request)

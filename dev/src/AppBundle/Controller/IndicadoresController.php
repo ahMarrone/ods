@@ -20,8 +20,8 @@ class IndicadoresController extends Controller
     /**
      * Lists all Indicadores entities.
      *
-     * @Route("/", name="admin_crud_indicadores_index")
-     * @Route("/{id_meta}", requirements={"admin_crud_indicadores_index_idMeta":"\d+"}, name="admin_crud_indicadores_index_idMeta", defaults={"admin_crud_indicadores_index_idMeta" = 0})
+     * @Route("/list", name="admin_crud_indicadores_index")
+     * @Route("/list/{id_meta}", requirements={"admin_crud_indicadores_index_idMeta":"\d+"}, name="admin_crud_indicadores_index_idMeta", defaults={"admin_crud_indicadores_index_idMeta" = 0})
      * @Method("GET")
      */
     public function indexAction(Request $request)
