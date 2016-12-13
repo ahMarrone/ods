@@ -32,10 +32,11 @@ class ValoresIndicadoresController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-
         $valoresindicadores = $em->getRepository('AppBundle:Valoresindicadores')->findAll();
+        $etiquetas = $this->getKeyValueEtiquetas($em->getRepository('AppBundle:Etiquetas')->findAll());
         return $this->render('valoresindicadores/index.html.twig', array(
             'valoresindicadores' => $valoresindicadores,
+            'etiquetas'=> $etiquetas,
             'api_urls' => array('aproveData'=> $this->generateUrl('admin_crud_valoresindicadores_aproveData'))
         ));
     }
@@ -80,11 +81,6 @@ class ValoresIndicadoresController extends Controller
            //echo var_dump($this->getRequest()->request->all());
            return $this->redirectToRoute('admin_crud_valoresindicadores_preload'); 
         }
-    }
-
-    private function getDesglocesObjects($listIDDesgloces){
-        $desglocesObjects = array();
-
     }
 
     private function parseEntityValoresindicadores($valoresindicadores){
@@ -333,12 +329,13 @@ class ValoresIndicadoresController extends Controller
         try {
             $em->getConnection()->beginTransaction();
             foreach ($data as $valorIndicador){
+                $configfecha = $this->getIndicadorConfigByKey($valorIndicador["indicador"], $valorIndicador["fecha"]);
                 $valoresindicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')
-                                    ->findByFullKey($valorIndicador["indicador"],
-                                                    $valorIndicador["refGeografica"], 
-                                                    $valorIndicador["fecha"],
-                                                    $valorIndicador["etiqueta"]);
-                $valoresindicadores = $valoresindicadores[0];
+                                    ->findOneBy(array('idvaloresindicadoresconfigfecha'=>$configfecha->getId(),
+                                                       'idetiqueta'=>$valorIndicador["etiqueta"],
+                                                       'idrefgeografica'=>$valorIndicador["refGeografica"],
+                                                )
+                                    );
                 $valoresindicadores->setAprobado($aproveAction);
             }
             $em->flush();
@@ -436,6 +433,15 @@ class ValoresIndicadoresController extends Controller
             array_push($list, $desgloce->getIddesgloce());
         }
         return $list;
+    }
+
+
+    private function getKeyValueEtiquetas($etiquetasList){
+        $etiquetas = array();
+        foreach ($etiquetasList as $et) {
+            $etiquetas[$et->getId()] = $et->getDescripcion();
+        }
+        return $etiquetas;
     }
 
 

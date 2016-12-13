@@ -288,7 +288,7 @@ class Indicadores
     }
 
     public function __toString(){
-        return (string) $this->getId() . ' - ' . substr($this->getDescripcion(), 0, 20);
+        return (string) $this->getId() . ' - ' . substr($this->getDescripcion(), 0, 100);
     }
 
     /**

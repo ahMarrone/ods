@@ -45,15 +45,21 @@
 	</tfoot>
 	{% for valorindicador in valoresindicadores %}
 	<tr >
-		<td>{{ valorindicador.idIndicador.id }}</td>
+		<td>{{ valorindicador.idvaloresindicadoresconfigfecha.idIndicador.id }}</td>
 		<td>{{ valorindicador.idEtiqueta }}</td>
 		<td>{{ valorindicador.idUsuario.id }}</td>
 		<td>{{ valorindicador.idRefgeografica.id }}</td>
-		<td>{{ valorindicador.idIndicador }}</td>
-		<td>{{ valorindicador.fecha|date("Y-m-d") }}</td>
+		<td title="{{ valorindicador.idvaloresindicadoresconfigfecha.idIndicador }}">{{ valorindicador.idvaloresindicadoresconfigfecha.idIndicador }}</td>
+		<td>{{ valorindicador.idvaloresindicadoresconfigfecha.fecha|date("Y-m-d") }}</td>
 		<td>{{ valorindicador.idRefgeografica }}</td>
 		<td>{{ valorindicador.idUsuario }}</td>
-		<td>{{ valorindicador.idEtiqueta }}</td>
+		<td>
+		{% set etiquetas_list = valorindicador.idEtiqueta|split(':') %}
+		{% for id_etiqueta in etiquetas_list %}
+			{{etiquetas[id_etiqueta]}}
+			{% if not loop.last %}/{% endif %}
+		{% endfor %}
+		</td>
 		<td>{{ valorindicador.valor }}</td>
 		<td>{{ valorindicador.aprobado ? "Si" : "No"}}</td>
 	</tr>
