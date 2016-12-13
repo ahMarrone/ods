@@ -26,7 +26,14 @@
         <div class="page-header">
           <h1>Carga valores indicadores <small>{{indicador_desc}}</small></h1>
         </div>
-      <div class="alert alert-info" class="col-md-3" role="alert">Fecha de carga: {{fecha}}. Desglozando por:
+      <div class="alert alert-info" class="col-md-3" role="alert"><b>Fecha de carga:</b> {{fecha}}.
+        <span>
+          <b>Desglozando por:</b>
+        {{ desgloces|join(', ') }}.
+        </span>
+        <span>
+          <b>Cruzar etiquetas:</b> {{ cruzado ? "Si" : "No"}}.
+        </span>
       </div>
       <div id="panelList"></div>
         <div class=".panel"></div>
@@ -170,10 +177,11 @@
     	  var desgloces = {{ desgloces|json_encode|raw}};
         var etiquetasDesgloces = {{ etiquetas_desgloces|json_encode|raw}};
         var etiquetasData = getEtiquetasData(etiquetasDesgloces);
-        var cruzado = 1;
-        console.log(etiquetasData[0]);
+        var cruzado = {{cruzado|json_encode|raw}};
+        console.log(desgloces);
+        console.log(etiquetasDesgloces);
         var etiquetas = getEtiquetasList(etiquetasData[0], cruzado);
-        console.log(etiquetas);
+        console.log(cruzado);
         var etiquetasMetadata = etiquetasData[1];
         var fecha = {{ fecha|json_encode|raw}};
         var valoresEtiquetas = {{ valores_indicadores|json_encode|raw}};

@@ -49,11 +49,13 @@ class ValoresIndicadoresController extends Controller
         $params = $this->getRequest()->request->all();
         $idIndicador = (isset($params["id_indicador_selected"])) ? $params["id_indicador_selected"] : NULL;
         $fecha =  (isset($params["fecha"])) ? $params["fecha"] : NULL;
-        if ($idIndicador && $fecha){
+        $configfecha = $this->getIndicadorConfigByKey($idIndicador, $fecha);
+        if ($configfecha){
             $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findById($idIndicador)[0];
-            $indicadorDesgloces = $this->getDoctrine()->getRepository('AppBundle:Desglocesindicadores')->findByIdindicador($idIndicador);
-            //$desglocesEtiquetas =  $this->getEtiquetasDesgloce($indicadorDesgloces);
-            list($desgloces, $etiquetasDesgloces) = $this->getEtiquetasDesgloce($indicadorDesgloces);
+            //$indicadorDesgloces = $this->getDoctrine()->getRepository('AppBundle:Desglocesindicadores')->findByIdindicador($idIndicador);
+            $userDesgloces = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfechadesgloces')->findByIdvaloresindicadoresconfigfecha($configfecha->getId());
+            $cruzado = $configfecha->getCruzado();
+            list($desgloces, $etiquetasDesgloces) = $this->getEtiquetasDesgloce($userDesgloces);
             //echo var_dump($desgloces);
             $refGeograficas = $this->getRefGeograficas();
             $valoresindicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')
@@ -65,6 +67,7 @@ class ValoresIndicadoresController extends Controller
                 'indicador_desc' => $indicador->getDescripcion(),
                 'desgloces' => $desgloces,
                 'etiquetas_desgloces' => $etiquetasDesgloces,
+                'cruzado' => $cruzado,
                 'ref_geograficas' => $refGeograficas,
                 'valores_indicadores' => $valoresindicadores,
                 'api_urls' => array('edit'=> $this->generateUrl('admin_crud_valoresindicadores_saveobjects'), 
@@ -72,9 +75,14 @@ class ValoresIndicadoresController extends Controller
                 )
         ));
         } else {
-            echo var_dump($this->getRequest()->request->all());
-           //return $this->redirectToRoute('admin_crud_indicadores_index'); 
+           //echo var_dump($this->getRequest()->request->all());
+           return $this->redirectToRoute('admin_crud_valoresindicadores_preload'); 
         }
+    }
+
+    private function getDesglocesObjects($listIDDesgloces){
+        $desglocesObjects = array();
+
     }
 
     private function parseEntityValoresindicadores($valoresindicadores){
