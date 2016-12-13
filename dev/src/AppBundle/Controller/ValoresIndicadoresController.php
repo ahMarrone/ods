@@ -176,42 +176,46 @@ class ValoresIndicadoresController extends Controller
     private function initSaveObjects($data){
         $userLogued = $this->getUser();
         $idIndicador = $data["id_indicador"];
+        $fecha = $data["fecha"];
         $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
         $etiquetasMemoization = array();
-        $fecha = $data["fecha"];
         $objects = $data["objects"];
         $em = $this->getDoctrine()->getManager();
         $response = array("success"=>false);
-        try {
-            $em->getConnection()->beginTransaction();
-            $fechaModif = date_format(new \DateTime(), 'Y-m-d H:i:s');
-            foreach ($objects as $refId => $refGeograficaObjects){
-                $refgeografica = $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findOneById($refId);
-                foreach ($refGeograficaObjects as $valorIndicadorData) { 
-                    $vi = new Valoresindicadores();
-                    $vi->setIdusuario($userLogued);
-                    $vi->setValor($valorIndicadorData["value"]);
-                    $vi->setIdEtiqueta($valorIndicadorData["id_etiqueta"]);
-                    $vi->setIdindicador($indicador);
-                    $vi->setIdrefgeografica($refgeografica);
-                    $vi->setAprobado(false);
-                    $date = new \DateTime($fecha);
-                    $vi->setFecha(date_format($date, 'Y-m-d'));
-                    $vi->setFechamodificacion($fechaModif);
-                    $em->merge($vi); // persisto valorindicador
+        $configfecha = $this->getIndicadorConfigByKey($idIndicador, $fecha);
+        if ($configfecha){
+                try {
+                    $em->getConnection()->beginTransaction();
+                    $fechaModif = date_format(new \DateTime(), 'Y-m-d H:i:s');
+                    foreach ($objects as $refId => $refGeograficaObjects){
+                        $refgeografica = $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findOneById($refId);
+                        foreach ($refGeograficaObjects as $valorIndicadorData) { 
+                            $vi = new Valoresindicadores();
+                            $vi->setIdvaloresindicadoresconfigfecha($configfecha);
+                            $vi->setIdusuario($userLogued);
+                            $vi->setValor($valorIndicadorData["value"]);
+                            $vi->setIdEtiqueta($valorIndicadorData["id_etiqueta"]);
+                            $vi->setIdrefgeografica($refgeografica);
+                            $vi->setAprobado(false);
+                            //$vi->setIdindicador($indicador);
+                            //$date = new \DateTime($fecha);
+                            //$vi->setFecha(date_format($date, 'Y-m-d'));
+                            $vi->setFechamodificacion($fechaModif);
+                            $em->merge($vi); // persisto valorindicador
+                        }
+                    }
+                    $em->flush();
+                    $em->getConnection()->commit();
+                    $response["success"] = true;
+                    $response["user"] = $userLogued->getUsernameCanonical();
+                    $response["dateModif"] = $fechaModif;
+                } catch (\Exception $e) {
+                    $em->getConnection()->rollback();
+                    $response["success"] = false;
+                    $response["msg"] = "Ha ocurrido un error mientras se intentaban dar de alta los valores indicadores";
+                    $response["exception"] = $e;
+                    throw $e;
                 }
-            }
-            $em->flush();
-            $em->getConnection()->commit();
-            $response["success"] = true;
-            $response["user"] = $userLogued->getUsernameCanonical();
-            $response["dateModif"] = $fechaModif;
-        } catch (\Exception $e) {
-            $em->getConnection()->rollback();
-            $response["success"] = false;
-            $response["msg"] = "Ha ocurrido un error mientras se intentaban dar de alta los valores indicadores";
-            $response["exception"] = $e;
-            throw $e;
         }
         return $response;
     }
@@ -271,30 +275,33 @@ class ValoresIndicadoresController extends Controller
     private function initDeleteObjects($data){
         $response = array("success"=>false);
         $idIndicador = $data["id_indicador"];
-        $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
         $fecha = $data["fecha"];
+        $configfecha = $this->getIndicadorConfigByKey($idIndicador, $fecha);
+        //$indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
         $objects = $data["objects"];
         $refGeografica = null;
         $em = $this->getDoctrine()->getManager();
-        try {
-            $em->getConnection()->beginTransaction();
-            // elimino todas las tuplas de ese, indicador, para esa fecha, y de esa ref_geografica
-            foreach ($objects as $refGeograficaID){  
-                $valoresindicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')
-                                    ->findByMultipleKey($idIndicador, $refGeograficaID, $fecha);
-                foreach ($valoresindicadores as $valorindicador) {
-                    $em->remove($valorindicador);
+        if ($configfecha){
+            try {
+                $em->getConnection()->beginTransaction();
+                // elimino todas las tuplas de ese, indicador, para esa fecha (id de configuracion) y de esa ref_geografica
+                foreach ($objects as $refGeograficaID){  
+                    $valoresindicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')
+                                        ->findBy(array('idvaloresindicadoresconfigfecha' => $configfecha->getId(), 'idrefgeografica' => $refGeograficaID));
+                    foreach ($valoresindicadores as $valorindicador) {
+                        $em->remove($valorindicador);
+                    }
                 }
+                $em->flush();
+                $em->getConnection()->commit();
+                $response["success"] = true;
+            } catch (\Exception $e) {
+                $em->getConnection()->rollback();
+                $response["success"] = false;
+                $response["msg"] = "No se han podido eliminar los objetos";
+                $response["exception"] = $e;
+                throw $e;
             }
-            $em->flush();
-            $em->getConnection()->commit();
-            $response["success"] = true;
-        } catch (\Exception $e) {
-            $em->getConnection()->rollback();
-            $response["success"] = false;
-            $response["msg"] = "No se han podido eliminar los objetos";
-            $response["exception"] = $e;
-            throw $e;
         }
         return $response;
     }

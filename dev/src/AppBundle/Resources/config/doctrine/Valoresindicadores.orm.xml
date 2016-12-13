@@ -12,7 +12,7 @@
     <id name="idrefgeografica" association-key="true"/>
     <field name="valor" type="decimal" column="valor" precision="10" scale="2" nullable="false"/>
     <field name="aprobado" type="boolean" column="aprobado" nullable="false"/>
-    <field name="fechamodificacion" type="datetime" column="fechaModificacion" nullable="false"/>
+    <field name="fechamodificacion" type="string" column="fechaModificacion" nullable="false"/>
     <one-to-one field="idvaloresindicadoresconfigfecha" target-entity="Valoresindicadoresconfigfecha">
       <join-columns>
         <join-column name="idValoresIndicadoresConfigFecha" referenced-column-name="id"/>

@@ -178,10 +178,7 @@
         var etiquetasDesgloces = {{ etiquetas_desgloces|json_encode|raw}};
         var etiquetasData = getEtiquetasData(etiquetasDesgloces);
         var cruzado = {{cruzado|json_encode|raw}};
-        console.log(desgloces);
-        console.log(etiquetasDesgloces);
         var etiquetas = getEtiquetasList(etiquetasData[0], cruzado);
-        console.log(cruzado);
         var etiquetasMetadata = etiquetasData[1];
         var fecha = {{ fecha|json_encode|raw}};
         var valoresEtiquetas = {{ valores_indicadores|json_encode|raw}};

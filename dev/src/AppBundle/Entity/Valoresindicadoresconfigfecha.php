@@ -45,7 +45,7 @@ class Valoresindicadoresconfigfecha
     /**
      * Set fecha
      *
-     * @param \DateTime $fecha
+     * @param string
      * @return Valoresindicadoresconfigfecha
      */
     public function setFecha($fecha)
@@ -58,7 +58,7 @@ class Valoresindicadoresconfigfecha
     /**
      * Get fecha
      *
-     * @return \DateTime 
+     * @return string
      */
     public function getFecha()
     {
