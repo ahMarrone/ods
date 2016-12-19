@@ -10,6 +10,7 @@
     <script type="text/javascript" src="{{ asset('js/backbone-min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/map.js') }}"></script>
     <!-- <script type="text/javascript" src="{{ asset('geoData.js') }}"></script> -->
+    <script type="text/javascript" src="{{ asset('js/nacion.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/provincias-simplified-0dot5-mapa.js') }}"></script>
 
 {% endblock %}    
@@ -63,6 +64,7 @@
 
 <div class="container-fluid" id='divFluid'>
 <script id="formLoader" type="text/template">
+<!-- Modificar para que sea  "1.1.1 Proporción de la p...nacional de la pobreza." -->
 <%_.mixin({
   trim: function(string, max) {
     var idx = string.indexOf(' ', 0);
@@ -99,7 +101,7 @@
         <select id="selectorIndicador" class="form-control selectIndicador">
           <% _.each(model.get("indicadores"), function( indicador, i){ %>
             <% if ( indicador.id_meta == model.get("meta_selected") ){ %>
-              '<option value="<%= indicador.id %>" <% if (indicador.id == model.get("indicador_selected")) { %> selected<% }  %>><%= indicador.descripcion %></option>'
+              <option value="<%= i %>" <% if (i == model.get("indicador_selected")) { %> selected<% }  %>><%= indicador.descripcion %></option>
             <% } %>
           <% }); %>
         </select>
@@ -127,7 +129,7 @@
     <label for="selectorEtiqueta" class="col-xs-1 control-label">Etiqueta</label>
       <div class="col-xs-4">
       <select id="selectorEtiqueta" class="form-control selectEtiqueta">
-      <% _.each(model.get("etiquetas"), function(etiqueta, i){ %>',
+      <% _.each(model.get("etiquetas"), function(etiqueta, i){ %>
         <% if ( etiqueta.id_desglose == model.get("desglose_selected") ){ %>
           <option title="<%= etiqueta.descripcion %>" value="<%= etiqueta.id %>"><%= etiqueta.descripcion %></option>
         <% } %>
@@ -165,9 +167,16 @@
       initialize: function() {
         this.model.set('desglose_selected', this.model.get('valoresIndicadoresDesgloses')[this.model.get('anio_selected')].id_desgloses[0]);
         this.model.set('etiqueta_selected', this.model.get('desgloses')[0].id);
+        
+        /* Incializar mapa */
+        swap(this.model.get('indicadores')[this.model.get('indicador_selected')].ambito);
+        valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('anio_selected')].valoresRefGeografica
+        etiqueta = this.model.get('etiqueta_selected');
+        update(valoresRefGeografica, etiqueta);
 
         this.model.on('change:objetivo_selected', this.render, this);
         this.model.on('change:meta_selected', this.render, this);
+        this.model.on('change:indicador_selected', this.render, this);
         this.model.on('change:anio_selected', this.render, this);
         this.model.on('change:desglose_selected', this.render, this);
         this.render();
@@ -178,7 +187,7 @@
                   'change .selectIndicador': 'indicadorSelected',
                   'change .selectAnio': 'anioSelected',
                   'change .selectDesglose': 'desgloseSelected',
-                  //'change .selectEtiqueta': 'etiquetaSelected',
+                  'change .selectEtiqueta': 'etiquetaSelected',
         },
         render:function(){
         // var tpl = _.template(template_select);
@@ -200,6 +209,7 @@
         indicadorSelected: function(e){
           this.model.set("indicador_selected",$(this.el).find('.selectIndicador').val());
           /* Ver si es necesario un 'if */
+          swap(this.model.get('indicadores')[this.model.get('indicador_selected')].ambito);
           this.desgloseSelected();
         },
         anioSelected: function(event){
@@ -211,15 +221,22 @@
           this.etiquetaSelected();
         },
         etiquetaSelected: function(event){
-          this.model.set("etiqueta_selected", $(this.el).find('.selectEtiqueta').val()); 
+          this.model.set("etiqueta_selected", $(this.el).find('.selectEtiqueta').val());
+          valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('anio_selected')].valoresRefGeografica
+          etiqueta = this.model.get('etiqueta_selected');
+          update(valoresRefGeografica, etiqueta);
         }
     })
-    
+
     var valoresIndicadoresDesgloses = {{ valoresIndicadoresDesgloses|json_encode|raw}};
 
     /* Primer anio a mostrar. Puede ser el primero de los años destacados u 
     ordenar años y mostrar primero (o último) */
     anio = Object.keys(valoresIndicadoresDesgloses)[0];
+    
+    console.log(valoresIndicadoresDesgloses);
+    console.log({{ etiquetas|json_encode|raw}});
+
 
     var modelForm = new ChainSelectData({
       'objetivos': {{ objetivos|json_encode|raw}},
@@ -233,11 +250,12 @@
       'indicador_selected': {{ idIndicadorSeleccionado }},
       'anio_selected': anio
     });
+
+    mapMe(poligonoNacion, poligonoProvincias);
     // var view = new ThreeSelectView({el: $("#selects"), model:model});
     var viewForm = new ChainSelectView({model:modelForm});
 
-    fill(provincias);
-    var tile = mapMe(provincias);
+    
   });
 </script>
 

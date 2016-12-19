@@ -1,37 +1,60 @@
-var southWest = L.latLng(-53.748710796898976, -107.57812500000001),
-    northEast = L.latLng(-19.642587534013032, -19.687500000000004),
-    bounds = L.latLngBounds(southWest, northEast),
+var map, tiles, current;
+
+var maxBoundsSouthWest = L.latLng(-89.99999999999994, -74.02985395599995),
+    maxBoundsNorthEast = L.latLng(-21.786688039999945, -25.02314483699996),
+    centerSouthWest = L.latLng(-53.748710796898976, -107.57812500000001),
+    centerNorthEast = L.latLng(-19.642587534013032, -19.687500000000004),
+    maxBounds = L.latLngBounds(maxBoundsSouthWest, maxBoundsNorthEast),
+    centerBounds = L.latLngBounds(centerSouthWest, centerNorthEast),
     minZoom = 4;
 
-function fill(data) {
-    var features = data.features;
-    for (var i = 0; i < features.length; i++) {
-        features[i].properties['value'] = 10 + i;
-    }
+function swap(ambito) {
+    map.removeLayer(tiles[current]);
+    map.addLayer(tiles[ambito]);
+    current = ambito;
 }
 
-function mapMe(geoJsonData) {
-    var base = L.tileLayer.wms('http://wms.ign.gob.ar/geoserver/wms?', {layers: 'ign:capabaseargenmap_gwc'});
-    var capa = L.geoJson(geoJsonData, {onEachFeature: onEachFeature, style: style});    
+function update(data, etiqueta) {
+    tiles[current].eachLayer(function (layer) {
+        idRefGeografica = layer.feature.properties.id;
+        valor = data[idRefGeografica][etiqueta];
+        layer.feature.properties['value'] = valor;
+        layer.setStyle({fillColor: getColor(valor)})
+    });
+}
 
-    /* Crear 'Objeto Mapa'*/
+function mapMe(geoJsonNacion, geoJsonProvincias) {
+    var base = L.tileLayer.wms('http://wms.ign.gob.ar/geoserver/wms?', {layers: 'ign:capabaseargenmap_gwc'});
+    var tileNacion = L.geoJson(geoJsonNacion, {onEachFeature: onEachFeature, style: style});
+    var tileProvincias = L.geoJson(geoJsonProvincias, {onEachFeature: onEachFeature, style: style});
+    // var capaDepartamentos = L.geoJson(geoJsonNacion, {onEachFeature: onEachFeature, style: style});
+
+    tiles = {
+        'N': tileNacion,
+        'P': tileProvincias
+    };
+
+    /* Capa por defecto al inicializar el mapa */
+    current = 'N';
+
+    /* Crear 'Objeto Mapa' */
     map = L.map(document.getElementById('mapCanvas'), {doubleClickZoom: false});
     /* Agregar Mapa de Base */
     base.addTo(map);
+
     /* Controles sobre el Mapa */
     // info = L.control({position: 'topright'});
     // info.onAdd = addDivInfo;
     // info.update = updateDivInfo;
 
     /* Definir centro de mapa a partir de capa definida */
-    map.fitBounds(bounds);
-    map.setMaxBounds(capa.getBounds());
+    map.fitBounds(centerBounds);
+    map.setMaxBounds(maxBounds);
     map.setMinZoom(minZoom);
 
     /* Agregar capas y otros */
     // info.addTo(map);
-    capa.addTo(map);
-    return capa;
+    map.addLayer(tiles[current]);
 }
 
 function onEachFeature(feature, layer) {
