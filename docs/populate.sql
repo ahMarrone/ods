@@ -1309,57 +1309,6 @@ INSERT INTO `agrupamientoRefGeografica` (`id_1`, `id_2`) VALUES
 (513, 24);
 
 
-INSERT INTO `desgloces` (`id`, `descripcion`) VALUES
-(0, 'Sin desgloce'),
-(1, 'Sexo'),
-(2, 'Rango edad 1'),
-(3, 'Ubicacion');
-
---
--- Volcado de datos para la tabla `desglocesIndicadores`
---
-
-INSERT INTO `desglocesIndicadores` (`idIndicador`, `idDesgloce`) VALUES
-(1, 0),
-(1, 1),
-(1, 2),
-(1, 3);
-
---
--- Volcado de datos para la tabla `etiquetas`
---
-
-INSERT INTO `etiquetas` (`id`, `descripcion`, `fkIdDesgloce`) VALUES
-(0, 'Sin etiqueta', 0),
-(1, 'Femenino', 1),
-(2, 'Masculino', 1),
-(3, '0-18', 2),
-(4, '19-30', 2),
-(5, '>30', 2),
-(6, 'Urbano', 3),
-(7, 'Rural', 3);
-
-
-
-INSERT INTO `valoresIndicadoresConfigFecha` (`id`, `idIndicador`, `fecha`, `cruzado`) VALUES
-(1, 1, '2013-07-03', 0),
-(2, 1, '2014-11-04', 0),
-(3, 1, '2015-11-02', 0),
-(4, 1, '2016-12-05', 1);
-
---
--- Volcado de datos para la tabla `valoresIndicadoresConfigFechaDesgloces`
---
-
-INSERT INTO `valoresIndicadoresConfigFechaDesgloces` (`idDesgloce`, `idValoresIndicadoresConfigFecha`) VALUES
-(0, 1),
-(1, 2),
-(3, 2),
-(2, 3),
-(3, 3),
-(1, 4),
-(3, 4);
-
 
 
 

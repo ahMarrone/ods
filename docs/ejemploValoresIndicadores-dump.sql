@@ -10,6 +10,7 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
+USE indicadores_ods;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -53,6 +54,31 @@ INSERT INTO `etiquetas` (`id`, `descripcion`, `fkIdDesgloce`) VALUES
 (5, '>30', 2),
 (6, 'Urbano', 3),
 (7, 'Rural', 3);
+
+
+--
+-- Volcado de datos para la tabla `valoresIndicadoresConfigFecha`
+--
+
+INSERT INTO `valoresIndicadoresConfigFecha` (`id`, `idIndicador`, `fecha`, `cruzado`) VALUES
+(1, 1, '2013-07-03', 0),
+(2, 1, '2014-11-04', 0),
+(3, 1, '2015-11-02', 0),
+(4, 1, '2016-12-05', 1);
+
+
+--
+-- Volcado de datos para la tabla `valoresIndicadoresConfigFechaDesgloces`
+--
+
+INSERT INTO `valoresIndicadoresConfigFechaDesgloces` (`idDesgloce`, `idValoresIndicadoresConfigFecha`) VALUES
+(0, 1),
+(1, 2),
+(3, 2),
+(2, 3),
+(3, 3),
+(1, 4),
+(3, 4);
 
 --
 -- Volcado de datos para la tabla `valoresIndicadores`
@@ -395,29 +421,6 @@ INSERT INTO `valoresIndicadores` (`idValoresIndicadoresConfigFecha`, `idEtiqueta
 (4, '1:7', 24, 36.20, 1, 1, '0000-00-00 00:00:00'),
 (4, '2:6', 24, 11.90, 1, 1, '0000-00-00 00:00:00'),
 (4, '2:7', 24, 39.20, 1, 1, '0000-00-00 00:00:00');
-
---
--- Volcado de datos para la tabla `valoresIndicadoresConfigFecha`
---
-
-INSERT INTO `valoresIndicadoresConfigFecha` (`id`, `idIndicador`, `fecha`, `cruzado`) VALUES
-(1, 1, '2013-07-03', 0),
-(2, 1, '2014-11-04', 0),
-(3, 1, '2015-11-02', 0),
-(4, 1, '2016-12-05', 1);
-
---
--- Volcado de datos para la tabla `valoresIndicadoresConfigFechaDesgloces`
---
-
-INSERT INTO `valoresIndicadoresConfigFechaDesgloces` (`idDesgloce`, `idValoresIndicadoresConfigFecha`) VALUES
-(0, 1),
-(1, 2),
-(3, 2),
-(2, 3),
-(3, 3),
-(1, 4),
-(3, 4);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
