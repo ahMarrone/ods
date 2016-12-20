@@ -61,10 +61,10 @@ INSERT INTO `etiquetas` (`id`, `descripcion`, `fkIdDesgloce`) VALUES
 --
 
 INSERT INTO `valoresIndicadoresConfigFecha` (`id`, `idIndicador`, `fecha`, `cruzado`) VALUES
-(1, 1, '2013-07-03', 0),
-(2, 1, '2014-11-04', 0),
-(3, 1, '2015-11-02', 0),
-(4, 1, '2016-12-05', 1);
+(1, 1, '2013-01-01', 0),
+(2, 1, '2014-01-01', 0),
+(3, 1, '2015-01-01', 0),
+(4, 1, '2016-01-01', 1);
 
 
 --
