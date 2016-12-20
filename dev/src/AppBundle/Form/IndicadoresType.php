@@ -23,44 +23,27 @@ class IndicadoresType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        // print_r(array_keys($options));
-        // print_r("<br>*");
-        // print_r($options['data']);
 
         $tipoSeleccionado = $options['data']->getTipo();
         $ambitoSeleccionado = $options['data']->getAmbito();
 
         $builder
-            //->add('objetivo', EntityType::class, array('label' => 'Objetivo', 'mapped' => false, 'class' => 'AppBundle:Objetivos', 'choice_label' => 'descripcion', ))
-
-            /*->add('objetivo', EntityType::class, array('label' => 'Objetivo', 'mapped' => false, 'class' => 'AppBundle:Objetivos', //'placeholder' => 'Seleccione un Objetivo',
-                'choice_label' => function ($objetivo) {
-                return $objetivo->getId(). "." . $objetivo->getDescripcion();
-                }, ))*/
-
-            //->add('fkidmeta', EntityType::class, array('label' => 'Meta', 'class' => 'AppBundle:Metas', 'choice_label' => 'descripcion', ))
-            /*->add('fkidmeta', EntityType::class, array('label' => 'Meta', 'class' => 'AppBundle:Metas', 'property' => 'name', 'placeholder' => 'Seleccione una Meta',
-                'choice_label' => function ($fkidmeta) {
-                return $fkidmeta->getIdobjetivo_str() . "-" . $fkidmeta->getDescripcion();
-                }, 
-                'choice_name' => function ($fkidmeta) {
-                return $fkidmeta->getIdobjetivo_str() . "-" . $fkidmeta->getDescripcion();
-                },
-                ))*/
             ->add('fkidmeta','hidden',array('mapped'=>false))
-            // ->add('fkidmeta',ChoiceType::class, array('label' => 'metas', 'mapped' => false))
             ->add('descripcion', TextareaType::class , array('label'  => 'Descripción', 'attr' => array('max_length' => 10, ),))
             ->add('tipo', ChoiceType::class, array('label'  => 'Tipo', 'expanded'=>true, 'required'=>true, 'choices' => array('Porcentual' => 'porcentual', 'Entero' => 'entero', 'Real' => 'real', ), 'data' => $tipoSeleccionado, 'choices_as_values' => true, ))
-            //->add('tipo', ChoiceType::class, array('label'  => 'Tipo2', 'choices_as_values' => true, ))
             ->add('valmin', NumberType::class , array('label'  => 'Valor Mínimo ', 'scale' => 2))
             ->add('valmax', IntegerType::class , array('label'  => 'Valor Máximo ', 'scale' => 2))
-            //->add('ambito')
             ->add('ambito', ChoiceType::class, array('label'  => 'Ámbito', 'expanded'=>true, 'required'=>true, 'choices' => array('Nacional' => 'N', 'Provincial' => 'P', 'Municipal' => 'M', ), 'data' => $ambitoSeleccionado, 'choices_as_values' => true, ))
-            //->add('visiblenacional', CheckboxType::class, array('label' => 'Show this entry publicly?', ))
-            ->add('visible', 'checkbox', array('label'  => 'Visible', 'required'  => false))   
-            //->add('visibleprovincial', 'checkbox', array('label'  => 'Provincial', 'required'  => false))   
-            //->add('visiblemunicipal', 'checkbox', array('label'  => 'Municipal', 'required'  => false))
-            //->add('fkidmeta')
+            ->add('visible', ChoiceType::class, array(
+                'choices'  => array(
+                    'Si' => true,
+                    'No' => false,
+                ),
+                'choices_as_values' => true,
+                'expanded' => true,
+                'multiple' => false,
+            ))
+            //->add('visible', 'checkbox', array('label'  => 'Visible', 'required'  => false))   
         ;
     }
 
