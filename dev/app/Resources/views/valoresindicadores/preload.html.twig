@@ -51,7 +51,7 @@
         <h3 class="panel-title">Configuración</h3>
       </div>
       <div class="panel-body">
-                <div id="datesWithData" class="alert alert-info" role="alert"><i class="fa fa-info-circle pull-left"></i><span id="datesDataLabel"><b>Este indicador tiene datos cargados en las fechas: </b></span>
+                <div id="datesWithData" class="alert alert-info" role="alert"><span id="datesDataLabel"><b>Este indicador tiene datos cargados en las fechas: </b></span>
                 <% _.each( model.enabled_dates, function( date, i){ %>
                     <a class='indicadorDate btn btn-default'><%= date %></a>  
                 <% }); %>
