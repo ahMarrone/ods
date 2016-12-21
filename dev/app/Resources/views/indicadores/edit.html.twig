@@ -1,5 +1,21 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('css/bootstrap-datepicker3.min.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="{{ asset('js/underscore-min.js') }}"></script>
+    <script src="{{ asset('js/backbone-min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ asset('js/ThreeSelect.js') }}"></script>
+    <script src="{{ asset('js/HighlightDates.js') }}"></script>
+{% endblock %}
+
 {% block body %}
 
 <ol class="breadcrumb">
@@ -13,7 +29,16 @@
     </div>
 
     {{ form_start(edit_form) }}
+
+        <div>
+           <div id="selects"></div>
+        </div>
+
         {{ form_widget(edit_form) }}
+
+        <div>
+           <div id="highlightDatesControl"></div>
+        </div>
         <input class="col-md-1 btn btn-success option-btn" type="submit" value="Editar" />
     {{ form_end(edit_form) }}
 
@@ -23,71 +48,47 @@
 {{ form_end(delete_form) }}
 </div>
 
-
-<script type="text/javascript">
-    $("#indicadores_objetivo").on("change", function() 
-    { 
-        var sel = $(this).val(), 
-            $ddl = $("#indicadores_fkidmeta");
-
-        if (!sel) 
-        { // if there is no value means first option is selected
-            $ddl.find("option").show(); $ddl.val(''); // show all options and reset the value
-        } 
-        else 
-        {
-            $ddl.find("option").hide(); // hide all options
-            var selObjetivo = document.getElementById("indicadores_objetivo").options;
-            var index = document.getElementById("indicadores_objetivo").selectedIndex;
-            var otro = selObjetivo[index].value;
-            var localMetas = document.getElementById('indicadores_fkidmeta');
-
-            for(var i=0; i < localMetas.length; i++)
-            {
-                var x = localMetas.options[i].text;
-                var this_value = parseInt(x.substr(0,5));
-
-                if (this_value == otro)
-                {
-                    var this_select_value = localMetas.options[i].value;
-                    $ddl.find("option[value*='" + this_select_value + "']").show();
-                }
-
-            }
-            localMetas.selectedIndex = "0";
-        }
-    });
-</script>
-
 <script type="text/javascript">
     $( document ).ready(function() {
-        var sel = $(this).val(), 
-            $ddl = $("#indicadores_objetivo");
-        var selMeta = document.getElementById("indicadores_fkidmeta").options;
-        var index = document.getElementById("indicadores_fkidmeta").selectedIndex;
-        var idobj = selMeta[index].text;
-        var this_value = parseInt(idobj.substr(0,5));
-        $ddl.find("option[value*='" + this_value + "']").prop('selected', true);
 
-        // Filtro la lista de "Metas" de acuerdo al "Objetivo" que corresponde.
-        // Este código repite el script de arriba, hay que mejorar la presentación en una función.
-        sel = $(this).val(), 
-        $ddl = $("#indicadores_fkidmeta");
-        $ddl.find("option").hide(); // hide all options
-        var selObjetivo = document.getElementById("indicadores_objetivo").options;
-        var index = document.getElementById("indicadores_objetivo").selectedIndex;
-        var otro = selObjetivo[index].value;
-        var localMetas = document.getElementById('indicadores_fkidmeta');
-        for(var i=0; i < localMetas.length; i++)
-        {
-            var x = localMetas.options[i].text;
-            var this_value = parseInt(x.substr(0,5));
-            if (this_value == otro)
-            {
-                var this_select_value = localMetas.options[i].value;
-                $ddl.find("option[value*='" + this_select_value + "']").show();
-            }
+        var objetivos = {{ objetivos|json_encode|raw}};
+        var metas = {{ metas|json_encode|raw}};
+
+        var modelThreeSelect = null;
+        var viewThreeSelect = null;
+
+        var modelHighlightDates = null;
+        var viewHighlightDates = null;
+
+
+        function addThreeSelectControls(){
+            var objetivo_selected = {{indicadore.fkIdMeta.fkidobjetivo.id}}
+            var meta_selected =  {{indicadore.fkIdMeta.id}}
+            modelThreeSelect = new ThreeSelectData({
+                'objetivo_selected': objetivo_selected,
+                'meta_selected': meta_selected,
+                'objetivos': objetivos,
+                'metas': metas,
+            });
+            viewThreeSelect = new ThreeSelectView({el: $("#selects"), model:modelThreeSelect});
         }
+
+        // Agrego al formulario controles para agregar fechas destacadas
+        function addHiglightedDatesControls(){
+            var highlightDatesSelected = {{indicadore.fechasdestacadas|json_encode|raw}};
+            console.log(highlightDatesSelected);
+            modelHighlightDates = new HighlightDates({dates:highlightDatesSelected.split(";")});
+            viewHighlightDates = new HighlightDatesView({el: $("#highlightDatesControl"), model:modelHighlightDates});
+        }
+
+        addThreeSelectControls();
+        addHiglightedDatesControls();
+
+        $('form[name="indicadores"]').submit(function() {
+            // Seteo fechas destacadas en el formulario
+            $('#indicadores_fechasdestacadas').val(modelHighlightDates.getFormattedDates());
+        });
+        
     });
 </script>
 

@@ -1,11 +1,19 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('css/bootstrap-datepicker3.min.css') }}" rel="stylesheet" />
+{% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
 
     <script src="{{ asset('js/underscore-min.js') }}"></script>
     <script src="{{ asset('js/backbone-min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('js/ThreeSelect.js') }}"></script>
+    <script src="{{ asset('js/HighlightDates.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -27,6 +35,11 @@
         </div>
 
         {{ form_widget(form) }}
+
+         <div>
+           <div id="highlightDatesControl"></div>
+        </div>
+
         <input class="col-md-1 btn btn-success option-btn" type="submit" value="Crear" />
     {{ form_end(form) }}
 
@@ -39,14 +52,42 @@
 <script type="text/javascript">
 
     $(document).ready(function() {
+
+
         var objetivos = {{ objetivos|json_encode|raw}};
         var metas = {{ metas|json_encode|raw}};
 
-        var model = new ThreeSelectData({
-            'objetivos': objetivos,
-            'metas': metas
+        var modelThreeSelect = null;
+        var viewThreeSelect = null;
+
+        var modelHighlightDates = null;
+        var viewHighlightDates = null;
+
+        function addThreeSelectControls(){
+            modelThreeSelect = new ThreeSelectData({
+                'objetivos': objetivos,
+                'metas': metas
+            });
+            viewThreeSelect = new ThreeSelectView({el: $("#selects"), model:modelThreeSelect});
+        }
+
+
+        // Agrego al formulario controles para agregar fechas destacadas
+        function addHiglightedDatesControls(){
+            modelHighlightDates = new HighlightDates({dates:[]});
+            viewHighlightDates = new HighlightDatesView({el: $("#highlightDatesControl"), model:modelHighlightDates});
+        }
+
+
+
+        addThreeSelectControls();
+        addHiglightedDatesControls();
+
+        $('form[name="indicadores"]').submit(function() {
+            // Seteo fechas destacadas en el formulario
+            $('#indicadores_fechasdestacadas').val(modelHighlightDates.getFormattedDates());
         });
-        var view = new ThreeSelectView({el: $("#selects") ,model:model});
+
     });
 </script>
 

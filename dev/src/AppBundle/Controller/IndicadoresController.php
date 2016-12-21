@@ -128,11 +128,11 @@ class IndicadoresController extends Controller
      */
     public function editAction(Request $request, Indicadores $indicadore)
     {
-        // Hack de Agustín para castear un string en un boolean (ya no hace falta)
-        //echo var_dump($indicadore->getVisiblenacional());
-        //$nac = ($indicadore->getVisiblenacional()) ? true : false;
-        //$indicadore->setVisiblenacional($nac);
-        
+        $params = $this->getRequest()->request->all();
+        if (isset($params['id_meta_selected'])){
+            $meta = $this->getDoctrine()->getRepository('AppBundle:Metas')->findOneById($params["id_meta_selected"]);
+            $indicadore->setFkidmeta($meta);
+        }
         $deleteForm = $this->createDeleteForm($indicadore);
         $editForm = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore);
         $editForm->handleRequest($request);
@@ -150,6 +150,8 @@ class IndicadoresController extends Controller
             'indicadore' => $indicadore,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
+            'objetivos' => $this->getObjetivosPreload(),
+            'metas' => $this->getMetasPreload(),
         ));
     }
 
