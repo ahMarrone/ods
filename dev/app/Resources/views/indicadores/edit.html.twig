@@ -35,6 +35,10 @@
         </div>
 
         {{ form_widget(edit_form) }}
+
+        <div>
+           <div id="highlightDatesControl"></div>
+        </div>
         <input class="col-md-1 btn btn-success option-btn" type="submit" value="Editar" />
     {{ form_end(edit_form) }}
 
@@ -60,7 +64,6 @@
         function addThreeSelectControls(){
             var objetivo_selected = {{indicadore.fkIdMeta.fkidobjetivo.id}}
             var meta_selected =  {{indicadore.fkIdMeta.id}}
-            console.log(objetivo_selected);
             modelThreeSelect = new ThreeSelectData({
                 'objetivo_selected': objetivo_selected,
                 'meta_selected': meta_selected,
@@ -70,7 +73,21 @@
             viewThreeSelect = new ThreeSelectView({el: $("#selects"), model:modelThreeSelect});
         }
 
+        // Agrego al formulario controles para agregar fechas destacadas
+        function addHiglightedDatesControls(){
+            var highlightDatesSelected = {{indicadore.fechasdestacadas|json_encode|raw}};
+            console.log(highlightDatesSelected);
+            modelHighlightDates = new HighlightDates({dates:highlightDatesSelected.split(";")});
+            viewHighlightDates = new HighlightDatesView({el: $("#highlightDatesControl"), model:modelHighlightDates});
+        }
+
         addThreeSelectControls();
+        addHiglightedDatesControls();
+
+        $('form[name="indicadores"]').submit(function() {
+            // Seteo fechas destacadas en el formulario
+            $('#indicadores_fechasdestacadas').val(modelHighlightDates.getFormattedDates());
+        });
         
     });
 </script>
