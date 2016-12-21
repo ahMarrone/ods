@@ -34,7 +34,7 @@ class IndicadoresType extends AbstractType
             ->add('tipo', ChoiceType::class, array('label'  => 'Tipo', 'expanded'=>true, 'required'=>true, 'choices' => array('Porcentual' => 'porcentual', 'Entero' => 'entero', 'Real' => 'real', ), 'data' => $tipoSeleccionado, 'choices_as_values' => true, ))
             ->add('valmin', NumberType::class , array('label'  => 'Valor Mínimo ', 'scale' => 2))
             ->add('valmax', IntegerType::class , array('label'  => 'Valor Máximo ', 'scale' => 2))
-            ->add('ambito', ChoiceType::class, array('label'  => 'Ámbito', 'expanded'=>true, 'required'=>true, 'choices' => array('Nacional' => 'N', 'Provincial' => 'P', 'Municipal' => 'M', ), 'data' => $ambitoSeleccionado, 'choices_as_values' => true, ))
+            ->add('ambito', ChoiceType::class, array('label'  => 'Ámbito', 'expanded'=>true, 'required'=>true, 'choices' => array('Nacional' => 'N', 'Provincial' => 'P', 'Departamental' => 'D', ), 'data' => $ambitoSeleccionado, 'choices_as_values' => true, ))
             ->add('visible', ChoiceType::class, array(
                 'choices'  => array(
                     'Si' => true,

@@ -40,6 +40,8 @@ var template_select = [
 
 var ThreeSelectData = Backbone.Model.extend({
 	defaults: {
+        'objetivo_selected': null,
+        'meta_selected':null,
 		'objetivos':[],
 		'metas':[],
 		'indicadores':[],
@@ -49,8 +51,10 @@ var ThreeSelectData = Backbone.Model.extend({
 
 var ThreeSelectView = Backbone.View.extend({
 	initialize: function() {
-		this.model.set('objetivo_selected',this.model.get('objetivos')[0].id);
-        if (this.model.get('metas').length) {
+        if (this.model.get('objetivo_selected') == null){
+		  this.model.set('objetivo_selected',this.model.get('objetivos')[0].id);
+        }
+        if ((this.model.get('meta_selected') == null) && (this.model.get('metas').length)) {
             this.model.set('meta_selected',this.model.get('metas')[0].id);
         }
         if (this.model.get('indicadores').length) {
