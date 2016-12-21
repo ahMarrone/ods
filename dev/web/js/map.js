@@ -1,4 +1,5 @@
-var map, tiles, current;
+var map, tiles, sideChartModel, sideChartView, current;
+var sideChartModel;
 
 var maxBoundsSouthWest = L.latLng(-89.99999999999994, -74.02985395599995),
     maxBoundsNorthEast = L.latLng(-21.786688039999945, -25.02314483699996),
@@ -8,13 +9,15 @@ var maxBoundsSouthWest = L.latLng(-89.99999999999994, -74.02985395599995),
     centerBounds = L.latLngBounds(centerSouthWest, centerNorthEast),
     minZoom = 4;
 
-function swap(ambito) {
+function swap(indicador) {
     map.removeLayer(tiles[current]);
-    map.addLayer(tiles[ambito]);
-    current = ambito;
+    map.addLayer(tiles[indicador.ambito]);
+    current = indicador.ambito;
+    sideChartModel.set('indicador', indicador);
 }
 
-function update(data, etiqueta) {
+function update(data, etiqueta, etiquetasActuales) {
+    sideChartModel.set('etiquetasActuales', etiquetasActuales)
     tiles[current].eachLayer(function (layer) {
         idRefGeografica = layer.feature.properties.id;
         valor = data[idRefGeografica][etiqueta];
@@ -23,15 +26,16 @@ function update(data, etiqueta) {
     });
 }
 
-function mapMe(geoJsonNacion, geoJsonProvincias) {
+function mapMe(geoJsonNacion, geoJsonProvincias, geoJsonDepartamentos) {
     var base = L.tileLayer.wms('http://wms.ign.gob.ar/geoserver/wms?', {layers: 'ign:capabaseargenmap_gwc'});
     var tileNacion = L.geoJson(geoJsonNacion, {onEachFeature: onEachFeature, style: style});
     var tileProvincias = L.geoJson(geoJsonProvincias, {onEachFeature: onEachFeature, style: style});
-    // var capaDepartamentos = L.geoJson(geoJsonNacion, {onEachFeature: onEachFeature, style: style});
+    var tileDepartamentos = L.geoJson(geoJsonNacion, {onEachFeature: onEachFeature, style: style});
 
     tiles = {
         'N': tileNacion,
-        'P': tileProvincias
+        'P': tileProvincias,
+        'D': tileDepartamentos
     };
 
     /* Capa por defecto al inicializar el mapa */
@@ -43,9 +47,8 @@ function mapMe(geoJsonNacion, geoJsonProvincias) {
     base.addTo(map);
 
     /* Controles sobre el Mapa */
-    // info = L.control({position: 'topright'});
-    // info.onAdd = addDivInfo;
-    // info.update = updateDivInfo;
+    sideChartControl = L.control({position: 'topright'});
+    sideChartControl.onAdd = addDivSideChart;
 
     /* Definir centro de mapa a partir de capa definida */
     map.fitBounds(centerBounds);
@@ -53,8 +56,16 @@ function mapMe(geoJsonNacion, geoJsonProvincias) {
     map.setMinZoom(minZoom);
 
     /* Agregar capas y otros */
-    // info.addTo(map);
+    sideChartControl.addTo(map);
     map.addLayer(tiles[current]);
+
+    sideChartModel = new sideChartModel({});
+    sideChartView = new sideChartView({el: $('.infobox'),model:sideChartModel});
+}
+
+function addDivSideChart(map) {
+    this._div = L.DomUtil.create('div', 'infobox'); // create a div with a class "info"
+    return this._div;
 }
 
 function onEachFeature(feature, layer) {
@@ -81,8 +92,8 @@ function getColor(i) {
     return i > 80 ? '#045a8d' :
            i > 60 ? '#2b8cbe' :
            i > 40 ? '#74a9cf' :
-           i > 20 ? '#bdc9e1' :
-                    '#f1eef6' ;
+           i > 20 ? '#a6bddb' :
+                    '#d0d1e6' ;
 }
 
 function highlightFeature(event) {
@@ -97,13 +108,14 @@ function highlightFeature(event) {
     if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
         layer.bringToFront();
     }
-    /*info.update(layer.feature.properties);*/
+    // sideChart.update(layer.feature.properties);
+    sideChartModel.set('layerProperties', layer.feature.properties);
 }
 
 function resetHighlight(event) {
     var layer = event.target;
     event.target.setStyle(style(event.target.feature));
-    /*info.update();*/
+    // sideChart.update();
 }
 
 function zoomToFeature(event) {
@@ -111,5 +123,5 @@ function zoomToFeature(event) {
 }
 
 function zoomOut(event) {
-  map.fitBounds(bounds);
+  map.fitBounds(centerBounds);
 }

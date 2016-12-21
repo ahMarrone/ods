@@ -73,6 +73,8 @@ class ExploraController extends Controller
             $list[$idIndicador]['descripcion'] = $i->getDescripcion();
             $list[$idIndicador]['id_meta'] = $i->getFkidmeta()->getId();
             $list[$idIndicador]['ambito'] = $i->getAmbito();
+            /* CONSTRUIR ESCALA A PARTIR DE valMin y ValMax */
+            $list[$idIndicador]['escala'] = array(0, 20, 40, 60, 80);
         }
         return $list;
     }

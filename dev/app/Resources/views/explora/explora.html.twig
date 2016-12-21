@@ -10,8 +10,10 @@
     <script type="text/javascript" src="{{ asset('js/backbone-min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/map.js') }}"></script>
     <!-- <script type="text/javascript" src="{{ asset('geoData.js') }}"></script> -->
-    <script type="text/javascript" src="{{ asset('js/nacion.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/nacion-simplified-1dot0-mapa.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/provincias-simplified-0dot5-mapa.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/departamentos-simplified-1dot0-mapa.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/sideChart.js') }}"></script>
 
 {% endblock %}    
 
@@ -101,7 +103,7 @@
         <select id="selectorIndicador" class="form-control selectIndicador">
           <% _.each(model.get("indicadores"), function( indicador, i){ %>
             <% if ( indicador.id_meta == model.get("meta_selected") ){ %>
-              <option value="<%= i %>" <% if (i == model.get("indicador_selected")) { %> selected<% }  %>><%= indicador.descripcion %></option>
+              <option value="<%= i %>" <% if (i == model.get("indicador_selected_id")) { %> selected<% }  %>><%= indicador.descripcion %></option>
             <% } %>
           <% }); %>
         </select>
@@ -129,8 +131,10 @@
     <label for="selectorEtiqueta" class="col-xs-1 control-label">Etiqueta</label>
       <div class="col-xs-4">
       <select id="selectorEtiqueta" class="form-control selectEtiqueta">
+      <% model.set('etiquetas_current', []) %>
       <% _.each(model.get("etiquetas"), function(etiqueta, i){ %>
         <% if ( etiqueta.id_desglose == model.get("desglose_selected") ){ %>
+          <% model.get('etiquetas_current').push(etiqueta.id); %>
           <option title="<%= etiqueta.descripcion %>" value="<%= etiqueta.id %>"><%= etiqueta.descripcion %></option>
         <% } %>
       <% }); %>
@@ -141,6 +145,7 @@
 </script>
 </div>
 <div id="mapCanvas" style="width: 1000px; height: 500px"></div>
+<div class="container-fluid" id='test'></div>
 
 <script type="text/javascript">
   $(document).ready(function() {
@@ -153,9 +158,10 @@
         'valoresIndicadoresDesgloses': [],
         'desgloses': [],
         'etiquetas': [],
+        'etiquetas_current': [],
         'objetivo_selected': '',
         'meta_selected': '',
-        'indicador_selected': '',
+        'indicador_selected_id': '',
         'anio_selected': ''
       }
     });
@@ -167,19 +173,20 @@
       initialize: function() {
         this.model.set('desglose_selected', this.model.get('valoresIndicadoresDesgloses')[this.model.get('anio_selected')].id_desgloses[0]);
         this.model.set('etiqueta_selected', this.model.get('desgloses')[0].id);
-        
-        /* Incializar mapa */
-        swap(this.model.get('indicadores')[this.model.get('indicador_selected')].ambito);
-        valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('anio_selected')].valoresRefGeografica
-        etiqueta = this.model.get('etiqueta_selected');
-        update(valoresRefGeografica, etiqueta);
 
         this.model.on('change:objetivo_selected', this.render, this);
         this.model.on('change:meta_selected', this.render, this);
-        this.model.on('change:indicador_selected', this.render, this);
+        this.model.on('change:indicador_selected_id', this.render, this);
         this.model.on('change:anio_selected', this.render, this);
         this.model.on('change:desglose_selected', this.render, this);
         this.render();
+        /* Inicializar mapa */
+        swap(this.model.get('indicadores')[this.model.get('indicador_selected_id')]);
+        valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('anio_selected')].valoresRefGeografica
+        etiqueta = this.model.get('etiqueta_selected');
+        etiquetasActuales = this.model.get('etiquetas_current');
+        update(valoresRefGeografica, etiqueta, etiquetasActuales);
+
         },
         events: {
                   'change .selectObjetivo': 'objetivoSelected',
@@ -207,9 +214,10 @@
             }
         },
         indicadorSelected: function(e){
-          this.model.set("indicador_selected",$(this.el).find('.selectIndicador').val());
+          this.model.set("indicador_selected_id",$(this.el).find('.selectIndicador').val());
           /* Ver si es necesario un 'if */
-          swap(this.model.get('indicadores')[this.model.get('indicador_selected')].ambito);
+          /* PROBAR */
+          swap(this.model.get('indicadores')[this.model.get('indicador_selected_id')]);
           this.desgloseSelected();
         },
         anioSelected: function(event){
@@ -224,19 +232,20 @@
           this.model.set("etiqueta_selected", $(this.el).find('.selectEtiqueta').val());
           valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('anio_selected')].valoresRefGeografica
           etiqueta = this.model.get('etiqueta_selected');
-          update(valoresRefGeografica, etiqueta);
+          etiquetasActuales = this.model.get('etiquetas_current');
+          update(valoresRefGeografica, etiqueta, etiquetasActuales);
         }
     })
 
-    var valoresIndicadoresDesgloses = {{ valoresIndicadoresDesgloses|json_encode|raw}};
+    mapMe(poligonoNacion, poligonoProvincias, poligonoDepartamentos);
+    var valoresIndicadoresDesgloses = {{ valoresIndicadoresDesgloses|json_encode|raw }};
 
     /* Primer anio a mostrar. Puede ser el primero de los años destacados u 
     ordenar años y mostrar primero (o último) */
     anio = Object.keys(valoresIndicadoresDesgloses)[0];
     
     console.log(valoresIndicadoresDesgloses);
-    console.log({{ etiquetas|json_encode|raw}});
-
+    // console.log({{ etiquetas|json_encode|raw}});
 
     var modelForm = new ChainSelectData({
       'objetivos': {{ objetivos|json_encode|raw}},
@@ -247,11 +256,10 @@
       'etiquetas': {{ etiquetas|json_encode|raw}},
       'objetivo_selected': {{ idObjetivoSeleccionado }},
       'meta_selected': {{ idMetaSeleccionada }},
-      'indicador_selected': {{ idIndicadorSeleccionado }},
+      'indicador_selected_id': {{ idIndicadorSeleccionado }},
       'anio_selected': anio
     });
 
-    mapMe(poligonoNacion, poligonoProvincias);
     // var view = new ThreeSelectView({el: $("#selects"), model:model});
     var viewForm = new ChainSelectView({model:modelForm});
 
