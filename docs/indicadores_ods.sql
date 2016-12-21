@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
   `visible` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Visibilidad del indicador a nivel Nacional',
   `idUsuario` int(11) unsigned NOT NULL,
   `fechaModificacion` datetime NOT NULL,
-  `fechasDestacadas` varchar(50) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `fechasDestacadas` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fkIdMeta` (`fkIdMeta`),
   KEY `ndxUsuario` (`idUsuario`)
