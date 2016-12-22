@@ -99,6 +99,11 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
   `idUsuario` int(11) unsigned NOT NULL,
   `fechaModificacion` datetime NOT NULL,
   `fechasDestacadas` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `documentpath` varchar(200) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `fechaMetaIntermedia` date NULL,
+  `valorEsperadoMetaIntermedia` decimal(10,2) NULL,
+  `fechaMetaFinal` date NULL,
+  `valorEsperadoMetaFinal` decimal(10,2) NULL,
   PRIMARY KEY (`id`),
   KEY `fkIdMeta` (`fkIdMeta`),
   KEY `ndxUsuario` (`idUsuario`)
