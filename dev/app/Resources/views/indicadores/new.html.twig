@@ -83,6 +83,13 @@
         addThreeSelectControls();
         addHiglightedDatesControls();
 
+        $('.expected-value-datepicker').datepicker({
+            format: 'yyyy-mm-dd',
+            format: "yyyy-mm-dd",
+            minViewMode: 2,
+            autoclose: true,
+        });
+
         $('form[name="indicadores"]').submit(function() {
             // Seteo fechas destacadas en el formulario
             $('#indicadores_fechasdestacadas').val(modelHighlightDates.getFormattedDates());

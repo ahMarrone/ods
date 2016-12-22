@@ -86,13 +86,19 @@
         // Agrego al formulario controles para agregar fechas destacadas
         function addHiglightedDatesControls(){
             var highlightDatesSelected = {{indicadore.fechasdestacadas|json_encode|raw}};
-            console.log(highlightDatesSelected);
             modelHighlightDates = new HighlightDates({dates:highlightDatesSelected.split(";")});
             viewHighlightDates = new HighlightDatesView({el: $("#highlightDatesControl"), model:modelHighlightDates});
         }
 
         addThreeSelectControls();
         addHiglightedDatesControls();
+
+        $('.expected-value-datepicker').datepicker({
+            format: 'yyyy-mm-dd',
+            format: "yyyy-mm-dd",
+            minViewMode: 2,
+            autoclose: true,
+        });
 
         $('form[name="indicadores"]').submit(function() {
             // Seteo fechas destacadas en el formulario

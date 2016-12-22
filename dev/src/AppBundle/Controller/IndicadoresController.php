@@ -67,7 +67,9 @@ class IndicadoresController extends Controller
             $meta = $this->getDoctrine()->getRepository('AppBundle:Metas')->findOneById($params["id_meta_selected"]);
             $indicadore->setFkidmeta($meta);
         }
-        $form = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore);
+        $form = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore, array(
+            'scopes_enabled' => $this->getEnabledScopes(),
+        ));
 
         $form->handleRequest($request);
 
@@ -155,7 +157,10 @@ class IndicadoresController extends Controller
                 new File($this->getParameter('indicadores_technical_documents_directory').'/'.$indicadore->getDocumentPath())
             );
         }
-        $editForm = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore);
+        $editForm = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore, array(
+                'scopes_enabled' => array('N'=>false,'P'=>false,'D'=>false), // en modo edicion, no se puede cambiar el ambito del indicador
+            )
+        );
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -231,5 +236,11 @@ class IndicadoresController extends Controller
     private function addIndicadorMetadata(&$indicador){
         $indicador->setIdusuario($this->getUser());
         $indicador->setFechamodificacion(date_format(new \DateTime(), 'Y-m-d H:i:s'));
+    }
+
+
+    private function getEnabledScopes(){
+        $scope = $this->get('app.utils.scopes_service');
+        return $scope->getIndicadorScope();
     }
 }

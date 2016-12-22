@@ -41,4 +41,9 @@ class ScopesService {
         return $this->getUserScope();
         //return array('N'=>true,'P'=>false,'M'=>false);
     }
+
+
+    public function getIndicadorScope(){
+        return $this->getUserScope();
+    }
 }

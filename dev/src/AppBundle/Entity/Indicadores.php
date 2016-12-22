@@ -76,6 +76,28 @@ class Indicadores
      */
     private $documentpath;
 
+       /**
+     * @var string
+     */
+    private $fechametaintermedia;
+
+    /**
+     * @var string
+     */
+    private $valoresperadometaintermedia;
+
+    /**
+     * @var string
+     */
+    private $fechametafinal;
+
+    /**
+     * @var string
+     */
+    private $valoresperadometafinal;
+
+
+
 
 
 
@@ -454,5 +476,97 @@ class Indicadores
     public function getDocumentpath()
     {
         return $this->documentpath;
+    }
+ 
+    /**
+     * Set fechametaintermedia
+     *
+     * @param string $fechametaintermedia
+     * @return Indicadores
+     */
+    public function setFechametaintermedia($fechametaintermedia)
+    {
+        $this->fechametaintermedia = $fechametaintermedia;
+
+        return $this;
+    }
+
+    /**
+     * Get fechametaintermedia
+     *
+     * @return string 
+     */
+    public function getFechametaintermedia()
+    {
+        return $this->fechametaintermedia;
+    }
+
+    /**
+     * Set valoresperadometaintermedia
+     *
+     * @param string $valoresperadometaintermedia
+     * @return Indicadores
+     */
+    public function setValoresperadometaintermedia($valoresperadometaintermedia)
+    {
+        $this->valoresperadometaintermedia = $valoresperadometaintermedia;
+
+        return $this;
+    }
+
+    /**
+     * Get valoresperadometaintermedia
+     *
+     * @return string 
+     */
+    public function getValoresperadometaintermedia()
+    {
+        return $this->valoresperadometaintermedia;
+    }
+
+    /**
+     * Set fechametafinal
+     *
+     * @param string $fechametafinal
+     * @return Indicadores
+     */
+    public function setFechametafinal($fechametafinal)
+    {
+        $this->fechametafinal = $fechametafinal;
+
+        return $this;
+    }
+
+    /**
+     * Get fechametafinal
+     *
+     * @return string 
+     */
+    public function getFechametafinal()
+    {
+        return $this->fechametafinal;
+    }
+
+    /**
+     * Set valoresperadometafinal
+     *
+     * @param string $valoresperadometafinal
+     * @return Indicadores
+     */
+    public function setValoresperadometafinal($valoresperadometafinal)
+    {
+        $this->valoresperadometafinal = $valoresperadometafinal;
+
+        return $this;
+    }
+
+    /**
+     * Get valoresperadometafinal
+     *
+     * @return string 
+     */
+    public function getValoresperadometafinal()
+    {
+        return $this->valoresperadometafinal;
     }
 }

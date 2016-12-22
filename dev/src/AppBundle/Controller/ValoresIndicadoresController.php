@@ -60,7 +60,7 @@ class ValoresIndicadoresController extends Controller
             $cruzado = $configfecha->getCruzado();
             list($desgloces, $etiquetasDesgloces) = $this->getEtiquetasDesgloce($userDesgloces);
             //echo var_dump($desgloces);
-            $refGeograficas = $this->getRefGeograficas();
+            $refGeograficas = $this->filterRefGeograficas($indicador->getAmbito());
             $valoresindicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')
                                ->filterByIndicadorFecha($idIndicador, $fecha);
             $valoresindicadores = $this->parseEntityValoresindicadores($valoresindicadores);
@@ -227,9 +227,15 @@ class ValoresIndicadoresController extends Controller
         return $list[$id];
     }*/
 
-    private function getRefGeograficas(){
+    // Retorna ref. geograficas
+    // Filtra de acuerdo a:
+    //      - Ambito de indicador
+    //      - Ambito de usuario (falta)
+    private function filterRefGeograficas($ambitoIndicador){
         $ret = array();
-        $refs =  $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findAll();
+        $refs =  $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findBy(
+             array('ambito' => $ambitoIndicador)
+        );
         foreach ($refs as $r) {
             $ret[$r->getId()] = array('desc'=>$r->getDescripcion(),'used'=>false);
         }

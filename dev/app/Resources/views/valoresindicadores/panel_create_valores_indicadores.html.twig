@@ -268,7 +268,7 @@
             },
             addNewDataLoader: function(){
               var refID = this.getNextUnusedRef();
-              if (refID){
+              if (refID != null){
                 var loader = new RefGeograficaData({id_ref_geografica:refID, is_preloaded:false, valor_etiquetas:{}});
                 this.collection.add(loader);
                 this.render();
