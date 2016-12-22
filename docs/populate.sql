@@ -772,8 +772,8 @@ INSERT INTO `metas` (`id`, `descripcion`, `fkIdObjetivo`, `idUsuario`, `fechaMod
 -- Volcado de datos para la tabla `indicadores`
 --
 
-INSERT INTO `indicadores` (`id`, `descripcion`, `fkIdMeta`, `tipo`, `valMin`, `valMax`, `ambito`, `visible`, `idUsuario`, `fechaModificacion`, `documentpath`, `fechaMetaIntermedia`, `valorEsperadoMetaIntermedia`, `fechaMetaFinal`, `valorEsperadoMetaFinal`) VALUES
-(1, '1.1.1 Proporción de la población que vive por debajo del umbral internacional de la pobreza.', 2, 'porcentual', 0, 100, 'P', 1, 1, '2016-11-01 00:00:00', NULL, '2019-01-01', 20, '2030-01-01', 12);
+INSERT INTO `indicadores` (`id`, `descripcion`, `fkIdMeta`, `tipo`, `valMin`, `valMax`, `ambito`, `visible`, `idUsuario`, `fechaModificacion`, `fechasDestacadas`, `documentpath`, `fechaMetaIntermedia`, `valorEsperadoMetaIntermedia`, `fechaMetaFinal`, `valorEsperadoMetaFinal`) VALUES
+(1, '1.1.1 Proporción de la población que vive por debajo del umbral internacional de la pobreza.', 2, 'porcentual', 0, 100, 'P', 1, 1, '2016-11-01 00:00:00', '2013-01-01;2015-01-01',NULL, '2019-01-01', 20, '2030-01-01', 12);
 
 --
 -- Volcado de datos para la tabla `agrupamientoRefGeografica`
