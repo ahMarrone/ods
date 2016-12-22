@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Indicadores
@@ -68,6 +69,14 @@ class Indicadores
      * @var \AppBundle\Entity\Metas
      */
     private $fkidmeta;
+
+        /**
+     * @var string
+     * @Assert\File(mimeTypes={ "application/pdf" })
+     */
+    private $documentpath;
+
+
 
 
     /**
@@ -422,5 +431,28 @@ class Indicadores
     public function getFechasdestacadas()
     {
         return $this->fechasdestacadas;
+    }
+
+    /**
+     * Set documentpath
+     *
+     * @param string $documentpath
+     * @return Indicadores
+     */
+    public function setDocumentpath($documentpath)
+    {
+        $this->documentpath = $documentpath;
+
+        return $this;
+    }
+
+    /**
+     * Get documentpath
+     *
+     * @return string 
+     */
+    public function getDocumentpath()
+    {
+        return $this->documentpath;
     }
 }

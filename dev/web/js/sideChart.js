@@ -71,7 +71,7 @@ function plot(refGeoId){
 
 
   $.each(valoresIndicadoresDesgloces, function(id, claves) {
-        $.each(claves['valoresRefGeografica'], function(idEtiqueta, value)){
+        $.each(claves['valoresRefGeografica'], function(idEtiqueta, value){
             chartData[idEtiqueta]
           chartData.push(value[selected]);
         });

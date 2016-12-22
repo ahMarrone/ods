@@ -15,7 +15,8 @@
     <field name="ambito" type="string" column="ambito" nullable="false"/>
     <field name="visible" type="boolean" column="visible" nullable="false"/>
     <field name="fechamodificacion" type="string" column="fechaModificacion" nullable="false"/>
-    <field name="fechasdestacadas" type="string" column="fechasDestacadas" length="50" nullable="true"/>
+    <field name="fechasdestacadas" type="string" column="fechasDestacadas" length="100" nullable="true"/>
+    <field name="documentpath" type="string" column="documentpath" length="200" nullable="true"/>
     <many-to-one field="fkidmeta" target-entity="Metas">
       <join-columns>
         <join-column name="fkIdMeta" referenced-column-name="id"/>

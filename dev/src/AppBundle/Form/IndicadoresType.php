@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvent;
@@ -45,6 +46,7 @@ class IndicadoresType extends AbstractType
                 'multiple' => false,
             ))
             ->add('fechasdestacadas','hidden')
+            ->add('documentpath', FileType::class, array('label' => 'Documento técnico (archivo PDF)', 'required'=>false))
             //->add('visible', 'checkbox', array('label'  => 'Visible', 'required'  => false))   
         ;
     }

@@ -16,6 +16,12 @@
     <script src="{{ asset('js/HighlightDates.js') }}"></script>
 {% endblock %}
 
+{% block _indicadores_documentpath_widget %}
+    <div class="text_widget">
+        {{ block('form_widget_simple') }}
+    </div>
+{% endblock %}
+
 {% block body %}
 
 <ol class="breadcrumb">
@@ -35,6 +41,10 @@
         </div>
 
         {{ form_widget(edit_form) }}
+
+        {% if document_path_string %}
+         <a class="btn btn-warning" target="_blank" title="Ver documento técnico" href="{{ asset('uploads/indicadores/' ~ document_path_string) }}"><i class="fa fa-file-pdf-o fa-fw" aria-hidden="true"></i>  Ver documento técnico existente</a>
+         {% endif %}
 
         <div>
            <div id="highlightDatesControl"></div>

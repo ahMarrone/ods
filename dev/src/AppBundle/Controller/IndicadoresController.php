@@ -10,6 +10,8 @@ use AppBundle\Entity\Indicadores;
 use AppBundle\Entity\Metas;
 use AppBundle\Form\IndicadoresType;
 
+use Symfony\Component\HttpFoundation\File\File;
+
 /**
  * Indicadores controller.
  *
@@ -71,6 +73,19 @@ class IndicadoresController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->addIndicadorMetadata($indicadore);
+
+            // documento técnico
+            $document = $indicadore->getDocumentPath();
+            if ($document){
+                $fileName = md5(uniqid()).'.'.$document->guessExtension();
+                $document->move(
+                    $this->getParameter('indicadores_technical_documents_directory'),
+                    $fileName
+                );
+                $indicadore->setDocumentPath($fileName);
+            }
+            //
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($indicadore);
             $em->flush();
@@ -134,11 +149,32 @@ class IndicadoresController extends Controller
             $indicadore->setFkidmeta($meta);
         }
         $deleteForm = $this->createDeleteForm($indicadore);
+        $document_path_string = $indicadore->getDocumentPath();
+        if ($document_path_string != NULL){
+            $indicadore->setDocumentPath(
+                new File($this->getParameter('indicadores_technical_documents_directory').'/'.$indicadore->getDocumentPath())
+            );
+        }
         $editForm = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->addIndicadorMetadata($indicadore);
+
+            // documento técnico
+            $document = $indicadore->getDocumentPath();
+            if ($document){
+                $fileName = ($document_path_string) ? $document_path_string :  md5(uniqid()).'.'.$document->guessExtension();
+                $document->move(
+                    $this->getParameter('indicadores_technical_documents_directory'),
+                    $fileName
+                );
+                $indicadore->setDocumentPath($fileName);
+            } else {
+                $indicadore->setDocumentPath($document_path_string);
+            }
+            //
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($indicadore);
             $em->flush();
@@ -152,6 +188,7 @@ class IndicadoresController extends Controller
             'delete_form' => $deleteForm->createView(),
             'objetivos' => $this->getObjetivosPreload(),
             'metas' => $this->getMetasPreload(),
+            'document_path_string' => $document_path_string,
         ));
     }
 

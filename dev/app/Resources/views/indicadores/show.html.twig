@@ -40,6 +40,17 @@
     <dt>Visible</dt>
     <dd>{{ indicadore.visible ? "Si" : "No"}}</dd>
 </dl>
+<dl class="dl-horizontal">
+    <dt>Documento técnico</dt>
+    <dd>
+        
+        {% if indicadore.documentpath == NULL%}
+            Sin documento técnico
+        {% else %}
+            <a target="_blank" href="{{ asset('uploads/indicadores/' ~ indicadore.documentpath) }}">Ver documento técnico</a>
+        {% endif %}
+    </dd>
+</dl>
 
 <div class="row">
             <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_index') }}">Volver atrás</a>
