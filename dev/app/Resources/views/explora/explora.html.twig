@@ -181,7 +181,7 @@
         this.model.on('change:desglose_selected', this.render, this);
         this.render();
         /* Inicializar mapa */
-        swap(this.model.get('indicadores')[this.model.get('indicador_selected_id')]);
+        swap(this.model.get('indicadores')[this.model.get('indicador_selected_id')], this.model.get('etiquetas'));
         valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('anio_selected')].valoresRefGeografica
         etiqueta = this.model.get('etiqueta_selected');
         etiquetasActuales = this.model.get('etiquetas_current');
@@ -217,7 +217,7 @@
           this.model.set("indicador_selected_id",$(this.el).find('.selectIndicador').val());
           /* Ver si es necesario un 'if */
           /* PROBAR */
-          swap(this.model.get('indicadores')[this.model.get('indicador_selected_id')]);
+          swap(this.model.get('indicadores')[this.model.get('indicador_selected_id')], this.model.get('etiquetas'));
           this.desgloseSelected();
         },
         anioSelected: function(event){

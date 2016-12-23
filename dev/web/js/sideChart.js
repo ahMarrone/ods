@@ -1,7 +1,8 @@
 /// TEMPLATE //////////////
 
 _.mixin({
-  getColor: getColor
+  getColor: getColor,
+  plot: plot,
 });
 
 function getColor (v){
@@ -27,6 +28,9 @@ var templateSideChart = [
     '</tr>',
     '</tbody></table>',
     '</div>',
+    '<% _.plot(model.get("valoresIndicadoresDesgloces"), model.get("idsEtiquetasActuales"), model.get("etiquetas"))%>',
+    '<div id="infobox-line-chart" class="c3" style="max-height: 160px; max-width: 250px; position: relative;">',
+    '</div>',
     '<div class="map-legend">',
     '<table id="legend-colors"><tbody>',
     '<tr>',
@@ -47,7 +51,8 @@ var sideChartModel = Backbone.Model.extend({
         'layerProperties':[],
         'indicador': [],
         'valoresIndicadoresDesgloces': [],
-        'etiquetasActuales' : []
+        'idsEtiquetasActuales' : [],
+        'etiquetas': [],
     }
 });
 
@@ -58,22 +63,40 @@ var sideChartView = Backbone.View.extend({
     },
 
     render:function(){
+        console.log(this.model.get("valoresIndicadoresDesgloces"));
+        // console.log(this.model.get("idsEtiquetasActuales"));
+        // console.log(this.model.get("etiquetas"));
         var tpl = _.template(templateSideChart);
         this.$el.html(tpl({model:this.model}));
         return this;
     }
 });
 
-function plot(refGeoId){
-  var chartData = [''];
+function plot(valoresIndicadoresDesgloces, idsEtiquetasActuales, etiquetas){
+    // console.log("entro");
+    // console.log(valoresIndicadoresDesgloces);
+    // console.log(idsEtiquetas);
+    // console.log(etiquetas);
+    var chartData = [];
+    var e;
+    var anios = ['x'];
 
+    for (var i = 0; i < idsEtiquetasActuales.length(); i++) {
+        id = etiquetasActuales[i];
+        e = etiquetas[id];
+        chartData[e] = [];
+    }
 
-
-
-  $.each(valoresIndicadoresDesgloces, function(id, claves) {
-        $.each(claves['valoresRefGeografica'], function(idEtiqueta, value){
-            chartData[idEtiqueta]
-          chartData.push(value[selected]);
+    $.each(idsEtiquetasActuales, function() {} );
+    $.each(valoresIndicadoresDesgloces, function(idValoresIndicadoresDesgloces, claves) {
+        anio.push(claves.fecha);
+        $.each(claves.valoresRefGeografica, function(idRefGeografica, idsEtiquetas) {
+            $.each(idsEtiquetas, function(id, value){
+                if (idsEtiquetasActuales.indexOf(id) != -1) {
+                    e = etiquetas[id];
+                    chartData[e].push(value);
+                }
+            });
         });
     });
 
@@ -82,7 +105,7 @@ function plot(refGeoId){
     data: {
       x: 'x',
       columns: [
-        ['x', '2014', '2015'],
+        anios,
         chartData
       ]
     },
@@ -91,3 +114,4 @@ function plot(refGeoId){
     }
 });
 }
+/*http://stackoverflow.com/questions/9589768/using-an-associative-array-as-data-for-d3*/
