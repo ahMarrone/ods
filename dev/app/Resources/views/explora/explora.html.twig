@@ -130,12 +130,16 @@
     </div>
     <label for="selectorEtiqueta" class="col-xs-1 control-label">Etiqueta</label>
       <div class="col-xs-4">
+      <% if ( model.get("desglose_selected") == 0 ) { %>
+      <select disabled id="selectorEtiqueta" class="form-control selectEtiqueta">
+      <% } else { %>
       <select id="selectorEtiqueta" class="form-control selectEtiqueta">
+      <% } %>
       <% model.set('etiquetas_current', []) %>
       <% _.each(model.get("etiquetas"), function(etiqueta, i){ %>
         <% if ( etiqueta.id_desglose == model.get("desglose_selected") ){ %>
           <% model.get('etiquetas_current').push(etiqueta.id); %>
-          <option title="<%= etiqueta.descripcion %>" value="<%= etiqueta.id %>"><%= etiqueta.descripcion %></option>
+          <option title="<%= etiqueta.descripcion %>" value="<%= etiqueta.id %>"><% if ( etiqueta.id != 0 ) { %> <%= etiqueta.descripcion %> <% } %></option>
         <% } %>
       <% }); %>
       </select>
@@ -144,8 +148,25 @@
   </form>  
 </script>
 </div>
-<div id="mapCanvas" style="width: 1000px; height: 500px"></div>
-<div class="container-fluid" id='test'></div>
+
+<div class="container-fluid">
+  <div id="mapCanvas" style="width: 1000px; height: 500px"></div>
+</div>
+
+
+<form class="form-horizontal" role="form">
+  <div class="form-group">
+    <div class="btn-group" role="group" aria-label="...">
+    <button type="button" class="btn btn-default">2013</button>
+    <button type="button" class="btn btn-default">2014</button>
+    <button type="button" class="btn btn-default">2015</button>
+  </div>  
+  <div class="col-lg-5">
+  </div>
+  </div>
+</form>
+
+
 
 <script type="text/javascript">
   $(document).ready(function() {
@@ -181,11 +202,12 @@
         this.model.on('change:desglose_selected', this.render, this);
         this.render();
         /* Inicializar mapa */
-        swap(this.model.get('indicadores')[this.model.get('indicador_selected_id')], this.model.get('etiquetas'));
+        swap(this.model.get('indicadores')[this.model.get('indicador_selected_id')], this.model.get('etiquetas'), this.model.get('valoresIndicadoresDesgloses'));
         valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('anio_selected')].valoresRefGeografica
-        etiqueta = this.model.get('etiqueta_selected');
+        idEtiquetaSeleccionada = this.model.get('etiqueta_selected');
+        descripcionEtiquetaSeleccionada = this.model.get('etiquetas')[this.model.get('etiqueta_selected')].descripcion;
         etiquetasActuales = this.model.get('etiquetas_current');
-        update(valoresRefGeografica, etiqueta, etiquetasActuales);
+        update(valoresRefGeografica, idEtiquetaSeleccionada, descripcionEtiquetaSeleccionada, etiquetasActuales);
 
         },
         events: {
@@ -231,9 +253,10 @@
         etiquetaSelected: function(event){
           this.model.set("etiqueta_selected", $(this.el).find('.selectEtiqueta').val());
           valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('anio_selected')].valoresRefGeografica
-          etiqueta = this.model.get('etiqueta_selected');
+          idEtiquetaSeleccionada = this.model.get('etiqueta_selected');
+          descripcionEtiquetaSeleccionada = this.model.get('etiquetas')[this.model.get('etiqueta_selected')].descripcion;
           etiquetasActuales = this.model.get('etiquetas_current');
-          update(valoresRefGeografica, etiqueta, etiquetasActuales);
+          update(valoresRefGeografica, idEtiquetaSeleccionada, descripcionEtiquetaSeleccionada, etiquetasActuales);
         }
     })
 
@@ -244,7 +267,7 @@
     ordenar años y mostrar primero (o último) */
     anio = Object.keys(valoresIndicadoresDesgloses)[0];
     
-    console.log(valoresIndicadoresDesgloses);
+    // console.log(valoresIndicadoresDesgloses);
     // console.log({{ etiquetas|json_encode|raw}});
 
     var modelForm = new ChainSelectData({
