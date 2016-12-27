@@ -80,7 +80,6 @@ var sideChartView = Backbone.View.extend({
         var idsEtiquetasActuales = this.model.get('idsEtiquetasActuales') ;
         var etiquetas = this.model.get('etiquetas');
         var idRefGeograficaActual = this.model.get("layerProperties").id;
-        var descripcionEtiquetaSeleccionada = this.model.get('descripcionEtiquetaSeleccionada');
 
         var chartDataRaw = {};
         var e;
@@ -131,16 +130,17 @@ var sideChartView = Backbone.View.extend({
 
     render: function() {
         // console.log(this.model.get("layerProperties"));
+        var descripcionEtiquetaSeleccionada = this.model.get('descripcionEtiquetaSeleccionada');
         var tpl = _.template(templateSideChart);
         var chartData = this.prepare();
         this.$el.html(tpl({model:this.model}));
-        _.plot(chartData);
+        _.plot(chartData, descripcionEtiquetaSeleccionada);
         return this;
     }
 });
 
 
-function plot(chartData){
+function plot(chartData, descripcionEtiquetaSeleccionada) {
     var chart = c3.generate({
         bindto: '#infobox-line-chart',
         data: {
