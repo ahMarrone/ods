@@ -249,12 +249,12 @@ class ValoresIndicadoresController extends Controller
         foreach ($desglocesIndicador as $desgloceIndicador) {
             $desgloce = $this->getDoctrine()->getRepository('AppBundle:Desgloces')->findOneById($desgloceIndicador->getIddesgloce());
             $etiquetas =  $this->getDoctrine()->getRepository('AppBundle:Etiquetas')->findByFkiddesgloce($desgloce);
-            array_push($desgloces,$desgloce->getDescripcion());
+            $desgloces[$desgloce->getId()] = $desgloce->getDescripcion();
             $tmpEtiquetas = array();
             foreach ($etiquetas as $e) {
                 array_push($tmpEtiquetas, array("id_etiqueta"=>$e->getId(), "desc"=>$e->getDescripcion()));
             }
-            array_push($etiquetasDesgloce, $tmpEtiquetas);
+            $etiquetasDesgloce[$desgloce->getId()] = $tmpEtiquetas;
         }
         return array($desgloces, $etiquetasDesgloce);
     }
