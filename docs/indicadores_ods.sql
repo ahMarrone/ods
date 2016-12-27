@@ -118,6 +118,7 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
 DROP TABLE IF EXISTS `metas`;
 CREATE TABLE IF NOT EXISTS `metas` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `codigo` int(11) unsigned NOT NULL,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la meta',
   `ambito` enum('N','P','D','L','R') COLLATE utf8_spanish_ci NOT NULL,
   `fkIdObjetivo` int(11) unsigned NOT NULL COMMENT 'clave foranea tabla objetivos',
