@@ -28,9 +28,19 @@ var templateSideChart = [
     '</tr>',
     '</tbody></table>',
     '</div>',
-    '<% _.plot(model.get("valoresIndicadoresDesgloces"), model.get("idsEtiquetasActuales"), model.get("etiquetas"))%>',
+    '<% if (_.isEmpty(model.get("layerProperties"))) { %>',
+    '<div class="texto-aclaracion">Bienvenido a Explora</div>',
+    '<% } else {%>',
+    '<% if ( model.get("isChartAvailable") ) { %>',
     '<div id="infobox-line-chart" class="c3" style="max-height: 160px; max-width: 250px; position: relative;">',
     '</div>',
+    '<% } else { %>',
+    '<div class="indicador-valor">',
+    '<%= model.get("layerProperties").value %></div>',
+    '<div class="texto-aclaracion">Al momento sólo se cuenta con datos para el año de referencia</div>',
+    '</div>',
+    '</div>',
+    '<% } %>',
     '<div class="map-legend">',
     '<table id="legend-colors"><tbody>',
     '<tr>',
@@ -43,75 +53,118 @@ var templateSideChart = [
     '<td class="legend-breaks"> <%= value %>',
     '</td>',
     '<% }); %>',
-    '</tbody></table>'
+    '</tbody></table>',
+    '<% } %>'
 ].join("\n");
 
 var sideChartModel = Backbone.Model.extend({
     defaults: {
         'layerProperties':[],
         'indicador': [],
-        'valoresIndicadoresDesgloces': [],
+        'valoresIndicadoresDesgloses': [],
+        'descripcionEtiquetaSeleccionada': '',
         'idsEtiquetasActuales' : [],
         'etiquetas': [],
+        'isChartAvailable': false
     }
 });
 
 var sideChartView = Backbone.View.extend({
     initialize: function() {
-        _.bindAll(this, "render");
+        _.bindAll(this, 'render');
         this.model.bind('change', this.render);
     },
 
-    render:function(){
-        console.log(this.model.get("valoresIndicadoresDesgloces"));
-        // console.log(this.model.get("idsEtiquetasActuales"));
-        // console.log(this.model.get("etiquetas"));
+    prepare: function() {
+        var valoresIndicadoresDesgloses = this.model.get('valoresIndicadoresDesgloses');
+        var idsEtiquetasActuales = this.model.get('idsEtiquetasActuales') ;
+        var etiquetas = this.model.get('etiquetas');
+        var idRefGeograficaActual = this.model.get("layerProperties").id;
+        var descripcionEtiquetaSeleccionada = this.model.get('descripcionEtiquetaSeleccionada');
+
+        var chartDataRaw = {};
+        var e;
+        var anios = ['x'];
+
+        _.each(idsEtiquetasActuales, function(id) {
+            e = etiquetas[id].descripcion;
+            chartDataRaw[e] = [];
+        })
+
+        _.each(valoresIndicadoresDesgloses, function(claves, idValoresIndicadoresDesgloses) {
+            _.each(claves.valoresRefGeografica, function(idsEtiquetas, idRefGeografica) {
+                if (idRefGeografica == idRefGeograficaActual) {
+                    _.each(idsEtiquetas, function(valor, idStr) {
+                        /* HACK - VERIFICAR TIPO */
+                        id = parseInt(idStr);
+                        /* CAMBIAR A FUNCIÓN DE UNDERSCORE */
+                        if (idsEtiquetasActuales.indexOf(id) != -1) {
+                            e = etiquetas[id].descripcion;
+                            anios.push(claves.fecha);
+                            chartDataRaw[e].push(valor);
+                        }
+                    })
+                }
+            })
+        })
+
+        anios = _.uniq(anios);
+        var chartData = [anios];
+        var i = 1;
+
+        _.each(chartDataRaw, function(valores, etiqueta){
+            chartData.push([etiqueta])
+            for (var j = 0 ; j < valores.length ; j++) {
+                chartData[i].push(valores[j]);
+            }
+            i++;
+        })
+        
+        if (anios.length > 2) {
+            this.model.set('isChartAvailable', true);
+        } else {
+            this.model.set('isChartAvailable', false);
+        }
+
+        return chartData
+    },
+
+    render: function() {
+        // console.log(this.model.get("layerProperties"));
         var tpl = _.template(templateSideChart);
+        var chartData = this.prepare();
         this.$el.html(tpl({model:this.model}));
+        _.plot(chartData);
         return this;
     }
 });
 
-function plot(valoresIndicadoresDesgloces, idsEtiquetasActuales, etiquetas){
-    // console.log("entro");
-    // console.log(valoresIndicadoresDesgloces);
-    // console.log(idsEtiquetas);
-    // console.log(etiquetas);
-    var chartData = [];
-    var e;
-    var anios = ['x'];
 
-    for (var i = 0; i < idsEtiquetasActuales.length(); i++) {
-        id = etiquetasActuales[i];
-        e = etiquetas[id];
-        chartData[e] = [];
-    }
-
-    $.each(idsEtiquetasActuales, function() {} );
-    $.each(valoresIndicadoresDesgloces, function(idValoresIndicadoresDesgloces, claves) {
-        anio.push(claves.fecha);
-        $.each(claves.valoresRefGeografica, function(idRefGeografica, idsEtiquetas) {
-            $.each(idsEtiquetas, function(id, value){
-                if (idsEtiquetasActuales.indexOf(id) != -1) {
-                    e = etiquetas[id];
-                    chartData[e].push(value);
-                }
-            });
-        });
+function plot(chartData){
+    var chart = c3.generate({
+        bindto: '#infobox-line-chart',
+        data: {
+          x: 'x',
+          columns: chartData
+        },
+        legend: {
+            show: false
+        },
+        color: {
+            pattern: ['#045a8d', '#2b8cbe', '#74a9cf', '#a6bddb', '#d0d1e6']
+        }
     });
 
-  var chart = c3.generate({
-    bindto: '#infobox-line-chart',
-    data: {
-      x: 'x',
-      columns: [
-        anios,
-        chartData
-      ]
-    },
-    legend: {
-        show: false
-    }
-});
+    descripcionEtiquetaSeleccionada = descripcionEtiquetaSeleccionada.replace(" ", "-");
+    // console.log('#infobox-line-chart2 .c3-line-'.concat(descripcionEtiquetaSeleccionada));
+
+    /* Estilo de las Líneas */
+    $('.c3-line').css('stroke-dasharray', '5,5'); /* Línea Punteada */
+
+    /* VERIFICAR SI FUNCIONA CORRECTAMENTE */
+    $('.c3-line-'.concat(descripcionEtiquetaSeleccionada)).css("stroke-width","2px");
+    $('.c3-line-'.concat(descripcionEtiquetaSeleccionada)).css("stroke-dasharray","0,0");
+    $('.c3 svg').css("font","8px sans-serif");
+    
+
 }
-/*http://stackoverflow.com/questions/9589768/using-an-associative-array-as-data-for-d3*/

@@ -66,6 +66,15 @@ body.front .jumbotron {
     margin-bottom: 5px;
     color: #aaa;
 }
+
+.infobox .texto-aclaracion {
+    font-weight: 700;
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: #aaa;
+    text-align: center;
+}
+
 .infobox .edo-image {
     width: 40px;
     height: 40px;
@@ -87,9 +96,9 @@ table#legend-colors tr td.legend-breaks {
     padding-top: 5px;
 }
 .indicador-valor, .indicador-valor-b {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 700;
-    color: #2b8cbe;
+    /*color: #2b8cbe;*/
     text-align: center;
 }
 .values-row {

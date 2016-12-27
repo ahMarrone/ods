@@ -9,19 +9,21 @@ var maxBoundsSouthWest = L.latLng(-89.99999999999994, -74.02985395599995),
     centerBounds = L.latLngBounds(centerSouthWest, centerNorthEast),
     minZoom = 4;
 
-function swap(indicador, etiquetas) {
+function swap(indicador, etiquetas, valoresIndicadoresDesgloses) {
     map.removeLayer(tiles[current]);
     map.addLayer(tiles[indicador.ambito]);
     current = indicador.ambito;
     sideChartModel.set('indicador', indicador);
     sideChartModel.set('etiquetas', etiquetas);
+    sideChartModel.set('valoresIndicadoresDesgloses', valoresIndicadoresDesgloses);
 }
 
-function update(data, idEtiqueta, idsEtiquetasActuales) {
-    sideChartModel.set('idsEtiquetasActuales', idsEtiquetasActuales)
+function update(data, idEtiquetaSeleccionada, descripcionEtiquetaSeleccionada, idsEtiquetasActuales) {
+    sideChartModel.set('idsEtiquetasActuales', idsEtiquetasActuales);
+    sideChartModel.set('descripcionEtiquetaSeleccionada', descripcionEtiquetaSeleccionada);
     tiles[current].eachLayer(function (layer) {
         idRefGeografica = layer.feature.properties.id;
-        valor = data[idRefGeografica][idEtiqueta];
+        valor = data[idRefGeografica][idEtiquetaSeleccionada];
         layer.feature.properties['value'] = valor;
         layer.setStyle({fillColor: getColor(valor)})
     });
