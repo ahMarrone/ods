@@ -110,9 +110,9 @@
       </div>
       <label for="selectorAnio" class="col-xs-1 control-label">Año</label>
       <div class="col-xs-4">
-      <select id="selectorAnio" class="form-control selectAnio">
-      <% _.each(model.get("valoresIndicadoresDesgloses"), function(e, i){ %>',
-          <option title="<%= e.fecha %>" value="<%= i %>" <% if (i == model.get("anio_selected")) { %> selected<% }  %>><%= e.fecha %></option>
+      <select id="selectorAnio" class="form-control selectFecha">
+      <% _.each(model.get("valoresIndicadoresDesgloses"), function(e, f){ %>',
+          <option title="<%= f %>" value="<%= f %>" <% if (f == model.get("fecha_selected")) { %> selected<% }  %>><%= f %></option>
       <% }); %>
       </select>
     </div>
@@ -122,7 +122,7 @@
     <div class="col-xs-4">
     <select id="selectorDesglose" class="form-control selectDesglose">
       <% _.each(model.get("desgloses"), function(desglose, i){ %>
-        <% if ( _.indexOf(model.get("valoresIndicadoresDesgloses")[model.get("anio_selected")].id_desgloses, desglose.id) != -1 ){ %>
+        <% if ( _.indexOf(model.get("valoresIndicadoresDesgloses")[model.get("fecha_selected")].id_desgloses, desglose.id) != -1 ){ %>
         <option title="<%= desglose.descripcion %>" value="<%= desglose.id %>"<% if (desglose.id == model.get("desglose_selected")) { %> selected<% } %>><%= desglose.descripcion %></option>
         <% } %>
       <% }); %>
@@ -153,20 +153,21 @@
   <div id="mapCanvas" style="width: 1000px; height: 500px"></div>
 </div>
 
-
+<div class="container-fluid" id='fechasDestacadasDiv'>
+<script id="fechasDestacadasLoader" type="text/template">
 <form class="form-horizontal" role="form">
-  <div class="form-group">
-    <div class="btn-group" role="group" aria-label="...">
-    <button type="button" class="btn btn-default">2013</button>
-    <button type="button" class="btn btn-default">2014</button>
-    <button type="button" class="btn btn-default">2015</button>
+  <div class="form-group" id=>
+    <div class="btn-group " role="group" aria-label="...">
+    <% _.each(model.get("indicadores")[model.get("indicador_selected_id")].fechasDestacadas, function(fecha, i) { %>
+    <input type="button" value="<%= fecha %>" class="ButtonFechaDestacada btn btn-default <% if (fecha == model.get('fecha_selected')) { print ('active'); } %>">
+    <% }); %>
   </div>  
   <div class="col-lg-5">
   </div>
   </div>
 </form>
-
-
+</script>
+</div>
 
 <script type="text/javascript">
   $(document).ready(function() {
@@ -183,7 +184,7 @@
         'objetivo_selected': '',
         'meta_selected': '',
         'indicador_selected_id': '',
-        'anio_selected': ''
+        'fecha_selected': ''
       }
     });
 
@@ -192,18 +193,18 @@
       template: _.template($('#formLoader').html()), /* Lo que quiero renderizar */
 
       initialize: function() {
-        this.model.set('desglose_selected', this.model.get('valoresIndicadoresDesgloses')[this.model.get('anio_selected')].id_desgloses[0]);
+        this.model.set('desglose_selected', this.model.get('valoresIndicadoresDesgloses')[this.model.get('fecha_selected')].id_desgloses[0]);
         this.model.set('etiqueta_selected', this.model.get('desgloses')[0].id);
 
         this.model.on('change:objetivo_selected', this.render, this);
         this.model.on('change:meta_selected', this.render, this);
         this.model.on('change:indicador_selected_id', this.render, this);
-        this.model.on('change:anio_selected', this.render, this);
+        this.model.on('change:fecha_selected', this.anioSelected, this);
         this.model.on('change:desglose_selected', this.render, this);
         this.render();
         /* Inicializar mapa */
         swap(this.model.get('indicadores')[this.model.get('indicador_selected_id')], this.model.get('etiquetas'), this.model.get('valoresIndicadoresDesgloses'));
-        valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('anio_selected')].valoresRefGeografica
+        valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('fecha_selected')].valoresRefGeografica
         idEtiquetaSeleccionada = this.model.get('etiqueta_selected');
         descripcionEtiquetaSeleccionada = this.model.get('etiquetas')[this.model.get('etiqueta_selected')].descripcion;
         etiquetasActuales = this.model.get('etiquetas_current');
@@ -214,7 +215,7 @@
                   'change .selectObjetivo': 'objetivoSelected',
                   'change .selectMeta': 'metaSelected',
                   'change .selectIndicador': 'indicadorSelected',
-                  'change .selectAnio': 'anioSelected',
+                  'change .selectFecha': 'anioSelected',
                   'change .selectDesglose': 'desgloseSelected',
                   'change .selectEtiqueta': 'etiquetaSelected',
         },
@@ -242,8 +243,18 @@
           swap(this.model.get('indicadores')[this.model.get('indicador_selected_id')], this.model.get('etiquetas'));
           this.desgloseSelected();
         },
+        fechaClicked: function(event) {
+          this.model.set("fecha_selected", $(this.el).find('.selectFecha').val()); 
+          // console.log("desde select" + this.model.get("fecha_selected"));
+          this.render();
+        },
         anioSelected: function(event){
-          this.model.set("anio_selected", event.target.value); 
+          /* MEJORAR */
+          if (!(event.target)) {
+            this.render();
+          } else {
+            this.model.set("fecha_selected", event.target.value);
+          }
           this.desgloseSelected();
         },
         desgloseSelected: function(event){
@@ -252,7 +263,7 @@
         },
         etiquetaSelected: function(event){
           this.model.set("etiqueta_selected", $(this.el).find('.selectEtiqueta').val());
-          valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('anio_selected')].valoresRefGeografica
+          valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('fecha_selected')].valoresRefGeografica;
           idEtiquetaSeleccionada = this.model.get('etiqueta_selected');
           descripcionEtiquetaSeleccionada = this.model.get('etiquetas')[this.model.get('etiqueta_selected')].descripcion;
           etiquetasActuales = this.model.get('etiquetas_current');
@@ -260,14 +271,43 @@
         }
     })
 
+
+    var FechasDestacadasView = Backbone.View.extend({
+      el: '#fechasDestacadasDiv',
+      template: _.template($('#fechasDestacadasLoader').html()),
+      initialize: function() {
+        // console.log(this.model.get('fecha_selected'));
+        // console.log("inicialice");
+        this.model.on('change:fecha_selected', this.render, this);
+        this.render();
+        },
+        events: {
+                  'click .ButtonFechaDestacada': 'fechaDestacadaClicked',
+        },
+        render:function(){
+          this.$el.html(this.template({model:this.model}));
+          return this;
+        },
+        fechaDestacadaClicked: function(event){
+          // console.log(this.model.get('fecha_selected'));
+          this.model.set("fecha_selected", event.target.value);
+          // console.log("modifique: " + this.model.get('fecha_selected'));
+        }
+    })
+
     mapMe(poligonoNacion, poligonoProvincias, poligonoDepartamentos);
     var valoresIndicadoresDesgloses = {{ valoresIndicadoresDesgloses|json_encode|raw }};
+    var indicadores = {{ indicadores|json_encode|raw}};
+    var idIndicadorSeleccionado = {{ idIndicadorSeleccionado }};
+    var fechaSeleccionada = indicadores[idIndicadorSeleccionado].fechasDestacadas[0];
 
     /* Primer anio a mostrar. Puede ser el primero de los años destacados u 
     ordenar años y mostrar primero (o último) */
-    anio = Object.keys(valoresIndicadoresDesgloses)[0];
-    
+    // fechaSeleccionada = Object.keys(valoresIndicadoresDesgloses)[0];
+    // console.log({{ indicadores|json_encode|raw}}[{{ idIndicadorSeleccionado }}].fechasDestacadas[0]);
     // console.log(valoresIndicadoresDesgloses);
+    
+    console.log(valoresIndicadoresDesgloses);
     // console.log({{ etiquetas|json_encode|raw}});
 
     var modelForm = new ChainSelectData({
@@ -279,12 +319,13 @@
       'etiquetas': {{ etiquetas|json_encode|raw}},
       'objetivo_selected': {{ idObjetivoSeleccionado }},
       'meta_selected': {{ idMetaSeleccionada }},
-      'indicador_selected_id': {{ idIndicadorSeleccionado }},
-      'anio_selected': anio
+      'indicador_selected_id': idIndicadorSeleccionado,
+      'fecha_selected': fechaSeleccionada
     });
 
     // var view = new ThreeSelectView({el: $("#selects"), model:model});
     var viewForm = new ChainSelectView({model:modelForm});
+    var viewFechasDestacadas = new FechasDestacadasView({model:modelForm});
 
     
   });

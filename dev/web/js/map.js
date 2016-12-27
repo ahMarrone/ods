@@ -7,7 +7,8 @@ var maxBoundsSouthWest = L.latLng(-89.99999999999994, -74.02985395599995),
     centerNorthEast = L.latLng(-19.642587534013032, -19.687500000000004),
     maxBounds = L.latLngBounds(maxBoundsSouthWest, maxBoundsNorthEast),
     centerBounds = L.latLngBounds(centerSouthWest, centerNorthEast),
-    minZoom = 4;
+    minZoom = 4,
+    poligonoSeleccionado = false;
 
 function swap(indicador, etiquetas, valoresIndicadoresDesgloses) {
     map.removeLayer(tiles[current]);
@@ -30,7 +31,7 @@ function update(data, idEtiquetaSeleccionada, descripcionEtiquetaSeleccionada, i
 }
 
 function mapMe(geoJsonNacion, geoJsonProvincias, geoJsonDepartamentos) {
-    var base = L.tileLayer.wms('http://wms.ign.gob.ar/geoserver/wms?', {layers: 'ign:capabaseargenmap_gwc'});
+    var base = L.tileLayer.wms('http://wms.ign.gob.ar/geoserver/wms?', {layers: 'ign:capabaseargenmap_gwc', attribution: '<a href="http://www.ign.gob.ar/">IGN</a>'});
     var tileNacion = L.geoJson(geoJsonNacion, {onEachFeature: onEachFeature, style: style});
     var tileProvincias = L.geoJson(geoJsonProvincias, {onEachFeature: onEachFeature, style: style});
     var tileDepartamentos = L.geoJson(geoJsonNacion, {onEachFeature: onEachFeature, style: style});
@@ -75,8 +76,7 @@ function onEachFeature(feature, layer) {
     layer.on({
         mouseover: highlightFeature,
         mouseout: resetHighlight,
-        click: zoomToFeature,
-        dblclick: zoomOut
+        click: seleccionarPoligon
     });
 }
 
@@ -100,29 +100,45 @@ function getColor(i) {
 }
 
 function highlightFeature(event) {
-    var layer = event.target;
-    layer.setStyle({
-        weight: 1,
-        color: '#646',
-        dashArray: '',
-        fillOpacity: 0.3
-    });
-  
-    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-        layer.bringToFront();
+    if (!poligonoSeleccionado) {
+        var layer = event.target;
+        layer.setStyle({
+            weight: 3,
+            color: '#045a8d',
+            dashArray: '',
+            fillOpacity: 0.3
+        });
+      
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront();
+        }
+        // sideChart.update(layer.feature.properties);
+        sideChartModel.set('layerProperties', layer.feature.properties);
     }
-    // sideChart.update(layer.feature.properties);
-    sideChartModel.set('layerProperties', layer.feature.properties);
 }
 
 function resetHighlight(event) {
-    var layer = event.target;
-    event.target.setStyle(style(event.target.feature));
-    // sideChart.update();
+    if (!poligonoSeleccionado) {
+        var layer = event.target;
+        event.target.setStyle(style(event.target.feature));
+        // sideChart.update();    
+    }
 }
 
 function zoomToFeature(event) {
     map.fitBounds(event.target.getBounds());
+}
+
+function seleccionarPoligon(event) {
+    if (poligonoSeleccionado) {
+        poligonoSeleccionado = false;    
+    } else {
+        poligonoSeleccionado = true;
+    }
+}
+
+function deSeleccionarPoligon(event) {
+    poligonoSeleccionado = false;
 }
 
 function zoomOut(event) {

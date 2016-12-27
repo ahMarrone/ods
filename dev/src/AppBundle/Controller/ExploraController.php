@@ -61,6 +61,15 @@ class ExploraController extends Controller
         return $list;
     }
 
+    private function parseFechasDestacadas($fechasDestacadasStr) {
+        $fechasDestacadas = array();
+        $parseResult = explode(";", $fechasDestacadasStr);
+        foreach ($parseResult as $fecha) {
+            array_push($fechasDestacadas, date('Y', strtotime($fecha)));
+        }
+        return $fechasDestacadas;
+    }
+
     private function getIndicadoresPreload($idMeta){
         $list = array();
         /* Si se desean filtrar por los indicadores por meta seleccionada  */
@@ -75,6 +84,7 @@ class ExploraController extends Controller
             $list[$idIndicador]['ambito'] = $i->getAmbito();
             /* CONSTRUIR ESCALA A PARTIR DE valMin y ValMax */
             $list[$idIndicador]['escala'] = array(0, 20, 40, 60, 80);
+            $list[$idIndicador]['fechasDestacadas'] = $this->parseFechasDestacadas($i->getFechasDestacadas());
         }
         return $list;
     }
@@ -109,6 +119,7 @@ class ExploraController extends Controller
     private function getValoresIndicadoresDesgloses($idIndicador){
         $entidad = $this->filterValoresIndicadoresConfigFechaByIndicador($idIndicador);
         $atributos = array();
+        $atributosPorFecha = array();
         /* ORDENARLOS POR IDS! */
         $idsValoresIndicadoresConfigFecha = array(); /* Lista de IDs */
 
@@ -116,8 +127,9 @@ class ExploraController extends Controller
             $id = $e->getId();
             array_push($idsValoresIndicadoresConfigFecha, $id);
             /* Parsear 'fecha', conservando solo el año */
-            $anio = explode('-', $e->getFecha())[0];
-            $atributos[$id] = array('fecha' => $anio, 'id_desgloses' => array(),
+            $fecha = explode('-', $e->getFecha())[0];
+            $atributos[$id] = array('fecha' => $fecha);
+            $atributosPorFecha[$fecha] = array('id_desgloses' => array(),
                 'valoresRefGeografica' => array());
         }
 
@@ -125,7 +137,8 @@ class ExploraController extends Controller
         foreach ($entidad as $e){
             $idValoresIndicadoresConfigFecha = $e->getIdValoresIndicadoresConfigFecha();
             $idDesglose = $e->getIdDesgloce();
-            array_push($atributos[$idValoresIndicadoresConfigFecha]['id_desgloses'], $idDesglose);            
+            $fecha = $atributos[$idValoresIndicadoresConfigFecha]['fecha'];
+            array_push($atributosPorFecha[$fecha]['id_desgloses'], $idDesglose);
         }
 
         $entidad = $this->filterValoresIndicadoresByIdsSet($idsValoresIndicadoresConfigFecha);
@@ -134,10 +147,12 @@ class ExploraController extends Controller
             $idRefGeografica = $e->getIdRefGeografica()->getId();
             $idEtiqueta = $e->getIdEtiqueta();
             $valor = $e->getValor();
+            $fecha = $atributos[$idValoresIndicadoresConfigFecha]['fecha'];
             /* Valor es String en la entidad, ¿por qué?*/
-            $atributos[$idValoresIndicadoresConfigFecha]['valoresRefGeografica'][$idRefGeografica][$idEtiqueta] = floatval($valor);
+            $atributosPorFecha[$fecha]['valoresRefGeografica'][$idRefGeografica][$idEtiqueta] = floatval($valor);
         }
-        return $atributos;
+
+        return $atributosPorFecha;
     }
 
     /* Consultas */

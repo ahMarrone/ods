@@ -90,7 +90,7 @@ var sideChartView = Backbone.View.extend({
             chartDataRaw[e] = [];
         })
 
-        _.each(valoresIndicadoresDesgloses, function(claves, idValoresIndicadoresDesgloses) {
+        _.each(valoresIndicadoresDesgloses, function(claves, fecha) {
             _.each(claves.valoresRefGeografica, function(idsEtiquetas, idRefGeografica) {
                 if (idRefGeografica == idRefGeograficaActual) {
                     _.each(idsEtiquetas, function(valor, idStr) {
@@ -99,7 +99,7 @@ var sideChartView = Backbone.View.extend({
                         /* CAMBIAR A FUNCIÓN DE UNDERSCORE */
                         if (idsEtiquetasActuales.indexOf(id) != -1) {
                             e = etiquetas[id].descripcion;
-                            anios.push(claves.fecha);
+                            anios.push(fecha);
                             chartDataRaw[e].push(valor);
                         }
                     })
