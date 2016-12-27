@@ -10,7 +10,7 @@
     </id>
     <field name="descripcion" type="string" column="descripcion" length="5000" nullable="false"/>
     <field name="ambito" type="string" column="ambito" nullable="false"/>
-    <field name="fechamodificacion" type="datetime" column="fechaModificacion" nullable="false"/>
+    <field name="fechamodificacion" type="string" column="fechaModificacion" nullable="false"/>
     <many-to-one field="idusuario" target-entity="Usuarios">
       <join-columns>
         <join-column name="idUsuario" referenced-column-name="id"/>
