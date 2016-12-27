@@ -386,15 +386,16 @@
     		'metas': metas,
     		'indicadores': indicadores
     	});
-    	var view = new ThreeSelectView({el: $("#selects") ,model:model});
+    	var view = new ThreeSelectView({el: $("#selects") ,model:model, indicadorChangeCallback: listenIndicadorChange});
 
-        $('#three_select_indicador').on('change', function() {
-            configModel.set('id_indicador',this.value);
-            configView.loadIndicadorDates();
-            if (configModel.get('desgloces_request_status') != -1){
+
+      function listenIndicadorChange() {
+          configModel.set('id_indicador',model.get("indicador_selected"));
+          configView.loadIndicadorDates();
+          if (configModel.get('desgloces_request_status') != -1){
               configView.loadDesglocesConfig();
-            }
-        });
+          }
+      }
 
         init();
 

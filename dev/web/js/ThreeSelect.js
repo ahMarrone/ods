@@ -50,7 +50,7 @@ var ThreeSelectData = Backbone.Model.extend({
 
 
 var ThreeSelectView = Backbone.View.extend({
-	initialize: function() {
+	initialize: function(options) {
         if (this.model.get('objetivo_selected') == null){
 		  this.model.set('objetivo_selected',this.model.get('objetivos')[0].id);
         }
@@ -62,6 +62,8 @@ var ThreeSelectView = Backbone.View.extend({
         }
 		this.model.on('change:objetivo_selected', this.render, this);
         this.model.on('change:meta_selected', this.render, this);
+        console.log(options);
+        this.listenIndicadorCallback = options.indicadorChangeCallback;
        	this.render();
     },
     events: {
@@ -75,16 +77,19 @@ var ThreeSelectView = Backbone.View.extend({
 	    return this;
     },
     objetivoSelected: function(e){
-    	this.model.set("objetivo_selected",event.target.value); 
-        this.metaSelected();
+    	this.model.set("objetivo_selected",event.target.value);
+        $('.selectTwo').trigger('change');
+        //this.metaSelected();
     },
     metaSelected: function(e){
     	this.model.set("meta_selected",$(this.el).find('.selectTwo').val());
         if (this.model.get('indicadores').length){
-            this.indicadorSelected();
+            $('.selectThree').trigger('change');
+            //this.indicadorSelected();
         }
     },
     indicadorSelected: function(e){
     	this.model.set("indicador_selected",$(this.el).find('.selectThree').val());
+        this.listenIndicadorCallback();
     }
 })
