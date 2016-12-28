@@ -1,4 +1,4 @@
-var map, tiles, sideChartModel, sideChartView, current;
+var map, tiles, selectedPoligonEvent, sideChartModel, sideChartView, current;
 var sideChartModel;
 
 var maxBoundsSouthWest = L.latLng(-89.99999999999994, -74.02985395599995),
@@ -8,7 +8,8 @@ var maxBoundsSouthWest = L.latLng(-89.99999999999994, -74.02985395599995),
     maxBounds = L.latLngBounds(maxBoundsSouthWest, maxBoundsNorthEast),
     centerBounds = L.latLngBounds(centerSouthWest, centerNorthEast),
     minZoom = 4,
-    poligonoSeleccionado = false;
+    isPoligonSelected = false,
+    isZoomIn = false;
 
 function swap(indicador, etiquetas, valoresIndicadoresDesgloses) {
     map.removeLayer(tiles[current]);
@@ -34,7 +35,7 @@ function mapMe(geoJsonNacion, geoJsonProvincias, geoJsonDepartamentos) {
     var base = L.tileLayer.wms('http://wms.ign.gob.ar/geoserver/wms?', {layers: 'ign:capabaseargenmap_gwc', attribution: '<a href="http://www.ign.gob.ar/">IGN</a>'});
     var tileNacion = L.geoJson(geoJsonNacion, {onEachFeature: onEachFeature, style: style});
     var tileProvincias = L.geoJson(geoJsonProvincias, {onEachFeature: onEachFeature, style: style});
-    var tileDepartamentos = L.geoJson(geoJsonNacion, {onEachFeature: onEachFeature, style: style});
+    var tileDepartamentos = L.geoJson(geoJsonDepartamentos, {onEachFeature: onEachFeature, style: style});
 
     tiles = {
         'N': tileNacion,
@@ -100,7 +101,7 @@ function getColor(i) {
 }
 
 function highlightFeature(event) {
-    if (!poligonoSeleccionado) {
+    if (!isPoligonSelected) {
         var layer = event.target;
         layer.setStyle({
             weight: 3,
@@ -118,10 +119,8 @@ function highlightFeature(event) {
 }
 
 function resetHighlight(event) {
-    if (!poligonoSeleccionado) {
-        var layer = event.target;
+    if (!isPoligonSelected) {
         event.target.setStyle(style(event.target.feature));
-        // sideChart.update();    
     }
 }
 
@@ -130,15 +129,15 @@ function zoomToFeature(event) {
 }
 
 function seleccionarPoligon(event) {
-    if (poligonoSeleccionado) {
-        poligonoSeleccionado = false;    
+    if (isPoligonSelected) {
+        isPoligonSelected = false;
+        resetHighlight(selectedPoligonEvent);
+        zoomOut(event);
     } else {
-        poligonoSeleccionado = true;
+        isPoligonSelected = true;
+        selectedPoligonEvent = event;
+        zoomToFeature(event);
     }
-}
-
-function deSeleccionarPoligon(event) {
-    poligonoSeleccionado = false;
 }
 
 function zoomOut(event) {

@@ -35,7 +35,7 @@ var templateSideChart = [
     '<div id="infobox-line-chart" class="c3" style="max-height: 160px; max-width: 250px; position: relative;">',
     '</div>',
     '<% } else { %>',
-    '<div class="indicador-valor">',
+    '<div class="indicador-valor" style="color: <%= _(model.get("layerProperties").value).getColor() %>" >',
     '<%= model.get("layerProperties").value %></div>',
     '<div class="texto-aclaracion">Al momento sólo se cuenta con datos para el año de referencia</div>',
     '</div>',
@@ -152,8 +152,21 @@ function plot(chartData, descripcionEtiquetaSeleccionada) {
         },
         color: {
             pattern: ['#045a8d', '#2b8cbe', '#74a9cf', '#a6bddb', '#d0d1e6']
+        },
+        grid: {
+            y: {
+                lines: [{value: 40, text: 'Meta 2019', class: 'meta1'}, {value: 20, text: 'Meta 2030', class: 'meta2'}]
+            }
         }
     });
+
+    $('.c3-ygrid-line.meta1 text').css("font","8px sans-serif");
+    $('.c3-ygrid-line.meta1 text').css('stroke', 'green');
+    $('.c3-ygrid-line.meta1 line').css('stroke', 'green');
+    
+    $('.c3-ygrid-line.meta2 text').css("font","8px sans-serif");
+    $('.c3-ygrid-line.meta2 text').css('stroke', 'green');
+    $('.c3-ygrid-line.meta2 line').css('stroke', 'green');
 
     descripcionEtiquetaSeleccionada = descripcionEtiquetaSeleccionada.replace(" ", "-");
     // console.log('#infobox-line-chart2 .c3-line-'.concat(descripcionEtiquetaSeleccionada));
