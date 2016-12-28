@@ -103,9 +103,17 @@ class ExploraController extends Controller
         $desgloses = array();
         $maximoID = 0;
         foreach ($etiquetasEntity as $e){
+
+            $id = $e->getId();
+            if ($id == 0) {
+                $descripcion = 'Total';
+            } else {
+                $descripcion = $e->getDescripcion();
+            }
+
             array_push($etiquetas, array(
-                'id' => $e->getId(),
-                'descripcion' => $e->getDescripcion(),
+                'id' => $id,
+                'descripcion' => $descripcion,
                 'id_desglose' => $e->getFkiddesgloce()->getId())
             );
             $maximoID = max($maximoID, $e->getId());
@@ -118,7 +126,7 @@ class ExploraController extends Controller
             $maximoID += 1;
             array_push($etiquetas, array(
                 'id' => $maximoID,
-                'descripcion' => 'Todos',
+                'descripcion' => 'Total',
                 'id_desglose' => $idDesglose)
             );
 
@@ -188,9 +196,13 @@ class ExploraController extends Controller
             $idRefGeografica = $columnas['idRefGeografica'];
             $idDesglose = $columnas['idDesglose'];
             $idEtiquetaAcumulado = $reverseDesgloses[$idDesglose]['id_etiqueta'];
-            $atributosPorFecha[$fecha]['valoresRefGeografica'][$idRefGeografica][$idEtiquetaAcumulado] = floatval($columnas['acumulado']);
+            if ($idDesglose != 0) {
+                $atributosPorFecha[$fecha]['valoresRefGeografica'][$idRefGeografica][$idEtiquetaAcumulado] = floatval($columnas['acumulado']);
+            }
+            
         }
 
+        // echo (var_dump($atributosPorFecha));
         return $atributosPorFecha;
     }
 

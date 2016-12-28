@@ -194,6 +194,7 @@
       template: _.template($('#formLoader').html()), /* Lo que quiero renderizar */
 
       initialize: function() {
+        console.log(this.model.get('valoresIndicadoresDesgloses'));
         this.model.set('desglose_selected', this.model.get('valoresIndicadoresDesgloses')[this.model.get('fecha_selected')].id_desgloses[0]);
         this.model.set('etiqueta_selected', this.model.get('desgloses')[0].id);
 
@@ -310,9 +311,9 @@
     // console.log({{ indicadores|json_encode|raw}}[{{ idIndicadorSeleccionado }}].fechasDestacadas[0]);
     // console.log(valoresIndicadoresDesgloses);
     
-    // console.log(valoresIndicadoresDesgloses);
+    console.log(valoresIndicadoresDesgloses);
     // console.log({{ etiquetas|json_encode|raw}});
-    console.log({{ indicadores|json_encode|raw}});
+    // console.log({{ indicadores|json_encode|raw}});
 
     var modelForm = new ChainSelectData({
       'objetivos': {{ objetivos|json_encode|raw}},
