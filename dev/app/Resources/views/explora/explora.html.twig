@@ -296,8 +296,6 @@
         }
     })
 
-    console.log(poligonoNacion);
-    console.log(poligonoProvincias);
     mapMe(poligonoNacion, poligonoProvincias, poligonoDepartamentos);
     var valoresIndicadoresDesgloses = {{ valoresIndicadoresDesgloses|json_encode|raw }};
     var indicadores = {{ indicadores|json_encode|raw}};
@@ -312,8 +310,9 @@
     // console.log({{ indicadores|json_encode|raw}}[{{ idIndicadorSeleccionado }}].fechasDestacadas[0]);
     // console.log(valoresIndicadoresDesgloses);
     
-    console.log(valoresIndicadoresDesgloses);
-    console.log({{ etiquetas|json_encode|raw}});
+    // console.log(valoresIndicadoresDesgloses);
+    // console.log({{ etiquetas|json_encode|raw}});
+    console.log({{ indicadores|json_encode|raw}});
 
     var modelForm = new ChainSelectData({
       'objetivos': {{ objetivos|json_encode|raw}},

@@ -1,0 +1,594 @@
+{% extends 'base.html.twig' %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('leaflet/leaflet.js') }}"></script>
+    <!-- Load d3.js and c3.js -->
+    <script src="{{ asset('d3/d3.js') }}" charset="utf-8"></script>
+    <script src="{{ asset('c3/c3.js') }}"></script>
+    <script src="{{ asset('js/underscore-min.js') }}"></script>
+    <script src="{{ asset('js/backbone-min.js') }}"></script>
+    <script src="{{ asset('js/ThreeSelect.js') }}"></script>
+
+{% endblock %}    
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style type="text/css">
+    /*body {
+        padding-top: 150px;
+    }*/
+
+    #map_canvas {
+      height: 100%;
+      overflow: hidden;
+      width: 100%;
+    }
+    .legend {
+        line-height: 18px;
+        color: #555;
+    }
+    .legend i {
+        width: 18px;
+        height: 18px;
+        float: left;
+        margin-right: 8px;
+        opacity: 0.7;
+    }
+    .myClass {
+        padding-top: 5%;
+        padding-left: 5%;
+        opacity: 0.7;
+    }
+
+
+    </style>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="{{ asset('leaflet/leaflet.css') }}" />
+    <link rel="stylesheet" href="{{ asset('bootstrap-select/dist/css/bootstrap-select.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/miscStyle.css') }}" />
+    <link rel="stylesheet" href="{{ asset('c3/c3.css') }}" />
+    <style type="text/css">
+      .leaflet-left .leaflet-control-scale {
+      display: inline-block;
+      float: none;
+    }
+    </style>
+
+    
+{% endblock %}
+
+{% block body %}
+
+
+<!-- <div class="container-fluid"> -->
+<!-- <form class="form-horizontal" role="form">
+ <div class="form-group">
+ <label for="selectorObjetivo" class="col-lg-1 control-label">Objetivo</label>
+ <div class="col-lg-4">
+    <select id="selectorObjetivo" >
+    <option>Poner fin a la pobreza en todas sus formas en todo el mundo</option>
+    </select>
+ </div>
+ <label for="selectorMeta" class="col-lg-1 control-label">Meta</label>
+ <div class="col-lg-4">
+   <select id="selectorMeta">
+    <option>1.1 Para 2030, erradicar la pobreza extrema para todas las personas en el mundo</option>
+    </select>  
+ </div>
+ </div>
+ <div class="form-group">
+ <label for="selectorIndicador" class="col-lg-1 control-label">Indicador</label>
+   <div class="col-lg-4">
+    <select id="selectorIndicador">
+    <option>Porcentaje de población bajo la línea de pobreza</option>
+    </select>
+   </div>
+   <label for="selectorDesgloce" class="col-lg-1 control-label">Desgloce</label>
+   <div class="col-lg-4">
+    <select id="selectorDesgloce">
+        <option id='pobreza_h'>Masculino</option>
+        <option id='pobreza_m'>Femenino</option>
+    </select>
+   </div>
+ </div>
+</form> -->
+
+<div class="container-fluid" id='divFluid'>
+<script id="formLoader" type="text/template">
+<%_.mixin({
+  trim: function(string, max) {
+    var idx = string.indexOf(' ', 0);
+    while ((idx < max) && (idx != -1)) {
+      idx = string.indexOf(' ', idx + 1);
+    }
+    return (idx == -1) ? string : string.substring(0, idx) + '...';
+  }
+});%>
+  <form class="form-horizontal" role="form">
+    <div class="form-group">
+    <label for="selectorObjetivo" class="col-xs-1 control-label">Objetivo</label>
+    <div class="col-xs-4">
+    <select id="selectorObjetivo" class="form-control selectOne">
+      <% _.each(model.get("objetivos"), function( objetivo, i){ %>
+        <option title="<%= objetivo.desc %>" value="<%= objetivo.id %>" <% if (objetivo.id == model.get("objetivo_selected")) { %> selected<% }  %>><%= _(objetivo.desc).trim(60) %></option>
+      <% }); %>
+    </select>
+    </div>
+    <label for="selectorMeta" class="col-xs-1 control-label">Meta</label>
+      <div class="col-xs-4">
+      <select id="selectorMeta" class="form-control selectTwo">
+      <% _.each(model.get("metas"), function( meta, i){ %>',
+        <% if ( meta.id_objetivo == model.get("objetivo_selected") ){ %>
+          <option title="<%= meta.desc %>" value="<%= meta.id %>" <% if (meta.id == model.get("meta_selected")) { %> selected<% }  %>><%= _(meta.desc).trim(60) %></option>
+        <% } %>
+      <% }); %>
+      </select>
+    </div>
+    </div>
+    <div class="form-group">
+    </div>
+    <div class="form-group">
+      <label for="selectorIndicador" class="col-xs-1 control-label">Indicador</label>
+      <div class="col-xs-4">
+        <select id="selectorIndicador" class="form-control selectThree">
+          <% _.each(model.get("indicadores"), function( indicador, i){ %>
+            <% if ( indicador.id_meta == model.get("meta_selected") ){ %>
+              '<option value="<%= indicador.id %>" <% if (indicador.id == model.get("indicador_selected")) { %> selected<% }  %>><%= indicador.desc %></option>'
+            <% } %>
+          <% }); %>
+        </select>
+      </div>
+    </div>
+  </form>  
+</script>
+</div>
+
+
+<!-- <div class="container">
+<div class="row">
+    <div class="page-header">
+          <h1>Carga de valores indicadores <small></small></h1>
+        </div>
+</div>
+<div class="row" class="col-md-10">
+<form id="preloaddataForm">
+        <div id="selects"></div>
+</form>
+
+
+</div>
+</div> -->
+
+    <!-- <div class="row">
+    <div class="col-md-1">
+    </div>
+     <div class="col-md-11">
+        <div id="map_canvas" style="width: 1000px; height: 500px"></div>
+        </div>
+    </div>
+    <form class="form-horizontal" role="form">
+    <div class="form-group">
+ <div class="col-lg-5">
+ </div>
+ <div class="col-lg-2">
+    <select id="selectorPeriodo">
+    <option id='2015'>2015</option>
+    <option id='2014'>2014</option>
+    </select>
+ </div>
+ <div class="col-lg-5">
+ </div>
+  </div>
+  </form>
+
+<!-- </div> -->
+<!-- <div id="map_canvas" class="leaflet-container leaflet-fade-anim"></div> -->
+
+
+<script type="text/javascript">
+  $(document).ready(function() {
+
+    var ThreeSelectData = Backbone.Model.extend({
+      defaults: {
+        'objetivos':[],
+        'metas':[],
+        'indicadores':[],
+        'etiquetas': [],
+        'objetivo_selected': 0,
+        'meta_selected': 0,
+        'indicador_selected': 0
+      }
+    });
+
+    var ThreeSelectView = Backbone.View.extend({
+      el: '#divFluid', /* Donde quiero renderizar */
+      template: _.template($('#formLoader').html()), /* Lo que quiero renderizar */
+
+      initialize: function() {
+        // this.model.set('objetivo_selected',this.model.get('objetivos')[0].id);
+        // this.model.set('meta_selected',this.model.get('metas')[0].id);
+            // if (this.model.get('indicadores').length) {
+                // this.model.set('indicador_selected',this.model.get('indicadores')[0].id);
+            // }
+        // this.model.on('change:objetivo_selected', this.render, this);
+        // this.model.on('change:meta_selected', this.render, this);
+        // this.render();
+        this.model.on('change:objetivo_selected', this.render, this);
+        this.model.on('change:meta_selected', this.render, this);
+        this.render();
+        },
+        events: {
+                  'change .selectOne': 'objetivoSelected',
+                  'change .selectTwo': 'metaSelected',
+                  'change .selectThree': 'indicadorSelected',
+        },
+        render:function(){
+        // var tpl = _.template(template_select);
+        //   this.$el.html(tpl({model:this.model}));
+          // this.$el.html(this.template({model:this.model}));
+          this.$el.html(this.template({model:this.model}));
+          return this;
+        },
+        objetivoSelected: function(event){
+          this.model.set("objetivo_selected",event.target.value); 
+          this.metaSelected();
+        },
+        metaSelected: function(e){
+          this.model.set("meta_selected",$(this.el).find('.selectTwo').val());
+            if (this.model.get('indicadores').length){
+                this.indicadorSelected();
+            }
+        },
+        indicadorSelected: function(e){
+          this.model.set("indicador_selected",$(this.el).find('.selectThree').val());
+        }
+    })
+
+    var objetivos = {{ objetivos|json_encode|raw}};
+    var metas = {{ metas|json_encode|raw}};
+    var indicadores = {{ indicadores|json_encode|raw}};
+    var etiquetas = {{ etiquetas|json_encode|raw}};
+
+    var idObjetivoSeleccionado = {{ idObjetivoSeleccionado }};
+    var idMetaSeleccionada = {{ idMetaSeleccionada }};
+    var idIndicadorSeleccionado = {{ idIndicadorSeleccionado }};
+
+    var model = new ThreeSelectData({
+      'objetivos': objetivos,
+      'metas': metas,
+      'indicadores': indicadores,
+      'etiquetas': etiquetas,
+      'objetivo_selected': idObjetivoSeleccionado,
+      'meta_selected': idMetaSeleccionada,
+      'indicador_selected': idIndicadorSeleccionado
+    });
+    // var view = new ThreeSelectView({el: $("#selects"), model:model});
+    var view = new ThreeSelectView({model:model});
+
+    // var idIndicador = $('#selectorDesgloce').children(":selected").attr("id");
+    // var descripcionIndicador = $('#selectorDesgloce').val();
+    // var periodo = $('#selectorPeriodo').children(":selected").attr("id");
+    // inicializarMapa(idIndicador, descripcionIndicador, periodo);
+  });
+
+// $('#indicadores li').on('click', function() {
+//   actualizarCapa($(this).attr('id'), $(this).text());
+// });
+// $('#selectorDesgloce').on('change', function() {
+//   var idIndicador = $(this).children(":selected").attr("id");
+//   var descripcionIndicador = $(this).val();
+//   var periodo = $('#selectorPeriodo').children(":selected").attr("id");
+//   actualizarCapa(idIndicador, descripcionIndicador, periodo);
+// });
+
+// $('#selectorPeriodo').on('change', function() {
+//   var idIndicador = $('#selectorDesgloce').children(":selected").attr("id");
+//   var descripcionIndicador = $('#selectorDesgloce').val();
+//   var periodo = $(this).children(":selected").attr("id");
+//   actualizarCapa(idIndicador, descripcionIndicador, periodo);
+// });
+</script>
+
+<script>
+  var map;
+  var capaActiva;
+  var ambitoActivo = "";
+  var baseMaps = {};
+  var baseTile = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png');
+  var info;
+  var legend;
+
+  var selected = '';
+  var text = '';
+  var period = '';
+  var valoresIndicadores;
+  var ambito;
+
+function inicializarMapa(s, t, p) {
+    selected = s;
+    text = t;
+    period = p;
+    $.getJSON("geoData.js", function (geoJsonData) {
+      crearCapas(geoJsonData);
+      $.getJSON("data.js", function ( data ) {
+        valoresIndicadores = data;
+        inicializarValoresIndicadores();
+      });
+    });
+}
+
+function style(feature) {
+    return {
+        fillColor: getColor(feature.properties.value),
+        // fillColor: getColor(valoresIndicadores['provincia'][refGeoId]['2015'][selected]),
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7
+        };
+}
+
+function getColor(d) {
+    return d > 80 ? '#045a8d' :
+           d > 60 ? '#2b8cbe' :
+           d > 40 ? '#74a9cf' :
+           d > 20 ? '#bdc9e1' :
+                    '#f1eef6' ;
+}
+
+function getLegend() {
+  var grades = [0, 20, 40, 60, 80];
+  var table = '<div class="map-legend"><table id="legend-colors"><tbody>';
+  var trColors = '<tr>';
+  var trLabels = '<tr>';
+
+  // loop through our density intervals and generate a label with a colored square for each interval
+  for (var i = 0; i < grades.length; i++) {
+      trColors += '<td class="legend-color" style="background-color: ' + getColor(grades[i] + 1) + ';"></td>';
+      trLabels += '<td class="legend-breaks">' + grades[i] + (grades[i + 1] ? ' &#45; ' + grades[i + 1] : ' &#45; 100') + '</td>';
+  }
+
+  trColors += "</tr>";
+  trLabels += "</tr>";
+  table += trColors + trLabels + "</tbody></table>";
+
+  return table;
+}
+
+function addDivLegend (map) {
+    var div = L.DomUtil.create('div', 'info legend');
+    var grades = [0, 20, 40, 60, 80];
+    div.innerHTML = '<b>' + text + ' </b><hr>'
+    var table = '<table class="table" style="border-collapse: collapse;"><tbody>';
+    var trColors = '<tr>';
+    var trLabels = '<tr>';
+
+    // loop through our density intervals and generate a label with a colored square for each interval
+    for (var i = 0; i < grades.length; i++) {
+        trColors += '<td style="background-color: ' + getColor(grades[i] + 1) + ';style="word-wrap:break-word;padding:0; margin:0;"></td>';
+            // '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+            // grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        trLabels += '<td>' + grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] : '+') + '</td>';
+    }
+
+    trColors += "</tr>";
+    trLabels += "</tr>";
+    table += trColors + trLabels + "</tbody></table>";
+    div.innerHTML += table;
+
+    return div;
+}
+
+function addDivInfo (map) {
+        this._div = L.DomUtil.create('div', 'infobox'); // create a div with a class "info"
+        this.update();
+        return this._div;
+    }
+
+// method that we will use to update the control based on feature properties passed
+function updateDivInfo (props) {
+    if (props) {
+      var text = $('#selectorIndicador').children(":selected").val();
+      var open = '<div class="row values-row"><table><tbody><tr>';
+      var content = '<td class="col-xs-4 indicador-valor">' +  props.valor + '</td><td class="col-xs-8 indicador-nombre">' + text + ' (' + period + ')' + '</td>';
+      var close = '</tr></tbody></table></div>';
+      
+      // var divHead = '<p><b>' + props.refGeo +'</b></p>';
+      // var divHead = '<h4>' + props.refGeo +'</h4>';
+      var divHead = '<div style="margin-bottom: 8px;" class="row"><div class="col-xs-9"><div class="unit-name">' + props.refGeo + '</div><div class="edo-name"></div></div></div>'
+
+      var divChart = '<div id="infobox-line-chart" class="c3" style="max-height: 160px; max-width: 250px; position: relative;"></div>';
+      var divContent = open + content + close;
+      var divLegend = getLegend();
+
+      this._div.innerHTML = divHead + divContent + divChart + divLegend;
+      // console.log(valoresIndicadores);
+      plot(props.id);
+    }
+}
+
+function inicializarValoresIndicadores () {
+
+  // if (baseMaps['Provincia']) {
+  //   ambitoActivo = 'Provincia';
+  // } else if (baseMaps['Nación']) {
+  //   ambitoActivo = 'Nación';
+  // }
+
+  $.each(baseMaps, function(ambito, capa) {
+    /* Si es capa actual, pinto */
+    /* id numérico y no string */
+      capa.eachLayer(function (layer) {
+        refGeoId = layer.feature.properties.id;
+        valor = valoresIndicadores[ambito][refGeoId][period][selected];
+        layer.feature.properties.valor = valor;
+        if (ambito == ambitoActivo) {
+          layer.setStyle({fillColor: getColor(valor)});
+        }
+      });
+  });
+}
+
+function actualizarCapa(s, t, p) {
+    map.removeControl(info);
+    selected = s;
+    text = t;
+    period = p;
+
+    info.onAdd = addDivInfo;
+    info.update = updateDivInfo;
+    info.addTo(map);
+
+    capaActiva.eachLayer(function (layer) {
+        refGeoId = layer.feature.properties.id;
+        valor = valoresIndicadores[ambitoActivo][refGeoId][period][selected];
+        layer.feature.properties.valor = valor;
+        layer.setStyle({fillColor: getColor(valor)})
+    });
+}
+
+function onOverlayAdd(selectedBaseLayer){
+  ambitoActivo = selectedBaseLayer.name;
+  capaActiva = selectedBaseLayer.layer;
+  // capaActiva.eachLayer(function (layer) {
+  //   /* Sólo pintar */
+  //     // layer.setStyle(style(layer.feature))
+  //     // console.log(layer.feature.properties.valor);
+  //     layer.setStyle({fillColor: getColor(layer.feature.properties.valor)})
+  //   });
+  actualizarCapa(selected, text, period);
+}
+
+function crearCapas(geoJsonData) {
+
+    /* Crear Capas */
+    
+    // var baseMaps = {};
+    var capas = [];
+
+    if (geoJsonData["Provincia"]) {
+      baseMaps["Provincia"] = L.geoJson(geoJsonData["Provincia"], {onEachFeature: onEachFeature, style: style});
+      ambitoActivo = "Provincia";
+      capaActiva = baseMaps["Provincia"];
+    }
+
+    if (geoJsonData['Nación']) {
+      baseMaps["Nación"] = L.geoJson(geoJsonData['Nación'], {onEachFeature: onEachFeature, style: style});
+      if (ambitoActivo == "") {
+        ambitoActivo = "Nación";
+        baseMaps["Nación"];
+      }
+    }
+
+    // $.each(baseMaps, function(key, value) {
+    //   // if (ambito == "") {
+    //   //   ambito = key;
+    //   // }
+    //   capas.push(value);
+    // });
+
+    // capaActiva = capas[0];
+
+    /* Crear 'Objeto Mapa', asignar a Div y definir capa base */
+    map = L.map(document.getElementById('map_canvas'), {
+      layers: [capaActiva],
+      doubleClickZoom: false});
+    /* Agregar Mapa de Base */
+    baseTile.addTo(map);
+    /* Controles sobre el Mapa */
+    info = L.control({position: 'topright'});
+    L.control.layers(baseMaps, null, {position: 'topleft', collapsed: true}).addTo(map);
+    
+    // L.control.scale().addTo(map);
+
+    /* Definir métodos de Creación y Actualización */
+    info.onAdd = addDivInfo;
+    info.update = updateDivInfo;
+
+    // Definir centro de mapa a partir de capa por defecto
+    map.fitBounds(capaActiva.getBounds());
+    /* Agregar capas y otros */
+    info.addTo(map);
+
+    /*Definiciones sobre 'map.on' */
+    map.on('baselayerchange', onOverlayAdd);
+
+    function highlightFeature(e) {
+        var layer = e.target;
+        layer.setStyle({
+            weight: 1,
+            color: '#646',
+            dashArray: '',
+            fillOpacity: 0.3
+        });
+      
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront();
+        }
+        info.update(layer.feature.properties);
+    }
+
+    function resetHighlight(e) {
+        capaActiva.resetStyle(e.target);
+        e.target.setStyle({fillColor: getColor(e.target.feature.properties.valor)});
+        info.update();
+    }
+
+    function zoomToFeature(e) {
+        map.fitBounds(e.target.getBounds());
+    }
+
+    function zoomOut(e) {
+      map.fitBounds(capaActiva.getBounds());
+    }
+
+    function onEachFeature(feature, layer) {
+        // layer.bindPopup(feature.properties.nombre + " " + feature.properties[selected]);
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: zoomToFeature,
+            dblclick: zoomOut
+        });
+    }
+}
+
+function plot(refGeoId){
+  var chartData = ['indicador'];
+  $.each(valoresIndicadores[ambitoActivo][refGeoId], function(key, value) {
+      chartData.push(value[selected]);
+    });
+
+  var chart = c3.generate({
+    bindto: '#infobox-line-chart',
+    data: {
+      x: 'x',
+      columns: [
+        ['x', '2014', '2015'],
+        chartData
+      ]
+    },
+    // axis: {
+    //     y: {
+    //         tick: {
+    //             count: 5,
+    //             max: 100,
+    //             min: 0,
+    //             padding: {top:0, bottom:0}
+    //         }
+    //     }
+    // },
+    legend: {
+        show: false
+    }
+});
+}
+
+
+</script>
+
+<!-- http://gis.stackexchange.com/questions/41928/adding-removing-leaflet-geojson-layers -->
+<!-- http://gis.stackexchange.com/questions/68941/how-to-add-remove-legend-with-leaflet-layers-control -->
+{% endblock %}
