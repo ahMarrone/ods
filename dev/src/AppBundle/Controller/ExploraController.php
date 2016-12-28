@@ -21,13 +21,20 @@ class ExploraController extends Controller
         $idObjetivoSeleccionado = $reverseSearchResult['objetivo'];
         $idMetaSeleccionada = $reverseSearchResult['meta'];
 
+        /* ENCONTRAR UNA SOLUCIÓN MÁS ELEGANTE */
+
+        $reverseDesgloses = array();
+        $etiquetas = $this->getEtiquetasByIndicadorPreload($idIndicador, $reverseDesgloses);
+
+        /* PASAR TODOS A VARIABLES */
+
         return $this->render('explora/explora.html.twig', array(
             'objetivos' => $this->getObjetivosPreload(),
             'metas' => $this->getMetasPreload(),
             'indicadores' => $this->getIndicadoresPreload($idMetaSeleccionada),
             'desgloses' => $this->getDesglosesByIndicadorPreload($idIndicador),
-            'etiquetas' => $this->getEtiquetasByIndicadorPreload($idIndicador),
-            'valoresIndicadoresDesgloses' => $this->getValoresIndicadoresDesgloses($idIndicador),
+            'etiquetas' => $etiquetas,
+            'valoresIndicadoresDesgloses' => $this->getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses),
             'idObjetivoSeleccionado' => $idObjetivoSeleccionado,
             'idMetaSeleccionada' => $idMetaSeleccionada,
             'idIndicadorSeleccionado' => $idIndicador
@@ -85,21 +92,42 @@ class ExploraController extends Controller
             /* CONSTRUIR ESCALA A PARTIR DE valMin y ValMax */
             $list[$idIndicador]['escala'] = array(0, 20, 40, 60, 80);
             $list[$idIndicador]['fechasDestacadas'] = $this->parseFechasDestacadas($i->getFechasDestacadas());
+            // $list[$idIndicador]['metas'] = array($i->getFechaMetaIntemedia => floatval($i->getValorEsperadoMetaIntermedia), $i->getFechaMetaFinal => floatval($i->getValorEsperadoMetaFinal));
         }
         return $list;
     }
 
-    private function getEtiquetasByIndicadorPreload($idIndicador){
+    private function getEtiquetasByIndicadorPreload($idIndicador, &$reverseDesgloses){
         $etiquetasEntity = $this->filterEtiquetasByIndicador($idIndicador);
         $etiquetas = array();
+        $desgloses = array();
+        $maximoID = 0;
         foreach ($etiquetasEntity as $e){
             array_push($etiquetas, array(
                 'id' => $e->getId(),
                 'descripcion' => $e->getDescripcion(),
                 'id_desglose' => $e->getFkiddesgloce()->getId())
             );
-            
+            $maximoID = max($maximoID, $e->getId());
+            array_push($desgloses, $e->getFkiddesgloce()->getId());
         }
+
+        $desgloses = array_unique($desgloses);
+
+        foreach ($desgloses as $idDesglose) {
+            $maximoID += 1;
+            array_push($etiquetas, array(
+                'id' => $maximoID,
+                'descripcion' => 'Todos',
+                'id_desglose' => $idDesglose)
+            );
+
+            array_push($reverseDesgloses, array(
+                'id' => $idDesglose,
+                'id_etiqueta' => $maximoID)
+            );
+        }
+
         return $etiquetas;
     }
 
@@ -116,7 +144,7 @@ class ExploraController extends Controller
         return $desgloses;
     }
 
-    private function getValoresIndicadoresDesgloses($idIndicador){
+    private function getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses){
         $entidad = $this->filterValoresIndicadoresConfigFechaByIndicador($idIndicador);
         $atributos = array();
         $atributosPorFecha = array();
@@ -148,8 +176,19 @@ class ExploraController extends Controller
             $idEtiqueta = $e->getIdEtiqueta();
             $valor = $e->getValor();
             $fecha = $atributos[$idValoresIndicadoresConfigFecha]['fecha'];
+            // echo (var_dump($idRefGeografica));
             /* Valor es String en la entidad, ¿por qué?*/
-            $atributosPorFecha[$fecha]['valoresRefGeografica'][$idRefGeografica][$idEtiqueta] = floatval($valor);
+            $atributosPorFecha[$fecha]['valoresRefGeografica'][$idRefGeografica][$idEtiqueta] = floatval($valor);            
+        }
+
+        $desglosesAcumulados = $this->sumValoresIndicadores($idsValoresIndicadoresConfigFecha);
+        foreach ($desglosesAcumulados as $columnas) {
+            $idValoresIndicadoresConfigFecha = $columnas['idValoresIndicadoresConfigFecha'];
+            $fecha = $atributos[$idValoresIndicadoresConfigFecha]['fecha'];
+            $idRefGeografica = $columnas['idRefGeografica'];
+            $idDesglose = $columnas['idDesglose'];
+            $idEtiquetaAcumulado = $reverseDesgloses[$idDesglose]['id_etiqueta'];
+            $atributosPorFecha[$fecha]['valoresRefGeografica'][$idRefGeografica][$idEtiquetaAcumulado] = floatval($columnas['acumulado']);
         }
 
         return $atributosPorFecha;
@@ -209,5 +248,16 @@ class ExploraController extends Controller
                 )->setParameter('idIndicador', $idIndicador)
                 ->getResult();
     }
+
+    private function sumValoresIndicadores($idsSet) {
+
+        return $this->getDoctrine()->getManager()->getConnection()->executeQuery(
+            'SELECT idValoresIndicadoresConfigFecha, idRefGeografica, fkIdDesgloce AS idDesglose, SUM(valor) AS acumulado FROM (SELECT idValoresIndicadoresConfigFecha, idEtiqueta, idRefGeografica, valor FROM valoresIndicadores WHERE idValoresIndicadoresConfigFecha IN (?)) AS TLeft INNER JOIN etiquetas as TRight ON TLeft.idEtiqueta = TRight.id GROUP BY idValoresIndicadoresConfigFecha, idRefGeografica, fkIdDesgloce',
+            array($idsSet),
+            array(\Doctrine\DBAL\Connection::PARAM_INT_ARRAY)
+            )->fetchAll();
+    }
 }
 // http://librosweb.es/libro/symfony_2_x/capitulo_8/buscando_objetos.html
+
+
