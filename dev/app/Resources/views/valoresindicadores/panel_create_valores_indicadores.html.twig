@@ -4,13 +4,16 @@
     {{ parent() }}
 
     <link href="{{ asset('css/valoresindicadores.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/bootstrap-select.min.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
 
+  
     <script src="{{ asset('js/underscore-min.js') }}"></script>
     <script src="{{ asset('js/backbone-min.js') }}"></script>
+     <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -35,68 +38,94 @@
           <b>Cruzar etiquetas:</b> {{ cruzado ? "Si" : "No"}}.
         </span>
       </div>
-      <div id="panelList"></div>
+    </div>
+      <div id="panelList">
         <div class=".panel"></div>
       </div>
-  </div>
+</div>
 
 
 <script id="panelListWrapper" type="text/template">
+<nav id="navbar-panel-create" class="navbar row">
+  <div class="container-fluid">
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+         <% if (this.collection.isRefLeft()) { %>
+        <button id="newDataLoader" type="button" class="btn btn-default navbar-btn"><i class="fa fa-plus"></i>  Agregar ficha</button>
+        <% }  %>
+        <button id="saveDataLoaders" type="button" class="btn btn-success navbar-btn"><span class="glyphicon glyphicon-save"></span>  Guardar todos</button>
+      </ul>
+            <% if (this.collection.ambito_indicador == 'D') { %>
+          <form class="navbar-form navbar-right" role="search">
+          <div class="form-group">
+              <select id="filterCardsSelect" data-container="main-container">
+                <%= this.collection.getFilterOptions() %>
+              </select>
+          </div>
+        </form>
+        <p class="navbar-text pull-right">Filtrar por provincia: </p>
+          <% }  %>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
 <div class="row">
- <% if (this.collection.isRefLeft()) { %>
-  <button id="newDataLoader" type="button" class="btn btn-primary pull-left"><i class="fa fa-plus"></i></button>
-  <% }  %>
-<button id="saveDataLoaders" type="button" class="btn btn-success pull-left"><span class="glyphicon glyphicon-save"></span></button>
-  </div>
+
+</div>
+<div id="dataLoadersWrapper" class="row">
+</div>
 </script>
 
 
 <script id="panelLoader" type="text/template">
-
-  <div class="panel panel-primary col-md-3 col-sm-4 panelDataLoader pull-left">
-      <div class="panel-heading clearfix">
-        <h4 class="panel-title pull-left" style="padding-top: 7.5px;">Carga de datos</h4>
-      <div class="btn-group pull-right">
-        <a class="btn btn-sm btn-danger btn-sm deleteObject"><i class="fa fa-trash"></i></a>
-      </div>
-      </div>
-      <div class="panel-body">
-        <form>
-        <div class="form-group">
-        <label>Ref. geog.</label>
-        <div>
-          <select class="form-control refGeogSelect" <% if (model.is_preloaded) { %>disabled="disabled"<% }  %>>
-          <% _.each( collection.refGeograficas, function( ref, i){ %>
-              <% if ( i == model.id_ref_geografica ){ %>
-                <option value="<%= i %>" selected>
-                <%= ref.desc %>
-                </option>
-              <%  } else if (!ref.used){ %>
-                  <option value="<%= i %>">
-                <%= ref.desc %>
-                </option>
-              <% } %>
-          <% }); %>
-          </select>
-          </div>
+    <div class="panel panel-primary col-md-3 col-sm-4 panelDataLoader pull-left">
+    <%= console.log(collection.filterParentID) %>
+    <%= console.log(model.ref_geografica_parent_id) %>
+    <% if (collection.filterParentID == model.ref_geografica_parent_id ) { %>
+        <div class="panel-heading clearfix">
+          <h4 class="panel-title pull-left" style="padding-top: 7.5px;">Carga de datos</h4>
+        <div class="btn-group pull-right">
+          <a class="btn btn-sm btn-danger btn-sm deleteObject"><i class="fa fa-trash"></i></a>
         </div>
-        <% _.each( etiquetas, function( etiquetas_id, i){ %>
-          <% id_formatted = parent.formatEtiquetaID(etiquetas_id) %>
-        <div class="form-group">
-          <label><%= parent.contructLabelEtiqueta(etiquetas_id) %></label>
+        </div>
+        <div class="panel-body">
+          <form>
+          <div class="form-group">
+          <label>Ref. geog.</label>
           <div>
-            <input type="text" class="form-control etiquetaInput" data-etiqueta-id="<%= id_formatted %>" value="<%= model.valor_etiquetas[id_formatted] %>">
+            <select class="form-control refGeogSelect" <% if (model.is_preloaded) { %>disabled="disabled"<% }  %>>
+            <% _.each( collection.refGeograficas, function( ref, i){ %>
+                <% if ( i == model.id_ref_geografica ){ %>
+                  <option value="<%= i %>" selected>
+                  <%= ref.desc %>
+                  </option>
+                <%  } else if (!ref.used && (ref.parent == collection.filterParentID)){ %>
+                    <option value="<%= i %>">
+                  <%= ref.desc %>
+                  </option>
+                <% } %>
+            <% }); %>
+            </select>
+            </div>
           </div>
+          <% _.each( etiquetas, function( etiquetas_id, i){ %>
+            <% id_formatted = parent.formatEtiquetaID(etiquetas_id) %>
+          <div class="form-group">
+            <label><%= parent.contructLabelEtiqueta(etiquetas_id) %></label>
+            <div>
+              <input type="text" class="form-control etiquetaInput" data-etiqueta-id="<%= id_formatted %>" value="<%= model.valor_etiquetas[id_formatted] %>">
+            </div>
+          </div>
+           <% }); %>
+              <a href="#" data-toggle="tooltip" title="<%= this.getTooltipInfo() %>">+Info</a>          
         </div>
-         <% }); %>
-            <a href="#" data-toggle="tooltip" title="<%= this.getTooltipInfo() %>">+Info</a>          
-      </div>
-      </form>
-      </div> <!-- CIERRO PANEL BODY -->
-  </div>
+        </form>
+        </div> <!-- CIERRO PANEL BODY -->
+    </div>
   <%
     collection.refGeograficas[model.id_ref_geografica].used = true;
   %>
+  <% } %>
 </script>
 
 <script type="text/javascript">
@@ -174,6 +203,7 @@
       }
 
         var indicador_id = {{ indicador_id|json_encode|raw}};
+        var indicador_ambito = {{indicador_ambito|json_encode|raw}}
     	  var desgloces = {{ desgloces|json_encode|raw}};
         var etiquetasDesgloces = {{ etiquetas_desgloces|json_encode|raw}};
         var etiquetasData = getEtiquetasData(etiquetasDesgloces);
@@ -185,7 +215,11 @@
         var api_urls = {{ api_urls|json_encode|raw}};
          // lista de todas las referencias geograficas disponibles
         var refGeograficasList =  {{ ref_geograficas|json_encode|raw}};
+        var refGeograficasFilters = {{filter_ref_geograficas|json_encode|raw}};
         valoresEtiquetas = _.groupBy(valoresEtiquetas, 'id_ref_geografica');
+
+        var refGeograficaCollection = null;
+        var refGeograficaPanelList = null;
 
         /////////////////// MODELOS //////////////////////////////7
 
@@ -195,6 +229,7 @@
         var RefGeograficaData = Backbone.Model.extend({
         	defaults: {
         		'id_ref_geografica': null,
+            'ref_geografica_parent_id':null,
         		'valor_etiquetas':{},
             'is_preloaded':false,
 			     },
@@ -207,9 +242,12 @@
           options || (options = {});
           if (options.refGeograficas) {
               this.refGeograficas = options.refGeograficas;
+              this.refGeograficasFilters = options.refGeograficasFilters;
               this.fecha = options.fecha;
               this.id_indicador = options.id_indicador;
+              this.ambito_indicador = options.ambito_indicador;
               this.api_urls = options.api_urls;
+              this.filterParentID = options.filterParentID;
           };
         },
         isRefLeft: function(){
@@ -226,6 +264,14 @@
               }
           });
           return count;
+        },
+        getFilterOptions: function(){
+            var options = "";
+            for (var r in this.refGeograficasFilters){
+                var selected = (this.refGeograficasFilters[r].id == this.filterParentID) ? "selected" : "";
+                options += "<option value='"+this.refGeograficasFilters[r].id+"' "+selected+">"+this.refGeograficasFilters[r].name+"</option>";
+            }
+            return options;
         }
 		});
 
@@ -243,23 +289,44 @@
                 this.etiquetas = options.etiquetas;
                 this.etiquetas_metadata = options.etiquetas_metadata;
                 this.refGeograficas = options.refGeograficasList;
+                this.refGeograficasFilters = options.refGeograficasFilters;
                 _.bindAll(this, "renderPanel");
+                this.render();
             },
             renderPanel: function(model){
-                var panelView = new RefGeograficaPanel({model: model, etiquetas: this.etiquetas,refGeograficas: this.refGeograficas, parent:this});
-                panelView.render();
-                $(this.el).prepend(panelView.el);
+              console.log("renderPanel");
+                if (model.get('ref_geografica_parent_id') == this.collection.filterParentID){
+                  var panelView = new RefGeograficaPanel({model: model, etiquetas: this.etiquetas,refGeograficas: this.refGeograficas, parent:this});
+                  panelView.render();
+                  $('#dataLoadersWrapper').prepend(panelView.el);
+              }
             },
             render: function(){
+                var that = this;
                 this.updateRefsUsed();
                 this.$el.html( this.template({collection: this.collection}));
                 this.collection.each(this.renderPanel);
-                        $('[data-toggle="tooltip"]').tooltip({html: true}); 
+                $('[data-toggle="tooltip"]').tooltip({html: true}); 
+                $('#filterCardsSelect').selectpicker({
+                  noneSelectedText: 'Filtrar por provincia'
+                });
+
+              $('#filterCardsSelect').on('change', function() {
+              //that.applyFilter(this.value);
+                  if (this.value != -1){
+                    refGeograficaCollection.filterParentID = this.value;
+                    refGeograficaPanelList.render();
+                    //that.collection.each(that.renderPanel);
+                  }
+              })                      
             },
             getNextUnusedRef: function(){
               var refID = null;
+              var that = this;
+              console.log(this.refGeograficas);
                 $.each(this.refGeograficas, function(index, value) {
-                  if (!value.used){
+                  console.log(that.collection.filterParentID);
+                  if (!value.used && (value.parent == that.collection.filterParentID)){
                     refID = index;
                     return;
                   }
@@ -269,7 +336,7 @@
             addNewDataLoader: function(){
               var refID = this.getNextUnusedRef();
               if (refID != null){
-                var loader = new RefGeograficaData({id_ref_geografica:refID, is_preloaded:false, valor_etiquetas:{}});
+                var loader = new RefGeograficaData({id_ref_geografica:refID, is_preloaded:false, valor_etiquetas:{}, ref_geografica_parent_id: this.refGeograficas[refID].parent});
                 this.collection.add(loader);
                 this.render();
               }
@@ -411,6 +478,7 @@
         this.parent = options.parent;
         this.etiquetas = options.etiquetas;
         this.refGeograficas = options.refGeograficas;
+        this.filterParentID = options.filterParentID;
       },
       render: function(){
         this.$el.html( this.template({
@@ -433,8 +501,8 @@
 
 		function bindRefGeograficaData(refGeograficaCollection, refGeograficasList){
 			$.each(valoresEtiquetas, function(idRefGeografica, valoresIndicadorValues) {
-          //console.log(valoresIndicadorValues);
-    			var ref = new RefGeograficaData({id_ref_geografica:idRefGeografica,is_preloaded:true});
+          console.log(refGeograficasList);
+    			var ref = new RefGeograficaData({id_ref_geografica:idRefGeografica,is_preloaded:true, ref_geografica_parent_id:refGeograficasList[idRefGeografica].parent});
           refGeograficasList[idRefGeografica].used = true;
     			var refData = {};
     			$.each(valoresIndicadorValues, function(index, data) {
@@ -448,19 +516,24 @@
 		}
 
   function initLoad(){
-    var refGeograficaCollection = new RefGeograficaCollection([],{
+    var filterParentDefault = (indicador_ambito == 'D') ? refGeograficasFilters[0].id : 0 ;
+    refGeograficaCollection = new RefGeograficaCollection([],{
             refGeograficas: refGeograficasList,
+            refGeograficasFilters: refGeograficasFilters,
+            filterParentID: filterParentDefault,
             fecha: fecha,
             id_indicador: indicador_id,
+            ambito_indicador:indicador_ambito,
             api_urls: api_urls
       });
     bindRefGeograficaData(refGeograficaCollection, refGeograficasList);
-    var refGeograficaPanelList = new RefGeograficaPanelList({collection:refGeograficaCollection, etiquetas: etiquetas, etiquetas_metadata: etiquetasMetadata, refGeograficasList: refGeograficasList})
+    refGeograficaPanelList = new RefGeograficaPanelList({collection:refGeograficaCollection, etiquetas: etiquetas, etiquetas_metadata: etiquetasMetadata, refGeograficasList: refGeograficasList})
     refGeograficaPanelList.render();
   }
 
 
 		initLoad();
+
 
 
 

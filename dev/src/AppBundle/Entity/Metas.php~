@@ -143,4 +143,32 @@ class Metas
     {
         return $this->idusuario;
     }
+    /**
+     * @var string
+     */
+    private $ambito;
+
+
+    /**
+     * Set ambito
+     *
+     * @param string $ambito
+     * @return Metas
+     */
+    public function setAmbito($ambito)
+    {
+        $this->ambito = $ambito;
+
+        return $this;
+    }
+
+    /**
+     * Get ambito
+     *
+     * @return string 
+     */
+    public function getAmbito()
+    {
+        return $this->ambito;
+    }
 }

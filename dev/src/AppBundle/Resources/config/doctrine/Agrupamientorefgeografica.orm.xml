@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Agrupamientorefgeografica" table="agrupamientoRefGeografica">
+    <indexes>
+      <index name="id_1" columns="id_1"/>
+      <index name="id_2" columns="id_2"/>
+    </indexes>
+    <id name="id_1" type="integer" column="id_1"/>
+    <id name="id_2" type="integer" column="id_2"/>
+  </entity>
+
+  <one-to-one field="id_1" target-entity="Refgeografica">
+      <join-columns>
+        <join-column name="id_1" referenced-column-name="id"/>
+      </join-columns>
+    </one-to-one>
+  <one-to-one field="id_2" target-entity="Refgeografica">
+      <join-columns>
+        <join-column name="id_2" referenced-column-name="id_2"/>
+      </join-columns>
+    </one-to-one>
+</doctrine-mapping>

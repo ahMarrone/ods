@@ -11,3 +11,12 @@
 .panelDataLoader{
 	margin:2px;
 }
+
+#navbar-panel-create {
+background-color: #f5f5f5;
+}
+
+
+select[class*="span"] {
+    margin-bottom: 0;
+}

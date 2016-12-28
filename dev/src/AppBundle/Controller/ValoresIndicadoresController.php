@@ -64,14 +64,17 @@ class ValoresIndicadoresController extends Controller
             $valoresindicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')
                                ->filterByIndicadorFecha($idIndicador, $fecha);
             $valoresindicadores = $this->parseEntityValoresindicadores($valoresindicadores);
+            $ambitoIndicador = $indicador->getAmbito();
             return $this->render('valoresindicadores/panel_create_valores_indicadores.html.twig', array(
                 'fecha' => $fecha,
                 'indicador_id' => $indicador->getId(),
                 'indicador_desc' => $indicador->getDescripcion(),
+                'indicador_ambito' => $ambitoIndicador,
                 'desgloces' => $desgloces,
                 'etiquetas_desgloces' => $etiquetasDesgloces,
                 'cruzado' => $cruzado,
                 'ref_geograficas' => $refGeograficas,
+                'filter_ref_geograficas' => $this->getParentRefGeograficas($ambitoIndicador),
                 'valores_indicadores' => $valoresindicadores,
                 'api_urls' => array('edit'=> $this->generateUrl('admin_crud_valoresindicadores_saveobjects'), 
                                     'delete'=> $this->generateUrl('admin_crud_valoresindicadores_deleteobjects')
@@ -81,6 +84,25 @@ class ValoresIndicadoresController extends Controller
            //echo var_dump($this->getRequest()->request->all());
            return $this->redirectToRoute('admin_crud_valoresindicadores_preload'); 
         }
+    }
+
+
+    // Retorna lista de ref. geograficas que actuan como filtro de otras.
+    // EJ: La lista de provincias actuan como filtro para las departamentales
+    private function getParentRefGeograficas($ambitoIndicador){
+        $filters = array();
+        $ambitoPivot = null;
+        if ($ambitoIndicador = 'D'){
+            $ambitoPivot = 'P';
+        }
+        if ($ambitoPivot != null){
+            $refs = $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findBy(
+                array('ambito' => 'P'));
+        }
+        foreach ($refs as $ref) {
+            array_push($filters, array('id'=>$ref->getId(), 'name'=>$ref->getDescripcion()));
+        }
+        return $filters;
     }
 
     private function parseEntityValoresindicadores($valoresindicadores){
@@ -236,8 +258,14 @@ class ValoresIndicadoresController extends Controller
         $refs =  $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findBy(
              array('ambito' => $ambitoIndicador)
         );
+        $parent = 0;
         foreach ($refs as $r) {
-            $ret[$r->getId()] = array('desc'=>$r->getDescripcion(),'used'=>false);
+            if ($ambitoIndicador == 'D'){
+                $agrupamiento = $this->getDoctrine()->getRepository('AppBundle:Agrupamientorefgeografica')->findBy(
+             array('id_1' => $r->getId()));
+                $parent = $agrupamiento[0]->getId2();
+            }
+            $ret[$r->getId()] = array('desc'=>$r->getDescripcion(),'used'=>false,'parent'=>$parent);
         }
         return $ret;
     }

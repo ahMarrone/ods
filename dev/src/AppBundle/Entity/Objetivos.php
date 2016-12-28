@@ -62,4 +62,9 @@ class Objetivos
         return $this->getDescripcion();  
         
     }
+
+
+    public function getDisplayName(){
+        return $this->getId() . " - "  . $this->getDescripcion();
+    }
 }

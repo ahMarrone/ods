@@ -60,14 +60,16 @@ class IndicadoresType extends AbstractType
             ->add('fechasdestacadas','hidden')
             ->add('fechametaintermedia', TextType::class, array(
                 'attr' => ['class' => 'expected-value-datepicker'],
-                'label' => 'Fecha meta intermedia'
+                'label' => 'Fecha meta intermedia',
+                'required'=>false
             ))
-            ->add('valoresperadometaintermedia', NumberType::class, array('label'=>'Valor esperado meta intermedia'))
+            ->add('valoresperadometaintermedia', NumberType::class, array('label'=>'Valor esperado meta intermedia', 'required'=>false))
             ->add('fechametafinal', TextType::class, array(
                 'attr' => ['class' => 'expected-value-datepicker'],
-                'label' => 'Fecha meta final'
+                'label' => 'Fecha meta final',
+                'required'=>false
             ))
-            ->add('valoresperadometafinal', NumberType::class , array('label'=> 'Valor esperado meta final'))
+            ->add('valoresperadometafinal', NumberType::class , array('label'=> 'Valor esperado meta final', 'required'=>false))
             ->add('documentpath', FileType::class, array('label' => 'Documento técnico (archivo PDF)', 'required'=>false))
             //->add('visible', 'checkbox', array('label'  => 'Visible', 'required'  => false))   
         ;

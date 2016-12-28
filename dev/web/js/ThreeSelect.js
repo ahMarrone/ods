@@ -77,7 +77,7 @@ var ThreeSelectView = Backbone.View.extend({
 	    return this;
     },
     objetivoSelected: function(e){
-    	this.model.set("objetivo_selected",event.target.value);
+    	this.model.set("objetivo_selected", e.target.value);
         $('.selectTwo').trigger('change');
         //this.metaSelected();
     },

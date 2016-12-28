@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Metas
@@ -18,6 +19,11 @@ class Metas
      * @var integer
      */
     private $id;
+
+        /**
+     * @var integer
+     */
+    private $codigo;
 
     /**
      * @var \AppBundle\Entity\Objetivos
@@ -171,4 +177,30 @@ class Metas
     {
         return $this->ambito;
     }
+
+
+
+    /**
+     * Set codigo
+     *
+     * @param integer $codigo
+     * @return Metas
+     */
+    public function setCodigo($codigo)
+    {
+        $this->codigo = $codigo;
+
+        return $this;
+    }
+
+    /**
+     * Get codigo
+     *
+     * @return integer 
+     */
+    public function getCodigo()
+    {
+        return $this->codigo;
+    }
+
 }
