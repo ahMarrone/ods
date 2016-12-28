@@ -35,7 +35,7 @@ var templateSideChart = [
     '<div id="infobox-line-chart" class="c3" style="max-height: 160px; max-width: 250px; position: relative;">',
     '</div>',
     '<% } else { %>',
-    '<div class="indicador-valor" style="color: <%= _(model.get("layerProperties").value).getColor() %>" >',
+    '<div class="indicador-valor">',
     '<%= model.get("layerProperties").value %></div>',
     '<div class="texto-aclaracion">Al momento sólo se cuenta con datos para el año de referencia</div>',
     '</div>',
@@ -133,14 +133,15 @@ var sideChartView = Backbone.View.extend({
         var descripcionEtiquetaSeleccionada = this.model.get('descripcionEtiquetaSeleccionada');
         var tpl = _.template(templateSideChart);
         var chartData = this.prepare();
+        var ambito = this.model.get('indicador').ambito;
         this.$el.html(tpl({model:this.model}));
-        _.plot(chartData, descripcionEtiquetaSeleccionada);
+        _.plot(chartData, descripcionEtiquetaSeleccionada, ambito);
         return this;
     }
 });
 
 
-function plot(chartData, descripcionEtiquetaSeleccionada) {
+function plot(chartData, descripcionEtiquetaSeleccionada, ambito) {
     var chart = c3.generate({
         bindto: '#infobox-line-chart',
         data: {
@@ -155,7 +156,7 @@ function plot(chartData, descripcionEtiquetaSeleccionada) {
         },
         grid: {
             y: {
-                lines: [{value: 40, text: 'Meta 2019', class: 'meta1'}, {value: 20, text: 'Meta 2030', class: 'meta2'}]
+                lines: [{value: 20, text: 'Meta 2019', class: 'meta1'}, {value: 15, text: 'Meta 2030', class: 'meta2'}]
             }
         }
     });
@@ -163,10 +164,18 @@ function plot(chartData, descripcionEtiquetaSeleccionada) {
     $('.c3-ygrid-line.meta1 text').css("font","8px sans-serif");
     $('.c3-ygrid-line.meta1 text').css('stroke', 'green');
     $('.c3-ygrid-line.meta1 line').css('stroke', 'green');
-    
     $('.c3-ygrid-line.meta2 text').css("font","8px sans-serif");
     $('.c3-ygrid-line.meta2 text').css('stroke', 'green');
     $('.c3-ygrid-line.meta2 line').css('stroke', 'green');
+
+
+    if (ambito != 'N') {
+        $('.c3-ygrid-line.meta1 text').css('visibility', 'hidden');
+        $('.c3-ygrid-line.meta1 line').css('visibility', 'hidden');
+        $('.c3-ygrid-line.meta2 text').css('visibility', 'hidden');
+        $('.c3-ygrid-line.meta2 line').css('visibility', 'hidden');
+    }
+
 
     descripcionEtiquetaSeleccionada = descripcionEtiquetaSeleccionada.replace(" ", "-");
     // console.log('#infobox-line-chart2 .c3-line-'.concat(descripcionEtiquetaSeleccionada));
