@@ -1,8 +1,14 @@
-var map, tiles, selectedPoligonEvent, sideChartModel, sideChartView, current;
+var map, tiles, selectedPoligonEvent, sideChartModel, sideChartView, ambitoIndicador;
 var sideChartModel;
+var NACIONAL = 'N',
+    PROVINCIAL = 'P',
+    DEPARTAMENTAL = 'D';
 
-var maxBoundsSouthWest = L.latLng(-89.99999999999994, -74.02985395599995),
-    maxBoundsNorthEast = L.latLng(-21.786688039999945, -25.02314483699996),
+// var maxBoundsSouthWest = L.latLng(-89.99999999999994, -74.02985395599995),
+// maxBoundsNorthEast = L.latLng(-21.786688039999945, -25.02314483699996),
+
+var maxBoundsSouthWest = L.latLng(-89.99999999999994, -80.02985395599995),
+    maxBoundsNorthEast = L.latLng(-21.786688039999945, -40.02314483699996),
     centerSouthWest = L.latLng(-53.748710796898976, -107.57812500000001),
     centerNorthEast = L.latLng(-19.642587534013032, -19.687500000000004),
     maxBounds = L.latLngBounds(maxBoundsSouthWest, maxBoundsNorthEast),
@@ -11,10 +17,17 @@ var maxBoundsSouthWest = L.latLng(-89.99999999999994, -74.02985395599995),
     isPoligonSelected = false,
     isZoomIn = false;
 
+/* En el caso de Tierra del Fuego, Antártida e Islas del Atlántico Sur, se define
+un centro específico */
+var especialID = 23;
+    especialCenterSouthWest = L.latLng(-89.99999999999994, -74.02985395599995),
+    especialCenterNorthEast = L.latLng(20.02466692199994, -25.02314483699996),
+    especialCenterBounds = L.latLngBounds(especialCenterSouthWest, especialCenterNorthEast)
+
 function swap(indicador, etiquetas, valoresIndicadoresDesgloses) {
-    map.removeLayer(tiles[current]);
+    map.removeLayer(tiles[ambitoIndicador]);
     map.addLayer(tiles[indicador.ambito]);
-    current = indicador.ambito;
+    ambitoIndicador = indicador.ambito;
     sideChartModel.set('indicador', indicador);
     sideChartModel.set('etiquetas', etiquetas);
     sideChartModel.set('valoresIndicadoresDesgloses', valoresIndicadoresDesgloses);
@@ -23,7 +36,7 @@ function swap(indicador, etiquetas, valoresIndicadoresDesgloses) {
 function update(data, idEtiquetaSeleccionada, descripcionEtiquetaSeleccionada, idsEtiquetasActuales) {
     sideChartModel.set('idsEtiquetasActuales', idsEtiquetasActuales);
     sideChartModel.set('descripcionEtiquetaSeleccionada', descripcionEtiquetaSeleccionada);
-    tiles[current].eachLayer(function (layer) {
+    tiles[ambitoIndicador].eachLayer(function (layer) {
         idRefGeografica = layer.feature.properties.id;
         valor = data[idRefGeografica][idEtiquetaSeleccionada];
         layer.feature.properties['value'] = valor;
@@ -33,18 +46,18 @@ function update(data, idEtiquetaSeleccionada, descripcionEtiquetaSeleccionada, i
 
 function mapMe(geoJsonNacion, geoJsonProvincias, geoJsonDepartamentos) {
     var base = L.tileLayer.wms('http://wms.ign.gob.ar/geoserver/wms?', {layers: 'ign:capabaseargenmap_gwc', attribution: '<a href="http://www.ign.gob.ar/">IGN</a>'});
+    // var base = L.tileLayer.wms('http://wms.ign.gob.ar/geoserver/wms?', {layers: 'capabaseargenmap', attribution: '<a href="http://www.ign.gob.ar/">IGN</a>'});
     var tileNacion = L.geoJson(geoJsonNacion, {onEachFeature: onEachFeature, style: style});
     var tileProvincias = L.geoJson(geoJsonProvincias, {onEachFeature: onEachFeature, style: style});
     var tileDepartamentos = L.geoJson(geoJsonDepartamentos, {onEachFeature: onEachFeature, style: style});
 
-    tiles = {
-        'N': tileNacion,
-        'P': tileProvincias,
-        'D': tileDepartamentos
-    };
+    tiles = {};
+    tiles[NACIONAL] = tileNacion;
+    tiles[PROVINCIAL] = tileProvincias;
+    tiles[DEPARTAMENTAL] = tileDepartamentos;
 
     /* Capa por defecto al inicializar el mapa */
-    current = 'N';
+    ambitoIndicador = NACIONAL;
 
     /* Crear 'Objeto Mapa' */
     map = L.map(document.getElementById('mapCanvas'), {doubleClickZoom: false});
@@ -62,7 +75,7 @@ function mapMe(geoJsonNacion, geoJsonProvincias, geoJsonDepartamentos) {
 
     /* Agregar capas y otros */
     sideChartControl.addTo(map);
-    map.addLayer(tiles[current]);
+    map.addLayer(tiles[ambitoIndicador]);
 
     sideChartModel = new sideChartModel({});
     sideChartView = new sideChartView({el: $('.infobox'),model:sideChartModel});
@@ -113,7 +126,6 @@ function highlightFeature(event) {
         if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
             layer.bringToFront();
         }
-        // sideChart.update(layer.feature.properties);
         sideChartModel.set('layerProperties', layer.feature.properties);
     }
 }
@@ -124,22 +136,30 @@ function resetHighlight(event) {
     }
 }
 
-function zoomToFeature(event) {
-    map.fitBounds(event.target.getBounds());
-}
-
-function seleccionarPoligon(event) {
-    if (isPoligonSelected) {
-        isPoligonSelected = false;
-        resetHighlight(selectedPoligonEvent);
-        zoomOut(event);
+function zoomIn(event) {
+    if (event.target.feature.properties.id == especialID) {
+        tileBounds = especialCenterBounds;
     } else {
-        isPoligonSelected = true;
-        selectedPoligonEvent = event;
-        zoomToFeature(event);
+        tileBounds = event.target.getBounds();
     }
+    map.fitBounds(tileBounds, {maxZoom: 5});
 }
 
 function zoomOut(event) {
   map.fitBounds(centerBounds);
 }
+
+function seleccionarPoligon(event) {
+    if (ambitoIndicador != NACIONAL) {
+        if (isPoligonSelected) {
+            isPoligonSelected = false;
+            resetHighlight(selectedPoligonEvent);
+            zoomOut(event);
+        } else {
+            isPoligonSelected = true;
+            selectedPoligonEvent = event;
+            zoomIn(event);
+        }
+    }
+}
+

@@ -2,7 +2,7 @@
 
 _.mixin({
   getColor: getColor,
-  plot: plot,
+  plot: plot
 });
 
 function getColor (v){
@@ -30,15 +30,26 @@ var templateSideChart = [
     '</div>',
     '<% if (_.isEmpty(model.get("layerProperties"))) { %>',
     '<div class="texto-aclaracion">Bienvenido a Explora</div>',
-    '<% } else {%>',
+    '<% } else { %>',
     '<% if ( model.get("isChartAvailable") ) { %>',
     '<div id="infobox-line-chart" class="c3" style="max-height: 160px; max-width: 250px; position: relative;">',
     '</div>',
     '<% } else { %>',
-    '<div class="indicador-valor">',
-    '<%= model.get("layerProperties").value %></div>',
+    '<div class="indicador-valor" style="color: <%= _(model.get("layerProperties").value).getColor() %>" >',
+    '<%= model.get("layerProperties").value.toFixed(2).replace(".", ",") %></div>',
     '<div class="texto-aclaracion">Al momento sólo se cuenta con datos para el año de referencia</div>',
     '</div>',
+    '</div>',
+    '<% } %>',
+    '<% if (model.get("indicador").ambito == "N") { %>',
+    '<div class="row values-row-metas">',
+    '<table><tbody>',
+    '<tr>',
+    '<td class="col-xs-2 meta"></td>',
+    '<td class="col-xs-4 meta">Meta 2019 20.00</td>',
+    '<td class="col-xs-4 meta">Meta 2030 15.00</td>',
+    '</tr>',
+    '</tbody></table>',
     '</div>',
     '<% } %>',
     '<div class="map-legend">',
@@ -63,6 +74,7 @@ var sideChartModel = Backbone.Model.extend({
         'indicador': [],
         'valoresIndicadoresDesgloses': [],
         'descripcionEtiquetaSeleccionada': '',
+        'indiceColorEtiqueta': 0,
         'idsEtiquetasActuales' : [],
         'etiquetas': [],
         'isChartAvailable': false
@@ -80,10 +92,12 @@ var sideChartView = Backbone.View.extend({
         var idsEtiquetasActuales = this.model.get('idsEtiquetasActuales') ;
         var etiquetas = this.model.get('etiquetas');
         var idRefGeograficaActual = this.model.get("layerProperties").id;
+        var descripcionEtiquetaSeleccionada = this.model.get("descripcionEtiquetaSeleccionada");
 
         var chartDataRaw = {};
         var e;
         var anios = ['x'];
+        var indiceColorEtiqueta = 0;
 
         _.each(idsEtiquetasActuales, function(id) {
             e = etiquetas[id].descripcion;
@@ -112,7 +126,10 @@ var sideChartView = Backbone.View.extend({
         var i = 1;
 
         _.each(chartDataRaw, function(valores, etiqueta){
-            chartData.push([etiqueta])
+            chartData.push([etiqueta]);
+            if (etiqueta == descripcionEtiquetaSeleccionada) {
+                indiceColorEtiqueta = i;
+            }
             for (var j = 0 ; j < valores.length ; j++) {
                 chartData[i].push(valores[j]);
             }
@@ -125,6 +142,8 @@ var sideChartView = Backbone.View.extend({
             this.model.set('isChartAvailable', false);
         }
 
+        this.model.set('indiceColorEtiqueta', indiceColorEtiqueta - 1);
+
         return chartData
     },
 
@@ -133,15 +152,18 @@ var sideChartView = Backbone.View.extend({
         var descripcionEtiquetaSeleccionada = this.model.get('descripcionEtiquetaSeleccionada');
         var tpl = _.template(templateSideChart);
         var chartData = this.prepare();
-        var ambito = this.model.get('indicador').ambito;
+        var indiceColorEtiqueta = this.model.get('indiceColorEtiqueta');
         this.$el.html(tpl({model:this.model}));
-        _.plot(chartData, descripcionEtiquetaSeleccionada, ambito);
+        _.plot(chartData, descripcionEtiquetaSeleccionada, indiceColorEtiqueta);
         return this;
     }
 });
 
 
-function plot(chartData, descripcionEtiquetaSeleccionada, ambito) {
+function plot(chartData, descripcionEtiquetaSeleccionada, indiceColorEtiqueta) {
+    /* Máximo 9 Tonos */
+    colorPattern = ['#800026', '#bd0026', '#e31a1c', '#fc4e2a', '#fd8d3c', '#feb24c', '#fed976', '#ffeda0', '#ffffcc'];
+    colorPattern[indiceColorEtiqueta] = '#045a8d';
     var chart = c3.generate({
         bindto: '#infobox-line-chart',
         data: {
@@ -152,30 +174,22 @@ function plot(chartData, descripcionEtiquetaSeleccionada, ambito) {
             show: false
         },
         color: {
-            pattern: ['#045a8d', '#2b8cbe', '#74a9cf', '#a6bddb', '#d0d1e6']
+            pattern: colorPattern
         },
-        grid: {
-            y: {
-                lines: [{value: 20, text: 'Meta 2019', class: 'meta1'}, {value: 15, text: 'Meta 2030', class: 'meta2'}]
+        tooltip: {
+            format: {
+                value: function(value) {
+                    return d3.format(",.2f")(value).replace('.', ' ').replace(/,/g, '.').replace(' ', ',')
+                }
             }
-        }
+        },
+        padding: {
+            top: 5,
+            right: 10,
+            // bottom: 0,
+            left: 20,
+        },  
     });
-
-    $('.c3-ygrid-line.meta1 text').css("font","8px sans-serif");
-    $('.c3-ygrid-line.meta1 text').css('stroke', 'green');
-    $('.c3-ygrid-line.meta1 line').css('stroke', 'green');
-    $('.c3-ygrid-line.meta2 text').css("font","8px sans-serif");
-    $('.c3-ygrid-line.meta2 text').css('stroke', 'green');
-    $('.c3-ygrid-line.meta2 line').css('stroke', 'green');
-
-
-    if (ambito != 'N') {
-        $('.c3-ygrid-line.meta1 text').css('visibility', 'hidden');
-        $('.c3-ygrid-line.meta1 line').css('visibility', 'hidden');
-        $('.c3-ygrid-line.meta2 text').css('visibility', 'hidden');
-        $('.c3-ygrid-line.meta2 line').css('visibility', 'hidden');
-    }
-
 
     descripcionEtiquetaSeleccionada = descripcionEtiquetaSeleccionada.replace(" ", "-");
     // console.log('#infobox-line-chart2 .c3-line-'.concat(descripcionEtiquetaSeleccionada));
@@ -186,7 +200,6 @@ function plot(chartData, descripcionEtiquetaSeleccionada, ambito) {
     /* VERIFICAR SI FUNCIONA CORRECTAMENTE */
     $('.c3-line-'.concat(descripcionEtiquetaSeleccionada)).css("stroke-width","2px");
     $('.c3-line-'.concat(descripcionEtiquetaSeleccionada)).css("stroke-dasharray","0,0");
-    $('.c3 svg').css("font","8px sans-serif");
     
-
+    $('.c3 svg').css("font","8px sans-serif");
 }

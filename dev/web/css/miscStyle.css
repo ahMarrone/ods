@@ -76,6 +76,15 @@ body.front .jumbotron {
     text-align: center;
 }
 
+.infobox .meta {
+    font-weight: 700;
+    font-size: 12px;
+    /*margin-bottom: 5px;*/
+    color: #008000;
+    text-align: center;
+}
+
+
 .infobox .edo-image {
     width: 40px;
     height: 40px;
@@ -106,6 +115,12 @@ table#legend-colors tr td.legend-breaks {
     display: table;
     /*margin-bottom: 10px;*/
 }
+
+.values-row-metas {
+    display: table;
+    margin-bottom: 10px;
+}
+
 .values-row div {
     display: table-cell;
     vertical-align: middle;
@@ -141,4 +156,13 @@ body.page-node .c3 svg g.c3-ygrids line {
 }
 #chart svg g.c3-lines path.c3-line {
     fill-opacity: 0;
+}
+
+.c3-circle._expanded_ {
+  stroke-width: 1px;
+  stroke: white;
+}
+.c3-selected-circle {
+  fill: white;
+  stroke-width: 2px;
 }
