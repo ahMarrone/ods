@@ -78,7 +78,7 @@
 });%>
   <form class="form-horizontal" role="form">
     <div class="form-group">
-    <label for="selectorObjetivo" class="col-xs-1 control-label">Objetivo</label>
+    <label for="selectorObjetivo" class="col-xs-2 control-label">Objetivo</label>
     <div class="col-xs-4">
     <select id="selectorObjetivo" class="form-control selectObjetivo">
       <% _.each(model.get("objetivos"), function( objetivo, i){ %>
@@ -98,7 +98,7 @@
     </div>
     </div>
     <div class="form-group">
-      <label for="selectorIndicador" class="col-xs-1 control-label">Indicador</label>
+      <label for="selectorIndicador" class="col-xs-2 control-label">Indicador <a target="_blank" href="#" class="glyphicon glyphicon-question-sign" title="Documento Técnico"></a></label>
       <div class="col-xs-4">
         <select id="selectorIndicador" class="form-control selectIndicador">
           <% _.each(model.get("indicadores"), function( indicador, i){ %>
@@ -118,7 +118,7 @@
     </div>
     </div>
     <div class="form-group">
-    <label for="selectorDesglose" class="col-xs-1 control-label">Desglose</label>
+    <label for="selectorDesglose" class="col-xs-2 control-label">Desglose</label>
     <div class="col-xs-4">
     <select id="selectorDesglose" class="form-control selectDesglose">
       <% _.each(model.get("desgloses"), function(desglose, i){ %>
@@ -194,7 +194,7 @@
       template: _.template($('#formLoader').html()), /* Lo que quiero renderizar */
 
       initialize: function() {
-        console.log(this.model.get('valoresIndicadoresDesgloses'));
+        // console.log(this.model.get('valoresIndicadoresDesgloses'));
         this.model.set('desglose_selected', this.model.get('valoresIndicadoresDesgloses')[this.model.get('fecha_selected')].id_desgloses[0]);
         this.model.set('etiqueta_selected', this.model.get('desgloses')[0].id);
 
@@ -300,6 +300,7 @@
     mapMe(poligonoNacion, poligonoProvincias, poligonoDepartamentos);
     var valoresIndicadoresDesgloses = {{ valoresIndicadoresDesgloses|json_encode|raw }};
     var indicadores = {{ indicadores|json_encode|raw}};
+    console.log(indicadores);
     var idIndicadorSeleccionado = {{ idIndicadorSeleccionado }};
     var fechaSeleccionada = indicadores[idIndicadorSeleccionado].fechasDestacadas[0];
 
@@ -311,7 +312,7 @@
     // console.log({{ indicadores|json_encode|raw}}[{{ idIndicadorSeleccionado }}].fechasDestacadas[0]);
     // console.log(valoresIndicadoresDesgloses);
     
-    console.log(valoresIndicadoresDesgloses);
+    // console.log(valoresIndicadoresDesgloses);
     // console.log({{ etiquetas|json_encode|raw}});
     // console.log({{ indicadores|json_encode|raw}});
 
