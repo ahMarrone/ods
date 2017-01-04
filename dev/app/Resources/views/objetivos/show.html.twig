@@ -12,8 +12,8 @@
     </div>
 
 <dl class="dl-horizontal">
-  <dt>Id</dt>
-  <dd>{{ objetivo.id }}</dd>
+  <dt>Código</dt>
+  <dd>{{ objetivo.codigo }}</dd>
 </dl>
 <dl class="dl-horizontal">
   <dt>Descripcion</dt>
@@ -21,12 +21,8 @@
 </dl>
 
 <div class="row">
-            <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_objetivos_index') }}">Volver atrás</a>
-            <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_objetivos_edit', { 'id': objetivo.id }) }}">Editar</a>
-            {{ form_start(delete_form) }}
-
-                <input class="btn btn-danger col-md-1 option-btn" type="submit" value="Eliminar">
-            {{ form_end(delete_form) }}
+            <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_objetivos_index') }}">Volver</a>
+            <a class="col-md-1 btn btn-success option-btn"  href="{{ path('admin_crud_objetivos_edit', { 'id': objetivo.id }) }}">Editar</a>
 </div>
 
     <script type="text/javascript">
