@@ -589,24 +589,24 @@ INSERT INTO `refGeografica` (`id`, `descripcion`, `ambito`) VALUES
 -- Volcado de datos para la tabla `objetivos`
 --
 
-INSERT INTO `objetivos` (`id`, `descripcion`) VALUES
-(1, 'Poner fin a la pobreza en todas sus formas en todo el mundo'),
-(2, 'Poner fin al hambre, lograr la seguridad alimentaria y la mejora de la nutrición y promover la agricultura sostenible'),
-(3, 'Garantizar una vida sana y promover el bienestar para todos en todas las edades'),
-(4, 'Garantizar una educación inclusiva, equitativa y de calidad y promover oportunidades de aprendizaje durante toda la vida para todos'),
-(5, 'Lograr la igualdad entre los géneros y empoderar a todas las mujeres y las niñas'),
-(6, 'Garantizar la disponibilidad de agua y su gestión sostenible y el saneamiento para todos'),
-(7, 'Garantizar el acceso a una energía asequible, segura, sostenible y moderna para todos'),
-(8, 'Promover el crecimiento económico sostenido, inclusivo y sostenible, el empleo pleno y productivo y el trabajo decente para todos'),
-(9, 'Construir infraestructuras resilientes, promover la industrialización inclusiva y sostenible y fomentar la innovación'),
-(10, 'Reducir la desigualdad en y entre los países'),
-(11, 'Lograr que las ciudades y los asentamientos humanos sean inclusivos, seguros, resilientes y sostenibles'),
-(12, 'Garantizar modalidades de consumo y producción sostenibles'),
-(13, 'Adoptar medidas urgentes para combatir el cambio climático y sus efectos'),
-(14, 'Conservar y utilizar en forma sostenible los océanos, los mares y los recursos marinos para el desarrollo sostenible'),
-(15, 'Proteger, restablecer y promover el uso sostenible de los ecosistemas terrestres, gestionar los bosques de forma sostenible de los bosques, luchar contra la desertificación, detener e invertir la degradación de las tierras y poner freno a la pérdida de la diversidad biológica'),
-(16, 'Promover sociedades pacíficas e inclusivas para el desarrollo sostenible, facilitar el acceso a la justicia para todos y crear instituciones eficaces, responsables e inclusivas a todos los niveles'),
-(17, 'Fortalecer los medios de ejecución y revitalizar la Alianza Mundial para el Desarrollo Sostenible Finanzas');
+INSERT INTO `objetivos` (`id`, `codigo`,`descripcion`) VALUES
+(1,1,'Poner fin a la pobreza en todas sus formas en todo el mundo'),
+(2,2,'Poner fin al hambre, lograr la seguridad alimentaria y la mejora de la nutrición y promover la agricultura sostenible'),
+(3,3,'Garantizar una vida sana y promover el bienestar para todos en todas las edades'),
+(4,4,'Garantizar una educación inclusiva, equitativa y de calidad y promover oportunidades de aprendizaje durante toda la vida para todos'),
+(5,5,'Lograr la igualdad entre los géneros y empoderar a todas las mujeres y las niñas'),
+(6,6,'Garantizar la disponibilidad de agua y su gestión sostenible y el saneamiento para todos'),
+(7,7,'Garantizar el acceso a una energía asequible, segura, sostenible y moderna para todos'),
+(8,8,'Promover el crecimiento económico sostenido, inclusivo y sostenible, el empleo pleno y productivo y el trabajo decente para todos'),
+(9,9,'Construir infraestructuras resilientes, promover la industrialización inclusiva y sostenible y fomentar la innovación'),
+(10,10,'Reducir la desigualdad en y entre los países'),
+(11,11,'Lograr que las ciudades y los asentamientos humanos sean inclusivos, seguros, resilientes y sostenibles'),
+(12,12,'Garantizar modalidades de consumo y producción sostenibles'),
+(13,13,'Adoptar medidas urgentes para combatir el cambio climático y sus efectos'),
+(14,14,'Conservar y utilizar en forma sostenible los océanos, los mares y los recursos marinos para el desarrollo sostenible'),
+(15,15,'Proteger, restablecer y promover el uso sostenible de los ecosistemas terrestres, gestionar los bosques de forma sostenible de los bosques, luchar contra la desertificación, detener e invertir la degradación de las tierras y poner freno a la pérdida de la diversidad biológica'),
+(16,16,'Promover sociedades pacíficas e inclusivas para el desarrollo sostenible, facilitar el acceso a la justicia para todos y crear instituciones eficaces, responsables e inclusivas a todos los niveles'),
+(17,17,'Fortalecer los medios de ejecución y revitalizar la Alianza Mundial para el Desarrollo Sostenible Finanzas');
 
 INSERT INTO `metas` (`id`, `codigo`, `descripcion`, `fkIdObjetivo`, `idUsuario`, `fechaModificacion`) VALUES
 (2, 1,'Para 2030, erradicar la pobreza extrema para todas las personas en el mundo, actualmente medida por un ingreso por persona inferior a 1.25 dólares de los Estados Unidos al día', 1, 1, '0000-00-00 00:00:00'),
