@@ -84,7 +84,10 @@ class ObjetivosController extends Controller
     public function editAction(Request $request, Objetivos $objetivo)
     {
         $deleteForm = $this->createDeleteForm($objetivo);
-        $editForm = $this->createForm('AppBundle\Form\ObjetivosType', $objetivo);
+        $editForm = $this->createForm('AppBundle\Form\ObjetivosType', $objetivo, array(
+                'disable_form' => true,
+            )
+        );
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {

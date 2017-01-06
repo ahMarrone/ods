@@ -12,7 +12,7 @@
  <table id="objetivosTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>Código</th>
                 <th>Descripcion</th>
                 <th>Acciones</th>
             </tr>
@@ -20,7 +20,7 @@
         <tbody>
         {% for objetivo in objetivos %}
             <tr>
-                <td>{{ objetivo.id }}</td>
+                <td>{{ objetivo.codigo }}</td>
                 <td><a href="{{ path('admin_crud_objetivos_show', { 'id': objetivo.id }) }}">{{ objetivo.descripcion }}</a></td>
                 <td>
 
@@ -34,14 +34,18 @@
         </tbody>
     </table>
             
-    <a class="btn btn-success" href="{{ path('admin_crud_objetivos_new') }}">Crear nuevo objetivo</a>
+    <a class="btn btn-success" href="{{ path('admin_crud_objetivos_new') }}">Nuevo objetivo</a>
 
 <script type="text/javascript">
     $(document).ready(function() {
-    $('#metasTable').DataTable({
+    var table = $('#objetivosTable').DataTable({
          "language": {
             "url": "/lang/datatables_spanish.json"
-        }
+        },
+        "columnDefs": [
+            { "width": "10%", "targets": 0 },
+            { "width": "70%", "targets": 1 }
+        ],
     });
 } );
 </script>

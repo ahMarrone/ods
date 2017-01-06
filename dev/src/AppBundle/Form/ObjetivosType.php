@@ -15,6 +15,10 @@ class ObjetivosType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('codigo', null, array(
+                    'disabled' => $options['disable_form'],
+                )
+            )
             ->add('descripcion')
         ;
     }
@@ -25,7 +29,8 @@ class ObjetivosType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Objetivos'
+            'data_class' => 'AppBundle\Entity\Objetivos',
+            'disable_form' => false,
         ));
     }
 }

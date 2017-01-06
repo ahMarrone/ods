@@ -62,7 +62,7 @@
             <% if (this.collection.ambito_indicador == 'D') { %>
           <form class="navbar-form navbar-right" role="search">
           <div class="form-group">
-              <select id="filterCardsSelect" data-container="main-container">
+              <select id="filterCardsSelect" data-container="body">
                 <%= this.collection.getFilterOptions() %>
               </select>
           </div>
@@ -82,8 +82,6 @@
 
 <script id="panelLoader" type="text/template">
     <div class="panel panel-primary col-md-3 col-sm-4 panelDataLoader pull-left">
-    <%= console.log(collection.filterParentID) %>
-    <%= console.log(model.ref_geografica_parent_id) %>
     <% if (collection.filterParentID == model.ref_geografica_parent_id ) { %>
         <div class="panel-heading clearfix">
           <h4 class="panel-title pull-left" style="padding-top: 7.5px;">Carga de datos</h4>
@@ -224,6 +222,8 @@
         var refGeograficaCollection = null;
         var refGeograficaPanelList = null;
 
+        console.log(refGeograficasList);
+
         /////////////////// MODELOS //////////////////////////////7
 
         // Contiene los datos asociados a una referencia geografica
@@ -297,7 +297,6 @@
                 this.render();
             },
             renderPanel: function(model){
-              console.log("renderPanel");
                 if (model.get('ref_geografica_parent_id') == this.collection.filterParentID){
                   var panelView = new RefGeograficaPanel({model: model, etiquetas: this.etiquetas,refGeograficas: this.refGeograficas, parent:this});
                   panelView.render();
@@ -326,9 +325,7 @@
             getNextUnusedRef: function(){
               var refID = null;
               var that = this;
-              console.log(this.refGeograficas);
                 $.each(this.refGeograficas, function(index, value) {
-                  console.log(that.collection.filterParentID);
                   if (!value.used && (value.parent == that.collection.filterParentID)){
                     refID = index;
                     return;
@@ -504,7 +501,6 @@
 
 		function bindRefGeograficaData(refGeograficaCollection, refGeograficasList){
 			$.each(valoresEtiquetas, function(idRefGeografica, valoresIndicadorValues) {
-          console.log(refGeograficasList);
     			var ref = new RefGeograficaData({id_ref_geografica:idRefGeografica,is_preloaded:true, ref_geografica_parent_id:refGeograficasList[idRefGeografica].parent});
           refGeograficasList[idRefGeografica].used = true;
     			var refData = {};

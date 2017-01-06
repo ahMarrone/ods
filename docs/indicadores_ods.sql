@@ -138,6 +138,7 @@ CREATE TABLE IF NOT EXISTS `metas` (
 DROP TABLE IF EXISTS `objetivos`;
 CREATE TABLE IF NOT EXISTS `objetivos` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `codigo` int(11) unsigned NOT NULL UNIQUE,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del objtivo',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;

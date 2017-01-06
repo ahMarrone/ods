@@ -19,6 +19,11 @@ class Objetivos
      */
     private $id;
 
+    /**
+     * @var integer
+     */
+    private $codigo;
+
 
     /**
      * Set descripcion
@@ -66,5 +71,30 @@ class Objetivos
 
     public function getDisplayName(){
         return $this->getId() . " - "  . $this->getDescripcion();
+    }
+
+
+
+    /**
+     * Set codigo
+     *
+     * @param integer $codigo
+     * @return Objetivos
+     */
+    public function setCodigo($codigo)
+    {
+        $this->codigo = $codigo;
+
+        return $this;
+    }
+
+    /**
+     * Get codigo
+     *
+     * @return integer 
+     */
+    public function getCodigo()
+    {
+        return $this->codigo;
     }
 }
