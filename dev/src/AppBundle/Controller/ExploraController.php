@@ -92,8 +92,16 @@ class ExploraController extends Controller
             /* CONSTRUIR ESCALA A PARTIR DE valMin y ValMax */
             $list[$idIndicador]['escala'] = array(0, 20, 40, 60, 80);
             $list[$idIndicador]['fechasDestacadas'] = $this->parseFechasDestacadas($i->getFechasDestacadas());
-            // $list[$idIndicador]['metas'] = array($i->getFechaMetaIntemedia => floatval($i->getValorEsperadoMetaIntermedia), $i->getFechaMetaFinal => floatval($i->getValorEsperadoMetaFinal));
+            /* Metas (Fechas/ValoresEsperados) */
+            $list[$idIndicador]['fechasMetas'] = array();
+            if ($i->getFechametaintermedia() != NULL) {
+                array_push($list[$idIndicador]['fechasMetas'], array(date('Y', strtotime($i->getFechametaintermedia())), floatval($i->getValoresperadometaintermedia())));
+            }
+            if ($i->getFechametafinal() != NULL) {
+                array_push($list[$idIndicador]['fechasMetas'], array(date('Y', strtotime($i->getFechametafinal())), floatval($i->getValoresperadometafinal())));
+            }
         }
+
         return $list;
     }
 
@@ -109,6 +117,7 @@ class ExploraController extends Controller
                 $descripcion = 'Total';
             } else {
                 $descripcion = $e->getDescripcion();
+                array_push($desgloses, $e->getFkiddesgloce()->getId());
             }
 
             array_push($etiquetas, array(
@@ -117,23 +126,22 @@ class ExploraController extends Controller
                 'id_desglose' => $e->getFkiddesgloce()->getId())
             );
             $maximoID = max($maximoID, $e->getId());
-            array_push($desgloses, $e->getFkiddesgloce()->getId());
+
         }
 
         $desgloses = array_unique($desgloses);
 
         foreach ($desgloses as $idDesglose) {
             $maximoID += 1;
+            /* Se crean nuevas etiquetas con la descripción 'Total' para cada desglose
+            Para ello, se comienza desde el ID de etiqueta más alto */
             array_push($etiquetas, array(
                 'id' => $maximoID,
                 'descripcion' => 'Total',
                 'id_desglose' => $idDesglose)
             );
 
-            array_push($reverseDesgloses, array(
-                'id' => $idDesglose,
-                'id_etiqueta' => $maximoID)
-            );
+            $reverseDesgloses[$idDesglose] = $maximoID;
         }
 
         return $etiquetas;
@@ -184,7 +192,6 @@ class ExploraController extends Controller
             $idEtiqueta = $e->getIdEtiqueta();
             $valor = $e->getValor();
             $fecha = $atributos[$idValoresIndicadoresConfigFecha]['fecha'];
-            // echo (var_dump($idRefGeografica));
             /* Valor es String en la entidad, ¿por qué?*/
             $atributosPorFecha[$fecha]['valoresRefGeografica'][$idRefGeografica][$idEtiqueta] = floatval($valor);            
         }
@@ -195,14 +202,13 @@ class ExploraController extends Controller
             $fecha = $atributos[$idValoresIndicadoresConfigFecha]['fecha'];
             $idRefGeografica = $columnas['idRefGeografica'];
             $idDesglose = $columnas['idDesglose'];
-            $idEtiquetaAcumulado = $reverseDesgloses[$idDesglose]['id_etiqueta'];
             if ($idDesglose != 0) {
+                /* Aquel desglose con ID = 0, corresponde a 'Sin Desglose' */
+                $idEtiquetaAcumulado = $reverseDesgloses[$idDesglose];
                 $atributosPorFecha[$fecha]['valoresRefGeografica'][$idRefGeografica][$idEtiquetaAcumulado] = floatval($columnas['acumulado']);
             }
-            
         }
 
-        // echo (var_dump($atributosPorFecha));
         return $atributosPorFecha;
     }
 

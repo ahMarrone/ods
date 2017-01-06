@@ -79,7 +79,7 @@ body.front .jumbotron {
 .infobox .meta {
     font-weight: 700;
     font-size: 12px;
-    /*margin-bottom: 5px;*/
+    margin-bottom: 5px;
     color: #008000;
     text-align: center;
 }
