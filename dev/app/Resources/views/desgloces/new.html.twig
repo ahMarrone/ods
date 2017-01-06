@@ -4,7 +4,7 @@
 
     <ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
-        <li><a href="{{ path('admin_crud_desgloces_index') }}">Desgloces</a></li>
+        <li><a href="{{ path('admin_crud_desgloces_index') }}">Desgloses</a></li>
         <li class="active">Nuevo desgloce</a></li>
     </ol>
 
@@ -15,9 +15,9 @@
 
     {{ form_start(form) }}
         {{ form_widget(form) }}
-        <input  class="col-md-1 btn btn-success option-btn"  type="submit" value="Crear" />
+        <input  class="col-md-1 btn btn-success option-btn"  type="submit" value="Guardar" />
     {{ form_end(form) }}
 <div class="row">
-            <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_desgloces_index') }}">Volver atrás</a>
+            <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_desgloces_index') }}">Volver</a>
 </div>
 {% endblock %}

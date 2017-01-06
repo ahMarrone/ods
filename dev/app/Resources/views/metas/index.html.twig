@@ -1,27 +1,46 @@
 {% extends 'base.html.twig' %}
 
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="{{ asset('js/underscore-min.js') }}"></script>
+    <script src="{{ asset('js/backbone-min.js') }}"></script>
+    <script src="{{ asset('js/ThreeSelect.js') }}"></script>
+{% endblock %}
+
 {% block body %}
     <ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
         <li class="active">Metas</a></li>
     </ol>
+
+
+    <div>
+           <div id="selects"></div>
+    </div>
+
     <div class="page-header">
-          <h3>Objetivo <small>{{ titulo_objetivo }} </small></h3>  
           <h2>Metas</h2>
     </div>
+
 
     <table id="metasTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr>
+                <th>IdObjetivo</th>
                 <th>Id</th>
-                <th>Descripcion</th>
+                <th>Código</th>
+                <th>Descripción</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
         {% for meta in metas %}
             <tr>
+                <td>{{ meta.fkidobjetivo.id}}</td>
                 <td>{{ meta.id }}</td>
+                <td>{{ meta.fkidobjetivo.id}}.{{ meta.codigo }}</td>
                 <td><a href="{{ path('admin_crud_metas_show', { 'id': meta.id }) }}">{{ meta.descripcion }}</a></td>
                 <td>
 
@@ -36,17 +55,69 @@
         </tbody>
     </table>
 
-    <a class="btn btn-success" href="{{ path('admin_crud_metas_new') }}">Crear nueva meta</a>
+    <a class="btn btn-success" href="{{ path('admin_crud_metas_new') }}">Nueva meta</a>
 
 
 
 <script type="text/javascript">
     $(document).ready(function() {
-    $('#metasTable').DataTable({
-         "language": {
-            "url": "/lang/datatables_spanish.json"
+
+        var table = null;
+
+        var objetivos = {{ objetivos|json_encode|raw}};
+        var metas = {{ metas|json_encode|raw}};
+
+        var objetivo_selected = {{objetivo_selected}};
+
+        function initTable(){
+            table = $('#metasTable').DataTable({
+                 "language": {
+                    "url": "/lang/datatables_spanish.json"
+                },
+                "columnDefs": [
+                    { "visible": false, "targets": 0 },
+                    { "visible": false, "targets": 1 },
+                    { "width": "5%", "targets": 2 },
+                    { "width": "80%", "targets": 3 },
+                    { "width": "15%", "targets": 4 }
+                ],
+            });
         }
-    });
+
+
+        $.fn.dataTable.ext.search.push(
+            function( settings, data, dataIndex ) {
+                if (parseInt(data[0]) == objetivo_selected){
+                    return true;
+                } 
+                return false;
+        });
+
+        function filterTableMetas(){
+            objetivo_selected = $('#three_select_objetivo').val();
+            console.log(objetivo_selected);
+            table.draw();
+        }
+
+
+        function initThreeSelect(){
+            modelThreeSelect = new ThreeSelectData({
+                'objetivos': objetivos,
+                'objetivo_selected': objetivo_selected,
+            });
+            viewThreeSelect = new ThreeSelectView({el: $("#selects"), model:modelThreeSelect,
+                objetivoChangeCallback: filterTableMetas });
+        }
+
+        function init(){ 
+            initTable();
+            initThreeSelect();
+            filterTableMetas(objetivo_selected);
+        }
+
+
+        init();
+
 } );
 </script>
 

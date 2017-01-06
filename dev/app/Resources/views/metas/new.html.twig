@@ -14,9 +14,47 @@
 
     {{ form_start(form) }}
         {{ form_widget(form) }}
-        <input  class="col-md-1 btn btn-success option-btn"  type="submit" value="Crear" />
+        <input  class="col-md-1 btn btn-success option-btn"  type="submit" value="Guardar" />
     {{ form_end(form) }}
 <div class="row">
-            <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_metas_index') }}">Volver atrás</a>
+            <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_metas_index') }}">Volver</a>
 </div>
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        var api_urls = {{ api_urls|json_encode|raw}};
+
+        $('#metas_fkidobjetivo').on('change', function(){
+            getNextMetaCode(this.value);
+        });
+
+
+
+        function getNextMetaCode(idObjetivo){
+            var url = api_urls.get_next_meta_code;
+            var data = {'objetivo_id':idObjetivo};
+            $.ajax(url,{
+                  'data': JSON.stringify(data),
+                  'type': 'POST',
+                  'processData': false,
+                  'contentType': 'application/json',
+                   success: function(data) {
+                        if (data.next_meta_code){
+                            $('#metas_codigo').val(data.next_meta_code);
+                        }
+                   },
+                   error: function(data) {
+                        
+                  },
+              });
+        }
+
+        getNextMetaCode($('#metas_fkidobjetivo').val());
+        
+    });
+</script>
+
+
 {% endblock %}

@@ -24,6 +24,7 @@ class MetasType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->enabledChoices = $options['scopes_enabled'];
+        $this->em = $options['entity_manager'];
         $builder
             ->add('fkidobjetivo', EntityType::class, array(
                           'class' => 'AppBundle:Objetivos',
@@ -35,9 +36,6 @@ class MetasType extends AbstractType
             )
             ->add('codigo', IntegerType::class, array(
                   'label' => "Código de meta",
-                  'constraints' => array(
-                      new Assert\Callback(array($this, 'validateEventDates'))
-                  )
             )
             )
             ->add('descripcion', TextType::class, array(
@@ -59,10 +57,29 @@ class MetasType extends AbstractType
         ;
     }
 
-    public function validateEventDates($meta, ExecutionContext $context)
+    public function validateNewMeta($meta, ExecutionContext $context)
     {
         //$idObjetivo = $m
-        $context->addViolationAt('codigo', 'El codigo ya está utilizado!');
+        $idObjetivo = $meta->getFkidobjetivo()->getId();
+        $codigo = $meta->getCodigo();
+        if ($this->codeAlreadyUsed($idObjetivo, $codigo)){
+          $context->addViolationAt('codigo', 'El código de meta para este objetivo ya está utilizado!');
+        }
+    }
+
+    private function codeAlreadyUsed($idObjetivo, $codigoMeta){
+        $entity = $this->em->createQueryBuilder()
+            ->select('e.id')
+            ->from('AppBundle:Metas', 'e')
+            ->where('e.fkidobjetivo = ?1 AND e.codigo = ?2')
+            ->setParameters(array(1 => $idObjetivo, 2 => $codigoMeta))
+            ->getQuery()
+            ->getResult();
+        if (count($entity)){
+          return true;
+        } else {
+          return false;
+        }
     }
     
     /**
@@ -73,9 +90,10 @@ class MetasType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'AppBundle\Entity\Metas',
             'constraints' => array(
-               new Assert\Callback(array($this, 'validateEventDates'))
+               new Assert\Callback(array($this, 'validateNewMeta'))
               ),
             'scopes_enabled' => array(),
+            'entity_manager' => null,
         ));
     }
 }
