@@ -145,7 +145,8 @@ var sideChartView = Backbone.View.extend({
     },
 
     render: function() {
-        // console.log(this.model.get("layerProperties"));
+        console.log(this.model.get("layerProperties"));
+        // console.log(this.model.get("valoresIndicadoresDesgloses"));
         var descripcionEtiquetaSeleccionada = this.model.get('descripcionEtiquetaSeleccionada');
         var tpl = _.template(templateSideChart);
         var chartData = this.prepare();

@@ -105,7 +105,7 @@
     </div>
     </div>
     <div class="form-group">
-      <label for="selectorIndicador" class="col-xs-2 control-label">Indicador <a target="_blank" href="#" class="glyphicon glyphicon-question-sign" title="Documento Técnico"></a></label>
+      <label for="selectorIndicador" class="col-xs-2 control-label">Indicador <% if (model.get('indicadores')[model.get('indicador_selected_id')].documentoTecnico) { %> <a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('indicador_selected_id')].documentoTecnico)%>" class="glyphicon glyphicon-question-sign" title="Documento Técnico"></a><% } %></label>
       <div class="col-xs-4">
         <select id="selectorIndicador" class="form-control selectIndicador">
           <% _.each(model.get("indicadores"), function( indicador, i){ %>
@@ -192,7 +192,8 @@
         'objetivo_selected': '',
         'meta_selected': '',
         'indicador_selected_id': '',
-        'fecha_selected': ''
+        'fecha_selected': '',
+        'rutaDocumentosTecnicos': "{{ asset('uploads/indicadores/') }}",
       }
     });
 
@@ -213,6 +214,7 @@
 
         /* Inicializar mapa */
         swap(this.model.get('indicadores')[this.model.get('indicador_selected_id')], this.model.get('etiquetas'), this.model.get('valoresIndicadoresDesgloses'));
+        console.log(this.model.get('fecha_selected'));
         valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('fecha_selected')].valoresRefGeografica
         idEtiquetaSeleccionada = this.model.get('etiqueta_selected');
         descripcionEtiquetaSeleccionada = this.model.get('etiquetas')[this.model.get('etiqueta_selected')].descripcion;
@@ -310,14 +312,19 @@
     var valoresIndicadoresDesgloses = {{ valoresIndicadoresDesgloses|json_encode|raw }};
     var indicadores = {{ indicadores|json_encode|raw}};
     var idIndicadorSeleccionado = {{ idIndicadorSeleccionado }};
-    var fechaSeleccionada = indicadores[idIndicadorSeleccionado].fechasDestacadas[0];
+    var fechaSeleccionada;
 
-    /* CORREGIR CUANDO 'AÑOS DESTACADOS' ESTÁ VACÍO */
+    /* Primer período a mostrar: El primero de los años destacados o si ninguno de 
+    estos ha sido definido, el año más lejano a la actualidad de los valores recuperados */
 
-    /* Primer anio a mostrar. El primero de los años destacados o si ninguno de 
-    estos ha sido definido, el año más lejano a la actualidad */
+    if (indicadores[idIndicadorSeleccionado].fechasDestacadas[0]) {
+      fechaSeleccionada = indicadores[idIndicadorSeleccionado].fechasDestacadas[0];
+    } else {
+      fechaSeleccionada = Object.keys(valoresIndicadoresDesgloses)[0];
+    }
 
-    // fechaSeleccionada = Object.keys(valoresIndicadoresDesgloses)[0];
+    // console.log(fechaSeleccionada);
+
     // console.log({{ indicadores|json_encode|raw}}[{{ idIndicadorSeleccionado }}].fechasDestacadas[0]);
     // console.log(valoresIndicadoresDesgloses);
     
