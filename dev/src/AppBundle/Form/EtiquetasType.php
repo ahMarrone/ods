@@ -6,6 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+
 class EtiquetasType extends AbstractType
 {
     /**
@@ -15,8 +17,11 @@ class EtiquetasType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('fkiddesgloce', EntityType::class, array(
+                    'class' => 'AppBundle:Desgloces',
+                    'label'=> "Desglose",
+            ))
             ->add('descripcion')
-            ->add('fkiddesgloce')
         ;
     }
     

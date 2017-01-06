@@ -6,7 +6,7 @@
         <li class="active">Etiquetas</a></li>
     </ol>
     <div class="page-header">
-          <h3>Desgloce <small>{{ titulo_desgloces }} </small></h3> 
+          <h3>Desglose <small>{{ titulo_desgloces }} </small></h3> 
           <h1>Etiquetas</h1>
     </div>
 
@@ -14,6 +14,7 @@
         <thead>
             <tr>
                 <th>Id</th>
+                <th>Desglose</th>
                 <th>Descripcion</th>
                 <th>Acciones</th>
             </tr>
@@ -22,6 +23,7 @@
         {% for etiqueta in etiquetas %}
             <tr>
                 <td>{{ etiqueta.id }}</td>
+                <td>{{ etiqueta.fkiddesgloce.descripcion }}</td>
                 <td><a href="{{ path('admin_crud_etiquetas_show', { 'id': etiqueta.id }) }}">{{ etiqueta.descripcion }}</a></td>
                 <td>
                     <a class="btn btn-primary" title="Ver" href="{{ path('admin_crud_etiquetas_show', { 'id': etiqueta.id }) }}"><i class="fa fa-eye fa-fw" aria-hidden="true"></i></a>
@@ -32,14 +34,18 @@
         </tbody>
     </table>
 
-    <a class="btn btn-success" href="{{ path('admin_crud_etiquetas_new') }}">Crear nueva Etiqueta</a>
+    <a class="btn btn-success" href="{{ path('admin_crud_etiquetas_new') }}">Nueva Etiqueta</a>
 
 <script type="text/javascript">
     $(document).ready(function() {
     $('#etiquetasTable').DataTable({
          "language": {
             "url": "/lang/datatables_spanish.json"
-        }
+        },
+       "columnDefs": [
+            { "visible": false, "targets": 0 },
+            { "width": "20%", "targets": 1 },
+        ],
     });
 } );
 </script>
