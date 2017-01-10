@@ -2,6 +2,8 @@
 
 namespace AppBundle\Form;
 
+use Symfony\Component\Validator\Context\ExecutionContext;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -18,6 +20,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 class IndicadoresType extends AbstractType
 {
     /**
@@ -26,15 +30,20 @@ class IndicadoresType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $this->em = $options['entity_manager'];
+
         $tipoSeleccionado = $options['data']->getTipo();
         $ambitoSeleccionado = $options['data']->getAmbito();
         $this->enabledChoices = $options['scopes_enabled'];
 
         $builder
             ->add('fkidmeta','hidden',array('mapped'=>false))
+            ->add('codigo', IntegerType::class, array(
+                'label' => 'Código del indicador'                 
+            ))
             ->add('descripcion', TextareaType::class , array('label'  => 'Descripción', 'attr' => array('max_length' => 10, ),))
             ->add('tipo', ChoiceType::class, array('label'  => 'Tipo', 'expanded'=>true, 'required'=>true, 'choices' => array('Porcentual' => 'porcentual', 'Entero' => 'entero', 'Real' => 'real', ), 'data' => $tipoSeleccionado, 'choices_as_values' => true, ))
-            ->add('valmin', NumberType::class , array('label'  => 'Valor Mínimo ', 'scale' => 2))
+            ->add('valmin', IntegerType::class , array('label'  => 'Valor Mínimo ', 'scale' => 2))
             ->add('valmax', IntegerType::class , array('label'  => 'Valor Máximo ', 'scale' => 2))
             ->add('ambito', ChoiceType::class, array(
                 'label'  => 'Ámbito', 
@@ -60,13 +69,13 @@ class IndicadoresType extends AbstractType
             ->add('fechasdestacadas','hidden')
             ->add('fechametaintermedia', TextType::class, array(
                 'attr' => ['class' => 'expected-value-datepicker'],
-                'label' => 'Fecha meta intermedia',
+                'label' => 'Año meta intermedia',
                 'required'=>false
             ))
             ->add('valoresperadometaintermedia', NumberType::class, array('label'=>'Valor esperado meta intermedia', 'required'=>false))
             ->add('fechametafinal', TextType::class, array(
                 'attr' => ['class' => 'expected-value-datepicker'],
-                'label' => 'Fecha meta final',
+                'label' => 'Año meta final',
                 'required'=>false
             ))
             ->add('valoresperadometafinal', NumberType::class , array('label'=> 'Valor esperado meta final', 'required'=>false))
@@ -74,6 +83,43 @@ class IndicadoresType extends AbstractType
             //->add('visible', 'checkbox', array('label'  => 'Visible', 'required'  => false))   
         ;
     }
+
+    // Se debe validar:
+    //      - el código del indicador.
+    //      - que las fecha de meta final sea mayor a la fecha de meta intermedia
+    public function validateNewIndicador($indicador, ExecutionContext $context){
+        $idMeta = $indicador->getFkidmeta()->getId();
+        $codigo = $indicador->getCodigo();
+        if ($this->codeAlreadyUsed($idMeta, $codigo)){
+          $context->addViolationAt('codigo', 'El código de indicador para esta meta ya está utilizado!');
+        }
+        if (!$this->checkValidDates($indicador->getFechametaintermedia(), $indicador->getFechametafinal())){
+            $context->addViolationAt('fechametafinal',"El año de la meta final debe ser posterior al año de meta intermedia");
+        }
+    }
+
+    private function checkValidDates($fechaIntermedia, $fechaFinal){
+        $fechaIntermedia = (int) $fechaIntermedia;
+        $fechaFinal = (int) $fechaFinal;
+        return $fechaIntermedia < $fechaFinal;
+    }
+
+    private function codeAlreadyUsed($idMeta, $codigoIndicador){
+        $entity = $this->em->createQueryBuilder()
+            ->select('e.id')
+            ->from('AppBundle:Indicadores', 'e')
+            ->where('e.fkidmeta = ?1 AND e.codigo = ?2')
+            ->setParameters(array(1 => $idMeta, 2 => $codigoIndicador))
+            ->getQuery()
+            ->getResult();
+        if (count($entity)){
+          return true;
+        } else {
+          return false;
+        }
+    }
+
+
 
     /**
      * @param OptionsResolver $resolver
@@ -84,6 +130,10 @@ class IndicadoresType extends AbstractType
             'data_class' => 'AppBundle\Entity\Indicadores',
             'allow_extra_fields' => true,
             'scopes_enabled' => array(),
+            'constraints' => array(
+               new Assert\Callback(array($this, 'validateNewIndicador'))
+              ),
+            'entity_manager' => null,
         ));
     }  
 

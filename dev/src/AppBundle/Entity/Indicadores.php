@@ -10,6 +10,19 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Indicadores
 {
+
+    /**
+     * @var \AppBundle\Entity\Metas
+     */
+    private $fkidmeta;
+
+
+
+    /**
+     * @var integer
+     */
+    private $codigo;
+
     /**
      * @var string
      */
@@ -64,11 +77,6 @@ class Indicadores
      * @var integer
      */
     private $id;
-
-    /**
-     * @var \AppBundle\Entity\Metas
-     */
-    private $fkidmeta;
 
         /**
      * @var string
@@ -328,6 +336,8 @@ class Indicadores
     public function __construct()
     {
         $this->iddesgloce = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->valmin = 0;
+        $this->valmax = 100;
     }
 
     /**
@@ -568,5 +578,35 @@ class Indicadores
     public function getValoresperadometafinal()
     {
         return $this->valoresperadometafinal;
+    }
+
+
+
+    /**
+     * Set codigo
+     *
+     * @param integer $codigo
+     * @return Indicadores
+     */
+    public function setCodigo($codigo)
+    {
+        $this->codigo = $codigo;
+
+        return $this;
+    }
+
+    /**
+     * Get codigo
+     *
+     * @return integer 
+     */
+    public function getCodigo()
+    {
+        return $this->codigo;
+    }
+
+
+    public function formatYearToDB($fecha){
+        return $fecha . "-01-01";
     }
 }

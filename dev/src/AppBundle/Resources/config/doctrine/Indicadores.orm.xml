@@ -8,6 +8,7 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
+    <field name="codigo" type="integer" column="codigo" nullable="false"/>
     <field name="descripcion" type="string" column="descripcion" length="5000" nullable="false"/>
     <field name="tipo" type="string" column="tipo" nullable="false"/>
     <field name="valmin" type="bigint" column="valMin" nullable="false"/>
@@ -32,7 +33,7 @@
       </join-columns>
     </many-to-one>
     <many-to-many field="iddesgloce" target-entity="Desgloces" inversed-by="idindicador">
-      <join-table name="desglocesIndicadores">
+      <join-table name="desglocesindicadores">
         <join-columns>
           <join-column name="idIndicador" referenced-column-name="id"/>
         </join-columns>

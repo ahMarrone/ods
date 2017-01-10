@@ -63,6 +63,7 @@ var ThreeSelectView = Backbone.View.extend({
 		this.model.on('change:objetivo_selected', this.render, this);
         this.model.on('change:meta_selected', this.render, this);
         this.listenObjetivoCallback = options.objetivoChangeCallback;
+        this.listenMetaCallback = options.metaChangeCallback;
         this.listenIndicadorCallback = options.indicadorChangeCallback;
        	this.render();
     },
@@ -86,6 +87,10 @@ var ThreeSelectView = Backbone.View.extend({
     },
     metaSelected: function(e){
     	this.model.set("meta_selected",$(this.el).find('.selectTwo').val());
+        console.log("meta");
+        if (this.listenMetaCallback){
+            this.listenMetaCallback();
+        }
         if (this.model.get('indicadores').length){
             $('.selectThree').trigger('change');
             //this.indicadorSelected();

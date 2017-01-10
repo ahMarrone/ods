@@ -89,8 +89,9 @@ CREATE TABLE IF NOT EXISTS `etiquetas` (
 DROP TABLE IF EXISTS `indicadores`;
 CREATE TABLE IF NOT EXISTS `indicadores` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del indicador',
   `fkIdMeta` int(11) unsigned NOT NULL COMMENT 'clave foranea meta',
+  `codigo` int(11) unsigned NOT NULL,
+  `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del indicador',
   `tipo` enum('porcentual','entero','real') COLLATE utf8_spanish_ci NOT NULL COMMENT 'tipo de indicador',
   `valMin` bigint(20) NOT NULL COMMENT 'valor minimo dentro del dominio',
   `valMax` bigint(20) NOT NULL COMMENT 'valor maximo dentro del dominio',

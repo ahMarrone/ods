@@ -40,11 +40,14 @@
            <div id="highlightDatesControl"></div>
         </div>
 
-        <input class="col-md-1 btn btn-success option-btn" type="submit" value="Crear" />
+        <hr>
+        
+
+        <input class="col-md-1 btn btn-success option-btn" type="submit" value="Guardar" />
     {{ form_end(form) }}
 
 <div class="row">
-<a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_index') }}">Volver atrás</a>
+<a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_index') }}">Volver</a>
 </div>
 
 
@@ -52,6 +55,8 @@
 <script type="text/javascript">
 
     $(document).ready(function() {
+
+        var api_urls = {{ api_urls|json_encode|raw}};
 
 
         var objetivos = {{ objetivos|json_encode|raw}};
@@ -68,7 +73,9 @@
                 'objetivos': objetivos,
                 'metas': metas
             });
-            viewThreeSelect = new ThreeSelectView({el: $("#selects"), model:modelThreeSelect});
+            viewThreeSelect = new ThreeSelectView({el: $("#selects"), model:modelThreeSelect,
+            metaChangeCallback: getNextIndicadorCode
+            });
         }
 
 
@@ -79,13 +86,34 @@
         }
 
 
+        function getNextIndicadorCode(){
+            var idMeta = $('#three_select_meta').val();
+            var url = api_urls.get_next_indicador_code;
+            var data = {'meta_id':idMeta};
+            $.ajax(url,{
+                  'data': JSON.stringify(data),
+                  'type': 'POST',
+                  'processData': false,
+                  'contentType': 'application/json',
+                   success: function(data) {
+                        if (data.next_indicador_code){
+                            $('#indicadores_codigo').val(data.next_indicador_code);
+                        }
+                   },
+                   error: function(data) {
+                        
+                  },
+              });
+        }
+
+
 
         addThreeSelectControls();
         addHiglightedDatesControls();
+        getNextIndicadorCode();
 
         $('.expected-value-datepicker').datepicker({
-            format: 'yyyy-mm-dd',
-            format: "yyyy-mm-dd",
+            format: "yyyy",
             minViewMode: 2,
             autoclose: true,
         });

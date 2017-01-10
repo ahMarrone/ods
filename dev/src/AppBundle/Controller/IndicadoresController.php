@@ -12,6 +12,8 @@ use AppBundle\Form\IndicadoresType;
 
 use Symfony\Component\HttpFoundation\File\File;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 /**
  * Indicadores controller.
  *
@@ -29,27 +31,28 @@ class IndicadoresController extends Controller
     public function indexAction(Request $request)
     {
 
-        $id_meta = $request->get('id_meta');
-        $em = $this->getDoctrine()->getManager();   
+        $id_meta = intval($request->get('id_meta'));
+        $em = $this->getDoctrine()->getManager();  
         
-        if (intval($id_meta) == 0)
-        {
-            $indicadores = $em->getRepository('AppBundle:Indicadores')->findAll();
-            $titulo_meta = "TODAS";
-        }
-        else
-        {
-            //
+        $objetivos = $this->getObjetivosPreload();
+        $metas = $this->getMetasPreload();
+        $indicadores = $em->getRepository('AppBundle:Indicadores')->findAll();
+
+        if ($id_meta == 0){
+            $objetivo_seleccionado = $objetivos[0]["id"];
+            $meta_seleccionada = $metas[0]["id"];
+        } else {
             $meta = $em->getRepository('AppBundle:Metas')->findOneById($id_meta);
-            $titulo_meta = $meta->getDescripcion();
-            //
-            $id_objetivo = $meta->getfkidObjetivo();
-            $indicadores = $em->getRepository('AppBundle:Indicadores')->findByfkidmeta($id_meta);            
+            $meta_seleccionada = $meta->getId();
+            $objetivo_seleccionado = $meta->getFkidobjetivo()->getId();
         }
 
         return $this->render('indicadores/index.html.twig', array(
             'indicadores' => $indicadores,
-            'titulo_meta' => $titulo_meta,            
+            'objetivos' => $this->getObjetivosPreload(),
+            'metas' => $this->getMetasPreload(),
+            'objetivo_seleccionado' => $objetivo_seleccionado,
+            'meta_seleccionada' => $meta_seleccionada,            
         ));
     }
 
@@ -69,12 +72,19 @@ class IndicadoresController extends Controller
         }
         $form = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore, array(
             'scopes_enabled' => $this->getEnabledScopes(),
+            'entity_manager' => $this->getDoctrine()->getManager(),
         ));
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->addIndicadorMetadata($indicadore);
+            // Fechas
+            /*$datetime = new \DateTime();
+            $newDate = $datetime->createFromFormat('Y-m-d', '2015-01-01');
+            $newDate->format('d-m-Y');*/
+            $indicadore->setFechametaintermedia($indicadore->formatYearToDB($indicadore->getFechametaintermedia()));
+            $indicadore->setFechametafinal($indicadore->formatYearToDB($indicadore->getFechametafinal()));
 
             // documento técnico
             $document = $indicadore->getDocumentPath();
@@ -99,7 +109,8 @@ class IndicadoresController extends Controller
             'indicadore' => $indicadore,
             'form' => $form->createView(),
             'objetivos' => $this->getObjetivosPreload(),
-            'metas' => $this->getMetasPreload()
+            'metas' => $this->getMetasPreload(),
+            'api_urls' => array('get_next_indicador_code'=> $this->generateUrl('admin_crud_indicadores_get_next_indicador_code'))
         ));
     }
 
@@ -119,6 +130,34 @@ class IndicadoresController extends Controller
             array_push($list, array('id'=>$m->getId(),'desc'=>$m->getDescripcion(),'id_objetivo'=>$m->getFkidobjetivo()->getId()));
         }
         return $list;
+    }
+
+       /**
+     *
+     * @Route("/api/get_next_indicador_code", name="admin_crud_indicadores_get_next_indicador_code")
+     * @Method("POST")
+     */
+    public function getNextIndicadorCodeAction(Request $request)
+    {
+        $content = $this->get("request")->getContent();
+        if (!empty($content)){
+            $data = json_decode($content, true);
+            $response = $this->getIndicadorNextCode($data['meta_id']);
+            return new JsonResponse($response);
+        }
+    }
+
+    private function getIndicadorNextCode($idMeta){
+        $em = $this->getDoctrine()->getManager();
+        $highest_id = $em->createQueryBuilder()
+            ->select('MAX(e.codigo)')
+            ->from('AppBundle:Indicadores', 'e')
+            ->where('e.fkidmeta = ?1')
+            ->setParameter(1, $idMeta)
+            ->getQuery()
+            ->getSingleScalarResult();
+        $highest_id = $highest_id + 1;
+        return array("next_indicador_code" => $highest_id);
     }
 
     /**
