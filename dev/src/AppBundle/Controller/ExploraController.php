@@ -15,7 +15,9 @@ class ExploraController extends Controller
     {
         // echo var_dump($idIndicador);
 
-        /* Recuperar Metas, Objetivos, Indicadores y Etiquetas para rellenar 'selects' */
+        /* Recuperar Metas, Objetivos, Indicadores, Desgloses, Etiquetas junto 
+        con los correspondientes valores para cada Referencia Geogŕafica de acuerdo
+        al indicador seleccionado */
 
         $reverseSearchResult = $this->reverseSearchByIndicador($idIndicador)[0];
         $idObjetivoSeleccionado = $reverseSearchResult['objetivo'];
@@ -26,15 +28,19 @@ class ExploraController extends Controller
         $reverseDesgloses = array();
         $etiquetas = $this->getEtiquetasByIndicadorPreload($idIndicador, $reverseDesgloses);
 
-        /* PASAR TODOS A VARIABLES */
+        $objetivos = $this->getObjetivosPreload();
+        $metas = $this->getMetasPreload();
+        $indicadores = $this->getIndicadoresPreload($idMetaSeleccionada);
+        $desgloses = $this->getDesglosesByIndicadorPreload($idIndicador);
+        $valoresIndicadoresDesgloses = $this->getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses, $indicadores[$idIndicador]);
 
         return $this->render('explora/explora.html.twig', array(
-            'objetivos' => $this->getObjetivosPreload(),
-            'metas' => $this->getMetasPreload(),
-            'indicadores' => $this->getIndicadoresPreload($idMetaSeleccionada),
-            'desgloses' => $this->getDesglosesByIndicadorPreload($idIndicador),
+            'objetivos' => $objetivos,
+            'metas' => $metas,
+            'indicadores' => $indicadores,
+            'desgloses' => $desgloses,
             'etiquetas' => $etiquetas,
-            'valoresIndicadoresDesgloses' => $this->getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses),
+            'valoresIndicadoresDesgloses' => $valoresIndicadoresDesgloses,
             'idObjetivoSeleccionado' => $idObjetivoSeleccionado,
             'idMetaSeleccionada' => $idMetaSeleccionada,
             'idIndicadorSeleccionado' => $idIndicador
@@ -79,8 +85,9 @@ class ExploraController extends Controller
 
     private function getIndicadoresPreload($idMeta){
         $list = array();
-        /* Si se desean filtrar por los indicadores por meta seleccionada  */
-        /*$indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByFkidmeta($idMeta);*/
+        /* Si se desean filtrar los indicadores por meta seleccionada, descomentar y reemplazar  */
+        // $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByFkidmeta($idMeta);
+
         $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findall();
 
         foreach ($indicadores as $i) {
@@ -89,10 +96,11 @@ class ExploraController extends Controller
             $list[$idIndicador]['descripcion'] = $i->getDescripcion();
             $list[$idIndicador]['id_meta'] = $i->getFkidmeta()->getId();
             $list[$idIndicador]['ambito'] = $i->getAmbito();
-            /* CONSTRUIR ESCALA A PARTIR DE valMin y ValMax */
+            $list[$idIndicador]['documentoTecnico'] = $i->getDocumentPath();
+            /* CONSTRUIR ESCALA A PARTIR DE valMin y ValMax o de acuerdo al Tipo de Indicador */
             $list[$idIndicador]['escala'] = array(0, 20, 40, 60, 80);
             $list[$idIndicador]['fechasDestacadas'] = $this->parseFechasDestacadas($i->getFechasDestacadas());
-            /* Metas (Fechas/ValoresEsperados) */
+            /* Metas: Fechas/ValoresEsperados */
             $list[$idIndicador]['fechasMetas'] = array();
             if ($i->getFechametaintermedia() != NULL) {
                 array_push($list[$idIndicador]['fechasMetas'], array(date('Y', strtotime($i->getFechametaintermedia())), floatval($i->getValoresperadometaintermedia())));
@@ -160,11 +168,15 @@ class ExploraController extends Controller
         return $desgloses;
     }
 
-    private function getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses){
+    /* VER QUÉ SUCEDE CUANDO NO EXISTEN VALORES CARGADOS PARA EL INDICADOR SELECCIONADO */
+    /* CONTROLAR VISIBILIDAD */
+
+    private function getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses, &$indicador){
         $entidad = $this->filterValoresIndicadoresConfigFechaByIndicador($idIndicador);
         $atributos = array();
         $atributosPorFecha = array();
         /* ORDENARLOS POR IDS! */
+        /* SOLO RECUPERAR IDs Sin Cruces */
         $idsValoresIndicadoresConfigFecha = array(); /* Lista de IDs */
 
         foreach ($entidad as $e){
@@ -208,6 +220,14 @@ class ExploraController extends Controller
                 $atributosPorFecha[$fecha]['valoresRefGeografica'][$idRefGeografica][$idEtiquetaAcumulado] = floatval($columnas['acumulado']);
             }
         }
+
+        $interseccion = array();
+        foreach ($indicador['fechasDestacadas'] as $fecha) {
+            if (array_key_exists($fecha, $atributosPorFecha)) {
+                array_push($interseccion, $fecha);
+            }
+        }
+        $indicador['fechasDestacadas'] = $interseccion;
 
         return $atributosPorFecha;
     }

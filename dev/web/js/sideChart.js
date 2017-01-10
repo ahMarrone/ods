@@ -41,11 +41,11 @@ var templateSideChart = [
     '</div>',
     '</div>',
     '<% } %>',
-    '<% if (model.get("indicador").ambito != "N") { %>',
+    '<% if (model.get("indicador").ambito == "N") { %>',
     '<div class="meta">',
     '<% _.each(model.get("indicador").fechasMetas, function(item, i){ %>',
     '<% if (i != 0) { %> - <% } %>',
-    'Meta <%= item[0] %>: <%= item[1].toFixed(2) %>',
+    'Meta <%= item[0] %>: <%= item[1].toFixed(2).replace(".", ",") %>',
     '<% }); %>',
     '</div>',
     '<% } %>',
@@ -145,7 +145,8 @@ var sideChartView = Backbone.View.extend({
     },
 
     render: function() {
-        // console.log(this.model.get("layerProperties"));
+        console.log(this.model.get("layerProperties"));
+        // console.log(this.model.get("valoresIndicadoresDesgloses"));
         var descripcionEtiquetaSeleccionada = this.model.get('descripcionEtiquetaSeleccionada');
         var tpl = _.template(templateSideChart);
         var chartData = this.prepare();

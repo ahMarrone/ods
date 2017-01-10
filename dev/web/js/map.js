@@ -1,5 +1,5 @@
-var map, tiles, selectedPoligonEvent, sideChartModel, sideChartView, ambitoIndicador;
-var sideChartModel;
+var map, tiles, selectedPoligonEvent, sideChartModel, sideChartView, 
+sideChartControl, ambitoIndicador;
 var NACIONAL = 'N',
     PROVINCIAL = 'P',
     DEPARTAMENTAL = 'D';
@@ -34,8 +34,12 @@ function swap(indicador, etiquetas, valoresIndicadoresDesgloses) {
 }
 
 function update(data, idEtiquetaSeleccionada, descripcionEtiquetaSeleccionada, idsEtiquetasActuales) {
+    if (map.hasDivSideChart()) {
+        map.removeControl(sideChartControl);
+    }
     sideChartModel.set('idsEtiquetasActuales', idsEtiquetasActuales);
     sideChartModel.set('descripcionEtiquetaSeleccionada', descripcionEtiquetaSeleccionada);
+    sideChartModel.set('layerProperties', []);
     tiles[ambitoIndicador].eachLayer(function (layer) {
         idRefGeografica = layer.feature.properties.id;
         valor = data[idRefGeografica][idEtiquetaSeleccionada];
@@ -66,7 +70,6 @@ function mapMe(geoJsonNacion, geoJsonProvincias, geoJsonDepartamentos) {
 
     /* Controles sobre el Mapa */
     sideChartControl = L.control({position: 'topright'});
-    sideChartControl.onAdd = addDivSideChart;
 
     /* Definir centro de mapa a partir de capa definida */
     map.fitBounds(centerBounds);
@@ -74,16 +77,27 @@ function mapMe(geoJsonNacion, geoJsonProvincias, geoJsonDepartamentos) {
     map.setMinZoom(minZoom);
 
     /* Agregar capas y otros */
-    sideChartControl.addTo(map);
     map.addLayer(tiles[ambitoIndicador]);
+    map.divSideChart = false;
+    L.Map.include({
+        hasDivSideChart: function () {
+            return (this.divSideChart);
+        }
+    });
 
     sideChartModel = new sideChartModel({});
-    sideChartView = new sideChartView({el: $('.infobox'),model:sideChartModel});
+    sideChartView = new sideChartView({model:sideChartModel});
+    // sideChartView = new sideChartView({el: $('.infobox'), model:sideChartModel});
 }
 
 function addDivSideChart(map) {
+    map.divSideChart = true;
     this._div = L.DomUtil.create('div', 'infobox'); // create a div with a class "info"
     return this._div;
+}
+
+function removeDivSideChart(map) {
+    map.divSideChart = false;
 }
 
 function onEachFeature(feature, layer) {
@@ -126,6 +140,14 @@ function highlightFeature(event) {
         if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
             layer.bringToFront();
         }
+
+        if (!map.hasDivSideChart()) {
+            sideChartControl.onAdd = addDivSideChart;
+            sideChartControl.onRemove = removeDivSideChart;
+            map.addControl(sideChartControl);
+            sideChartView.setElement($('.infobox'));
+        }
+
         sideChartModel.set('layerProperties', layer.feature.properties);
     }
 }
