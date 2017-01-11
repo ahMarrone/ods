@@ -51,7 +51,14 @@
               });
         }
 
-        getNextMetaCode($('#metas_fkidobjetivo').val());
+        function init(){
+          var metaCode = $('#metas_codigo').val();
+          if (!metaCode){
+            getNextMetaCode($('#metas_fkidobjetivo').val());
+          }
+        }
+
+        init();
         
     });
 </script>
