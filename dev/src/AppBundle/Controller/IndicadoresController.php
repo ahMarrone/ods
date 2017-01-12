@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use AppBundle\Entity\Indicadores;
 use AppBundle\Entity\Metas;
 use AppBundle\Form\IndicadoresType;
+use AppBundle\Entity\Desglocesindicadores;
 
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -101,8 +102,9 @@ class IndicadoresController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($indicadore);
             $em->flush();
-            //return $this->redirectToRoute('/');
-            return $this->redirectToRoute('admin_crud_desglocesporindicador_new', array('id_indicador' => $indicadore->getId()));
+            $this->saveBaseDesglocesIndicadores($indicadore);
+            return $this->redirectToRoute('admin_crud_indicadores_show', array('id'=> $indicadore->getId()));
+            //return $this->redirectToRoute('admin_crud_desglocesporindicador_new', array('id_indicador' => $indicadore->getId()));
         }
 
         return $this->render('indicadores/new.html.twig', array(
@@ -112,6 +114,17 @@ class IndicadoresController extends Controller
             'metas' => $this->getMetasPreload(),
             'api_urls' => array('get_next_indicador_code'=> $this->generateUrl('admin_crud_indicadores_get_next_indicador_code'))
         ));
+    }
+
+
+    // Guarda la relacion "sin desgloce" para el nuevo indicador
+    private function saveBaseDesglocesIndicadores($indicador){
+        $em = $this->getDoctrine()->getManager();
+        $di = new Desglocesindicadores();
+        $di->setIdindicador($indicador->getId());
+        $di->setIddesgloce(0);
+        $em->persist($di);
+        $em->flush();
     }
 
     private function getObjetivosPreload(){
@@ -196,8 +209,14 @@ class IndicadoresController extends Controller
                 new File($this->getParameter('indicadores_technical_documents_directory').'/'.$indicadore->getDocumentPath())
             );
         }
+
+        // Formateo fechas a 'yyyy' para visualizacion
+        $indicadore->setFechametaintermedia(explode('-',$indicadore->getFechametaintermedia())[0]);
+        $indicadore->setFechametafinal(explode('-',$indicadore->getFechametafinal())[0]);
+
         $editForm = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore, array(
                 'scopes_enabled' => array('N'=>false,'P'=>false,'D'=>false), // en modo edicion, no se puede cambiar el ambito del indicador
+                'entity_manager' => $this->getDoctrine()->getManager(),
             )
         );
         $editForm->handleRequest($request);

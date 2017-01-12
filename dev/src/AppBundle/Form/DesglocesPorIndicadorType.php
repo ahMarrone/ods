@@ -27,6 +27,7 @@ class DesglocesPorIndicadorType extends AbstractType
 
 
         $all_etiquetas = $options['label'];
+        $this->desgloces_seleccionados = $options['desgloces_seleccionados'];
 
 
         foreach ($options['data'] as $key => $value) {
@@ -40,23 +41,18 @@ class DesglocesPorIndicadorType extends AbstractType
             }
             $choice_desgloces[$key]="". $newkey . $this_etiquetas;
         }
-
         $builder
-            //->add('objetivo', EntityType::class, array('label' => 'Objetivo', 'mapped' => false, 'class' => 'AppBundle:Objetivos', //'placeholder' => 'Seleccione un Objetivo',
-            //    'choice_label' => function ($objetivo) {
-            //    return $objetivo->getId(). "." . $objetivo->getDescripcion();
-            //    }, ))
             ->add('desglocesSeleccionados',  ChoiceType::class, array(
                                             'mapped' => false, 
                                             'label'  => 'Desgloces', 
                                             'required'=>true, 
                                             'choices' => $choice_desgloces,
                                             'choice_attr' => function($key, $val, $index) {
-                                                return $index == 0 ? ['disabled' => 'disabled'] : [];
+                                                return in_array($key, $this->desgloces_seleccionados)? ['disabled' => 'disabled'] : [];
                                              },
                                             'expanded'=>true, 
                                             'multiple'=>true, 
-                                            'data' => array(0) // siempre la opcion cero (Sin desgloces esta seleccionada)
+                                            'data' => $this->desgloces_seleccionados // siempre la opcion cero (Sin desgloces esta seleccionada)
                                             )
             )  
         ;
@@ -70,6 +66,7 @@ class DesglocesPorIndicadorType extends AbstractType
         $resolver->setDefaults(array(
             //'data_class' => 'AppBundle\Entity\Desgloces',
             'idIndicador' => null,
+            'desgloces_seleccionados' => array(),
         ));
     } 
 }

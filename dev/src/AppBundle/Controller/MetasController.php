@@ -148,6 +148,7 @@ class MetasController extends Controller
     {
         $deleteForm = $this->createDeleteForm($meta);
         $editForm = $this->createForm('AppBundle\Form\MetasType', $meta, array(
+            'entity_manager' => $this->getDoctrine()->getManager(),
             'scopes_enabled' => array('N'=>false,'P'=>false,'D'=>false), // en modo edicion, no se puede cambiar el ambito de la meta
         ));
         $editForm->handleRequest($request);
@@ -165,6 +166,7 @@ class MetasController extends Controller
             'meta' => $meta,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
+            'api_urls' => array('get_next_meta_code'=> $this->generateUrl('admin_crud_metas_get_next_meta_code'))
         ));
     }
 

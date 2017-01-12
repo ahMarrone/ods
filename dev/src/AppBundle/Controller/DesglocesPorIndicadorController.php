@@ -25,22 +25,22 @@ class DesglocesPorIndicadorController extends Controller
      * @Route("/desglocesporindicador/{id_indicador}", requirements={"id_indicador":"\d+"}, name="admin_crud_desglocesporindicador_new")
      * @Method("GET")
      */
-    public function newAction(Request $request, $id_indicador)
-    {
+    public function newAction(Request $request, $id_indicador){
+
+        $etiquetas_desgloces = array();
+        $desgloces_seleccionados = array();
         
         $em = $this->getDoctrine()->getManager();
         $desgloces = $em->getRepository('AppBundle:Desgloces')->findAll();
         $indicador = $em->getRepository('AppBundle:Indicadores')->findOneById($id_indicador);
         $etiquetas = $em->getRepository('AppBundle:Etiquetas')->findAll();
 
-        /*var_dump($etiquetas);
-        echo "<hr>";
-        print $etiquetas[1]->getId() ;
-        echo "<hr>";
-        #print $etiquetas[0].getDescripcion();
-        echo "<hr>";
-        */
-        $etiquetas_desgloces = array();
+        $desgloces_indicador =  $em->getRepository('AppBundle:Desglocesindicadores')->findByIdindicador($id_indicador);
+
+
+        foreach ($desgloces_indicador as $di){
+            array_push($desgloces_seleccionados, $di->getIddesgloce());
+        }
 
         foreach ($etiquetas as $key => $value) {
             $etiqueta_descripcion = $value->getDescripcion();
@@ -54,20 +54,18 @@ class DesglocesPorIndicadorController extends Controller
                 $etiquetas_desgloces[$idDesgloce] = "[" . $etiqueta_descripcion . "]";
             }
         }
-
-        $form = $this->createForm('AppBundle\Form\DesglocesPorIndicadorType', $desgloces, array('idIndicador' => $indicador,
-            'method' => 'GET', 'label' => $etiquetas_desgloces)
+        $form = $this->createForm('AppBundle\Form\DesglocesPorIndicadorType', $desgloces, array(
+            'idIndicador' => $indicador,
+            'method' => 'GET', 
+            'label' => $etiquetas_desgloces,
+            'desgloces_seleccionados' => $desgloces_seleccionados,
+            )
         );
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
 
-            // Grabo la relacion "Sin desgloce"
-            $thisDI = new Desglocesindicadores();
-            $thisDI->setIdindicador($indicador->getId());
-            $thisDI->setIddesgloce(0);
-            $em->persist($thisDI);
             // Por cada desgloce seleccionado, grabo en la relación
             $desglocesSeleccionados = $form['desglocesSeleccionados']->getdata();
             foreach ($desglocesSeleccionados as $key => $value) {
@@ -77,10 +75,12 @@ class DesglocesPorIndicadorController extends Controller
                 $thisDI->setIdindicador($indicador->getId());
                 $thisDI->setIddesgloce($value);
                 // Grabar
-                $em->persist($thisDI);
+                if (!$this->desgloceIndicadorExists($thisDI)){
+                    $em->persist($thisDI);
+                }
             }
             $em->flush();
-            return $this->redirectToRoute('admin_crud_indicadores_show', array('id' => $indicador->getId()));
+            return $this->redirectToRoute('admin_crud_indicadores_index');
         }
 
         return $this->render('indicadores/desglocesporindicador.html.twig', array(
@@ -89,5 +89,18 @@ class DesglocesPorIndicadorController extends Controller
             'edit_form' => $form->createView(),
             'nombre_indicador' => $indicador->getDescripcion(),
         ));   
+    }
+
+
+    private function desgloceIndicadorExists($desgloceIndicador){
+        $em = $this->getDoctrine()->getManager();
+        $diDB =  $em->getRepository('AppBundle:Desglocesindicadores')->findBy(
+            array('idindicador' => $desgloceIndicador->getIdindicador() , 'iddesgloce' => $desgloceIndicador->getIddesgloce()
+        ));
+        if (count($diDB) > 0 ){
+            return true;
+        } else {
+            return false;
+        }
     }
 }
