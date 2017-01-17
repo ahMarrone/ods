@@ -52,6 +52,7 @@ class ValoresIndicadoresController extends Controller
         $params = $this->getRequest()->request->all();
         $idIndicador = (isset($params["id_indicador_selected"])) ? $params["id_indicador_selected"] : NULL;
         $fecha =  (isset($params["fecha"])) ? $params["fecha"] : NULL;
+        $fecha = $this->formatDateToDB($fecha);
         $configfecha = $this->getIndicadorConfigByKey($idIndicador, $fecha);
         if ($configfecha){
             $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findById($idIndicador)[0];
@@ -65,6 +66,7 @@ class ValoresIndicadoresController extends Controller
                                ->filterByIndicadorFecha($idIndicador, $fecha);
             $valoresindicadores = $this->parseEntityValoresindicadores($valoresindicadores);
             $ambitoIndicador = $indicador->getAmbito();
+            $step = ($indicador->getTipo() == 'entero') ? "1" : "0.01";
             return $this->render('valoresindicadores/panel_create_valores_indicadores.html.twig', array(
                 'fecha' => $fecha,
                 'indicador_id' => $indicador->getId(),
@@ -76,6 +78,7 @@ class ValoresIndicadoresController extends Controller
                 'ref_geograficas' => $refGeograficas,
                 'filter_ref_geograficas' => $this->getParentRefGeograficas($ambitoIndicador),
                 'valores_indicadores' => $valoresindicadores,
+                'step' => $step,
                 'api_urls' => array('edit'=> $this->generateUrl('admin_crud_valoresindicadores_saveobjects'), 
                                     'delete'=> $this->generateUrl('admin_crud_valoresindicadores_deleteobjects')
                 )
@@ -256,8 +259,7 @@ class ValoresIndicadoresController extends Controller
     private function filterRefGeograficas($ambitoIndicador){
         $ret = array();
         $refs =  $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findBy(
-             array('ambito' => $ambitoIndicador)
-        );
+             array('ambito' => $ambitoIndicador), array('descripcion' => 'ASC'));
         $parent = 0;
         foreach ($refs as $r) {
             if ($ambitoIndicador == 'D'){
@@ -401,7 +403,8 @@ class ValoresIndicadoresController extends Controller
                                ->getIndicadorDates($idIndicador);
 
             foreach ($rows as $dates) {
-                array_push($data, $dates["fecha"]);
+                $newDate = explode("-",$dates["fecha"])[0];
+                array_push($data, $newDate);
             }
         }
         return new JsonResponse($data);
@@ -418,6 +421,7 @@ class ValoresIndicadoresController extends Controller
         $em = $this->getDoctrine()->getManager();
         $id_indicador = $request->query->get('id_indicador');
         $fecha = $request->query->get('fecha');
+        $fecha = $this->formatDateToDB($fecha);
         $data = array();
         $userDesgloces = array();
         $configfecha = $this->getIndicadorConfigByKey($id_indicador, $fecha);
@@ -433,6 +437,11 @@ class ValoresIndicadoresController extends Controller
         list($desgloces, $etiquetasDesgloces) = $this->getEtiquetasDesgloce($adminDesgloces);
         $data['desgloces_enabled'] = $this->constructDesglocesConfig($adminDesgloces, $userDesgloces, $desgloces, $etiquetasDesgloces);
         return new JsonResponse($data);
+    }
+
+
+    private function formatDateToDB($fecha){
+        return  $fecha . "-01" . "-01";
     }
 
 
@@ -501,6 +510,7 @@ class ValoresIndicadoresController extends Controller
         $response = array("success"=>false);
         $idIndicador = $data["id_indicador"];
         $fecha = $data["fecha"];
+        $fecha = $this->formatDateToDB($fecha);
         $desgloces = $data["desgloces_active"];
         $cruzado = $data["desgloces_cross"];
         $configfecha = $this->getIndicadorConfigByKey($idIndicador, $fecha);

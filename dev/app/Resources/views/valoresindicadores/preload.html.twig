@@ -35,8 +35,7 @@
     <div class="form-group">
         <div id="panelConfiguration"></div>
     </div>
-     <button id="preloadDataSubmitBtn" type="submit" class="btn btn-success">
- <span class="glyphicon glyphicon-next"></span> Siguiente
+     <button id="preloadDataSubmitBtn" type="submit" class="btn btn-success">  Siguiente
 </button>
 </form>
 </div>
@@ -51,7 +50,7 @@
         <h3 class="panel-title">Configuración</h3>
       </div>
       <div class="panel-body">
-                <div id="datesWithData" class="alert alert-info" role="alert"><span id="datesDataLabel"><b>Este indicador tiene datos cargados en las fechas: </b></span>
+                <div id="datesWithData" class="alert alert-info" role="alert"><span id="datesDataLabel"><b>Este indicador tiene datos cargados en los períodos: </b></span>
                 <% _.each( model.enabled_dates, function( date, i){ %>
                     <a class='indicadorDate btn btn-default'><%= date %></a>  
                 <% }); %>
@@ -59,7 +58,7 @@
         <form>
             <div class="form-group">
                 <div class="input-group date">
-                <label>Elija la fecha en la cual quiere cargar valores:</label>
+                <label>Elija el período en el cual quiere cargar valores:</label>
                   <input id="valorIndicadorDate" name="fecha" type="text" class="form-control" value="<%= model.date_selected %>">
                 </div>
             </div>
@@ -104,7 +103,7 @@
                         <i class="fa fa-spinner fa-spin fa-fw"></i>
                      <% } else { %>
                         <div class="alert alert-warning col-md-12" role="alert">
-                        <b>Debe seleccionar una fecha para cargar la configuración de los desgloces</b>
+                        <b>Debe seleccionar un período para cargar la configuración de los desgloces</b>
                         </div>
                       <% } %>
             </div>
@@ -179,6 +178,7 @@
                 this.model.on('change', this.render, this);
                 //this.render();
                 this.loadIndicadorDates(this.model.get('id_indicador'));
+                this.updatePreloadDataForm();
             },
             render: function(){
                 this.$el.html( this.template({model:this.model.toJSON()}));                
@@ -186,7 +186,7 @@
             },
             initializeDatePicker: function(){
                 $('#valorIndicadorDate').datepicker({
-                    format: "yyyy-mm-dd",
+                    format: "yyyy",
                     minViewMode: 2,
                     daysOfWeekDisabled: "1,2,3,4,5,6",
                     autoclose: true
@@ -251,7 +251,14 @@
               this.setLabelsList();
             },
             updateDesglocesCross: function(){
-              this.model.set('desgloces_cross',($("#crossDesglocesCheckbox").is(':checked')));
+              if ($("#crossDesglocesCheckbox").is(':checked')){
+                 // Si seleccione cruzar etiquetas, deselecciona desgloce "sin desgloce"
+                  $('.indicadorDesgloceCheckbox').each(function () {
+                        if ($(this).val()==0)
+                            $(this).attr("checked", false);
+                    });
+              }
+              this.syncDesglocesCheckboxs();
             },
             loadDesglocesConfig: function(){
                 var idIndicador = this.model.get('id_indicador');
@@ -353,17 +360,19 @@
             },
             prepareLabelsListContent: function(){
               var content = "";
-              var labelsCrossData = getEtiquetasList(this.model.get('labels_by_desgloce'),this.model.get('desgloces_cross'));
-              var labelsFullList = this.model.get('labels_full_list');
-              $.each(labelsCrossData, function(i, labelsIDList){
-                content += "<li>";
-                var labelsText = [];
-                $.each(labelsIDList, function(m, idLabel){
-                  labelsText.push(labelsFullList[idLabel]);
+                if (this.model.get('labels_by_desgloce').length){
+                var labelsCrossData = getEtiquetasList(this.model.get('labels_by_desgloce'),this.model.get('desgloces_cross'));
+                var labelsFullList = this.model.get('labels_full_list');
+                $.each(labelsCrossData, function(i, labelsIDList){
+                  content += "<li>";
+                  var labelsText = [];
+                  $.each(labelsIDList, function(m, idLabel){
+                    labelsText.push(labelsFullList[idLabel]);
+                  });
+                  content +=  labelsText.join("/");
+                  content += "</li>";
                 });
-                content +=  labelsText.join("/");
-                content += "</li>";
-              });
+              }
               return content;
             }
         });
