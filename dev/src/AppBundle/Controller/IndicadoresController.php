@@ -213,7 +213,6 @@ class IndicadoresController extends Controller
         // Formateo fechas a 'yyyy' para visualizacion
         $indicadore->setFechametaintermedia(explode('-',$indicadore->getFechametaintermedia())[0]);
         $indicadore->setFechametafinal(explode('-',$indicadore->getFechametafinal())[0]);
-
         $editForm = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore, array(
                 'scopes_enabled' => array('N'=>false,'P'=>false,'D'=>false), // en modo edicion, no se puede cambiar el ambito del indicador
                 'entity_manager' => $this->getDoctrine()->getManager(),
@@ -223,6 +222,9 @@ class IndicadoresController extends Controller
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->addIndicadorMetadata($indicadore);
+
+            $indicadore->setFechametaintermedia($indicadore->formatYearToDB($indicadore->getFechametaintermedia()));
+            $indicadore->setFechametafinal($indicadore->formatYearToDB($indicadore->getFechametafinal()));
 
             // documento técnico
             $document = $indicadore->getDocumentPath();
@@ -237,12 +239,11 @@ class IndicadoresController extends Controller
                 $indicadore->setDocumentPath($document_path_string);
             }
             //
-
             $em = $this->getDoctrine()->getManager();
             $em->persist($indicadore);
             $em->flush();
 
-            return $this->redirectToRoute('admin_crud_indicadores_edit', array('id' => $indicadore->getId()));
+            //return $this->redirectToRoute('admin_crud_indicadores_edit', array('id' => $indicadore->getId()));
         }
 
         return $this->render('indicadores/edit.html.twig', array(

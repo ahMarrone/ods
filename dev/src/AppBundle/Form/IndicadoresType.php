@@ -31,7 +31,7 @@ class IndicadoresType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->em = $options['entity_manager'];
-
+        $this->indicador = $builder->getData();
         $tipoSeleccionado = $options['data']->getTipo();
         $ambitoSeleccionado = $options['data']->getAmbito();
         $this->enabledChoices = $options['scopes_enabled'];
@@ -49,11 +49,14 @@ class IndicadoresType extends AbstractType
                 'label'  => 'Ámbito', 
                 'expanded'=>true, 
                 'required'=>true, 
-                'choices' => array('Nacional' => 'N', 'Provincial' => 'P', 'Departamental' => 'D', ), 
-                'data' => $ambitoSeleccionado, 
+                'choices' => array('Nacional' => 'N', 'Provincial' => 'P', 'Departamental' => 'D'), 
+                //'data' => $ambitoSeleccionado, 
                 'choices_as_values' => true,
                 'choice_attr' => function($key, $val, $index) {
                             $disabled = !$this->enabledChoices[$key];
+                            if ($key == $this->indicador->getAmbito()){
+                                return [];
+                            }
                             return $disabled ? ['disabled' => 'disabled'] : [];
                  },
             ))
@@ -91,7 +94,7 @@ class IndicadoresType extends AbstractType
         $idMeta = $indicador->getFkidmeta()->getId();
         $codigo = $indicador->getCodigo();
         if ($this->codeAlreadyUsed($idMeta, $codigo)){
-          $context->addViolationAt('codigo', 'El código de indicador para esta meta ya está utilizado!');
+          //$context->addViolationAt('codigo', 'El código de indicador para esta meta ya está utilizado!');
         }
         if (!$this->checkValidDates($indicador->getFechametaintermedia(), $indicador->getFechametafinal())){
             $context->addViolationAt('fechametafinal',"El año de la meta final debe ser posterior al año de meta intermedia");
