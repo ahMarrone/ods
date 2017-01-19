@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+
+        {% block stylesheets %}
+            <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet" />
+            <link href='{{ asset('css/datatables.min.css') }}' rel="stylesheet" />
+            <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet" />
+            
+            <!-- Estilo fuente -->
+            <link href='https://fonts.googleapis.com/css?family=Roboto:400,500,700' rel='stylesheet' type='text/css'>
+            <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+            <link href="http://www.odsargentina.gob.ar/public/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+            <!-- Fuente Iconos -->
+            <link href="{{ asset('odsargentina/css/font-awesome.min.css') }}" rel="stylesheet">
+            <link href="{{ asset('odsargentina/css/font-awesome-animation.min.css') }}" rel="stylesheet">
+            <!-- Estilos ODS -->
+            <link href="{{ asset('odsargentina/css/estilo_ods.css') }}" rel="stylesheet">
+
+        {% endblock %} 
+
+        {% block javascripts %}
+            <script src="{{ asset('js/jquery.min.js') }}"></script>
+            <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+            <script src="{{ asset('js/datatables.min.js') }}"></script>
+        {% endblock %}    
+
+    </head>
+    <body>
+
+        <!-- HEADER -->  
+        <header>
+          <div class="preHeader">
+            <div class="preLine"></div>
+          </div>
+
+          <!-- START NAVBAR -->  
+          <nav id="navegacion-menu" class="navbar navbar-top navbar-default">
+            <div class="container">
+              <div class="row"> 
+                <div class="navbar-header">
+                  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </button>
+
+                  <!-- LOGOS -->
+                  <div class="logoODS">
+                    <h1><a href="http://www.odsargentina.gob.ar/"><img alt="Logo Agenda 2030 - ODS Argentina" src="http://www.odsargentina.gob.ar/public/images/logoODS.png"/></a></h1>
+                  </div>
+
+                  <div class="logoConsejo">
+                    <a href="http://www.politicassociales.gob.ar" target="_blank"><img src="http://www.odsargentina.gob.ar/public/images/logoConsejo.png" alt="Logo Consejo Nacional de Coordinación de Políticas Sociales" /></a>
+                  </div>
+
+                  <div class="logoPresidencia hidden-sm hidden-xs">
+                    <a href="http://www.presidencia.gob.ar" target="_blank"><img alt="Logo Presidencia de la Nación" src="http://www.odsargentina.gob.ar/public/images/logoPresidencia.png"></a>
+                  </div>
+                </div>
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+                  <ul class="nav navbar-nav navbar-right">
+
+                    <!-- BTN INICIO -->
+                    <li class="green"><a href="http://www.odsargentina.gob.ar/">Inicio</a></li>
+
+                    <!-- BTN INSTITUCIONAL -->
+                    <li id="menuIni" class="dropdown yellow">
+                      <a href="#" class="dropdown-toggle yellow" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Institucional<span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                        <li class="yellow"><a href="http://www.odsargentina.gob.ar/Agenda2030">Agenda 2030</a></li>
+                        <li class="yellow"><a href="http://www.odsargentina.gob.ar/QueSonLosODS">Qué son los ODS</a></li>
+                        <li class="yellow"><a href="http://www.odsargentina.gob.ar/Los17objetivos">Los 17 objetivos</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li class="yellow"><a href="http://www.odsargentina.gob.ar/Consejo#autoridades">Autoridades</a></li>
+                        <li class="yellow"><a href="http://www.odsargentina.gob.ar/Consejo#rol">Rol del Consejo</a></li>
+                        <li class="yellow"><a href="http://www.odsargentina.gob.ar/Consejo#adecuacion">Adecuación</a></li>
+                      </ul>
+                    </li>
+
+                    <!-- BTN PUBLICACIONES -->
+                    <li id="menuPub" class="dropdown lightblue">
+                      <a href="#" class="dropdown-toggle lightblue" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Publicaciones<span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                        <!--<li class="lightblue"><a href="InformacionGeneral">Información general</a></li>-->
+                        <li class="lightblue"><a href="http://www.odsargentina.gob.ar/PublicacionesODS">Documentos ODS</a></li>
+                        <li class="lightblue"><a href="http://www.odsargentina.gob.ar/PublicacionesODM">Documentos ODM</a></li>
+                      </ul>
+                    </li>
+
+                    <!-- BTN NOTICIAS -->
+                    <li id="menuNew" class="orange">
+                      <a href="http://www.odsargentina.gob.ar/Noticias">Noticias</a>
+                    </li>
+
+                    <!-- BTN CONTACTO -->
+                    <li id="contact" class="red"> 
+                      <a href="http://www.odsargentina.gob.ar/Contacto"><!--<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>--><i class="fa fa-envelope faa-shake animated-hover"></i></a>
+                    </li>
+
+                  </ul> 
+                </div>
+              </div>
+            </div>
+          </nav>
+        </header>
+        <!-- END NAVBAR -->
+  
+        <div  id="main-container" class="container">
+            {% block body %}{% endblock %}
+        </div>
+
+        <!-- New footer! -->
+        <footer>
+          <div class="preLine"></div>
+          <div class="main-footer">
+            <div class="container">
+              <div class="row">
+
+                <!-- COL-LEFT -->
+                <div class="col-lg-4 col-md-4 col-sm-3 col-xs-12">
+                  <div class="icon pull-left">
+                    <img src="http://www.odsargentina.gob.ar/public/images/iconos/place-icon.png" alt="Icono de ubicación" />
+                  </div>
+
+                  <div class="info">
+                    <ul>
+                      <li><h4>DIRECCIÓN</h4></li>
+                      <li>Av. Julio A. Roca - 5° Piso (C1067ABP)</li>
+                      <li><h4>LOCALIDAD</h4></li>
+                      <li>C.A.B.A. - República Argentina</li>
+                    </ul>
+                  </div>
+
+                  <div class="visible-xs"><hr /></div>
+                </div>
+
+                <!-- COL-MID -->
+                <div class="col-lg-4 col-md-4 col-sm-5 col-xs-12">
+                  <div class="icon pull-left">
+                    <img src="http://www.odsargentina.gob.ar/public/images/iconos/sitemap-icon.png" alt="Icono de mapa del sitio" />
+                  </div>
+
+                  <div class="info">
+                    <ul class="sitemap">
+                      <li><h4>INSTITUCIONAL</h4></li>
+                      <li>► <a href="http://www.odsargentina.gob.ar/Agenda2030">AGENDA 2030</a></li>
+                      <li>► <a href="http://www.odsargentina.gob.ar/QueSonLosODS">QUÉ SON LOS ODS</a></li>
+                      <li>► <a href="http://www.odsargentina.gob.ar/Los17objetivos">LOS 17 OBJETIVOS</a></li>
+                      <li>► <a href="http://www.odsargentina.gob.ar/Consejo#autoridades">AUTORIDADES</a></li>
+                      <li>► <a href="http://www.odsargentina.gob.ar/Consejo#rol">ROL DEL CONSEJO</a></li>
+                      <li>► <a href="http://www.odsargentina.gob.ar/Consejo#adecuacion">ADECUACIÓN</a></li>
+
+                      <li><h4>PUBLICACIONES</h4></li>
+                      <!--<li>► <a href="http://www.odsargentina.gob.ar/InformacionGeneral">INFO. GENERAL</a></li>-->
+                      <li>► <a href="http://www.odsargentina.gob.ar/PublicacionesODS">DOCUMENTOS ODS</a></li>
+                      <li>► <a href="http://www.odsargentina.gob.ar/PublicacionesODM">DOCUMENTOS ODM</a></li>
+                    </ul>
+                    <ul class="sitemap">
+                      <li><h4>NOTICIAS</h4></li>
+                      <li>► <a href="http://www.odsargentina.gob.ar/Noticias">IR AL LISTADO</a></li>
+                      <li><h4>VIDEOS</h4></li>
+                      <li>► <a href="http://www.odsargentina.gob.ar/Videos">IR A LA SECCIÓN</a></li>
+                      <li><h4>CONTACTO</h4></li>
+                      <li>► <a href="http://www.odsargentina.gob.ar/Videos">ENVIAR CONSULTA</a></li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!-- COL-RIGHT -->
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                  <div class="visible-xs"><hr /></div>
+
+                  <div class="icon pull-left">
+                    <img src="http://www.odsargentina.gob.ar/public/images/iconos/message-icon.png" alt="Icono de información de contacto" />
+                  </div>
+
+                  <div class="info">
+                    <ul>
+                      <li><h4>TELÉFONO</h4></li>
+                      <li>(011) 4343-0181 (Int. 5177)</li>
+                      <li><h4>E-MAIL</h4></li>
+                      <li><a href="mailto:ods@politicassociales.gob.ar">ods@politicassociales.gob.ar</a></li>
+                      <li><h4>REDES SOCIALES</h4></li>
+                      <span class="social pull-left"><a href="http://www.facebook.com/consejopoliticassociales" target="_blank"><i class="fa fa-facebook"></i></a></span>
+                      <span class="social pull-left"><a href="https://twitter.com/CNCPS_Oficial" target="_blank"><i class="fa fa-twitter"></i></a></span>
+                      <span class="social pull-left"><a href="https://www.youtube.com/channel/UCQJNlIYdzeENWUDi7XLB59A" target="_blank"><i class="fa fa-youtube-play"></i></a></span>
+                    </ul>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="subFooter">
+            <div class="container">
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-4 col-xs-12">          
+                  <div class="logoOnuFooter">
+                    <a href="http://www.onu.org.ar" target="_blank"><img src="http://www.odsargentina.gob.ar/public/images/onu.png" alt="Logo de Organización de las Naciones Unidas en Argentina" /></a>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-8 col-xs-12">
+                  <div class="logos-varios">
+                    <div class="logoODS hidden-xs">
+                      <a href="Index"><img src="http://www.odsargentina.gob.ar/public/images/logoODSFooter.png" alt="Logo Agenda 2030 - ODS Argentina" /></a>
+                    </div>  
+                    <div class="logoConsejo">
+                      <a href="http://www.politicassociales.gob.ar" target="_blank"><img src="http://www.odsargentina.gob.ar/public/images/logoConsejoFooter.png" alt="Logo Consejo Nacional de Coordinación de Políticas Sociales" /></a>
+                    </div>        
+                    <div class="logoPresidenciaFooter">
+                      <a href="http://www.presidencia.gob.ar" target="_blank"><img src="http://www.odsargentina.gob.ar/public/images/logoPresidenciaFooter.png" alt="Logo Presidencia de la Nación" /></a>
+                    </div>
+                  </div>
+                </div>  
+              </div>
+            </div>
+          </div>
+        </footer>
+
+    </body>
+</html>
