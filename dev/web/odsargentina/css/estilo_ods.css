@@ -1,5 +1,9 @@
 /* CSS GENERAL */
-body { font-family: 'Roboto', Helvetica, Arial, sans-serif !important; }
+body { 
+  font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
+  /*min-height: 2000px;
+  /*padding-top: 40px; */
+}
 
 a:link { text-decoration: none; }
 a:hover { text-decoration: underline; }

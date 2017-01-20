@@ -14,7 +14,7 @@
     <script type="text/javascript" src="{{ asset('js/provincias-simplified-0dot5-mapa.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/departamentos-simplified-1dot0-mapa.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/sideChart.js') }}"></script>
-
+    <script type="text/javascript" src="{{ asset('nice-select/js/jquery.nice-select.js') }}"></script>
 {% endblock %}    
 
 {% block stylesheets %}
@@ -23,35 +23,18 @@
     /*body {
         padding-top: 150px;
     }*/
-
-    #map_canvas {
-      height: 100%;
-      overflow: hidden;
+    #mapCanvas {
       width: 100%;
+      height: 500px;
+      overflow: hidden;
     }
-    .legend {
-        line-height: 18px;
-        color: #555;
-    }
-    .legend i {
-        width: 18px;
-        height: 18px;
-        float: left;
-        margin-right: 8px;
-        opacity: 0.7;
-    }
-    .myClass {
-        padding-top: 5%;
-        padding-left: 5%;
-        opacity: 0.7;
-    }
-
 
     </style>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="{{ asset('leaflet/leaflet.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/miscStyle.css') }}" />
     <link rel="stylesheet" href="{{ asset('c3/c3.css') }}" />
+    <link rel="stylesheet" href="{{ asset('nice-select/css/nice-select.css') }}" />
     <style type="text/css">
       .leaflet-left .leaflet-control-scale {
       display: inline-block;
@@ -63,6 +46,11 @@
 {% endblock %}
 
 {% block body %}
+
+<!-- SUCIO! Corregir  -->
+<div class="row">
+  <h1></h1>
+</div>
 
 <div class="container-fluid" id='divFluid'>
 <script id="formLoader" type="text/template">
@@ -103,8 +91,6 @@
       <% }); %>
       </select>
     </div>
-    </div>
-    <div class="form-group">
       <label for="selectorIndicador" class="col-xs-2 control-label">Indicador <% if (model.get('indicadores')[model.get('indicador_selected_id')].documentoTecnico) { %> <a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('indicador_selected_id')].documentoTecnico)%>" class="glyphicon glyphicon-question-sign" title="Documento Técnico"></a><% } %></label>
       <div class="col-xs-4">
         <select id="selectorIndicador" class="form-control selectIndicador">
@@ -123,8 +109,7 @@
       <% }); %>
       </select>
     </div>
-    </div>
-    <div class="form-group">
+    
     <label for="selectorDesglose" class="col-xs-2 control-label">Desglose</label>
     <div class="col-xs-4">
     <select id="selectorDesglose" class="form-control selectDesglose">
@@ -158,16 +143,16 @@
 </div>
 
 <div class="container-fluid">
-  <div id="mapCanvas" style="width: 1100px; height: 500px"></div>
+  <div id="mapCanvas"></div>
 </div>
 
 <div class="container-fluid" id='fechasDestacadasDiv'>
 <script id="fechasDestacadasLoader" type="text/template">
 <form class="form-horizontal" role="form">
-  <div class="form-group" id=>
+  <div class="form-group">
     <div class="btn-group " role="group" aria-label="...">
     <% _.each(model.get("indicadores")[model.get("indicador_selected_id")].fechasDestacadas, function(fecha, i) { %>
-    <input type="button" value="<%= fecha %>" class="ButtonFechaDestacada btn btn-default <% if (fecha == model.get('fecha_selected')) { print ('active'); } %>">
+    <input type="button" value="<%= fecha %>" class="ButtonFechaDestacada btn btn-primary sharp <% if (fecha == model.get('fecha_selected')) { print ('active'); } %>">
     <% }); %>
   </div>  
   <div class="col-lg-5">
@@ -249,6 +234,7 @@
         },
         indicadorSelected: function(e){
           this.model.set("indicador_selected_id",$(this.el).find('.selectIndicador').val());
+          /* Actualizar datos, ir a buscarlos y refrescar (Bloquear pantalla) */
           /* Ver si es necesario un 'if */
           /* PROBAR */
           swap(this.model.get('indicadores')[this.model.get('indicador_selected_id')], this.model.get('etiquetas'));

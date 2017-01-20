@@ -1,40 +1,13 @@
-body.front .jumbotron {
-    background: #00cc99;
-    background-size: 100% auto;
-}
-.header .jumbotron ul.navbar-nav li a {
-    color: rgb(60,172,144);
-    padding: 0;
-    margin-right: 20px;
-    margin-bottom: 16px;
-    font-weight: 700;
-    font-size: 16px;
+.selectMap {
+    max-width:100%;
 }
 
-.jumbotron {
-  padding-top: 20px;
-  padding-bottom: 20px;
-  /*background: #00CC99;*/
-  background: #333;
-  background-size: cover;
-  color: #fff;
-  /*margin-bottom: 0;*/
+.btn.sharp {
+  border-radius:0;
 }
-
-.header .jumbotron .page-title {
-    text-align: left;
-    font-size: 20px;
-    font-weight: 600;
-    
-}
-.header .jumbotron .page-caption {
-    text-align: left;
-    font-size: 16px;    
-}
-
 
 .infobox {
-    font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', sans-serif;
+    /*font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', sans-serif;*/
     z-index: 100;
     position: absolute;
     top: 60px;
@@ -132,7 +105,7 @@ table#legend-colors tr td.legend-breaks {
 
 /* Line charts */
 body.page-node .c3 svg {
-    font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', sans-serif;
+    /*font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', sans-serif;*/
     font-size: 12px;
     font-weight: 200;
 }
