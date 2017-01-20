@@ -9,7 +9,6 @@
     <script type="text/javascript" src="{{ asset('js/underscore-min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/backbone-min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/map.js') }}"></script>
-    <!-- <script type="text/javascript" src="{{ asset('geoData.js') }}"></script> -->
     <script type="text/javascript" src="{{ asset('js/nacion-simplified-1dot0-mapa.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/provincias-simplified-0dot5-mapa.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/departamentos-simplified-1dot0-mapa.js') }}"></script>
@@ -19,40 +18,16 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <style type="text/css">
-    /*body {
-        padding-top: 150px;
-    }*/
-    #mapCanvas {
-      width: 100%;
-      height: 500px;
-      overflow: hidden;
-    }
-
-    </style>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="{{ asset('leaflet/leaflet.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/miscStyle.css') }}" />
     <link rel="stylesheet" href="{{ asset('c3/c3.css') }}" />
-    <link rel="stylesheet" href="{{ asset('nice-select/css/nice-select.css') }}" />
-    <style type="text/css">
-      .leaflet-left .leaflet-control-scale {
-      display: inline-block;
-      float: none;
-    }
-    </style>
-
-    
+    <link rel="stylesheet" href="{{ asset('nice-select/css/nice-select.css') }}" />  
 {% endblock %}
 
 {% block body %}
 
-<!-- SUCIO! Corregir  -->
-<div class="row">
-  <h1></h1>
-</div>
-
-<div class="container-fluid" id='divFluid'>
+<div class="container-fluid" id='divFluid' style="padding-top: 15px;">
 <script id="formLoader" type="text/template">
 <!-- Modificar para que sea  "1.1.1 Proporción de la p...nacional de la pobreza." -->
 
@@ -72,95 +47,116 @@
   }
 });%>
   <form class="form-horizontal" role="form">
-    <div class="form-group">
-    <label for="selectorObjetivo" class="col-xs-2 control-label">Objetivo</label>
-    <div class="col-xs-4">
-    <select id="selectorObjetivo" class="form-control selectObjetivo">
-      <% _.each(model.get("objetivos"), function( objetivo, i){ %>
-        <option title="<%= objetivo.descripcion %>" value="<%= objetivo.id %>" <% if (objetivo.id == model.get("objetivo_selected")) { %> selected<% }  %>><%= _(objetivo.descripcion).trim(60) %></option>
-      <% }); %>
-    </select>
-    </div>
-    <label for="selectorMeta" class="col-xs-1 control-label">Meta</label>
-      <div class="col-xs-4">
-      <select id="selectorMeta" class="form-control selectMeta">
-      <% _.each(model.get("metas"), function( meta, i){ %>',
-        <% if ( meta.id_objetivo == model.get("objetivo_selected") ){ %>
-          <option title="<%= meta.descripcion %>" value="<%= meta.id %>" <% if (meta.id == model.get("meta_selected")) { %> selected<% }  %>><%= _(meta.descripcion).trim(60) %></option>
-        <% } %>
-      <% }); %>
-      </select>
-    </div>
-      <label for="selectorIndicador" class="col-xs-2 control-label">Indicador <% if (model.get('indicadores')[model.get('indicador_selected_id')].documentoTecnico) { %> <a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('indicador_selected_id')].documentoTecnico)%>" class="glyphicon glyphicon-question-sign" title="Documento Técnico"></a><% } %></label>
-      <div class="col-xs-4">
-        <select id="selectorIndicador" class="form-control selectIndicador">
-          <% _.each(model.get("indicadores"), function( indicador, i){ %>
-            <% if ( indicador.id_meta == model.get("meta_selected") ){ %>
-              <option value="<%= i %>" <% if (i == model.get("indicador_selected_id")) { %> selected<% }  %>><%= indicador.descripcion %></option>
-            <% } %>
+    <div class="col-sm-6 col-lg-4">
+      <div class="form-group">
+        <label for="selectorObjetivo" class="col-md-3 control-label">Objetivo</label>
+        <div class="col-md-9">
+          <select id="selectorObjetivo" class="form-control selectObjetivo">
+          <% _.each(model.get("objetivos"), function( objetivo, i){ %>
+          <option title="<%= objetivo.descripcion %>" value="<%= objetivo.id %>" <% if (objetivo.id == model.get("objetivo_selected")) { %> selected<% }  %>><%= _(objetivo.descripcion).trim(30) %></option>
           <% }); %>
-        </select>
-      </div>
-      <label for="selectorAnio" class="col-xs-1 control-label">Año</label>
-      <div class="col-xs-4">
-      <select id="selectorAnio" class="form-control selectFecha">
-      <% _.each(model.get("valoresIndicadoresDesgloses"), function(e, f){ %>',
+          </select>
+        </div>
+      </div> <!-- /.form-group -->
+    </div> <!-- /.col-sm-6 col-lg-4 -->
+    <div class="col-sm-6 col-lg-4">
+      <div class="form-group">
+        <label for="selectorMeta" class="col-md-3 control-label">Meta</label>
+        <div class="col-md-9">
+          <select id="selectorMeta" class="form-control selectMeta">
+          <% _.each(model.get("metas"), function( meta, i){ %>',
+          <% if ( meta.id_objetivo == model.get("objetivo_selected") ){ %>
+          <option title="<%= meta.descripcion %>" value="<%= meta.id %>" <% if (meta.id == model.get("meta_selected")) { %> selected<% }  %>><%= _(meta.descripcion).trim(30) %></option>
+          <% } %>
+          <% }); %>
+          </select>
+        </div>
+      </div> <!-- /.form-group -->
+    </div> <!-- /.col-sm-6 col-lg-4 -->
+    <div class="col-sm-6 col-lg-4">
+      <div class="form-group">
+        <label for="selectorIndicador" class="col-md-3 control-label">Indicador <% if (model.get('indicadores')[model.get('indicador_selected_id')].documentoTecnico) { %><a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('indicador_selected_id')].documentoTecnico)%>" class="glyphicon glyphicon-question-sign" title="Documento Técnico"></a><% } %></label>
+        <div class="col-md-9">
+          <select id="selectorIndicador" class="form-control selectIndicador">
+          <% _.each(model.get("indicadores"), function( indicador, i){ %>
+          <% if ( indicador.id_meta == model.get("meta_selected") ){ %>
+          <option option title="<%= indicador.descripcion %>" value="<%= i %>" <% if (i == model.get("indicador_selected_id")) { %> selected<% }  %>><%= _(indicador.descripcion ).trim(30) %></option>
+          <% } %>
+          <% }); %>
+          </select>
+        </div>
+      </div> <!-- /.form-group -->
+    </div> <!-- /.col-sm-6 col-lg-4 -->
+    <div class="col-sm-6 col-lg-4">
+      <div class="form-group">
+        <label for="selectorAnio" class="col-md-3 control-label">Año</label>
+        <div class="col-md-9">
+          <select id="selectorAnio" class="form-control selectFecha">
+          <% _.each(model.get("valoresIndicadoresDesgloses"), function(e, f){ %>',
           <option title="<%= f %>" value="<%= f %>" <% if (f == model.get("fecha_selected")) { %> selected<% }  %>><%= f %></option>
-      <% }); %>
-      </select>
-    </div>
-    
-    <label for="selectorDesglose" class="col-xs-2 control-label">Desglose</label>
-    <div class="col-xs-4">
-    <select id="selectorDesglose" class="form-control selectDesglose">
-      <% _.each(model.get("desgloses"), function(desglose, i){ %>
-      <!-- MODIFICAR PARA USAR BÚSQUEDA BINARIA  -->
-        <% if ( _.indexOf(model.get("valoresIndicadoresDesgloses")[model.get("fecha_selected")].id_desgloses, desglose.id) != -1 ){ %>
-        <option title="<%= desglose.descripcion %>" value="<%= desglose.id %>"<% if (desglose.id == model.get("desglose_selected")) { %> selected<% } %>><%= desglose.descripcion %></option>
-        <% } %>
-      <% }); %>
-    </select>
-    </div>
-    <label for="selectorEtiqueta" class="col-xs-1 control-label">Etiqueta</label>
-      <div class="col-xs-4">
-      <% if ( model.get("desglose_selected") == 0 ) { %>
-      <select disabled id="selectorEtiqueta" class="form-control selectEtiqueta">
-      <% } else { %>
-      <select id="selectorEtiqueta" class="form-control selectEtiqueta">
-      <% } %>
-      <% model.set('etiquetas_current', []) %>
-      <% _.each(model.get("etiquetas"), function(etiqueta, i){ %>
-        <% if ( etiqueta.id_desglose == model.get("desglose_selected") ){ %>
+          <% }); %>
+          </select>
+        </div>
+      </div> <!-- /.form-group -->
+    </div> <!-- /.col-sm-6 col-lg-4 -->
+    <div class="col-sm-6 col-lg-4">
+      <div class="form-group">
+        <label for="selectorDesglose" class="col-md-3 control-label">Desglose</label>
+        <div class="col-md-9">
+          <select id="selectorDesglose" class="form-control selectDesglose">
+          <% _.each(model.get("desgloses"), function(desglose, i){ %>
+          <!-- MODIFICAR PARA USAR BÚSQUEDA BINARIA  -->
+          <% if ( _.indexOf(model.get("valoresIndicadoresDesgloses")[model.get("fecha_selected")].id_desgloses, desglose.id) != -1 ){ %>
+          <option title="<%= desglose.descripcion %>" value="<%= desglose.id %>"<% if (desglose.id == model.get("desglose_selected")) { %> selected<% } %>><%= desglose.descripcion %></option>
+          <% } %>
+          <% }); %>
+          </select>
+        </div>
+      </div> <!-- /.form-group -->
+    </div> <!-- /.col-sm-6 col-lg-4 -->
+    <div class="col-sm-6 col-lg-4">
+      <div class="form-group">
+        <label for="selectorEtiqueta" class="col-md-3 control-label">Etiqueta</label>
+        <div class="col-md-9">
+          <% if ( model.get("desglose_selected") == 0 ) { %>
+          <select disabled id="selectorEtiqueta" class="form-control selectEtiqueta">
+          <% } else { %>
+          <select id="selectorEtiqueta" class="form-control selectEtiqueta">
+          <% } %>
+          <% model.set('etiquetas_current', []) %>
+          <% _.each(model.get("etiquetas"), function(etiqueta, i){ %>
+          <% if ( etiqueta.id_desglose == model.get("desglose_selected") ){ %>
           <% model.get('etiquetas_current').push(etiqueta.id); %>
           <option title="<%= etiqueta.descripcion %>" value="<%= etiqueta.id %>" <% if ( etiqueta.descripcion == "Total" ) { model.set('etiqueta_selected', etiqueta.id ) %> selected<% } %>><% if ( etiqueta.id != 0 ) { %> <%= etiqueta.descripcion %> <% } %></option>
-        <% } %>
-      <% }); %>
-      </select>
-    </div>
-    </div>
+          <% } %>
+          <% }); %>
+          </select>
+        </div>
+      </div> <!-- /.form-group -->
+    </div> <!-- /.col-sm-6 col-lg-4 -->
   </form>  
 </script>
 </div>
 
-<div class="container-fluid">
-  <div id="mapCanvas"></div>
-</div>
+<div class="container-fluid mapCanvas" id="mapCanvas"></div>
 
-<div class="container-fluid" id='fechasDestacadasDiv'>
+<table class="table table-responsive" id='fechasDestacadasDiv'>
 <script id="fechasDestacadasLoader" type="text/template">
-<form class="form-horizontal" role="form">
-  <div class="form-group">
-    <div class="btn-group " role="group" aria-label="...">
-    <% _.each(model.get("indicadores")[model.get("indicador_selected_id")].fechasDestacadas, function(fecha, i) { %>
-    <input type="button" value="<%= fecha %>" class="ButtonFechaDestacada btn btn-primary sharp <% if (fecha == model.get('fecha_selected')) { print ('active'); } %>">
-    <% }); %>
-  </div>  
-  <div class="col-lg-5">
-  </div>
-  </div>
-</form>
+<tbody>
+    <tr>
+      <!-- <td  style="padding-top: 0px; background-color: #DFF6FF;padding-bottom: 0px"> -->
+      <td>
+      <div class="text-center" id='fechasDestacadasDiv'>
+        <div class="btn-group " role="group" aria-label="...">
+          <% _.each(model.get("indicadores")[model.get("indicador_selected_id")].fechasDestacadas, function(fecha, i) { %>
+          <input type="button" value="<%= fecha %>" class="ButtonFechaDestacada btn btn-primary sharp <% if (fecha == model.get('fecha_selected')) { print ('active'); } %>">
+          <% }); %>
+        </div>  
+      </div>
+      </td>
+    </tr>
 </script>
-</div>
+</table>
 
 <script type="text/javascript">
   $(document).ready(function() {

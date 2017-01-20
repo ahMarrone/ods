@@ -4,6 +4,29 @@
 
 .btn.sharp {
   border-radius:0;
+  /*background-color: #034ea2;*/
+}
+
+.form-horizontal .control-label {
+    padding-right: 0px;
+    text-align: center;
+}
+
+/*.form-horizontal .form-control  {
+    margin-bottom: 0;
+    padding-top: 1px;
+    text-align: center;
+}*/
+
+.mapCanvas {
+      width: 100%;
+      height: 500px;
+      overflow: hidden;
+}
+
+.leaflet-left .leaflet-control-scale {
+    display: inline-block;
+    float: none;
 }
 
 .infobox {
