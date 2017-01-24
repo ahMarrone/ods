@@ -131,7 +131,7 @@ class IndicadoresController extends Controller
         $list = array();
         $objetivos =  $this->getDoctrine()->getRepository('AppBundle:Objetivos')->findAll();
         foreach ($objetivos as $o) {
-            array_push($list, array('id'=>$o->getId(),'desc'=>$o->getDescripcion()));
+            array_push($list, array('id'=>$o->getId(),'desc'=>$o->getDescripcion(),'code'=>$o->getCodigo()));
         }
         return $list;
     }
@@ -140,7 +140,7 @@ class IndicadoresController extends Controller
         $list = array();
         $metas =  $this->getDoctrine()->getRepository('AppBundle:Metas')->findAll();
         foreach ($metas as $m) {
-            array_push($list, array('id'=>$m->getId(),'desc'=>$m->getDescripcion(),'id_objetivo'=>$m->getFkidobjetivo()->getId()));
+            array_push($list, array('id'=>$m->getId(),'desc'=>$m->getDescripcion(),'id_objetivo'=>$m->getFkidobjetivo()->getId(),'code'=>$m->getCodigo(), 'code_objetivo'=>$m->getFkidobjetivo()->getCodigo()));
         }
         return $list;
     }

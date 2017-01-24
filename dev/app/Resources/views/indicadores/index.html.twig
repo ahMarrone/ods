@@ -28,6 +28,7 @@
             <tr>
                 <th>IdMeta</th>
                 <th>Id</th>
+                <th>Codigo</th>                
                 <th>Descripcion</th>
                 <th>Tipo</th>
                 <th>Valmin</th>
@@ -42,6 +43,7 @@
             <tr>
                 <td>{{ indicadore.fkidmeta.id }}</td>
                 <td>{{ indicadore.id }}</td>
+                <td>{{indicadore.fkidmeta.fkidobjetivo.codigo}}.{{indicadore.fkidmeta.codigo}}.{{indicadore.codigo}}</td>                
                 <td><a href="{{ path('admin_crud_indicadores_show', { 'id': indicadore.id }) }}">{{ indicadore.descripcion }}</a></td>
                 <td>{{ indicadore.tipo }}</td>
                 <td>{{ indicadore.valmin }}</td>
@@ -81,10 +83,10 @@
                 "columnDefs": [
                     { "visible": false, "targets": 0 },
                     { "visible": false, "targets": 1 },
-                    { "width": "60%","title": "Descripción", "targets": 2 },
-                    { "title": "Valor máx.", "targets": 4 },
-                    { "title": "Valor mín.", "targets": 5 },
-                    { "width": "25%", "targets": 8 },
+                    { "width": "60%","title": "Descripción", "targets": 3 },
+                    { "title": "Valor máx.", "targets": 5 },
+                    { "title": "Valor mín.", "targets": 6 },
+                    { "width": "25%", "targets": 9 },
                 ],
             });
         }
@@ -109,6 +111,7 @@
                 'objetivo_selected': objetivo_selected,
                 'meta_selected': meta_selected,
             });
+            console.log(metas);
             viewThreeSelect = new ThreeSelectView({el: $("#selects"), model:modelThreeSelect,
                 objetivo_selected: objetivo_selected, meta_selected: meta_selected,
                 metaChangeCallback: filterTableIndicadores,

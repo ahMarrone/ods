@@ -57,7 +57,7 @@ class MetasController extends Controller
         $list = array();
         $objetivos =  $this->getDoctrine()->getRepository('AppBundle:Objetivos')->findAll();
         foreach ($objetivos as $o) {
-            array_push($list, array('id'=>$o->getId(),'desc'=>$o->getId() ." - " . $o->getDescripcion()));
+            array_push($list, array('id'=>$o->getId(),'desc'=>$o->getDescripcion(), 'code'=>$o->getcodigo()));
         }
         return $list;
     }

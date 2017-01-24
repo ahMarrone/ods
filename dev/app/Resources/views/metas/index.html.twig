@@ -40,7 +40,7 @@
             <tr>
                 <td>{{ meta.fkidobjetivo.id}}</td>
                 <td>{{ meta.id }}</td>
-                <td>{{ meta.fkidobjetivo.id}}.{{ meta.codigo }}</td>
+                <td>{{ meta.fkidobjetivo.codigo}}.{{ meta.codigo }}</td>
                 <td><a href="{{ path('admin_crud_metas_show', { 'id': meta.id }) }}">{{ meta.descripcion }}</a></td>
                 <td>
 
@@ -104,6 +104,7 @@
                 'objetivos': objetivos,
                 'objetivo_selected': objetivo_selected,
             });
+            console.log(objetivos);
             viewThreeSelect = new ThreeSelectView({el: $("#selects"), model:modelThreeSelect,
                 objetivoChangeCallback: filterTableMetas });
         }
