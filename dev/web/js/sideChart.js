@@ -36,7 +36,7 @@ var templateSideChart = [
     '</div>',
     '<% } else { %>',
     '<div class="indicador-valor" style="color: <%= _(model.get("layerProperties").value).getColor() %>" >',
-    '<%= model.get("layerProperties").value.toFixed(2).replace(".", ",") %></div>',
+    '<%= model.get("layerProperties").value.toFixed(3).replace(".", ",") %></div>',
     '<div class="texto-aclaracion">Al momento sólo se cuenta con datos para el año de referencia</div>',
     '</div>',
     '</div>',
@@ -45,7 +45,7 @@ var templateSideChart = [
     '<div class="meta">',
     '<% _.each(model.get("indicador").fechasMetas, function(item, i){ %>',
     '<% if (i != 0) { %> - <% } %>',
-    'Meta <%= item[0] %>: <%= item[1].toFixed(2).replace(".", ",") %>',
+    'Meta <%= item[0] %>: <%= item[1].toFixed(3).replace(".", ",") %>',
     '<% }); %>',
     '</div>',
     '<% } %>',
@@ -177,7 +177,7 @@ function plot(chartData, descripcionEtiquetaSeleccionada, indiceColorEtiqueta) {
         tooltip: {
             format: {
                 value: function(value) {
-                    return d3.format(",.2f")(value).replace('.', ' ').replace(/,/g, '.').replace(' ', ',')
+                    return d3.format(",.3f")(value).replace('.', ' ').replace(/,/g, '.').replace(' ', ',')
                 }
             }
         },
