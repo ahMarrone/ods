@@ -7,6 +7,7 @@
     </ol>
     <div class="page-header">
           <h1>Valores de indicadores</h1>
+          <h1><small>{{indicador_desc}}</small></h1>
     </div>
 
 
@@ -19,7 +20,6 @@
 		<th>ID Etiqueta</th>
 		<th>ID Usuario</th>	
 		<th>ID Ref</th>
-		<th>Indicador</th>
 		<th>Fecha</th>
 		<th>Ref. geográfica</th>
 		<th>Usuario</th>
@@ -34,7 +34,6 @@
 		<th>ID Etiqueta</th>
 		<th>ID Usuario</th>	
 		<th>ID Ref</th>
-		<th>Indicador</th>
 		<th>Fecha</th>
 		<th>Ref. geográfica</th>
 		<th>Usuario</th>
@@ -49,7 +48,6 @@
 		<td>{{ valorindicador.idEtiqueta }}</td>
 		<td>{{ valorindicador.idUsuario.id }}</td>
 		<td>{{ valorindicador.idRefgeografica.id }}</td>
-		<td title="{{ valorindicador.idvaloresindicadoresconfigfecha.idIndicador }}">{{ valorindicador.idvaloresindicadoresconfigfecha.idIndicador }}</td>
 		<td>{{ valorindicador.idvaloresindicadoresconfigfecha.fecha|date("Y-m-d") }}</td>
 		<td>{{ valorindicador.idRefgeografica }}</td>
 		<td>{{ valorindicador.idUsuario }}</td>
@@ -109,7 +107,7 @@
 			"indicador":row[0],
 			"etiqueta":row[1],
 			"refGeografica":row[3],
-			"fecha":row[5]
+			"fecha":row[4]
 		}
 	}
 
@@ -168,7 +166,8 @@
                 "targets": [0,1,2,3],
                 "visible": false
             }
-        ]
+        ],
+        "order": [[ 9, "asc" ]]
     });
 
     $('#valoresindicadoresTable tbody').on( 'click', 'tr', function () {

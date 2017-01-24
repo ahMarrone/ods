@@ -26,17 +26,26 @@ class ValoresIndicadoresController extends Controller
     /**
      * Lists all ValoresIndicadores entities.
      *
-     * @Route("/", name="admin_crud_valoresindicadores_index")
+     * @Route("/{id_indicador}",  requirements={"id_indicador" = "\d+"}, name="admin_crud_valoresindicadores_index")
      * @Method("GET")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
+        $etiquetas = $valoresindicadores = NULL;
+        $indicadorDesc = "";
+        $idIndicador = intval($request->get('id_indicador'));
         $em = $this->getDoctrine()->getManager();
-        $valoresindicadores = $em->getRepository('AppBundle:Valoresindicadores')->findAll();
-        $etiquetas = $this->getKeyValueEtiquetas($em->getRepository('AppBundle:Etiquetas')->findAll());
+        $indicador = $em->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
+        if (count($indicador)){
+            $indicadorDesc = $indicador->getDescripcion();
+            $configfechaEntity = $em->getRepository('AppBundle:Valoresindicadoresconfigfecha')->findByIdindicador($idIndicador);
+            $valoresindicadores = $em->getRepository('AppBundle:Valoresindicadores')->findByIdvaloresindicadoresconfigfecha($configfechaEntity);
+            $etiquetas = $this->getKeyValueEtiquetas($em->getRepository('AppBundle:Etiquetas')->findAll());
+        }
         return $this->render('valoresindicadores/index.html.twig', array(
             'valoresindicadores' => $valoresindicadores,
             'etiquetas'=> $etiquetas,
+            'indicador_desc' => $indicadorDesc,
             'api_urls' => array('aproveData'=> $this->generateUrl('admin_crud_valoresindicadores_aproveData'))
         ));
     }
