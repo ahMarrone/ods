@@ -34,7 +34,17 @@
            <div id="selects"></div>
         </div>
 
+        <!--
         {{ form_widget(form) }}
+        -->
+        
+        <div>
+			{{ form_label(form.descripcion) }}
+			{{ form_errors(form.descripcion) }}
+			{{ form_widget(form.descripcion) }}
+		</div>
+        
+        
 
          <div>
            <div id="highlightDatesControl"></div>
@@ -57,8 +67,6 @@
     $(document).ready(function() {
 
         var api_urls = {{ api_urls|json_encode|raw}};
-
-
         var objetivos = {{ objetivos|json_encode|raw}};
         var metas = {{ metas|json_encode|raw}};
 
@@ -78,13 +86,11 @@
             });
         }
 
-
         // Agrego al formulario controles para agregar fechas destacadas
         function addHiglightedDatesControls(){
             modelHighlightDates = new HighlightDates({dates:[]});
             viewHighlightDates = new HighlightDatesView({el: $("#highlightDatesControl"), model:modelHighlightDates});
         }
-
 
         function getNextIndicadorCode(){
             var idMeta = $('#three_select_meta').val();
@@ -105,8 +111,6 @@
                   },
               });
         }
-
-
 
         addThreeSelectControls();
         addHiglightedDatesControls();

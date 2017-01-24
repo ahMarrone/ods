@@ -3,10 +3,11 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: localhost
--- Tiempo de generación: 29-11-2016 a las 13:35:25
+-- Tiempo de generación: 24-01-2017 a las 14:42:02
 -- Versión del servidor: 5.5.53-0ubuntu0.14.04.1
 -- Versión de PHP: 5.5.9-1ubuntu4.20
 
+SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
@@ -19,7 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `indicadores_ods`
 --
-drop database `indicadores_ods`;
 CREATE DATABASE IF NOT EXISTS `indicadores_ods` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 USE `indicadores_ods`;
 
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `desgloces` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del desgloce',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `etiquetas` (
   `fkIdDesgloce` int(11) unsigned NOT NULL COMMENT 'clave foranea desgloce',
   PRIMARY KEY (`id`),
   KEY `fkIdDesgloce` (`fkIdDesgloce`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=8 ;
 
 -- --------------------------------------------------------
 
@@ -101,14 +101,14 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
   `fechaModificacion` datetime NOT NULL,
   `fechasDestacadas` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL,
   `documentpath` varchar(200) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `fechaMetaIntermedia` date NULL,
-  `valorEsperadoMetaIntermedia` decimal(10,2) NULL,
-  `fechaMetaFinal` date NULL,
-  `valorEsperadoMetaFinal` decimal(10,2) NULL,
+  `fechaMetaIntermedia` date DEFAULT NULL,
+  `valorEsperadoMetaIntermedia` decimal(15,6) DEFAULT NULL,
+  `fechaMetaFinal` date DEFAULT NULL,
+  `valorEsperadoMetaFinal` decimal(15,6) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fkIdMeta` (`fkIdMeta`),
   KEY `ndxUsuario` (`idUsuario`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=6 ;
 
 -- --------------------------------------------------------
 
@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS `metas` (
   PRIMARY KEY (`id`),
   KEY `fkIdObjetivo` (`fkIdObjetivo`),
   KEY `ndxUsuario` (`idUsuario`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=163 ;
 
 -- --------------------------------------------------------
 
@@ -139,10 +139,11 @@ CREATE TABLE IF NOT EXISTS `metas` (
 DROP TABLE IF EXISTS `objetivos`;
 CREATE TABLE IF NOT EXISTS `objetivos` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `codigo` int(11) unsigned NOT NULL UNIQUE,
+  `codigo` int(11) unsigned NOT NULL,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del objtivo',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `codigo` (`codigo`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=18 ;
 
 -- --------------------------------------------------------
 
@@ -156,7 +157,7 @@ CREATE TABLE IF NOT EXISTS `refGeografica` (
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la referencia geografica',
   `ambito` enum('N','P','D','L','R') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito de la ref. geografica',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=554 ;
 
 -- --------------------------------------------------------
 
@@ -196,7 +197,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   UNIQUE KEY `UNIQ_957A647992FC23A8` (`username_canonical`),
   UNIQUE KEY `UNIQ_957A6479A0D96FBF` (`email_canonical`),
   UNIQUE KEY `UNIQ_957A6479C05FB297` (`confirmation_token`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
@@ -223,7 +224,7 @@ CREATE TABLE IF NOT EXISTS `valoresIndicadores` (
   `idValoresIndicadoresConfigFecha` int(11) unsigned NOT NULL,
   `idEtiqueta` varchar(30) COLLATE utf8_spanish_ci NOT NULL COMMENT 'Clave en formato string que representa el cruce de etuqietas del registro',
   `idRefGeografica` int(11) unsigned NOT NULL,
-  `valor` decimal(10,2) NOT NULL,
+  `valor` decimal(15,6) NOT NULL,
   `aprobado` tinyint(1) NOT NULL,
   `idUsuario` int(11) unsigned NOT NULL,
   `fechaModificacion` datetime NOT NULL,
@@ -248,7 +249,7 @@ CREATE TABLE IF NOT EXISTS `valoresIndicadoresConfigFecha` (
   `cruzado` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `desglocesIndicadores_uniq_1` (`idIndicador`,`fecha`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=10 ;
 
 -- --------------------------------------------------------
 
@@ -329,6 +330,7 @@ ALTER TABLE `valoresIndicadoresConfigFecha`
 ALTER TABLE `valoresIndicadoresConfigFechaDesgloces`
   ADD CONSTRAINT `valoresIndicadoresConfigFechaDesgloces_ibfk_1` FOREIGN KEY (`idDesgloce`) REFERENCES `desgloces` (`id`),
   ADD CONSTRAINT `valoresIndicadoresConfigFechaDesgloces_ibfk_2` FOREIGN KEY (`idValoresIndicadoresConfigFecha`) REFERENCES `valoresIndicadoresConfigFecha` (`id`);
+SET FOREIGN_KEY_CHECKS=1;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

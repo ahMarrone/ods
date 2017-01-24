@@ -3,48 +3,52 @@
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
         <li class="active">Perfil de usuario</a></li>
     </ol>
-    <div class="page-header">
-          <h1>Perfil de usuario</h1>
-    </div>
-<div class="fos_user_user_show">
-	<dl class="dl-horizontal">
-  		<dt>{{ 'Usuario'|trans }}</dt>
-  		<dd> {{ user.username }}</dd>
-	</dl>
-	<dl class="dl-horizontal">
-  		<dt>{{ 'Email'|trans }}</dt>
-  		<dd> {{ user.email }}</dd>
-	</dl>
-	<dl class="dl-horizontal">
-  		<dt>{{ 'Apellido'|trans }}</dt>
-  		<dd> {{ user.apellido }}</dd>
-	</dl>
-	<dl class="dl-horizontal">
-  		<dt>{{ 'Nombre'|trans }}</dt>
-  		<dd> {{ user.nombre }}</dd>
-	</dl>
-	<dl class="dl-horizontal">
-  		<dt>{{ 'Domicilio'|trans }}</dt>
-  		<dd> {{ user.domicilio }}</dd>
-	</dl>
-	<dl class="dl-horizontal">
-  		<dt>{{ 'Localidad'|trans }}</dt>
-  		<dd> {{ user.localidad }}</dd>
-	</dl>
-	<dl class="dl-horizontal">
-  		<dt>{{ 'Provincia'|trans }}</dt>
-  		<dd> {{ user.provincia }}</dd>
-	</dl>
-	<dl class="dl-horizontal">
-  		<dt>{{ 'Teléfono'|trans }}</dt>
-  		<dd> {{ user.telefono }}</dd>
-	</dl>
-	<dl class="dl-horizontal">
-  		<dt>{{ 'Dependencia'|trans }}</dt>
-  		<dd> {{ user.dependencia }}</dd>
-	</dl>
-	<dl class="dl-horizontal">
-  		<dt>{{ 'Observaciones'|trans }}</dt>
-  		<dd> {{ user.observaciones}}</dd>
-	</dl>
-</div>
+
+	<div class="page-header">
+		<h1>Perfil de <span style="color:#034EA2">'{{ user.username }}'</div></h1>
+	</div>
+
+
+	<div class="fos_user_user_show">
+		<dl class="dl-horizontal">
+	  		<dt>{{ 'Usuario'|trans }}</dt>
+	  		<dd> {{ user.username }}</dd>
+		</dl>
+		<dl class="dl-horizontal">
+	  		<dt>{{ 'Email'|trans }}</dt>
+	  		<dd> {{ user.email }}</dd>
+		</dl>
+		<dl class="dl-horizontal">
+	  		<dt>{{ 'Apellido'|trans }}</dt>
+	  		<dd> {{ user.apellido }}</dd>
+		</dl>
+		<dl class="dl-horizontal">
+	  		<dt>{{ 'Nombre'|trans }}</dt>
+	  		<dd> {{ user.nombre }}</dd>
+		</dl>
+		<dl class="dl-horizontal">
+	  		<dt>{{ 'Domicilio'|trans }}</dt>
+	  		<dd> {{ user.domicilio }}</dd>
+		</dl>
+		<dl class="dl-horizontal">
+	  		<dt>{{ 'Localidad'|trans }}</dt>
+	  		<dd> {{ user.localidad }}</dd>
+		</dl>
+		<dl class="dl-horizontal">
+	  		<dt>{{ 'Provincia'|trans }}</dt>
+	  		<dd> {{ user.provincia }}</dd>
+		</dl>
+		<dl class="dl-horizontal">
+	  		<dt>{{ 'Teléfono'|trans }}</dt>
+	  		<dd> {{ user.telefono }}</dd>
+		</dl>
+		<dl class="dl-horizontal">
+	  		<dt>{{ 'Dependencia'|trans }}</dt>
+	  		<dd> {{ user.dependencia }}</dd>
+		</dl>
+		<dl class="dl-horizontal">
+	  		<dt>{{ 'Observaciones'|trans }}</dt>
+	  		<dd> {{ user.observaciones}}</dd>
+		</dl>
+	</div>
+
