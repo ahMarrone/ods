@@ -13,23 +13,27 @@
 		</div>
 	</div>
 	<div class="row">
+    <div class="col-md-1">
       <a class="quick-btn" href="{{ path('fos_user_profile_show') }}">
         <i class="fa fa-user fa-3x"></i>
         <span>Mi perfil</span> 
       </a>
+    </div>
+      <div class="col-md-1">
       <a class="quick-btn" href="{{ path('admin_users_index') }}">
         <i class="fa fa-user-plus fa-3x"></i>
         <span>Administrar</span> 
       </a> 
-</div>
+    </div>
+  </div>
 </div>
 <div class="row"> 
 <div class="panel-section">
-		<div class="page-header">
-		  <h2>Objetivos, metas e indicadores</h2>
-		</div>
-	</div>
-	<div class="row">
+    <div class="page-header">
+      <h2>Objetivos, metas e indicadores</h2>
+    </div>
+  </div>
+  <div class="row">
     <div class="col-md-1">
       <a class="quick-btn" href="{{ path('admin_crud_objetivos_index') }}">
         <i class="fa fa-globe fa-3x"></i>
@@ -63,7 +67,7 @@
         <span>Etiquetas</span> 
       </a>
     </div>
-
+  </div>
 </div>
 <div class="row"> 
 <div class="panel-section">
@@ -72,14 +76,12 @@
 		</div>
 	</div>
 	<div class="row">
-      <a class="quick-btn" href="{{ path('admin_crud_valoresindicadores_index') }}">
-        <i class="fa fa-eye fa-3x"></i>
-         <span class="label label-danger">{{stats.toAprove}}</span>
-        <span>Datos</span> 
-      </a>
+    <div class="col-md-1">
       <a class="quick-btn" href="{{ path('admin_crud_valoresindicadores_preload') }}">
         <i class="fa fa-plus-circle fa-3x"></i>
         <span>Cargar</span> 
       </a>
+    </div>
 	</div>
+ </div>
 {% endblock %}
