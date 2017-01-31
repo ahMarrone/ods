@@ -13,7 +13,7 @@
   
     <script src="{{ asset('js/underscore-min.js') }}"></script>
     <script src="{{ asset('js/backbone-min.js') }}"></script>
-     <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -51,7 +51,6 @@
 <script id="panelListWrapper" type="text/template">
 <nav id="navbar-panel-create" class="navbar row">
   <div class="container-fluid">
-    <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="">
       <ul class="nav navbar-nav">
          <% if (this.collection.isRefLeft()) { %>
@@ -92,20 +91,10 @@
         <div class="panel-body">
           <form>
           <div class="form-group">
-          <label>Ref. geog.</label>
+          <label>Referencia geográfica</label>
           <div>
             <select class="form-control refGeogSelect" <% if (model.is_preloaded) { %>disabled="disabled"<% }  %>>
-            <% _.each( collection.refGeograficas, function( ref, i){ %>
-                <% if ( i == model.id_ref_geografica ){ %>
-                  <option value="<%= i %>" selected>
-                  <%= ref.desc %>
-                  </option>
-                <%  } else if (!ref.used && (ref.parent == collection.filterParentID)){ %>
-                    <option value="<%= i %>">
-                  <%= ref.desc %>
-                  </option>
-                <% } %>
-            <% }); %>
+            <%= this.getRefGeograficasSelect() %>
             </select>
             </div>
           </div>
@@ -222,6 +211,7 @@
         var refGeograficaCollection = null;
         var refGeograficaPanelList = null;
 
+
         /////////////////// MODELOS //////////////////////////////7
 
         // Contiene los datos asociados a una referencia geografica
@@ -290,13 +280,14 @@
                 this.etiquetas = options.etiquetas;
                 this.etiquetas_metadata = options.etiquetas_metadata;
                 this.refGeograficas = options.refGeograficasList;
+                this.sortedRefGeograficas = this.sortRefGeograficas();
                 this.refGeograficasFilters = options.refGeograficasFilters;
                 _.bindAll(this, "renderPanel");
                 this.render();
             },
             renderPanel: function(model){
                 if (model.get('ref_geografica_parent_id') == this.collection.filterParentID){
-                  var panelView = new RefGeograficaPanel({model: model, etiquetas: this.etiquetas,refGeograficas: this.refGeograficas, parent:this});
+                  var panelView = new RefGeograficaPanel({model: model, etiquetas: this.etiquetas,refGeograficas: this.refGeograficas, sortedRefGeograficas: this.sortedRefGeograficas, parent:this});
                   panelView.render();
                   $('#dataLoadersWrapper').prepend(panelView.el);
               }
@@ -319,6 +310,19 @@
                     //that.collection.each(that.renderPanel);
                   }
               })                      
+            },
+            sortRefGeograficas: function(){
+                var refGeograficas = this.refGeograficas;
+                var sortedRefGeograficas = Object.keys(refGeograficas).map(function(key) {
+                    return [key, refGeograficas[key]];
+                });
+                sortedRefGeograficas.sort(function(a, b) {
+                  if(a[1]["desc"] < b[1]["desc"]) return -1;
+                  if(a[1]["desc"] > b[1]["desc"]) return 1;
+                  return 0;
+                });
+                console.log(sortedRefGeograficas.slice(0, 5));
+                return sortedRefGeograficas;
             },
             getNextUnusedRef: function(){
               var refID = null;
@@ -476,6 +480,7 @@
         this.parent = options.parent;
         this.etiquetas = options.etiquetas;
         this.refGeograficas = options.refGeograficas;
+        this.sortedRefGeograficas = options.sortedRefGeograficas;
         this.filterParentID = options.filterParentID;
       },
       render: function(){
@@ -491,7 +496,25 @@
           return "<b>usuario</b>: "+this.model.get("user")+"<br /><b>modif.</b>: "+this.model.get("dateModif");
         }
         return "";
-      } 
+      },
+      getRefGeograficasSelect: function(){
+        var selectHTML = "";
+        var sortedRefGeograficas = this.sortedRefGeograficas;
+        var parentCollection = this.parent.collection;
+        console.log(sortedRefGeograficas.slice(0, 5));
+
+        console.log(this.model.get('id_ref_geografica'));
+        for (k in sortedRefGeograficas) {
+          var nextRef = sortedRefGeograficas[k];
+          if (nextRef[0] == this.model.get('id_ref_geografica')){
+                      selectHTML += "<option value='"+nextRef[0]+"'' selected>"+nextRef[1].desc+"</option>";
+          } else if (!nextRef[1].used && (nextRef[1].parent == parentCollection.filterParentID)) {
+            selectHTML += "<option value='"+nextRef[0]+"'>"+nextRef[1].desc+"</option>";
+          }
+
+        }
+        return selectHTML;
+      }
 		})
 
 
@@ -527,7 +550,6 @@
     refGeograficaPanelList = new RefGeograficaPanelList({collection:refGeograficaCollection, etiquetas: etiquetas, etiquetas_metadata: etiquetasMetadata, refGeograficasList: refGeograficasList})
     refGeograficaPanelList.render();
   }
-
 
 		initLoad();
 
