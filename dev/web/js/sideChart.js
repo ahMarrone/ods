@@ -1,16 +1,18 @@
 /// TEMPLATE //////////////
 
+/* HOMOGENEIZAR NOMBRES */
+
 _.mixin({
   getColor: getColor,
   plot: plot
 });
 
-function getColor (v){
-    return v > 80 ? '#045a8d' :
-           v > 60 ? '#2b8cbe' :
-           v > 40 ? '#74a9cf' :
-           v > 20 ? '#a6bddb' :
-                    '#d0d1e6' ;
+function swapInArray(left, right, v) {
+    var aux;
+
+    aux = v[left];
+    v[left] = v[right];
+    v[right] = aux;
 }
 
 var templateSideChart = [
@@ -35,11 +37,13 @@ var templateSideChart = [
     '<div id="infobox-line-chart" class="c3" style="max-height: 160px; max-width: 250px; position: relative;">',
     '</div>',
     '<% } else { %>',
+    '<% if (model.get("layerProperties").value) { %>',
     '<div class="indicador-valor" style="color: <%= _(model.get("layerProperties").value).getColor() %>" >',
     '<%= model.get("layerProperties").value.toFixed(3).replace(".", ",") %></div>',
     '<div class="texto-aclaracion">Al momento sólo se cuenta con datos para el año de referencia</div>',
-    '</div>',
-    '</div>',
+    '<% } else { %>',
+    '<div class="texto-aclaracion">Al momento no se cuenta con datos para el año de referencia</div>',
+    '<% } %>',
     '<% } %>',
     '<% if (model.get("indicador").ambito == "N") { %>',
     '<div class="meta">',
@@ -67,13 +71,13 @@ var templateSideChart = [
 
 var sideChartModel = Backbone.Model.extend({
     defaults: {
-        'layerProperties':[],
         'indicador': [],
+        'layerProperties': [],
         'valoresIndicadoresDesgloses': [],
-        'descripcionEtiquetaSeleccionada': '',
+        'idEtiquetaSeleccionada': null,
+        'etiquetas': [],
         'indiceColorEtiqueta': 0,
         'idsEtiquetasActuales' : [],
-        'etiquetas': [],
         'isChartAvailable': false
     }
 });
@@ -87,81 +91,89 @@ var sideChartView = Backbone.View.extend({
     prepare: function() {
         var valoresIndicadoresDesgloses = this.model.get('valoresIndicadoresDesgloses');
         var idsEtiquetasActuales = this.model.get('idsEtiquetasActuales') ;
-        var etiquetas = this.model.get('etiquetas');
         var idRefGeograficaActual = this.model.get("layerProperties").id;
-        var descripcionEtiquetaSeleccionada = this.model.get("descripcionEtiquetaSeleccionada");
+        var etiquetas = this.model.get("etiquetas");
+        var idEtiquetaSeleccionada = this.model.get("idEtiquetaSeleccionada");
 
         var chartDataRaw = {};
-        var e;
-        var anios = ['x'];
-        var indiceColorEtiqueta = 0;
-
-        _.each(idsEtiquetasActuales, function(id) {
-            e = etiquetas[id].descripcion;
-            chartDataRaw[e] = [];
-        })
+        var chartData = [];
+        var nulosPorAnio = {};
+        var aniosDefinidos = 0;
+        var indiceEtiquetaSeleccionada = null;
+        var i;
 
         _.each(valoresIndicadoresDesgloses, function(claves, fecha) {
+            if (!(fecha in chartDataRaw)) {
+                chartDataRaw[fecha] = {};
+                nulosPorAnio[fecha] = 0;
+            }
             _.each(claves.valoresRefGeografica, function(idsEtiquetas, idRefGeografica) {
                 if (idRefGeografica == idRefGeograficaActual) {
-                    _.each(idsEtiquetas, function(valor, idStr) {
-                        /* HACK - VERIFICAR TIPO */
-                        id = parseInt(idStr);
-                        /* CAMBIAR A FUNCIÓN DE UNDERSCORE */
-                        if (idsEtiquetasActuales.indexOf(id) != -1) {
-                            e = etiquetas[id].descripcion;
-                            anios.push(fecha);
-                            chartDataRaw[e].push(valor);
+                    _.each(idsEtiquetasActuales, function(id) {
+                        if (id in idsEtiquetas) {
+                            valor = idsEtiquetas[id];
+                            if (id == idEtiquetaSeleccionada) {
+                                aniosDefinidos += 1;
+                            }
+                        } else {
+                            nulosPorAnio[fecha] += 1;
+                            valor = null;
                         }
+                        e = etiquetas[id].descripcion;
+                        chartDataRaw[fecha][id] = valor;
                     })
                 }
             })
         })
 
-        anios = _.uniq(anios);
-        var chartData = [anios];
-        var i = 1;
-
-        _.each(chartDataRaw, function(valores, etiqueta){
-            chartData.push([etiqueta]);
-            if (etiqueta == descripcionEtiquetaSeleccionada) {
-                indiceColorEtiqueta = i;
-            }
-            for (var j = 0 ; j < valores.length ; j++) {
-                chartData[i].push(valores[j]);
-            }
-            i++;
-        })
-        
-        if (anios.length > 2) {
+        if (aniosDefinidos > 1) {
             this.model.set('isChartAvailable', true);
+            /* Inicializar 'chartData' con el formato requerido por c3 */
+            chartData = [['x']];
+            _.each(idsEtiquetasActuales, function(id, i){
+                chartData.push([etiquetas[id].descripcion]);
+                if (id == idEtiquetaSeleccionada) {
+                    indiceEtiquetaSeleccionada = i + 1;
+                }
+            });
+
+            _.each(chartDataRaw, function(valoresPorEtiqueta, anio) {
+                if (nulosPorAnio[anio] == idsEtiquetasActuales.length) {
+                    return;
+                }
+                chartData[0].push(anio);
+                i = 1;
+                _.each(valoresPorEtiqueta, function(valor, id){
+                    chartData[i].push(valor);
+                    i++;
+                });
+            });            
+            swapInArray(indiceEtiquetaSeleccionada, chartData.length - 1, chartData);
         } else {
             this.model.set('isChartAvailable', false);
         }
-
-        this.model.set('indiceColorEtiqueta', indiceColorEtiqueta - 1);
 
         return chartData
     },
 
     render: function() {
-        console.log(this.model.get("layerProperties"));
-        // console.log(this.model.get("valoresIndicadoresDesgloses"));
-        var descripcionEtiquetaSeleccionada = this.model.get('descripcionEtiquetaSeleccionada');
         var tpl = _.template(templateSideChart);
         var chartData = this.prepare();
-        var indiceColorEtiqueta = this.model.get('indiceColorEtiqueta');
         this.$el.html(tpl({model:this.model}));
-        _.plot(chartData, descripcionEtiquetaSeleccionada, indiceColorEtiqueta);
+        if (this.model.get("isChartAvailable")) {
+            var etiquetas = this.model.get("etiquetas");
+            var idEtiquetaSeleccionada = this.model.get("idEtiquetaSeleccionada");
+            var descripcionEtiquetaSeleccionada = etiquetas[idEtiquetaSeleccionada].descripcion;
+            _.plot(chartData, descripcionEtiquetaSeleccionada);    
+        }
         return this;
     }
 });
 
-
-function plot(chartData, descripcionEtiquetaSeleccionada, indiceColorEtiqueta) {
+function plot(chartData, descripcionEtiquetaSeleccionada) {
     /* Máximo 9 Tonos */
     colorPattern = ['#800026', '#bd0026', '#e31a1c', '#fc4e2a', '#fd8d3c', '#feb24c', '#fed976', '#ffeda0', '#ffffcc'];
-    colorPattern[indiceColorEtiqueta] = '#045a8d';
+    colorPattern[chartData.length - 2] = '#045a8d';
     var chart = c3.generate({
         bindto: '#infobox-line-chart',
         data: {

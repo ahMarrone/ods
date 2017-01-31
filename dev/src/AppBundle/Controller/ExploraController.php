@@ -19,18 +19,25 @@ class ExploraController extends Controller
         con los correspondientes valores para cada Referencia Geogŕafica de acuerdo
         al indicador seleccionado */
 
+        $objetivos = $this->getObjetivosPreload();
+        $metas = $this->getMetasPreload();
+        $indicadores = $this->getIndicadoresPreload();
+
+        /* Antes de continuar verificar si el Indicador solicitado se encuentra 'visible' */
+
+        if (!array_key_exists($idIndicador, $indicadores)) {
+            throw $this->createNotFoundException('Indicador no encontrado');
+        }
+
+        /* MODIFICAR PARA NO UTILIZAR CONSULTA SINO DATOS YA RECUPERADOS (Objetivos, Metas, Indicadores) */
         $reverseSearchResult = $this->reverseSearchByIndicador($idIndicador)[0];
         $idObjetivoSeleccionado = $reverseSearchResult['objetivo'];
         $idMetaSeleccionada = $reverseSearchResult['meta'];
 
         /* ENCONTRAR UNA SOLUCIÓN MÁS ELEGANTE */
-
         $reverseDesgloses = array();
         $etiquetas = $this->getEtiquetasByIndicadorPreload($idIndicador, $reverseDesgloses);
 
-        $objetivos = $this->getObjetivosPreload();
-        $metas = $this->getMetasPreload();
-        $indicadores = $this->getIndicadoresPreload($idMetaSeleccionada);
         $desgloses = $this->getDesglosesByIndicadorPreload($idIndicador);
         $valoresIndicadoresDesgloses = $this->getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses, $indicadores[$idIndicador]);
 
@@ -76,19 +83,22 @@ class ExploraController extends Controller
 
     private function parseFechasDestacadas($fechasDestacadasStr) {
         $fechasDestacadas = array();
-        $parseResult = explode(";", $fechasDestacadasStr);
-        foreach ($parseResult as $fecha) {
+        if ($fechasDestacadasStr) {
+            $parseResult = explode(";", $fechasDestacadasStr);
+            foreach ($parseResult as $fecha) {
             array_push($fechasDestacadas, date('Y', strtotime($fecha)));
+            }    
         }
         return $fechasDestacadas;
     }
 
-    private function getIndicadoresPreload($idMeta){
+    private function getIndicadoresPreload(){
         $list = array();
         /* Si se desean filtrar los indicadores por meta seleccionada, descomentar y reemplazar  */
         // $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByFkidmeta($idMeta);
 
-        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findall();
+        // $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findall();
+        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByVisible(true);
 
         foreach ($indicadores as $i) {
             $idIndicador = $i->getId();
@@ -128,11 +138,14 @@ class ExploraController extends Controller
                 array_push($desgloses, $e->getFkiddesgloce()->getId());
             }
 
-            array_push($etiquetas, array(
-                'id' => $id,
-                'descripcion' => $descripcion,
-                'id_desglose' => $e->getFkiddesgloce()->getId())
-            );
+            $etiquetas[$id] = array('descripcion' => $descripcion,
+                                    'id_desglose' => $e->getFkiddesgloce()->getId());
+
+            // array_push($etiquetas, array(
+            //     'id' => $id,
+            //     'descripcion' => $descripcion,
+            //     'id_desglose' => $e->getFkiddesgloce()->getId())
+            // );
             $maximoID = max($maximoID, $e->getId());
 
         }
@@ -143,11 +156,14 @@ class ExploraController extends Controller
             $maximoID += 1;
             /* Se crean nuevas etiquetas con la descripción 'Total' para cada desglose
             Para ello, se comienza desde el ID de etiqueta más alto */
-            array_push($etiquetas, array(
-                'id' => $maximoID,
-                'descripcion' => 'Total',
-                'id_desglose' => $idDesglose)
-            );
+            // array_push($etiquetas, array(
+            //     'id' => $maximoID,
+            //     'descripcion' => 'Total',
+            //     'id_desglose' => $idDesglose)
+            // );
+
+            $etiquetas[$maximoID] = array('descripcion' => 'Total',
+                                          'id_desglose' => $idDesglose);
 
             $reverseDesgloses[$idDesglose] = $maximoID;
         }
@@ -169,7 +185,7 @@ class ExploraController extends Controller
     }
 
     /* VER QUÉ SUCEDE CUANDO NO EXISTEN VALORES CARGADOS PARA EL INDICADOR SELECCIONADO */
-    /* CONTROLAR VISIBILIDAD */
+    /* VERIFICAR QUE FILTRO POR APROBADO FUNCIONE CORRECTAMENTE */
 
     private function getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses, &$indicador){
         $entidad = $this->filterValoresIndicadoresConfigFechaByIndicador($idIndicador);
@@ -185,16 +201,6 @@ class ExploraController extends Controller
             /* Parsear 'fecha', conservando solo el año */
             $fecha = explode('-', $e->getFecha())[0];
             $atributos[$id] = array('fecha' => $fecha);
-            $atributosPorFecha[$fecha] = array('id_desgloses' => array(),
-                'valoresRefGeografica' => array());
-        }
-
-        $entidad = $this->filterValoresIndicadoresConfigDesglosesFechaByIdsSet($idsValoresIndicadoresConfigFecha);
-        foreach ($entidad as $e){
-            $idValoresIndicadoresConfigFecha = $e->getIdValoresIndicadoresConfigFecha();
-            $idDesglose = $e->getIdDesgloce();
-            $fecha = $atributos[$idValoresIndicadoresConfigFecha]['fecha'];
-            array_push($atributosPorFecha[$fecha]['id_desgloses'], $idDesglose);
         }
 
         $entidad = $this->filterValoresIndicadoresByIdsSet($idsValoresIndicadoresConfigFecha);
@@ -204,8 +210,24 @@ class ExploraController extends Controller
             $idEtiqueta = $e->getIdEtiqueta();
             $valor = $e->getValor();
             $fecha = $atributos[$idValoresIndicadoresConfigFecha]['fecha'];
+
+            if (!array_key_exists($fecha, $atributosPorFecha)) {
+                $atributosPorFecha[$fecha] = array('id_desgloses' => array(),
+                'valoresRefGeografica' => array());
+            }
+
             /* Valor es String en la entidad, ¿por qué?*/
             $atributosPorFecha[$fecha]['valoresRefGeografica'][$idRefGeografica][$idEtiqueta] = floatval($valor);            
+        }
+
+        $entidad = $this->filterValoresIndicadoresConfigDesglosesFechaByIdsSet($idsValoresIndicadoresConfigFecha);
+        foreach ($entidad as $e){
+            $idValoresIndicadoresConfigFecha = $e->getIdValoresIndicadoresConfigFecha();
+            $idDesglose = $e->getIdDesgloce();
+            $fecha = $atributos[$idValoresIndicadoresConfigFecha]['fecha'];
+            if (array_key_exists($fecha, $atributosPorFecha)) {
+                array_push($atributosPorFecha[$fecha]['id_desgloses'], $idDesglose);    
+            }
         }
 
         $desglosesAcumulados = $this->sumValoresIndicadores($idsValoresIndicadoresConfigFecha);
@@ -273,7 +295,7 @@ class ExploraController extends Controller
     private function filterValoresIndicadoresByIdsSet($idsSet) {
         return $this->getDoctrine()->getManager()->createQuery(
                 'SELECT e FROM AppBundle:Valoresindicadores e WHERE 
-                e.idvaloresindicadoresconfigfecha IN (:idsSet)'
+                e.idvaloresindicadoresconfigfecha IN (:idsSet) AND e.aprobado = TRUE'
                 )->setParameter('idsSet', $idsSet)
                 ->getResult();
     }
@@ -290,7 +312,7 @@ class ExploraController extends Controller
     private function sumValoresIndicadores($idsSet) {
 
         return $this->getDoctrine()->getManager()->getConnection()->executeQuery(
-            'SELECT idValoresIndicadoresConfigFecha, idRefGeografica, fkIdDesgloce AS idDesglose, SUM(valor) AS acumulado FROM (SELECT idValoresIndicadoresConfigFecha, idEtiqueta, idRefGeografica, valor FROM valoresIndicadores WHERE idValoresIndicadoresConfigFecha IN (?)) AS TLeft INNER JOIN etiquetas as TRight ON TLeft.idEtiqueta = TRight.id GROUP BY idValoresIndicadoresConfigFecha, idRefGeografica, fkIdDesgloce',
+            'SELECT idValoresIndicadoresConfigFecha, idRefGeografica, fkIdDesgloce AS idDesglose, SUM(valor) AS acumulado FROM (SELECT idValoresIndicadoresConfigFecha, idEtiqueta, idRefGeografica, valor FROM valoresIndicadores WHERE idValoresIndicadoresConfigFecha IN (?) AND aprobado = TRUE) AS TLeft INNER JOIN etiquetas as TRight ON TLeft.idEtiqueta = TRight.id GROUP BY idValoresIndicadoresConfigFecha, idRefGeografica, fkIdDesgloce',
             array($idsSet),
             array(\Doctrine\DBAL\Connection::PARAM_INT_ARRAY)
             )->fetchAll();
