@@ -13,7 +13,6 @@
     <script type="text/javascript" src="{{ asset('js/provincias-simplified-0dot5-mapa.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/departamentos-simplified-1dot0-mapa.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/sideChart.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('nice-select/js/jquery.nice-select.js') }}"></script>
 {% endblock %}    
 
 {% block stylesheets %}
@@ -21,12 +20,14 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="{{ asset('leaflet/leaflet.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/miscStyle.css') }}" />
-    <link rel="stylesheet" href="{{ asset('c3/c3.css') }}" />
-    <link rel="stylesheet" href="{{ asset('nice-select/css/nice-select.css') }}" />  
+    <link rel="stylesheet" href="{{ asset('c3/c3.css') }}" />  
 {% endblock %}
 
 {% block body %}
 
+<div id="preloader" style="display:none"><img class="displayed" src="http://www.odsargentina.gob.ar/public/images/loader.png" /></div>
+
+<div id=mainContainer>
 <div class="container-fluid" id='divFluid' style="padding-top: 15px;">
 <script id="formLoader" type="text/template">
 <!-- Modificar para que sea  "1.1.1 Proporción de la p...nacional de la pobreza." -->
@@ -46,6 +47,27 @@
     return (idx == -1) ? string : string.substring(0, idx) + '...';
   }
 });%>
+<%_.mixin({
+  trimByTheMiddle: function(string, max) {
+    var half = Math.floor(max/2);
+    var len = string.length;
+    var result = string;
+    var idx = half;
+
+    if (max < len) {
+      while (string[idx] != ' ') {
+        idx++;
+      }
+      result = string.substring(0, idx) + '...';
+      idx = len - half;
+      while (string[idx] != ' ') {
+        idx--;
+      }
+      result += string.substring(idx + 1, len);
+    }
+    return result;
+  }
+});%>
   <form class="form-horizontal" role="form">
     <div class="col-sm-6 col-lg-4">
       <div class="form-group">
@@ -53,7 +75,7 @@
         <div class="col-md-9">
           <select id="selectorObjetivo" class="form-control selectObjetivo">
           <% _.each(model.get("objetivos"), function( objetivo, i){ %>
-          <option title="<%= objetivo.descripcion %>" value="<%= objetivo.id %>" <% if (objetivo.id == model.get("objetivo_selected")) { %> selected<% }  %>><%= _(objetivo.descripcion).trim(30) %></option>
+          <option title="<%= objetivo.descripcion %>" value="<%= objetivo.id %>" <% if (objetivo.id == model.get("objetivo_selected")) { %> selected<% }  %>><%= _(objetivo.descripcion).trimByTheMiddle(25) %></option>
           <% }); %>
           </select>
         </div>
@@ -124,10 +146,10 @@
           <select id="selectorEtiqueta" class="form-control selectEtiqueta">
           <% } %>
           <% model.set('etiquetas_current', []) %>
-          <% _.each(model.get("etiquetas"), function(etiqueta, i){ %>
-          <% if ( etiqueta.id_desglose == model.get("desglose_selected") ){ %>
-          <% model.get('etiquetas_current').push(etiqueta.id); %>
-          <option title="<%= etiqueta.descripcion %>" value="<%= etiqueta.id %>" <% if ( etiqueta.descripcion == "Total" ) { model.set('etiqueta_selected', etiqueta.id ) %> selected<% } %>><% if ( etiqueta.id != 0 ) { %> <%= etiqueta.descripcion %> <% } %></option>
+          <% _.each(model.get("etiquetas"), function(e, id){ %>
+          <% if ( e.id_desglose == model.get("desglose_selected") ){ %>
+          <% model.get('etiquetas_current').push(id); %>
+          <option title="<%= e.descripcion %>" value="<%= id %>" <% if ( e.descripcion == "Total" ) { model.set('etiqueta_selected', id ) %> selected<% } %>><% if ( id != 0 ) { %> <%= e.descripcion %> <% } %></option>
           <% } %>
           <% }); %>
           </select>
@@ -157,6 +179,7 @@
     </tr>
 </script>
 </table>
+</div>
 
 <script type="text/javascript">
   $(document).ready(function() {
@@ -195,12 +218,10 @@
 
         /* Inicializar mapa */
         swap(this.model.get('indicadores')[this.model.get('indicador_selected_id')], this.model.get('etiquetas'), this.model.get('valoresIndicadoresDesgloses'));
-        console.log(this.model.get('fecha_selected'));
         valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('fecha_selected')].valoresRefGeografica
         idEtiquetaSeleccionada = this.model.get('etiqueta_selected');
-        descripcionEtiquetaSeleccionada = this.model.get('etiquetas')[this.model.get('etiqueta_selected')].descripcion;
         etiquetasActuales = this.model.get('etiquetas_current');
-        update(valoresRefGeografica, idEtiquetaSeleccionada, descripcionEtiquetaSeleccionada, etiquetasActuales);
+        update(valoresRefGeografica, idEtiquetaSeleccionada, etiquetasActuales);
 
         },
         events: {
@@ -231,6 +252,11 @@
         indicadorSelected: function(e){
           this.model.set("indicador_selected_id",$(this.el).find('.selectIndicador').val());
           /* Actualizar datos, ir a buscarlos y refrescar (Bloquear pantalla) */
+          /* Bloquear pantalla hasta tanto no se hayan recuperado los datos */
+          $( "#preloader" ).fadeIn(400, function(){
+            $( "#mainContainer" ).fadeOut(200);
+          });
+
           /* Ver si es necesario un 'if */
           /* PROBAR */
           swap(this.model.get('indicadores')[this.model.get('indicador_selected_id')], this.model.get('etiquetas'));
@@ -258,9 +284,8 @@
           this.model.set("etiqueta_selected", $(this.el).find('.selectEtiqueta').val());
           valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('fecha_selected')].valoresRefGeografica;
           idEtiquetaSeleccionada = this.model.get('etiqueta_selected');
-          descripcionEtiquetaSeleccionada = this.model.get('etiquetas')[this.model.get('etiqueta_selected')].descripcion;
           etiquetasActuales = this.model.get('etiquetas_current');
-          update(valoresRefGeografica, idEtiquetaSeleccionada, descripcionEtiquetaSeleccionada, etiquetasActuales);
+          update(valoresRefGeografica, idEtiquetaSeleccionada, etiquetasActuales);
         }
     })
 
@@ -308,10 +333,9 @@
     // console.log(fechaSeleccionada);
 
     // console.log({{ indicadores|json_encode|raw}}[{{ idIndicadorSeleccionado }}].fechasDestacadas[0]);
+    console.log(valoresIndicadoresDesgloses);
     // console.log(valoresIndicadoresDesgloses);
-    
-    // console.log(valoresIndicadoresDesgloses);
-    // console.log({{ etiquetas|json_encode|raw}});
+    console.log({{ etiquetas|json_encode|raw}});
     // console.log({{ indicadores|json_encode|raw}});
     // console.log({{ desgloses|json_encode|raw}});
 

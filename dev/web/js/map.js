@@ -33,23 +33,28 @@ function swap(indicador, etiquetas, valoresIndicadoresDesgloses) {
     sideChartModel.set('valoresIndicadoresDesgloses', valoresIndicadoresDesgloses);
 }
 
-function update(data, idEtiquetaSeleccionada, descripcionEtiquetaSeleccionada, idsEtiquetasActuales) {
+function update(data, idEtiquetaSeleccionada, idsEtiquetasActuales) {
     if (map.hasDivSideChart()) {
         map.removeControl(sideChartControl);
     }
     sideChartModel.set('idsEtiquetasActuales', idsEtiquetasActuales);
-    sideChartModel.set('descripcionEtiquetaSeleccionada', descripcionEtiquetaSeleccionada);
+    sideChartModel.set('idEtiquetaSeleccionada', idEtiquetaSeleccionada);
     sideChartModel.set('layerProperties', []);
     tiles[ambitoIndicador].eachLayer(function (layer) {
         idRefGeografica = layer.feature.properties.id;
-        valor = data[idRefGeografica][idEtiquetaSeleccionada];
+        valor = undefined;
+        if (data[idRefGeografica]) {
+            if (data[idRefGeografica][idEtiquetaSeleccionada])
+                valor = data[idRefGeografica][idEtiquetaSeleccionada];
+        }
         layer.feature.properties['value'] = valor;
-        layer.setStyle({fillColor: getColor(valor)})
+        layer.setStyle({fillColor: getColor(valor)});
     });
 }
 
 function mapMe(geoJsonNacion, geoJsonProvincias, geoJsonDepartamentos) {
     var base = L.tileLayer.wms('http://wms.ign.gob.ar/geoserver/wms?', {layers: 'ign:capabaseargenmap_gwc', attribution: '<a href="http://www.ign.gob.ar/">IGN</a>'});
+
     // var base = L.tileLayer.wms('http://wms.ign.gob.ar/geoserver/wms?', {layers: 'capabaseargenmap', attribution: '<a href="http://www.ign.gob.ar/">IGN</a>'});
     var tileNacion = L.geoJson(geoJsonNacion, {onEachFeature: onEachFeature, style: style});
     var tileProvincias = L.geoJson(geoJsonProvincias, {onEachFeature: onEachFeature, style: style});
@@ -119,12 +124,17 @@ return {
     };
 }
 
-function getColor(i) {
-    return i > 80 ? '#045a8d' :
-           i > 60 ? '#2b8cbe' :
-           i > 40 ? '#74a9cf' :
-           i > 20 ? '#a6bddb' :
-                    '#d0d1e6' ;
+function getColor(v) {
+    if (v === undefined) {
+        color = '#dcdbdb';
+    } else {
+        color = v > 80 ? '#045a8d' :
+                v > 60 ? '#2b8cbe' : 
+                v > 40 ? '#74a9cf' :
+                v > 20 ? '#a6bddb' :
+                         '#d0d1e6' ;
+    }
+    return color;
 }
 
 function highlightFeature(event) {
@@ -159,12 +169,18 @@ function resetHighlight(event) {
 }
 
 function zoomIn(event) {
-    if (event.target.feature.properties.id == especialID) {
-        tileBounds = especialCenterBounds;
-    } else {
+
+    if (ambitoIndicador == PROVINCIAL) {
+        if (event.target.feature.properties.id == especialID) {
+            tileBounds = especialCenterBounds;
+        } else {
+            tileBounds = event.target.getBounds();
+        }
+        map.fitBounds(tileBounds, {maxZoom: 5});
+    } else /* ambitoIndicador == DEPARTAMENTAL */ {
         tileBounds = event.target.getBounds();
-    }
-    map.fitBounds(tileBounds, {maxZoom: 5});
+        map.fitBounds(tileBounds, {maxZoom: 6});
+    }    
 }
 
 function zoomOut(event) {
