@@ -20,7 +20,7 @@
 		<th>ID Etiqueta</th>
 		<th>ID Usuario</th>	
 		<th>ID Ref</th>
-		<th>Fecha</th>
+		<th>Periodo</th>
 		<th>Ref. geográfica</th>
 		<th>Usuario</th>
 		<th>Etiqueta</th>
@@ -34,7 +34,7 @@
 		<th>ID Etiqueta</th>
 		<th>ID Usuario</th>	
 		<th>ID Ref</th>
-		<th>Fecha</th>
+		<th>Periodo</th>
 		<th>Ref. geográfica</th>
 		<th>Usuario</th>
 		<th>Etiqueta</th>
@@ -48,7 +48,7 @@
 		<td>{{ valorindicador.idEtiqueta }}</td>
 		<td>{{ valorindicador.idUsuario.id }}</td>
 		<td>{{ valorindicador.idRefgeografica.id }}</td>
-		<td>{{ valorindicador.idvaloresindicadoresconfigfecha.fecha|date("Y-m-d") }}</td>
+		<td>{{ valorindicador.idvaloresindicadoresconfigfecha.fecha|date("Y") }}</td>
 		<td>{{ valorindicador.idRefgeografica }}</td>
 		<td>{{ valorindicador.idUsuario }}</td>
 		<td>
@@ -164,10 +164,18 @@
 	    "columnDefs": [
             {
                 "targets": [0,1,2,3],
-                "visible": false
-            }
+                "visible": false,
+            },
+            { "width": "10%", "targets": [4,6,7,9] },
+            { "width": "15%", "targets": 5 },
+            {
+            	"targets":[8],
+            	"className": "dt-right",
+            	"width": "10%",
+            },
         ],
-        "order": [[ 9, "asc" ]]
+        "order": [[ 9, "asc" ]],
+        "pageLength": 50
     });
 
     $('#valoresindicadoresTable tbody').on( 'click', 'tr', function () {

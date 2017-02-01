@@ -41,7 +41,8 @@ class ObjetivosController extends Controller
      */
     public function newAction(Request $request)
     {
-        $objetivo = new Objetivos();
+        // NO SE PERMITE ALTA DE OBJETIVOS
+        /*$objetivo = new Objetivos();
         $form = $this->createForm('AppBundle\Form\ObjetivosType', $objetivo);
         $form->handleRequest($request);
 
@@ -56,7 +57,8 @@ class ObjetivosController extends Controller
         return $this->render('objetivos/new.html.twig', array(
             'objetivo' => $objetivo,
             'form' => $form->createView(),
-        ));
+        ));*/
+        return $this->redirectToRoute('admin_crud_objetivos_index');
     }
 
     /**
