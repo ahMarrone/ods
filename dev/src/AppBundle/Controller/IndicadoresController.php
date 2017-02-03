@@ -103,7 +103,8 @@ class IndicadoresController extends Controller
             $em->persist($indicadore);
             $em->flush();
             $this->saveBaseDesglocesIndicadores($indicadore);
-            return $this->redirectToRoute('admin_crud_indicadores_show', array('id'=> $indicadore->getId()));
+            return $this->redirectToRoute("admin_crud_indicadores_index_idMeta", array('id_meta'=>$indicadore->getFkidmeta()->getId()));
+            //return $this->redirectToRoute('admin_crud_indicadores_show', array('id'=> $indicadore->getId()));
             //return $this->redirectToRoute('admin_crud_desglocesporindicador_new', array('id_indicador' => $indicadore->getId()));
         }
 
