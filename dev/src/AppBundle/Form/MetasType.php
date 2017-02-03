@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
@@ -24,6 +25,7 @@ class MetasType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->enabledChoices = $options['scopes_enabled'];
+        $this->last_code_used = $options['last_code_used'];
         $this->em = $options['entity_manager'];
         $builder
             ->add('fkidobjetivo', EntityType::class, array(
@@ -54,16 +56,21 @@ class MetasType extends AbstractType
                          },
                   )
             )
+            ->add('last_code_used', HiddenType::class, array(
+                'empty_data' => $this->last_code_used,
+                'mapped'=> false
+            ))
         ;
     }
 
     public function validateNewMeta($meta, ExecutionContext $context)
     {
-        //$idObjetivo = $m
         $idObjetivo = $meta->getFkidobjetivo()->getId();
         $codigo = $meta->getCodigo();
-        if ($this->codeAlreadyUsed($idObjetivo, $codigo)){
-          $context->addViolationAt('codigo', 'El código de meta para este objetivo ya está utilizado!');
+        if (($this->last_code_used == null && $this->codeAlreadyUsed($idObjetivo, $codigo)) ||
+           ($this->last_code_used != null && $this->last_code_used != $codigo && $this->codeAlreadyUsed($idObjetivo, $codigo)))
+        {
+            $context->addViolationAt('codigo', 'El código de meta para este objetivo ya está utilizado!');
         }
     }
 
@@ -93,6 +100,7 @@ class MetasType extends AbstractType
                new Assert\Callback(array($this, 'validateNewMeta'))
               ),
             'scopes_enabled' => array(),
+            'last_code_used' => null,
             'entity_manager' => null,
         ));
     }

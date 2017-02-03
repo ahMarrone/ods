@@ -34,9 +34,9 @@
            <div id="selects"></div>
         </div>
 
-        <!--
+        
         {{ form_widget(form) }}
-        -->
+        
         
         <div>
 			{{ form_label(form.descripcion) }}
@@ -112,9 +112,16 @@
               });
         }
 
-        addThreeSelectControls();
-        addHiglightedDatesControls();
-        getNextIndicadorCode();
+        function init(){
+            addThreeSelectControls();
+            addHiglightedDatesControls();
+            if (!$('#indicadores_codigo').val()){
+                getNextIndicadorCode();         
+            }
+        }
+
+
+        init();
 
         $('.expected-value-datepicker').datepicker({
             format: "yyyy",

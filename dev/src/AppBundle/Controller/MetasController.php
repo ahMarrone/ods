@@ -150,6 +150,7 @@ class MetasController extends Controller
         $editForm = $this->createForm('AppBundle\Form\MetasType', $meta, array(
             'entity_manager' => $this->getDoctrine()->getManager(),
             'scopes_enabled' => array('N'=>false,'P'=>false,'D'=>false), // en modo edicion, no se puede cambiar el ambito de la meta
+            'last_code_used' => $meta->getCodigo()
         ));
         $editForm->handleRequest($request);
 

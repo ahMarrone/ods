@@ -16,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -35,7 +36,7 @@ class IndicadoresType extends AbstractType
         $tipoSeleccionado = $options['data']->getTipo();
         $ambitoSeleccionado = $options['data']->getAmbito();
         $this->enabledChoices = $options['scopes_enabled'];
-
+        $this->last_code_used = $options['last_code_used'];
         $builder
             ->add('fkidmeta','hidden',array('mapped'=>false))
             ->add('codigo', IntegerType::class, array(
@@ -83,6 +84,10 @@ class IndicadoresType extends AbstractType
             ))
             ->add('valoresperadometafinal', NumberType::class , array('label'=> 'Valor esperado meta final', 'required'=>false))
             ->add('documentpath', FileType::class, array('label' => 'Documento técnico (archivo PDF)', 'required'=>false))
+            ->add('last_code_used', HiddenType::class, array(
+                'empty_data' => $this->last_code_used,
+                'mapped'=> false
+            ))
             //->add('visible', 'checkbox', array('label'  => 'Visible', 'required'  => false))   
         ;
     }
@@ -93,8 +98,10 @@ class IndicadoresType extends AbstractType
     public function validateNewIndicador($indicador, ExecutionContext $context){
         $idMeta = $indicador->getFkidmeta()->getId();
         $codigo = $indicador->getCodigo();
-        if ($this->codeAlreadyUsed($idMeta, $codigo)){
-          //$context->addViolationAt('codigo', 'El código de indicador para esta meta ya está utilizado!');
+        if (($this->last_code_used == null && $this->codeAlreadyUsed($idMeta, $codigo)) ||
+           ($this->last_code_used != null && $this->last_code_used != $codigo && $this->codeAlreadyUsed($idMeta, $codigo)))
+        {
+            $context->addViolationAt('codigo', 'El código de indicador para esta meta ya está utilizado!');
         }
         if (!$this->checkValidDates($indicador->getFechametaintermedia(), $indicador->getFechametafinal())){
             $context->addViolationAt('fechametafinal',"El año de la meta final debe ser posterior al año de meta intermedia");
@@ -133,6 +140,7 @@ class IndicadoresType extends AbstractType
             'data_class' => 'AppBundle\Entity\Indicadores',
             'allow_extra_fields' => true,
             'scopes_enabled' => array(),
+            'last_code_used' => null,
             'constraints' => array(
                new Assert\Callback(array($this, 'validateNewIndicador'))
               ),

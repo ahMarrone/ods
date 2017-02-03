@@ -216,6 +216,7 @@ class IndicadoresController extends Controller
         $indicadore->setFechametafinal(explode('-',$indicadore->getFechametafinal())[0]);
         $editForm = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore, array(
                 'scopes_enabled' => array('N'=>false,'P'=>false,'D'=>false), // en modo edicion, no se puede cambiar el ambito del indicador
+                'last_code_used' => $indicadore->getCodigo(),
                 'entity_manager' => $this->getDoctrine()->getManager(),
             )
         );
