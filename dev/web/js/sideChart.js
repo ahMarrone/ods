@@ -3,8 +3,7 @@
 /* HOMOGENEIZAR NOMBRES */
 
 _.mixin({
-  getColor: getColor,
-  plot: plot
+  getColor: getColor
 });
 
 function swapInArray(left, right, v) {
@@ -71,21 +70,21 @@ var templateSideChart = [
 
 var sideChartModel = Backbone.Model.extend({
     defaults: {
-        'indicador': [],
         'layerProperties': [],
-        'valoresIndicadoresDesgloses': [],
-        'idEtiquetaSeleccionada': null,
+        'indicador': [],
         'etiquetas': [],
-        'indiceColorEtiqueta': 0,
+        'valoresIndicadoresDesgloses': [],
         'idsEtiquetasActuales' : [],
+        'idEtiquetaSeleccionada': null,
         'isChartAvailable': false
     }
 });
 
 var sideChartView = Backbone.View.extend({
     initialize: function() {
-        _.bindAll(this, 'render');
-        this.model.bind('change', this.render);
+        /*_.bindAll(this, 'render');
+        this.model.bind('change', this.render);*/
+        this.model.on('change:layerProperties', this.render, this);
     },
 
     prepare: function() {
@@ -164,52 +163,40 @@ var sideChartView = Backbone.View.extend({
             var etiquetas = this.model.get("etiquetas");
             var idEtiquetaSeleccionada = this.model.get("idEtiquetaSeleccionada");
             var descripcionEtiquetaSeleccionada = etiquetas[idEtiquetaSeleccionada].descripcion;
-            _.plot(chartData, descripcionEtiquetaSeleccionada);    
+            this.plot(chartData, descripcionEtiquetaSeleccionada);    
         }
         return this;
+    },
+
+    plot: function(chartData, descripcionEtiquetaSeleccionada) {
+        /* Máximo 9 Tonos */
+        var colorPattern = ['#800026', '#bd0026', '#e31a1c', '#fc4e2a', '#fd8d3c', '#feb24c', '#fed976', '#ffeda0', '#ffffcc'];
+        colorPattern[chartData.length - 2] = '#045a8d';
+        var chart = c3.generate({
+            bindto: '#infobox-line-chart',
+            data: { x: 'x', columns: chartData },
+            legend: { show: false },
+            color: { pattern: colorPattern },
+            tooltip: {
+                format: {
+                    value: function(value) {
+                        return d3.format(",.3f")(value).replace('.', ' ').replace(/,/g, '.').replace(' ', ',')
+                    }
+                }
+            },
+            padding: {top: 5, right: 10, /*bottom: 0,*/ left: 20},  
+        });
+
+        descripcionEtiquetaSeleccionada = descripcionEtiquetaSeleccionada.replace(" ", "-");
+        // console.log('#infobox-line-chart2 .c3-line-'.concat(descripcionEtiquetaSeleccionada));
+
+        /* Estilo de las Líneas */
+        $('.c3-line').css('stroke-dasharray', '5,5'); /* Línea Punteada */
+
+        /* VERIFICAR SI FUNCIONA CORRECTAMENTE */
+        $('.c3-line-'.concat(descripcionEtiquetaSeleccionada)).css("stroke-width","2px");
+        $('.c3-line-'.concat(descripcionEtiquetaSeleccionada)).css("stroke-dasharray","0,0");
+        
+        $('.c3 svg').css("font","8px sans-serif");
     }
 });
-
-function plot(chartData, descripcionEtiquetaSeleccionada) {
-    /* Máximo 9 Tonos */
-    colorPattern = ['#800026', '#bd0026', '#e31a1c', '#fc4e2a', '#fd8d3c', '#feb24c', '#fed976', '#ffeda0', '#ffffcc'];
-    colorPattern[chartData.length - 2] = '#045a8d';
-    var chart = c3.generate({
-        bindto: '#infobox-line-chart',
-        data: {
-          x: 'x',
-          columns: chartData
-        },
-        legend: {
-            show: false
-        },
-        color: {
-            pattern: colorPattern
-        },
-        tooltip: {
-            format: {
-                value: function(value) {
-                    return d3.format(",.3f")(value).replace('.', ' ').replace(/,/g, '.').replace(' ', ',')
-                }
-            }
-        },
-        padding: {
-            top: 5,
-            right: 10,
-            // bottom: 0,
-            left: 20,
-        },  
-    });
-
-    descripcionEtiquetaSeleccionada = descripcionEtiquetaSeleccionada.replace(" ", "-");
-    // console.log('#infobox-line-chart2 .c3-line-'.concat(descripcionEtiquetaSeleccionada));
-
-    /* Estilo de las Líneas */
-    $('.c3-line').css('stroke-dasharray', '5,5'); /* Línea Punteada */
-
-    /* VERIFICAR SI FUNCIONA CORRECTAMENTE */
-    $('.c3-line-'.concat(descripcionEtiquetaSeleccionada)).css("stroke-width","2px");
-    $('.c3-line-'.concat(descripcionEtiquetaSeleccionada)).css("stroke-dasharray","0,0");
-    
-    $('.c3 svg').css("font","8px sans-serif");
-}

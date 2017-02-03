@@ -13,6 +13,7 @@
     <script type="text/javascript" src="{{ asset('js/provincias-simplified-0dot5-mapa.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/departamentos-simplified-1dot0-mapa.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/sideChart.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/loadingModal.js') }}"></script>
 {% endblock %}    
 
 {% block stylesheets %}
@@ -25,18 +26,9 @@
 
 {% block body %}
 
-<div id="preloader" style="display:none"><img class="displayed" src="http://www.odsargentina.gob.ar/public/images/loader.png" /></div>
-
 <div id=mainContainer>
 <div class="container-fluid" id='divFluid' style="padding-top: 15px;">
 <script id="formLoader" type="text/template">
-<!-- Modificar para que sea  "1.1.1 Proporción de la p...nacional de la pobreza." -->
-
-<!--  TamanioTotal = TamanioDeseado - 3  -->
-<!-- 1. Encontrar la posición que corresponde a la mitad del arreglo -->
-<!-- 2. Insertar '...' -->
-<!-- 3. Copiar desde 0 hasta floor(TamanioDeseado / 2) e insertar '...'  -->
-<!-- 4. Copiar desde el final hasta floor(TamanioDeseado / 2) -->
 
 <%_.mixin({
   trim: function(string, max) {
@@ -45,9 +37,8 @@
       idx = string.indexOf(' ', idx + 1);
     }
     return (idx == -1) ? string : string.substring(0, idx) + '...';
-  }
-});%>
-<%_.mixin({
+  },
+
   trimByTheMiddle: function(string, max) {
     var half = Math.floor(max/2);
     var len = string.length;
@@ -75,7 +66,7 @@
         <div class="col-md-9">
           <select id="selectorObjetivo" class="form-control selectObjetivo">
           <% _.each(model.get("objetivos"), function( objetivo, i){ %>
-          <option title="<%= objetivo.descripcion %>" value="<%= objetivo.id %>" <% if (objetivo.id == model.get("objetivo_selected")) { %> selected<% }  %>><%= _(objetivo.descripcion).trimByTheMiddle(25) %></option>
+          <option title="<%= objetivo.descripcion %>" value="<%= objetivo.id %>" <% if (objetivo.id == model.get("idObjetivoSeleccionado")) { %> selected<% }  %>><%= _(objetivo.descripcion).trimByTheMiddle(25) %></option>
           <% }); %>
           </select>
         </div>
@@ -87,8 +78,8 @@
         <div class="col-md-9">
           <select id="selectorMeta" class="form-control selectMeta">
           <% _.each(model.get("metas"), function( meta, i){ %>',
-          <% if ( meta.id_objetivo == model.get("objetivo_selected") ){ %>
-          <option title="<%= meta.descripcion %>" value="<%= meta.id %>" <% if (meta.id == model.get("meta_selected")) { %> selected<% }  %>><%= _(meta.descripcion).trim(30) %></option>
+          <% if ( meta.id_objetivo == model.get("idObjetivoSeleccionado") ){ %>
+          <option title="<%= meta.descripcion %>" value="<%= meta.id %>" <% if (meta.id == model.get("idMetaSeleccionada")) { %> selected<% }  %>><%= _(meta.descripcion).trim(30) %></option>
           <% } %>
           <% }); %>
           </select>
@@ -97,12 +88,12 @@
     </div> <!-- /.col-sm-6 col-lg-4 -->
     <div class="col-sm-6 col-lg-4">
       <div class="form-group">
-        <label for="selectorIndicador" class="col-md-3 control-label">Indicador <% if (model.get('indicadores')[model.get('indicador_selected_id')].documentoTecnico) { %><a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('indicador_selected_id')].documentoTecnico)%>" class="glyphicon glyphicon-question-sign" title="Documento Técnico"></a><% } %></label>
+        <label for="selectorIndicador" class="col-md-3 control-label">Indicador <% if (model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico) { %><a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico)%>" class="glyphicon glyphicon-question-sign" title="Documento Técnico"></a><% } %></label>
         <div class="col-md-9">
           <select id="selectorIndicador" class="form-control selectIndicador">
           <% _.each(model.get("indicadores"), function( indicador, i){ %>
-          <% if ( indicador.id_meta == model.get("meta_selected") ){ %>
-          <option option title="<%= indicador.descripcion %>" value="<%= i %>" <% if (i == model.get("indicador_selected_id")) { %> selected<% }  %>><%= _(indicador.descripcion ).trim(30) %></option>
+          <% if ( indicador.id_meta == model.get("idMetaSeleccionada") ){ %>
+          <option option title="<%= indicador.descripcion %>" value="<%= i %>" <% if (i == model.get("idIndicadorSeleccionado")) { %> selected<% }  %>><%= _(indicador.descripcion ).trim(30) %></option>
           <% } %>
           <% }); %>
           </select>
@@ -115,7 +106,7 @@
         <div class="col-md-9">
           <select id="selectorAnio" class="form-control selectFecha">
           <% _.each(model.get("valoresIndicadoresDesgloses"), function(e, f){ %>',
-          <option title="<%= f %>" value="<%= f %>" <% if (f == model.get("fecha_selected")) { %> selected<% }  %>><%= f %></option>
+          <option title="<%= f %>" value="<%= f %>" <% if (f == model.get("fechaSeleccionada")) { %> selected<% }  %>><%= f %></option>
           <% }); %>
           </select>
         </div>
@@ -128,8 +119,8 @@
           <select id="selectorDesglose" class="form-control selectDesglose">
           <% _.each(model.get("desgloses"), function(desglose, i){ %>
           <!-- MODIFICAR PARA USAR BÚSQUEDA BINARIA  -->
-          <% if ( _.indexOf(model.get("valoresIndicadoresDesgloses")[model.get("fecha_selected")].id_desgloses, desglose.id) != -1 ){ %>
-          <option title="<%= desglose.descripcion %>" value="<%= desglose.id %>"<% if (desglose.id == model.get("desglose_selected")) { %> selected<% } %>><%= desglose.descripcion %></option>
+          <% if ( _.indexOf(model.get("valoresIndicadoresDesgloses")[model.get("fechaSeleccionada")].id_desgloses, desglose.id) != -1 ){ %>
+          <option title="<%= desglose.descripcion %>" value="<%= desglose.id %>"<% if (desglose.id == model.get("desgloseSeleccionado")) { %> selected<% } %>><%= desglose.descripcion %></option>
           <% } %>
           <% }); %>
           </select>
@@ -140,16 +131,16 @@
       <div class="form-group">
         <label for="selectorEtiqueta" class="col-md-3 control-label">Etiqueta</label>
         <div class="col-md-9">
-          <% if ( model.get("desglose_selected") == 0 ) { %>
+          <% if ( model.get("desgloseSeleccionado") == 0 ) { %>
           <select disabled id="selectorEtiqueta" class="form-control selectEtiqueta">
           <% } else { %>
           <select id="selectorEtiqueta" class="form-control selectEtiqueta">
           <% } %>
-          <% model.set('etiquetas_current', []) %>
+          <% model.set('etiquetasActuales', []) %>
           <% _.each(model.get("etiquetas"), function(e, id){ %>
-          <% if ( e.id_desglose == model.get("desglose_selected") ){ %>
-          <% model.get('etiquetas_current').push(id); %>
-          <option title="<%= e.descripcion %>" value="<%= id %>" <% if ( e.descripcion == "Total" ) { model.set('etiqueta_selected', id ) %> selected<% } %>><% if ( id != 0 ) { %> <%= e.descripcion %> <% } %></option>
+          <% if ( e.id_desglose == model.get("desgloseSeleccionado") ){ %>
+          <% model.get('etiquetasActuales').push(id); %>
+          <option title="<%= e.descripcion %>" value="<%= id %>" <% if ( e.descripcion == "Total" ) { model.set('etiquetaSeleccionada', id ) %> selected<% } %>><% if ( id != 0 ) { %> <%= e.descripcion %> <% } %></option>
           <% } %>
           <% }); %>
           </select>
@@ -170,8 +161,8 @@
       <td>
       <div class="text-center" id='fechasDestacadasDiv'>
         <div class="btn-group " role="group" aria-label="...">
-          <% _.each(model.get("indicadores")[model.get("indicador_selected_id")].fechasDestacadas, function(fecha, i) { %>
-          <input type="button" value="<%= fecha %>" class="ButtonFechaDestacada btn btn-primary sharp <% if (fecha == model.get('fecha_selected')) { print ('active'); } %>">
+          <% _.each(model.get("indicadores")[model.get("idIndicadorSeleccionado")].fechasDestacadas, function(fecha, i) { %>
+          <input type="button" value="<%= fecha %>" class="ButtonFechaDestacada btn btn-primary sharp <% if (fecha == model.get('fechaSeleccionada')) { print ('active'); } %>">
           <% }); %>
         </div>  
       </div>
@@ -192,11 +183,11 @@
         'valoresIndicadoresDesgloses': [],
         'desgloses': [],
         'etiquetas': [],
-        'etiquetas_current': [],
-        'objetivo_selected': '',
-        'meta_selected': '',
-        'indicador_selected_id': '',
-        'fecha_selected': '',
+        'etiquetasActuales': [],
+        'idObjetivoSeleccionado': null,
+        'idMetaSeleccionada': null,
+        'idIndicadorSeleccionado': null,
+        'fechaSeleccionada': null,
         'rutaDocumentosTecnicos': "{{ asset('uploads/indicadores/') }}",
       }
     });
@@ -206,21 +197,31 @@
       template: _.template($('#formLoader').html()), /* Lo que quiero renderizar */
 
       initialize: function() {
-        /* Primer elemento de la lista de desgloses para una fecha definida */
-        this.model.set('desglose_selected', this.model.get('valoresIndicadoresDesgloses')[this.model.get('fecha_selected')].id_desgloses[0]);
+        var idIndicadorSeleccionado = this.model.get('idIndicadorSeleccionado');
+        var indicador = this.model.get('indicadores');
+        var fechaSeleccionada = this.model.get('fechaSeleccionada');
+        var valoresIndicadoresDesgloses = this.model.get('valoresIndicadoresDesgloses');
+        var valoresRefGeografica = valoresIndicadoresDesgloses[fechaSeleccionada].valoresRefGeografica;
+        var etiquetas = this.model.get('etiquetas');
 
-        this.model.on('change:objetivo_selected', this.render, this);
-        this.model.on('change:meta_selected', this.render, this);
-        this.model.on('change:indicador_selected_id', this.render, this);
-        this.model.on('change:fecha_selected', this.anioSelected, this);
-        this.model.on('change:desglose_selected', this.render, this);
+        /* Primer elemento de la lista de desgloses para una fecha definida */
+        var desgloseSeleccionado = valoresIndicadoresDesgloses[fechaSeleccionada].id_desgloses[0];
+        this.model.set('desgloseSeleccionado', desgloseSeleccionado);
+
+        /* Eventos a monitorizar */
+        this.model.on('change:idObjetivoSeleccionado', this.render, this);
+        this.model.on('change:idMetaSeleccionada', this.render, this);
+        this.model.on('change:idIndicadorSeleccionado', this.render, this);
+        this.model.on('change:fechaSeleccionada', this.anioSelected, this);
+        this.model.on('change:desgloseSeleccionado', this.render, this);
         this.render();
 
+        /* Se instancian luego de la ejecución de render() */
+        var idEtiquetaSeleccionada = this.model.get('etiquetaSeleccionada');
+        var etiquetasActuales = this.model.get('etiquetasActuales');
+
         /* Inicializar mapa */
-        swap(this.model.get('indicadores')[this.model.get('indicador_selected_id')], this.model.get('etiquetas'), this.model.get('valoresIndicadoresDesgloses'));
-        valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('fecha_selected')].valoresRefGeografica
-        idEtiquetaSeleccionada = this.model.get('etiqueta_selected');
-        etiquetasActuales = this.model.get('etiquetas_current');
+        swap(indicadores[idIndicadorSeleccionado], etiquetas, valoresIndicadoresDesgloses);
         update(valoresRefGeografica, idEtiquetaSeleccionada, etiquetasActuales);
 
         },
@@ -233,92 +234,125 @@
                   'change .selectEtiqueta': 'etiquetaSelected',
         },
         render:function(){
-        // var tpl = _.template(template_select);
-        //   this.$el.html(tpl({model:this.model}));
+          // var tpl = _.template(template_select);
+          // this.$el.html(tpl({model:this.model}));
           // this.$el.html(this.template({model:this.model}));
           this.$el.html(this.template({model:this.model}));
           return this;
         },
         objetivoSelected: function(event){
-          this.model.set("objetivo_selected",event.target.value); 
+          this.model.set("idObjetivoSeleccionado", event.target.value); 
           this.metaSelected();
         },
         metaSelected: function(e){
-          this.model.set("meta_selected",$(this.el).find('.selectMeta').val());
+          this.model.set("idMetaSeleccionada", $(this.el).find('.selectMeta').val());
             if (this.model.get('indicadores').length){
                 this.indicadorSelected();
             }
         },
-        indicadorSelected: function(e){
-          this.model.set("indicador_selected_id",$(this.el).find('.selectIndicador').val());
-          /* Actualizar datos, ir a buscarlos y refrescar (Bloquear pantalla) */
+        indicadorSelected: function(e) {
+          /* Actualizar datos, ir a buscarlos y refrescar */
           /* Bloquear pantalla hasta tanto no se hayan recuperado los datos */
-          $( "#preloader" ).fadeIn(400, function(){
-            $( "#mainContainer" ).fadeOut(200);
-          });
 
-          /* Ver si es necesario un 'if */
-          /* PROBAR */
-          swap(this.model.get('indicadores')[this.model.get('indicador_selected_id')], this.model.get('etiquetas'));
-          this.desgloseSelected();
+          var idIndicador = $(this.el).find('.selectIndicador').val();
+          var url = api_urls.refresh + '?id_indicador='+ idIndicador;
+          var data;
+          var that = this;
+          // setTimeout(function () {waitingDilog.hide();}, 3000);
+          waitingDialog.show('Aguarde un momento por favor...');
+          $.ajax(url, {
+                'type': 'GET',
+                'processData': false,
+                'contentType': 'application/json',
+                 success: function(data) {
+                  var indicador = that.model.get('indicadores')[idIndicador];
+                  var desgloses = data['desgloses'];
+                  var etiquetas = data['etiquetas'];
+                  var valoresIndicadoresDesgloses = data['valoresIndicadoresDesgloses'];
+                  var fechaSeleccionadaAnterior = that.model.get('fechaSeleccionada');
+
+                  that.model.set('idIndicadorSeleccionado', idIndicador);
+                  that.model.set('desgloses', desgloses);
+                  that.model.set('etiquetas', etiquetas);
+                  that.model.set('valoresIndicadoresDesgloses', valoresIndicadoresDesgloses);
+                  
+                  swap(indicador, etiquetas, valoresIndicadoresDesgloses);
+
+                  if (indicador.fechasDestacadas[0]) {
+                    fechaSeleccionada = indicador.fechasDestacadas[0];
+                  } else {
+                    fechaSeleccionada = Object.keys(valoresIndicadoresDesgloses)[0];
+                  }
+
+                  that.model.unset('fechaSeleccionada', {silent: true});
+                  that.model.set('fechaSeleccionada', fechaSeleccionada);
+                  waitingDialog.hide();
+                 },
+                 error: function(data) {
+                  /* VER CÓMO GESTIONAR ERRORES */
+                  waitingDialog.hide();
+                  alert('Ha ocurrido un error. Por favor, actualice la página');
+                },
+          });
         },
         fechaClicked: function(event) {
-          this.model.set("fecha_selected", $(this.el).find('.selectFecha').val()); 
-          // console.log("desde select" + this.model.get("fecha_selected"));
+          this.model.set("fechaSeleccionada", $(this.el).find('.selectFecha').val()); 
+          // console.log("desde select" + this.model.get("fechaSeleccionada"));
           this.render();
         },
         anioSelected: function(event){
-          /* MEJORAR */
-          if (!(event.target)) {
-            this.render();
-          } else {
-            this.model.set("fecha_selected", event.target.value);
+          if (event.target) {
+            this.model.set("fechaSeleccionada", $(this.el).find('.selectFecha').val());
+            // this.model.set("fechaSeleccionada", event.target.value);
           }
+          this.render();
           this.desgloseSelected();
         },
-        desgloseSelected: function(event){
-          this.model.set("desglose_selected", $(this.el).find('.selectDesglose').val()); 
+        desgloseSelected: function(event) {
+          this.model.set("desgloseSeleccionado", $(this.el).find('.selectDesglose').val()); 
           this.etiquetaSelected();
         },
-        etiquetaSelected: function(event){
-          this.model.set("etiqueta_selected", $(this.el).find('.selectEtiqueta').val());
-          valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[this.model.get('fecha_selected')].valoresRefGeografica;
-          idEtiquetaSeleccionada = this.model.get('etiqueta_selected');
-          etiquetasActuales = this.model.get('etiquetas_current');
+        etiquetaSelected: function(event) {
+          this.model.set("etiquetaSeleccionada", $(this.el).find('.selectEtiqueta').val());
+
+          var fechaSeleccionada = this.model.get('fechaSeleccionada');
+          var valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[fechaSeleccionada].valoresRefGeografica;
+          var idEtiquetaSeleccionada = this.model.get('etiquetaSeleccionada');
+          var etiquetasActuales = this.model.get('etiquetasActuales');
           update(valoresRefGeografica, idEtiquetaSeleccionada, etiquetasActuales);
         }
     })
-
 
     var FechasDestacadasView = Backbone.View.extend({
       el: '#fechasDestacadasDiv',
       template: _.template($('#fechasDestacadasLoader').html()),
       initialize: function() {
-        // console.log(this.model.get('fecha_selected'));
-        // console.log("inicialice");
-        this.model.on('change:fecha_selected', this.render, this);
+        this.model.on('change:fechaSeleccionada', this.render, this);
         this.render();
         },
-        events: {
-                  'click .ButtonFechaDestacada': 'fechaDestacadaClicked',
-        },
+        events: {'click .ButtonFechaDestacada': 'fechaDestacadaClicked'},
         render:function(){
           this.$el.html(this.template({model:this.model}));
           return this;
         },
         fechaDestacadaClicked: function(event){
-          // console.log(this.model.get('fecha_selected'));
-          this.model.set("fecha_selected", event.target.value);
-          // console.log("modifique: " + this.model.get('fecha_selected'));
+          this.model.set("fechaSeleccionada", event.target.value);
         }
     })
 
     /* Incializar Mapa */
     mapMe(poligonoNacion, poligonoProvincias, poligonoDepartamentos);
 
+    var objetivos = {{ objetivos|json_encode|raw }};
+    var metas = {{ metas|json_encode|raw }};
+    var indicadores = {{ indicadores|json_encode|raw }};
     var valoresIndicadoresDesgloses = {{ valoresIndicadoresDesgloses|json_encode|raw }};
-    var indicadores = {{ indicadores|json_encode|raw}};
+    var desgloses = {{ desgloses|json_encode|raw }};
+    var etiquetas = {{ etiquetas|json_encode|raw }};
     var idIndicadorSeleccionado = {{ idIndicadorSeleccionado }};
+    var idObjetivoSeleccionado = {{ idObjetivoSeleccionado }};
+    var idMetaSeleccionada = {{ idMetaSeleccionada }};
+    var api_urls = {{ api_urls|json_encode|raw }};
     var fechaSeleccionada;
 
     /* Primer período a mostrar: El primero de los años destacados o si ninguno de 
@@ -330,26 +364,17 @@
       fechaSeleccionada = Object.keys(valoresIndicadoresDesgloses)[0];
     }
 
-    // console.log(fechaSeleccionada);
-
-    // console.log({{ indicadores|json_encode|raw}}[{{ idIndicadorSeleccionado }}].fechasDestacadas[0]);
-    console.log(valoresIndicadoresDesgloses);
-    // console.log(valoresIndicadoresDesgloses);
-    console.log({{ etiquetas|json_encode|raw}});
-    // console.log({{ indicadores|json_encode|raw}});
-    // console.log({{ desgloses|json_encode|raw}});
-
     var modelForm = new ChainSelectData({
-      'objetivos': {{ objetivos|json_encode|raw}},
-      'metas': {{ metas|json_encode|raw}},
-      'indicadores': {{ indicadores|json_encode|raw}},
+      'objetivos': objetivos,
+      'metas': metas,
+      'indicadores': indicadores,
       'valoresIndicadoresDesgloses': valoresIndicadoresDesgloses,
-      'desgloses': {{ desgloses|json_encode|raw}},
-      'etiquetas': {{ etiquetas|json_encode|raw}},
-      'objetivo_selected': {{ idObjetivoSeleccionado }},
-      'meta_selected': {{ idMetaSeleccionada }},
-      'indicador_selected_id': idIndicadorSeleccionado,
-      'fecha_selected': fechaSeleccionada
+      'desgloses': desgloses,
+      'etiquetas': etiquetas,
+      'idObjetivoSeleccionado': idObjetivoSeleccionado,
+      'idMetaSeleccionada': idMetaSeleccionada,
+      'idIndicadorSeleccionado': idIndicadorSeleccionado,
+      'fechaSeleccionada': fechaSeleccionada
     });
 
     // var view = new ThreeSelectView({el: $("#selects"), model:model});

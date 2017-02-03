@@ -2,16 +2,25 @@
 
 namespace AppBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+
+/**
+* Explora Controller
+*
+* @Route("/explora")
+*/
 
 class ExploraController extends Controller
 {
     /**
-     * @Route("/explora/{idIndicador}", name="explora", requirements={"idIndicador": "\d+"})
+     * @Route("/{idIndicador}", name="explora_initialize", requirements={"idIndicador": "\d+"})
      */
-    public function exploraAction(Request $request, $idIndicador)
+    public function initializeAction(Request $request, $idIndicador)
     {
         // echo var_dump($idIndicador);
 
@@ -39,7 +48,9 @@ class ExploraController extends Controller
         $etiquetas = $this->getEtiquetasByIndicadorPreload($idIndicador, $reverseDesgloses);
 
         $desgloses = $this->getDesglosesByIndicadorPreload($idIndicador);
-        $valoresIndicadoresDesgloses = $this->getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses, $indicadores[$idIndicador]);
+        $valoresIndicadoresDesgloses = $this->getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses);
+        $indicadores[$idIndicador]['fechasDestacadas'] = $this->intersectFechasDestacadas(
+            $indicadores[$idIndicador]['fechasDestacadas'], array_keys($valoresIndicadoresDesgloses));
 
         return $this->render('explora/explora.html.twig', array(
             'objetivos' => $objetivos,
@@ -50,8 +61,41 @@ class ExploraController extends Controller
             'valoresIndicadoresDesgloses' => $valoresIndicadoresDesgloses,
             'idObjetivoSeleccionado' => $idObjetivoSeleccionado,
             'idMetaSeleccionada' => $idMetaSeleccionada,
-            'idIndicadorSeleccionado' => $idIndicador
+            'idIndicadorSeleccionado' => $idIndicador,
+            'api_urls' => array('refresh'=> $this->generateUrl('explora_refresh'))
         ));
+    }
+
+    /**
+     * Refrescar 'valoresIndicadoresDesgloses' al seleccionar un nuevo 'Indicador'
+     * @Route("/refresh", name="explora_refresh")
+     * @Method({"GET"})
+    */
+
+    // public function refreshAction(Request $request, $idIndicador) {
+    public function refreshAction(Request $request) {
+        $callbackData = array();
+        $idIndicador = $request->query->get('id_indicador');
+
+        /* Actualizar:
+        *  - Indicador (Intersecar fechasDestacadas)
+        *  - Desgloses
+        *  - Etiquetas
+        *  - ValoresIndicadoresDesgloses
+        */
+
+        if (isset($idIndicador)) {
+            $reverseDesgloses = array();
+            $callbackData['etiquetas'] = $this->getEtiquetasByIndicadorPreload($idIndicador, $reverseDesgloses);
+            $callbackData['desgloses'] = $this->getDesglosesByIndicadorPreload($idIndicador);
+            $callbackData['valoresIndicadoresDesgloses'] = $this->getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses);
+        }
+
+        if (empty($callbackData['valoresIndicadoresDesgloses'])) {
+            throw $this->createNotFoundException('Indicador no encontrado');    
+        }
+
+        return new JsonResponse($callbackData);
     }
 
     /* CAMBIAR ESQUEMA DE DICCIONARIOS - REVISAR PROBLEMA C0N CLAVE 0 */
@@ -92,13 +136,23 @@ class ExploraController extends Controller
         return $fechasDestacadas;
     }
 
-    private function getIndicadoresPreload(){
+    private function intersectFechasDestacadas($fechasDestacadasIndicador, $fechasDestacadasValidas) {
+        $interseccion = array();
+        foreach ($fechasDestacadasIndicador as $f) {
+            /* IMPLEMENTAR BUSQUEDA BINARIA! */
+            if (in_array($f, $fechasDestacadasValidas)){
+                array_push($interseccion, $f);
+            }
+        }
+        return $interseccion;
+    }
+
+    private function getIndicadoresPreload() {
         $list = array();
         /* Si se desean filtrar los indicadores por meta seleccionada, descomentar y reemplazar  */
         // $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByFkidmeta($idMeta);
 
-        // $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findall();
-        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByVisible(true);
+        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByVisible(true);    
 
         foreach ($indicadores as $i) {
             $idIndicador = $i->getId();
@@ -187,7 +241,7 @@ class ExploraController extends Controller
     /* VER QUÉ SUCEDE CUANDO NO EXISTEN VALORES CARGADOS PARA EL INDICADOR SELECCIONADO */
     /* VERIFICAR QUE FILTRO POR APROBADO FUNCIONE CORRECTAMENTE */
 
-    private function getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses, &$indicador){
+    private function getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses){
         $entidad = $this->filterValoresIndicadoresConfigFechaByIndicador($idIndicador);
         $atributos = array();
         $atributosPorFecha = array();
@@ -243,14 +297,6 @@ class ExploraController extends Controller
             }
         }
 
-        $interseccion = array();
-        foreach ($indicador['fechasDestacadas'] as $fecha) {
-            if (array_key_exists($fecha, $atributosPorFecha)) {
-                array_push($interseccion, $fecha);
-            }
-        }
-        $indicador['fechasDestacadas'] = $interseccion;
-
         return $atributosPorFecha;
     }
 
@@ -276,6 +322,7 @@ class ExploraController extends Controller
                 ->getResult();
     }
 
+    /* REEMPLAZAR POR FUNCIÓN NATIVA DE SYMFONY */
     private function filterValoresIndicadoresConfigFechaByIndicador($idIndicador) {
         return $this->getDoctrine()->getManager()->createQuery(
                 'SELECT e FROM AppBundle:Valoresindicadoresconfigfecha e WHERE 
