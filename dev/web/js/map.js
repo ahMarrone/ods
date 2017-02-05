@@ -90,6 +90,28 @@ function mapMe(geoJsonNacion, geoJsonProvincias, geoJsonDepartamentos) {
         }
     });
 
+    var exportarButton = L.easyButton({
+      id: 'exportButton',       // an id for the generated button
+      position: 'topleft',      // inherited from L.Control -- the corner it goes in
+      type: 'replace',          // set to animate when you're comfy with css
+      leafletClasses: true,     // use leaflet classes to style the button?
+      states:[{                 // specify different icons and responses for your button
+        stateName: 'export',
+        onClick: function(button, map){
+          alert('¡Exportar!');
+        },
+        title: 'Exportar',
+        icon: 'fa-download'
+      }]
+    });
+    exportarButton.addTo(map);
+
+    /*var buttons = [ L.easyButton(options),
+                    L.easyButton(options2),
+                    L.easyButton(options3)];
+
+    L.easyBar(buttons).addTo(map);*/
+
     sideChartModel = new sideChartModel({});
     sideChartView = new sideChartView({model:sideChartModel});
     // sideChartView = new sideChartView({el: $('.infobox'), model:sideChartModel});

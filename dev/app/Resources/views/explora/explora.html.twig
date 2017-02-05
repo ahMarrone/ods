@@ -14,6 +14,7 @@
     <script type="text/javascript" src="{{ asset('js/departamentos-simplified-1dot0-mapa.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/sideChart.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/loadingModal.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/easy-button.js') }}"></script>
 {% endblock %}    
 
 {% block stylesheets %}
@@ -21,7 +22,8 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="{{ asset('leaflet/leaflet.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/miscStyle.css') }}" />
-    <link rel="stylesheet" href="{{ asset('c3/c3.css') }}" />  
+    <link rel="stylesheet" href="{{ asset('c3/c3.css') }}" />
+    <link rel="stylesheet" href="{{ asset('c3/easy-button.css') }}" />
 {% endblock %}
 
 {% block body %}
@@ -254,6 +256,12 @@
           /* Actualizar datos, ir a buscarlos y refrescar */
           /* Bloquear pantalla hasta tanto no se hayan recuperado los datos */
 
+          var idIndicadorSeleccionado = this.model.get('idIndicadorSeleccionado');
+          var metas = this.model.get('metas');
+          var indicadores = this.model.get('indicadores');
+          var idMeta = indicadores[idIndicadorSeleccionado].id_meta;
+          var idObjetivo = metas[idMeta].id_objetivo;
+
           var idIndicador = $(this.el).find('.selectIndicador').val();
           var url = api_urls.refresh + '?id_indicador='+ idIndicador;
           var data;
@@ -271,27 +279,36 @@
                   var valoresIndicadoresDesgloses = data['valoresIndicadoresDesgloses'];
                   var fechaSeleccionadaAnterior = that.model.get('fechaSeleccionada');
 
-                  that.model.set('idIndicadorSeleccionado', idIndicador);
-                  that.model.set('desgloses', desgloses);
-                  that.model.set('etiquetas', etiquetas);
-                  that.model.set('valoresIndicadoresDesgloses', valoresIndicadoresDesgloses);
-                  
-                  swap(indicador, etiquetas, valoresIndicadoresDesgloses);
-
-                  if (indicador.fechasDestacadas[0]) {
-                    fechaSeleccionada = indicador.fechasDestacadas[0];
+                  if ($.isEmptyObject(valoresIndicadoresDesgloses)) {
+                    that.model.set(idObjetivoSeleccionado, idObjetivo);
+                    that.model.set(idObjetivoSeleccionado, idMeta);
+                    $(that.el).find('.selectIndicador').val(idIndicadorSeleccionado);
+                    alert('El Indicador seleccionado aún no posee datos disponibles');
                   } else {
-                    fechaSeleccionada = Object.keys(valoresIndicadoresDesgloses)[0];
-                  }
+                    /* Actualizar variables del Modelo */
+                    that.model.set('idIndicadorSeleccionado', idIndicador);
+                    that.model.set('desgloses', desgloses);
+                    that.model.set('etiquetas', etiquetas);
+                    that.model.set('valoresIndicadoresDesgloses', valoresIndicadoresDesgloses);
+                    
+                    swap(indicador, etiquetas, valoresIndicadoresDesgloses);
 
-                  that.model.unset('fechaSeleccionada', {silent: true});
-                  that.model.set('fechaSeleccionada', fechaSeleccionada);
+                    if (indicador.fechasDestacadas[0]) {
+                      fechaSeleccionada = indicador.fechasDestacadas[0];
+                    } else {
+                      fechaSeleccionada = Object.keys(valoresIndicadoresDesgloses)[0];
+                    }
+                    that.model.unset('fechaSeleccionada', {silent: true});
+                    that.model.set('fechaSeleccionada', fechaSeleccionada);
+                  }
                   waitingDialog.hide();
                  },
                  error: function(data) {
-                  /* VER CÓMO GESTIONAR ERRORES */
+                  that.model.set(idObjetivoSeleccionado, idObjetivo);
+                  that.model.set(idObjetivoSeleccionado, idMeta);
+                  $(that.el).find('.selectIndicador').val(idIndicadorSeleccionado);
+                  alert('Ha ocurrido un error. Por favor, intente nuevamente');
                   waitingDialog.hide();
-                  alert('Ha ocurrido un error. Por favor, actualice la página');
                 },
           });
         },
