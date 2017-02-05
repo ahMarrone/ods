@@ -86,14 +86,18 @@ class ExploraController extends Controller
 
         if (isset($idIndicador)) {
             $reverseDesgloses = array();
-            $callbackData['etiquetas'] = $this->getEtiquetasByIndicadorPreload($idIndicador, $reverseDesgloses);
-            $callbackData['desgloses'] = $this->getDesglosesByIndicadorPreload($idIndicador);
+            $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
+            $fechasDestacadasIndicador = $this->parseFechasDestacadas($indicador->getFechasDestacadas());
+            $callbackData['etiquetas'] = $this->getEtiquetasByIndicadorPreload($idIndicador, $reverseDesgloses);;
+            $callbackData['desgloses'] = $this->getDesglosesByIndicadorPreload($idIndicador);;
             $callbackData['valoresIndicadoresDesgloses'] = $this->getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses);
+            $fechasDestacadasDefinidas = array_keys($callbackData['valoresIndicadoresDesgloses']);
+            $callbackData['fechasDestacadas'] = $this->intersectFechasDestacadas($fechasDestacadasIndicador, $fechasDestacadasDefinidas);
         }
 
-        if (empty($callbackData['valoresIndicadoresDesgloses'])) {
+        /*if (empty($callbackData['valoresIndicadoresDesgloses'])) {
             throw $this->createNotFoundException('Indicador no encontrado');    
-        }
+        }*/
 
         return new JsonResponse($callbackData);
     }
@@ -136,11 +140,11 @@ class ExploraController extends Controller
         return $fechasDestacadas;
     }
 
-    private function intersectFechasDestacadas($fechasDestacadasIndicador, $fechasDestacadasValidas) {
+    private function intersectFechasDestacadas($fechasDestacadasIndicador, $fechasDestacadasDefinidas) {
         $interseccion = array();
         foreach ($fechasDestacadasIndicador as $f) {
             /* IMPLEMENTAR BUSQUEDA BINARIA! */
-            if (in_array($f, $fechasDestacadasValidas)){
+            if (in_array($f, $fechasDestacadasDefinidas)){
                 array_push($interseccion, $f);
             }
         }

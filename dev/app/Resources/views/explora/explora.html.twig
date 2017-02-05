@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="{{ asset('leaflet/leaflet.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/miscStyle.css') }}" />
     <link rel="stylesheet" href="{{ asset('c3/c3.css') }}" />
-    <link rel="stylesheet" href="{{ asset('c3/easy-button.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/easy-button.css') }}" />
 {% endblock %}
 
 {% block body %}
@@ -90,7 +90,7 @@
     </div> <!-- /.col-sm-6 col-lg-4 -->
     <div class="col-sm-6 col-lg-4">
       <div class="form-group">
-        <label for="selectorIndicador" class="col-md-3 control-label">Indicador <% if (model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico) { %><a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico)%>" class="glyphicon glyphicon-question-sign" title="Documento Técnico"></a><% } %></label>
+        <label for="selectorIndicador" class="col-md-3 control-label">Indicador <% if (model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico) { %><a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico)%>" class="fa fa-question-circle" title="Documento Técnico"></a><% } %></label>
         <div class="col-md-9">
           <select id="selectorIndicador" class="form-control selectIndicador">
           <% _.each(model.get("indicadores"), function( indicador, i){ %>
@@ -162,8 +162,8 @@
       <!-- <td  style="padding-top: 0px; background-color: #DFF6FF;padding-bottom: 0px"> -->
       <td>
       <div class="text-center" id='fechasDestacadasDiv'>
-        <div class="btn-group " role="group" aria-label="...">
-          <% _.each(model.get("indicadores")[model.get("idIndicadorSeleccionado")].fechasDestacadas, function(fecha, i) { %>
+        <div class="btn-group " role="group" aria-label="">
+          <% _.each(model.get("fechasDestacadas"), function(fecha, i) { %>
           <input type="button" value="<%= fecha %>" class="ButtonFechaDestacada btn btn-primary sharp <% if (fecha == model.get('fechaSeleccionada')) { print ('active'); } %>">
           <% }); %>
         </div>  
@@ -186,6 +186,7 @@
         'desgloses': [],
         'etiquetas': [],
         'etiquetasActuales': [],
+        'fechasDestacadas': [],
         'idObjetivoSeleccionado': null,
         'idMetaSeleccionada': null,
         'idIndicadorSeleccionado': null,
@@ -277,6 +278,7 @@
                   var desgloses = data['desgloses'];
                   var etiquetas = data['etiquetas'];
                   var valoresIndicadoresDesgloses = data['valoresIndicadoresDesgloses'];
+                  var fechasDestacadas = data['fechasDestacadas'];
                   var fechaSeleccionadaAnterior = that.model.get('fechaSeleccionada');
 
                   if ($.isEmptyObject(valoresIndicadoresDesgloses)) {
@@ -290,11 +292,12 @@
                     that.model.set('desgloses', desgloses);
                     that.model.set('etiquetas', etiquetas);
                     that.model.set('valoresIndicadoresDesgloses', valoresIndicadoresDesgloses);
+                    that.model.set('fechasDestacadas', fechasDestacadas);
                     
                     swap(indicador, etiquetas, valoresIndicadoresDesgloses);
 
-                    if (indicador.fechasDestacadas[0]) {
-                      fechaSeleccionada = indicador.fechasDestacadas[0];
+                    if (fechasDestacadas.length > 0) {
+                      fechaSeleccionada = fechasDestacadas[0];
                     } else {
                       fechaSeleccionada = Object.keys(valoresIndicadoresDesgloses)[0];
                     }
@@ -370,13 +373,14 @@
     var idObjetivoSeleccionado = {{ idObjetivoSeleccionado }};
     var idMetaSeleccionada = {{ idMetaSeleccionada }};
     var api_urls = {{ api_urls|json_encode|raw }};
+    var fechasDestacadas = indicadores[idIndicadorSeleccionado].fechasDestacadas;
     var fechaSeleccionada;
 
-    /* Primer período a mostrar: El primero de los años destacados o si ninguno de 
+    /* Primer 'período' a mostrar: El primero de los años destacados o si ninguno de 
     estos ha sido definido, el año más lejano a la actualidad de los valores recuperados */
 
-    if (indicadores[idIndicadorSeleccionado].fechasDestacadas[0]) {
-      fechaSeleccionada = indicadores[idIndicadorSeleccionado].fechasDestacadas[0];
+    if (fechasDestacadas.length > 0) {
+      fechaSeleccionada = fechasDestacadas[0];
     } else {
       fechaSeleccionada = Object.keys(valoresIndicadoresDesgloses)[0];
     }
@@ -388,6 +392,7 @@
       'valoresIndicadoresDesgloses': valoresIndicadoresDesgloses,
       'desgloses': desgloses,
       'etiquetas': etiquetas,
+      'fechasDestacadas': fechasDestacadas,
       'idObjetivoSeleccionado': idObjetivoSeleccionado,
       'idMetaSeleccionada': idMetaSeleccionada,
       'idIndicadorSeleccionado': idIndicadorSeleccionado,
