@@ -8,6 +8,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+
+
 
 /**
 * Explora Controller
@@ -62,7 +66,8 @@ class ExploraController extends Controller
             'idObjetivoSeleccionado' => $idObjetivoSeleccionado,
             'idMetaSeleccionada' => $idMetaSeleccionada,
             'idIndicadorSeleccionado' => $idIndicador,
-            'api_urls' => array('refresh'=> $this->generateUrl('explora_refresh'))
+            'api_urls' => array('refresh'=> $this->generateUrl('explora_refresh'),
+                                'export'=> $this->generateUrl('export_refresh'))
         ));
     }
 
@@ -100,6 +105,31 @@ class ExploraController extends Controller
         }*/
 
         return new JsonResponse($callbackData);
+    }
+
+    /**
+     * Exportar datos del Indicador
+     * @Route("/export", name="export_refresh")
+     * @Method({"POST"})
+    */
+
+    public function exportAction(Request $request) {
+        $callbackData = array();
+        $idIndicador = $request->query->get('id_indicador');
+        $content = $request->request->all();
+        // $request->request->get('var_name');
+        $fileContent = '';
+        if ((!empty($content)) and (!empty($idIndicador))){
+            $fileContent .= 'Contenido!';
+        }
+        
+        $response = new Response($fileContent);
+        $disposition = $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            'foo.csv'
+        );
+        $response->headers->set('Content-Disposition', $disposition);
+        return $response;
     }
 
     /* CAMBIAR ESQUEMA DE DICCIONARIOS - REVISAR PROBLEMA C0N CLAVE 0 */
