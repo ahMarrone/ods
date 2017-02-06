@@ -172,7 +172,55 @@
     </tr>
 </script>
 </table>
+
+<!-- Modal Exportar -->
+<div class="modal fade" id="exportarModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content text-center">
+    <!-- /export/?id_indicador=getIdIndicador() -->
+    <form name="exportar" class="form-horizontal" method="POST" action="action()" id="formExportModal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Seleccione una opción</h4>
+      </div>
+      <div class="modal-body">
+      <div class="form-group">
+        <div class="radio">
+          <label><input type="radio" name="radioExportar" value="csv" onclick="showDiv()">CSV (Datos)</label>
+        </div>
+        <div class="radio">
+            <label><input type="radio" name="radioExportar" value="pdf" onclick="hideDiv()" checked="checked">PDF (Mapa)</label>
+        </div>
+        <div id="checkboxExportar" class="checkbox" style="display:none;">
+        <label><input type="checkbox" value="">Todos los años disponibles</label>
+      </div>
+      </div>
+    </div>
+      <div class="modal-footer">
+        <div class="col-sm-6 col-md-4 col-md-offset-3">
+        <!-- <input class="btn btn-primary color" type="submit" name="exportar" id="botonExportar" value="Exportar"> -->
+          <button type="submit" class="btn btn-primary"><i class="fa fa-download fa-lg"></i> Exportar</button>
+        </div>
+      </div>
+    </form>
+    </div>
+  </div>
 </div>
+
+</div>
+
+<script type="text/javascript">
+  function showDiv() {
+   document.getElementById('checkboxExportar').style.display = "block";
+ }
+ function hideDiv() {
+  document.getElementById('checkboxExportar').style.display = "none";
+ }
+ // $('#myModal').off('hidden.bs.modal').on('hide.bs.modal', function () {
+ $('#exportarModal').on('hide.bs.modal', function () {
+   $('#checkboxExportar').hide();
+});
+</script>
 
 <script type="text/javascript">
   $(document).ready(function() {
@@ -385,29 +433,37 @@
       fechaSeleccionada = Object.keys(valoresIndicadoresDesgloses)[0];
     }
 
-    var modelForm = new ChainSelectData({
-      'objetivos': objetivos,
-      'metas': metas,
-      'indicadores': indicadores,
-      'valoresIndicadoresDesgloses': valoresIndicadoresDesgloses,
-      'desgloses': desgloses,
-      'etiquetas': etiquetas,
-      'fechasDestacadas': fechasDestacadas,
-      'idObjetivoSeleccionado': idObjetivoSeleccionado,
-      'idMetaSeleccionada': idMetaSeleccionada,
-      'idIndicadorSeleccionado': idIndicadorSeleccionado,
-      'fechaSeleccionada': fechaSeleccionada
-    });
+    if ($.isEmptyObject(valoresIndicadoresDesgloses)) {
+      waitingDialog.show('El Indicador seleccionado aún no posee datos disponibles',{onHide: function () {alert('Redirecionado!');}});
+      // setTimeout(function () {waitingDialog.hide();}, 3000);
+    } else {
+      var modelForm = new ChainSelectData({
+        'objetivos': objetivos,
+        'metas': metas,
+        'indicadores': indicadores,
+        'valoresIndicadoresDesgloses': valoresIndicadoresDesgloses,
+        'desgloses': desgloses,
+        'etiquetas': etiquetas,
+        'fechasDestacadas': fechasDestacadas,
+        'idObjetivoSeleccionado': idObjetivoSeleccionado,
+        'idMetaSeleccionada': idMetaSeleccionada,
+        'idIndicadorSeleccionado': idIndicadorSeleccionado,
+        'fechaSeleccionada': fechaSeleccionada
+      });
 
-    // var view = new ThreeSelectView({el: $("#selects"), model:model});
-    var viewForm = new ChainSelectView({model:modelForm});
-    var viewFechasDestacadas = new FechasDestacadasView({model:modelForm});
-
-    
+      // var view = new ThreeSelectView({el: $("#selects"), model:model});
+      var viewForm = new ChainSelectView({model:modelForm});
+      var viewFechasDestacadas = new FechasDestacadasView({model:modelForm});
+    }
   });
 </script>
 
 
 <!-- http://gis.stackexchange.com/questions/41928/adding-removing-leaflet-geojson-layers -->
 <!-- http://gis.stackexchange.com/questions/68941/how-to-add-remove-legend-with-leaflet-layers-control -->
+
+<!-- http://stackoverflow.com/questions/133925/javascript-post-request-like-a-form-submit -->
+<!-- http://stackoverflow.com/questions/27447755/can-you-set-a-javascript-function-name-as-an-html-attribute -->
+<!-- http://stackoverflow.com/questions/15279716/form-inside-the-modal-bootstrap -->
+<!-- http://stackoverflow.com/questions/13010411/symfony2-force-file-download -->
 {% endblock %}
