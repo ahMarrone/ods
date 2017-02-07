@@ -1,5 +1,10 @@
 {% extends 'base.html.twig' %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/simplemodal.js') }}"></script>
+{% endblock %}
+
 {% block body %}
     <ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
@@ -65,12 +70,23 @@
 </table>
 </div>
 
+<div id="globalModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+    </div>
+    </div>
+  </div>
+</div>
+
 
 
 <script type="text/javascript">
 	$(document).ready(function() {
 
 	var api_urls = {{ api_urls|json_encode|raw}};
+
+	var globalModal = 'globalModal';
 
 
 	function aproveDataRequest(data, rows){
@@ -83,15 +99,15 @@
           'contentType': 'application/json',
            success: function(data) {
               if (data.success){
-                alert("Valores guardados con éxito");
+                showSimpleModal(globalModal, 'success', 'Valores GUARDADOS con éxito');
                 updateRowsAproveStatus(rows,data["action"]);
               } else {
-                alert(data.msg);
+                showSimpleModal(globalModal, 'error', data.msg);
               }
               location.reload();
           },
           error: function(data) {
-            alert("ERROR! Ocurrió un error mientras se intentaban guardar los datos");
+            showSimpleModal(globalModal, 'error', "ERROR! Ocurrió un error mientras se intentaban guardar los datos");
           },
       });
 	}

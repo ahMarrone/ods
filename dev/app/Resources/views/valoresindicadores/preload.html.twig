@@ -13,6 +13,7 @@
     <script src="{{ asset('js/underscore-min.js') }}"></script>
     <script src="{{ asset('js/backbone-min.js') }}"></script>
     <script src="{{ asset('js/ThreeSelect.js') }}"></script>
+    <script src="{{ asset('js/simplemodal.js') }}"></script>
     <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
 {% endblock %}
 
@@ -39,6 +40,16 @@
 </button>
 </form>
 </div>
+</div>
+
+
+<div id="globalModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+    </div>
+    </div>
+  </div>
 </div>
 
 <script id="panelConfigurationTemplate" type="text/template">
@@ -118,6 +129,8 @@
 
         var configModel = null;
         var configView = null;
+
+        var globalModal = 'globalModal';
 
         function cartesianProductOf() {
           return _.reduce(arguments, function(a, b) {
@@ -340,14 +353,14 @@
                     'contentType': 'application/json',
                      success: function(data) {
                         if (data.success){
-                          alert("Configuración guardada con éxito");
+                          showSimpleModal(globalModal, 'success', 'Configuración guardada con éxito');
                           that.model.set('desgloces_has_saved_config',true);
                         } else {
-                          alert("No se pudo guardar la configuración");
+                          showSimpleModal(globalModal, 'error', 'ERROR! No se pudo guardar la configuración');
                         }
                      },
                      error: function(data) {
-                        alert("Ha ocurrido un error mientras se intentaba guardar la configuración");
+                        showSimpleModal(globalModal, 'error', 'ERROR! "Ha ocurrido un error mientras se intentaba guardar la configuración"');
                         that.model.set('desgloces_has_saved_config',false);
                      },
                      complete: function() {
@@ -355,7 +368,7 @@
                      }
                    });
                 } else {
-                  alert("Debe seleccionar alguno de los desgloces disponibles");
+                  showSimpleModal(globalModal, 'error', 'Por favor, seleccione algunos de los desgloses disponibles');
                 }
             },
             prepareLabelsListContent: function(){
@@ -386,6 +399,8 @@
         }
 
 
+
+
         var objetivos = {{ objetivos|json_encode|raw}};
         var metas = {{ metas|json_encode|raw}};
         var indicadores = {{ indicadores|json_encode|raw}};
@@ -406,12 +421,14 @@
           }
       }
 
-        init();
 
-        function init(){
-            configModel = new IndicadorConfiguration({id_indicador:$('#three_select_indicador').val()});
-            configView = new configurationView({model:configModel});
-        }
+      function init(){
+          configModel = new IndicadorConfiguration({id_indicador:$('#three_select_indicador').val()});
+          configView = new configurationView({model:configModel});
+      }
+
+      init();
+
 
     });
 </script>

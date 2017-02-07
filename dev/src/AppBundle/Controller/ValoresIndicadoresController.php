@@ -374,7 +374,8 @@ class ValoresIndicadoresController extends Controller
         try {
             $em->getConnection()->beginTransaction();
             foreach ($data as $valorIndicador){
-                $configfecha = $this->getIndicadorConfigByKey($valorIndicador["indicador"], $valorIndicador["fecha"]);
+                $fecha = $this->formatDateToDB($valorIndicador["fecha"]);
+                $configfecha = $this->getIndicadorConfigByKey($valorIndicador["indicador"], $fecha);
                 $valoresindicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')
                                     ->findOneBy(array('idvaloresindicadoresconfigfecha'=>$configfecha->getId(),
                                                        'idetiqueta'=>$valorIndicador["etiqueta"],
