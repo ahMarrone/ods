@@ -1,10 +1,20 @@
 {% trans_default_domain 'FOSUserBundle' %}
+
+
+	<ol class="breadcrumb">
+        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        <li><a href="{{ path('admin_users_index') }}">Usuarios</a></li>
+        <li class="active">Registro de usuario</a></li>
+    </ol>
+
 <div class="page-header">
           <h1>Registro de usuario</h1>
     </div>
+
+
 {{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register'}}) }}
     {{ form_widget(form) }}
-    <div>
-        <input type="submit" class="btn btn-success" value="{{ 'Registrar'|trans }}" />
+    <div class="col-md-offset-2">
+        <input type="submit" class="btn btn-success " value="{{ 'Registrar'|trans }}" />
     </div>
 {{ form_end(form) }}

@@ -19,12 +19,14 @@
         <span>Mi perfil</span> 
       </a>
     </div>
+      {% if is_granted('ROLE_SUPER_ADMIN') %}
       <div class="col-md-1">
       <a class="quick-btn" href="{{ path('admin_users_index') }}">
         <i class="fa fa-user-plus fa-3x"></i>
         <span>Administrar</span> 
       </a> 
     </div>
+    {% endif %}
   </div>
 </div>
 <div class="row"> 
