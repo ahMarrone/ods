@@ -177,8 +177,9 @@
 <div class="modal fade" id="exportarModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">
   <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content text-center">
+    <!--  -->
     <!-- /export/?id_indicador=getIdIndicador() -->
-    <form name="exportar" class="form-horizontal" method="POST" action="action()" id="formExportModal">
+    <form name="exportar" class="form-horizontal" method="POST" onsubmit="postAction(this);" id="formExportModal">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Seleccione una opción</h4>
@@ -186,13 +187,14 @@
       <div class="modal-body">
       <div class="form-group">
         <div class="radio">
-          <label><input type="radio" name="radioExportar" value="csv" onclick="showDiv()">CSV (Datos)</label>
+        <!-- IdIndicador puede ir en 'value' -->
+            <label><input type="radio" id="pdfRadio" name="exportar" onclick="hideDiv()" checked="checked">PDF (Mapa)</label>
         </div>
         <div class="radio">
-            <label><input type="radio" name="radioExportar" value="pdf" onclick="hideDiv()" checked="checked">PDF (Mapa)</label>
+          <label><input type="radio" id="csvRadio" name="exportar" onclick="showDiv()">CSV (Datos)</label>
         </div>
-        <div id="checkboxExportar" class="checkbox" style="display:none;">
-        <label><input type="checkbox" value="">Todos los años disponibles</label>
+        <div id="checkboxExportarDiv" class="checkbox" style="display:none;">
+          <label><input type="checkbox" name="todos" value="1">Todos los años disponibles</label>
       </div>
       </div>
     </div>
@@ -211,14 +213,25 @@
 
 <script type="text/javascript">
   function showDiv() {
-   document.getElementById('checkboxExportar').style.display = "block";
+    document.getElementById('checkboxExportarDiv').style.display = "block";
  }
- function hideDiv() {
-  document.getElementById('checkboxExportar').style.display = "none";
+  function hideDiv() {
+    document.getElementById('checkboxExportarDiv').style.display = "none";
  }
+  function postAction(form) {
+    var idIndicador = $('#selectorIndicador').val()
+    form.action = "export?id_indicador=" + idIndicador;
+ }
+ $('#formExportModal').submit(function() {
+    if ($('#pdfRadio', this).is(':checked')) {
+      alert('Descargo el mapa!');
+      // $('#exportarModal').modal('hide');
+      return false;
+    }
+});
  // $('#myModal').off('hidden.bs.modal').on('hide.bs.modal', function () {
  $('#exportarModal').on('hide.bs.modal', function () {
-   $('#checkboxExportar').hide();
+   $('#checkboxExportarDiv').hide();
 });
 </script>
 
