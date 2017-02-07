@@ -63,6 +63,7 @@ class ValoresIndicadoresController extends Controller
         $fecha =  (isset($params["fecha"])) ? $params["fecha"] : NULL;
         $fecha = $this->formatDateToDB($fecha);
         $configfecha = $this->getIndicadorConfigByKey($idIndicador, $fecha);
+        
         if ($configfecha){
             $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findById($idIndicador)[0];
             //$indicadorDesgloces = $this->getDoctrine()->getRepository('AppBundle:Desglocesindicadores')->findByIdindicador($idIndicador);
@@ -93,8 +94,8 @@ class ValoresIndicadoresController extends Controller
                 )
         ));
         } else {
-           //echo var_dump($this->getRequest()->request->all());
-           return $this->redirectToRoute('admin_crud_valoresindicadores_preload'); 
+			//echo var_dump($this->getRequest()->request->all());
+			return $this->redirectToRoute('admin_crud_valoresindicadores_preload'); 
         }
     }
 

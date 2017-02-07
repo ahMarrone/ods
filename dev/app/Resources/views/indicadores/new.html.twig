@@ -34,17 +34,9 @@
            <div id="selects"></div>
         </div>
 
-        
-        {{ form_widget(form) }}
-        
-        
-        <div>
-			{{ form_label(form.descripcion) }}
-			{{ form_errors(form.descripcion) }}
-			{{ form_widget(form.descripcion) }}
-		</div>
-        
-        
+		
+		{{ form_widget(form) }}
+                    
 
          <div>
            <div id="highlightDatesControl"></div>
@@ -119,7 +111,6 @@
                 getNextIndicadorCode();         
             }
         }
-
 
         init();
 

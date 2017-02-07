@@ -9,7 +9,6 @@
 
 {% block javascripts %}
     {{ parent() }}
-
     <script src="{{ asset('js/underscore-min.js') }}"></script>
     <script src="{{ asset('js/backbone-min.js') }}"></script>
     <script src="{{ asset('js/ThreeSelect.js') }}"></script>
@@ -20,26 +19,28 @@
 {% block body %}
 
 <div class="container">
-<div class="row">
-    <ol class="breadcrumb">
-        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
-        <li class="active">Precarga valores indicadores</a></li>
-    </ol>
+	<div class="row">
+		<ol class="breadcrumb">
+			<li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+			<li class="active">Carga de valores indicadores</a></li>
+		</ol>
 
-    <div class="page-header">
-          <h1>Carga de valores indicadores <small></small></h1>
+		<div class="page-header">
+			<h1>Carga de valores indicadores</h1>
         </div>
-</div>
-<div class="row" class="col-md-10">
-<form id="preloaddataForm" action="{{ path('admin_crud_valoresindicadores_new') }}" method="post">
-        <div id="selects"></div>
-    <div class="form-group">
-        <div id="panelConfiguration"></div>
-    </div>
-     <button id="preloadDataSubmitBtn" type="submit" class="btn btn-success">  Siguiente
-</button>
-</form>
-</div>
+	</div>
+
+	<div class="row">
+		<form id="preloaddataForm" action="{{ path('admin_crud_valoresindicadores_new') }}" method="post">    
+			
+			<div id="selects"></div>
+			<br><br><br><br><br><br>
+			<div class="form-group">
+				<div id="panelConfiguration"></div>
+			</div>
+			<button id="preloadDataSubmitBtn" type="submit" class="btn btn-success">Siguiente</button>
+		</form>
+	</div>
 </div>
 
 
