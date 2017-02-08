@@ -1,11 +1,11 @@
 
 var template_highlight_dates = [
     '<div class="form-group">',
-            '<label class="control-label required">Fechas destacadas (hitos)</label>',
+            '<label class="control-label required col-sm-2">Fechas destacadas (hitos)</label>',
         '<div class="row">',
             '<div id="highlightDatesCalendar" class="col-md-3" name="highlight_dates">',
             '</div>',
-            '<div class="alert alert-info col-md-9" role="alert"><b>Fechas destacadas (máx. 5): </b>',
+            '<div class="alert alert-info col-md-6" role="alert"><b>Fechas destacadas (máx. 5): </b>',
             '<ul>',
             '<% _.each(model.get("dates"), function( date, i){ %>',
                 '<li><%= date %></li>',
