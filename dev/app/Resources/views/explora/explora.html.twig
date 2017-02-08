@@ -66,9 +66,9 @@
       <div class="form-group">
         <label for="selectorObjetivo" class="col-md-3 control-label">Objetivo</label>
         <div class="col-md-9">
-          <select id="selectorObjetivo" class="form-control selectObjetivo">
+          <select id="selectorObjetivo" class="form-control selectObjetivo" title="<%= this.model.get('objetivos')[this.model.get('idObjetivoSeleccionado')].descripcion %>">
           <% _.each(model.get("objetivos"), function( objetivo, i){ %>
-          <option title="<%= objetivo.descripcion %>" value="<%= objetivo.id %>" <% if (objetivo.id == model.get("idObjetivoSeleccionado")) { %> selected<% }  %>><%= _(objetivo.descripcion).trimByTheMiddle(25) %></option>
+          <option title="<%= objetivo.descripcion %>" value="<%= objetivo.id %>" <% if (objetivo.id == model.get("idObjetivoSeleccionado")) { %> selected<% }  %>><%= _(objetivo.descripcion).trimByTheMiddle(120) %></option>
           <% }); %>
           </select>
         </div>
@@ -78,10 +78,10 @@
       <div class="form-group">
         <label for="selectorMeta" class="col-md-3 control-label">Meta</label>
         <div class="col-md-9">
-          <select id="selectorMeta" class="form-control selectMeta">
+          <select id="selectorMeta" class="form-control selectMeta" title="<%= this.model.get('metas')[this.model.get('idMetaSeleccionada')].descripcion %>">
           <% _.each(model.get("metas"), function( meta, i){ %>',
           <% if ( meta.id_objetivo == model.get("idObjetivoSeleccionado") ){ %>
-          <option title="<%= meta.descripcion %>" value="<%= meta.id %>" <% if (meta.id == model.get("idMetaSeleccionada")) { %> selected<% }  %>><%= _(meta.descripcion).trim(30) %></option>
+          <option title="<%= meta.descripcion %>" value="<%= meta.id %>" <% if (meta.id == model.get("idMetaSeleccionada")) { %> selected<% }  %>><%= _(meta.descripcion).trimByTheMiddle(80) %></option>
           <% } %>
           <% }); %>
           </select>
@@ -90,12 +90,12 @@
     </div> <!-- /.col-sm-6 col-lg-4 -->
     <div class="col-sm-6 col-lg-4">
       <div class="form-group">
-        <label for="selectorIndicador" class="col-md-3 control-label">Indicador <% if (model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico) { %><a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico)%>" class="fa fa-question-circle" title="Documento Técnico"></a><% } %></label>
+        <label for="selectorIndicador" class="col-md-3 control-label">Indicador <% if (model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico) { %><a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico)%>" class="fa fa-info-circle" title="Documento Técnico"></a><% } %></label>
         <div class="col-md-9">
-          <select id="selectorIndicador" class="form-control selectIndicador">
+          <select id="selectorIndicador" class="form-control selectIndicador" title="<%= this.model.get('indicadores')[this.model.get('idIndicadorSeleccionado')].descripcion %>">
           <% _.each(model.get("indicadores"), function( indicador, i){ %>
           <% if ( indicador.id_meta == model.get("idMetaSeleccionada") ){ %>
-          <option option title="<%= indicador.descripcion %>" value="<%= i %>" <% if (i == model.get("idIndicadorSeleccionado")) { %> selected<% }  %>><%= _(indicador.descripcion ).trim(30) %></option>
+          <option option title="<%= indicador.descripcion %>" value="<%= i %>" <% if (i == model.get("idIndicadorSeleccionado")) { %> selected<% }  %>><%= _(indicador.descripcion ).trimByTheMiddle(20) %></option>
           <% } %>
           <% }); %>
           </select>
@@ -278,6 +278,9 @@
         this.model.on('change:idIndicadorSeleccionado', this.render, this);
         this.model.on('change:fechaSeleccionada', this.anioSelected, this);
         this.model.on('change:desgloseSeleccionado', this.render, this);
+
+        console.log();
+
         this.render();
 
         /* Se instancian luego de la ejecución de render() */
@@ -310,9 +313,7 @@
         },
         metaSelected: function(e){
           this.model.set("idMetaSeleccionada", $(this.el).find('.selectMeta').val());
-            if (this.model.get('indicadores').length){
-                this.indicadorSelected();
-            }
+          this.indicadorSelected();
         },
         indicadorSelected: function(e) {
           /* Actualizar datos, ir a buscarlos y refrescar */
@@ -328,7 +329,7 @@
           var url = api_urls.refresh + '?id_indicador='+ idIndicador;
           var data;
           var that = this;
-          // setTimeout(function () {waitingDilog.hide();}, 3000);
+
           waitingDialog.show('Aguarde un momento por favor...');
           $.ajax(url, {
                 'type': 'GET',
