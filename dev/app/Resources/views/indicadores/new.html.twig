@@ -1,5 +1,6 @@
 {% extends 'base.html.twig' %}
 
+
 {% block stylesheets %}
     {{ parent() }}
 
@@ -14,6 +15,8 @@
     <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('js/ThreeSelect.js') }}"></script>
     <script src="{{ asset('js/HighlightDates.js') }}"></script>
+    <script src="{{ asset('js/globalutils.js') }}"></script>
+
 {% endblock %}
 
 {% block body %}
@@ -45,7 +48,7 @@
         <hr>
         
 
-        <input class="col-md-1 btn btn-success option-btn" type="submit" value="Guardar" />
+        <input class="col-md-1 col-md-offset-2 btn btn-success option-btn" type="submit" value="Guardar" />
     {{ form_end(form) }}
 
 <div class="row">
@@ -88,6 +91,7 @@
             var idMeta = $('#three_select_meta').val();
             var url = api_urls.get_next_indicador_code;
             var data = {'meta_id':idMeta};
+            appendSpinner($('#indicadores_codigo').parent().parent());
             $.ajax(url,{
                   'data': JSON.stringify(data),
                   'type': 'POST',
@@ -101,6 +105,9 @@
                    error: function(data) {
                         
                   },
+                  complete: function(data){
+                    removeSpinner();
+                  }
               });
         }
 

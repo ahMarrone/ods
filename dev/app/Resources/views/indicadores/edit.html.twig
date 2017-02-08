@@ -14,6 +14,7 @@
     <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('js/ThreeSelect.js') }}"></script>
     <script src="{{ asset('js/HighlightDates.js') }}"></script>
+    <script src="{{ asset('js/globalutils.js') }}"></script>
 {% endblock %}
 
 {% block _indicadores_documentpath_widget %}
@@ -43,13 +44,16 @@
         {{ form_widget(edit_form) }}
 
         {% if document_path_string %}
-         <a class="btn btn-warning" target="_blank" title="Ver documento técnico" href="{{ asset('uploads/indicadores/' ~ document_path_string) }}"><i class="fa fa-file-pdf-o fa-fw" aria-hidden="true"></i>  Ver documento técnico existente</a>
+         <a class="btn btn-warning col-md-offset-2" target="_blank" title="Ver documento técnico" href="{{ asset('uploads/indicadores/' ~ document_path_string) }}"><i class="fa fa-file-pdf-o fa-fw" aria-hidden="true"></i>  Ver documento técnico existente</a>
          {% endif %}
 
-        <div>
+        <div style="margin-top:40px;">
            <div id="highlightDatesControl"></div>
         </div>
-        <input class="col-md-1 btn btn-success option-btn" type="submit" value="Editar" />
+
+        <hr>
+
+        <input class="col-md-1 col-md-offset-2 btn btn-success option-btn" type="submit" value="Editar" />
     {{ form_end(edit_form) }}
 
 <div class="row">
@@ -60,6 +64,8 @@
 
 <script type="text/javascript">
     $( document ).ready(function() {
+
+        var api_urls = {{ api_urls|json_encode|raw}};
 
         var objetivos = {{ objetivos|json_encode|raw}};
         var metas = {{ metas|json_encode|raw}};
@@ -80,7 +86,9 @@
                 'objetivos': objetivos,
                 'metas': metas,
             });
-            viewThreeSelect = new ThreeSelectView({el: $("#selects"), model:modelThreeSelect});
+            viewThreeSelect = new ThreeSelectView({el: $("#selects"), model:modelThreeSelect,
+                metaChangeCallback: getNextIndicadorCode
+            });
         }
 
         // Agrego al formulario controles para agregar fechas destacadas
@@ -89,6 +97,31 @@
             var dates = (highlightDatesSelected) ? highlightDatesSelected.split(";") : [] ;
             modelHighlightDates = new HighlightDates({dates: dates});
             viewHighlightDates = new HighlightDatesView({el: $("#highlightDatesControl"), model:modelHighlightDates});
+        }
+
+
+        function getNextIndicadorCode(){
+            var idMeta = $('#three_select_meta').val();
+            var url = api_urls.get_next_indicador_code;
+            var data = {'meta_id':idMeta};
+            appendSpinner($('#indicadores_codigo').parent().parent());
+            $.ajax(url,{
+                  'data': JSON.stringify(data),
+                  'type': 'POST',
+                  'processData': false,
+                  'contentType': 'application/json',
+                   success: function(data) {
+                        if (data.next_indicador_code){
+                            $('#indicadores_codigo').val(data.next_indicador_code);
+                        }
+                   },
+                   error: function(data) {
+                        
+                  },
+                  complete: function(data){
+                    removeSpinner();
+                  }
+              });
         }
 
         addThreeSelectControls();
@@ -104,6 +137,11 @@
             // Seteo fechas destacadas en el formulario
             $('#indicadores_fechasdestacadas').val(modelHighlightDates.getFormattedDates());
         });
+
+        /*$('#three_select_meta').on('change', function(){
+            alert('change');
+            getNextIndicadorCode();
+        });*/
         
     });
 </script>

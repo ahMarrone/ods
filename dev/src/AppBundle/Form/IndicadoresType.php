@@ -75,13 +75,13 @@ class IndicadoresType extends AbstractType
             ->add('fechametaintermedia', TextType::class, array(
                 'attr' => ['class' => 'expected-value-datepicker'],
                 'label' => 'Año meta intermedia',
-                'required'=>false,  'attr' => array('class' => 'col-sm-1')
+                'required'=>false,
             ))
             ->add('valoresperadometaintermedia', NumberType::class, array('label'=>'Valor esperado meta intermedia', 'required'=>false, 'attr' => array('class' => 'col-sm-1')))             
             ->add('fechametafinal', TextType::class, array(
                 'attr' => ['class' => 'expected-value-datepicker'],
                 'label' => 'Año meta final',
-                'required'=>false,  'attr' => array('class' => 'col-sm-1')
+                'required'=>false,
             ))
             ->add('valoresperadometafinal', NumberType::class , array('label'=> 'Valor esperado meta final', 'required'=>false,  'attr' => array('class' => 'col-sm-1')))
             ->add('documentpath', FileType::class, array('label' => 'Documento técnico (archivo PDF)', 'required'=>false))

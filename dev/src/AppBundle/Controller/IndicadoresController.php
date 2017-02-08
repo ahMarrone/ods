@@ -255,6 +255,7 @@ class IndicadoresController extends Controller
             'objetivos' => $this->getObjetivosPreload(),
             'metas' => $this->getMetasPreload(),
             'document_path_string' => $document_path_string,
+            'api_urls' => array('get_next_indicador_code'=> $this->generateUrl('admin_crud_indicadores_get_next_indicador_code'))
         ));
     }
 

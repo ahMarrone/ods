@@ -1,5 +1,11 @@
 {% extends 'base.html.twig' %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/globalutils.js') }}"></script>
+{% endblock %}
+
+
 {% block body %}
 
     <ol class="breadcrumb">
@@ -35,6 +41,7 @@
 
 
         function getNextMetaCode(idObjetivo){
+            appendSpinner($('#metas_codigo').parent().parent());
             var url = api_urls.get_next_meta_code;
             var data = {'objetivo_id':idObjetivo};
             $.ajax(url,{
@@ -50,6 +57,9 @@
                    error: function(data) {
                         
                   },
+                  complete: function(data){
+                    removeSpinner();
+                  }
               });
         }
         
