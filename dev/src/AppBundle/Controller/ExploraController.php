@@ -77,10 +77,9 @@ class ExploraController extends Controller
      * @Method({"GET"})
     */
 
-    // public function refreshAction(Request $request, $idIndicador) {
     public function refreshAction(Request $request) {
         $callbackData = array();
-        $idIndicador = $request->query->get('id_indicador');
+        $idIndicador = json_decode($request->query->get('id_indicador'));
 
         /* Actualizar:
         *  - Indicador (Intersecar fechasDestacadas)
@@ -98,11 +97,9 @@ class ExploraController extends Controller
             $callbackData['valoresIndicadoresDesgloses'] = $this->getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses);
             $fechasDestacadasDefinidas = array_keys($callbackData['valoresIndicadoresDesgloses']);
             $callbackData['fechasDestacadas'] = $this->intersectFechasDestacadas($fechasDestacadasIndicador, $fechasDestacadasDefinidas);
-        }
-
-        /*if (empty($callbackData['valoresIndicadoresDesgloses'])) {
+        } else {
             throw $this->createNotFoundException('Indicador no encontrado');    
-        }*/
+        }
 
         return new JsonResponse($callbackData);
     }
@@ -119,17 +116,98 @@ class ExploraController extends Controller
         $content = $request->request->all();
         // $request->request->get('var_name');
         $fileContent = '';
+        $fileName = "ods_".date('dmYHis').".csv";
         if ((!empty($content)) and (!empty($idIndicador))){
-            $fileContent .= 'Contenido!';
+            $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
+            $idMeta = $indicador->getFkidmeta()->getId();
+            $meta = $this->getDoctrine()->getRepository('AppBundle:Metas')->findOneById($idMeta);
+            $idObjetivo = $meta->getFkidobjetivo()->getId();
+            $objetivo = $this->getDoctrine()->getRepository('AppBundle:Objetivos')->findOneById($idObjetivo);
+            $fileContent .= 'Objetivo: ' . $objetivo->getDescripcion() . "\r\n";
+            $fileContent .= 'Meta: ' . $meta->getDescripcion() . "\r\n";
+            $fileContent .= 'Indicador: ' . $indicador->getDescripcion() . "\r\n";
+            $fileContent .= "\r\n";
+            /* Filtro cruzado y Fecha */
+            $valoresIndicadoresConfigFecha = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfecha')->findByIdindicador($idIndicador);
+            $valoresIndicadoresConfigFechaMap = array();
+            foreach ($valoresIndicadoresConfigFecha as $e) {
+                $id = $e->getId();
+                $valoresIndicadoresConfigFechaMap[$id] = $this->getPeriodo($e->getFecha());
+            }
+            $idsValoresIndicadoresConfigFecha = array_keys($valoresIndicadoresConfigFechaMap);
+
+            /* Mapping Desgloses */
+            $valoresIndicadoresConfigFechaDesgloces = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfechadesgloces')->findByIdvaloresindicadoresconfigfecha($idsValoresIndicadoresConfigFecha);
+
+            $idsDesgloses = array();
+            foreach ($valoresIndicadoresConfigFechaDesgloces as $e) {
+                $id = $e->getIddesgloce();
+                array_push($idsDesgloses, $id);
+            }
+            /* VER SI VALE LA PENA array_unique() */
+
+            /* Mapping Etiquetas */
+            $etiquetas = $this->getDoctrine()->getRepository('AppBundle:Etiquetas')->findByFkiddesgloce($idsDesgloses);
+            $etiquetasMap = $this->buildMap($etiquetas);
+            $cantidadEtiquetas = count($etiquetasMap);
+
+            $valores = array();
+            $valores = array_fill(0, $cantidadEtiquetas, 0);
+            // $database = array_fill_keys(array('dbdriver', 'dbhost', 'dbname', 'dbuser', 'dbpass'), '');
+
+            /* ORDENAR POR ID, IDREFGEO */
+            $valoresIndicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')->findBy(
+                array('idvaloresindicadoresconfigfecha' => $idsValoresIndicadoresConfigFecha, 
+                      'aprobado' => true));
+
+            // $fileContent .= "Año;Referencia_Geográfica;"
+            // foreach ($ as $key => $value) {
+            //     # code...
+            // }
+
+            $idRefGeograficaActual = $valoresIndicadores[0]->getIdrefgeografica()->getId();
+            foreach ($valoresIndicadores as $e) {
+                $id = $e->getIdvaloresindicadoresconfigfecha()->getId();
+                $idRefGeografica = $e->getIdrefgeografica()->getId();
+                $idEtiqueta = $e->getIdetiqueta();
+                $valor = $e->getValor();
+                if ($idRefGeografica != $idRefGeograficaActual) {
+                    $periodo = $valoresIndicadoresConfigFechaMap[$id];
+                    $fileContent .= $periodo . ";" . $idRefGeograficaActual . ";";
+                    foreach ($valores as $v) {
+                        // echo var_dump($v);
+                        $fileContent .= $v . ";";
+                    }
+                    $fileContent .= "\r\n";
+                    $idRefGeograficaActual = $idRefGeografica;
+                    $valores = array();
+                    $valores = array_fill(0, $cantidadEtiquetas, 0);
+                }
+                $indice = $etiquetasMap[$idEtiqueta][1];
+                $valores[$indice] = $valor;
+            }
+
         }
-        
+        // echo var_dump($fileContent);
+
         $response = new Response($fileContent);
         $disposition = $response->headers->makeDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            'foo.csv'
+            $fileName
         );
         $response->headers->set('Content-Disposition', $disposition);
         return $response;
+    }
+
+    private function buildMap(&$entityList) {
+        $map = array();
+        $i = 0;
+        foreach ($entityList as $e) {
+            $id = $e->getId();
+            $map[$id] = array($e->getDescripcion(), $i);
+            $i++;
+        }
+        return $map;
     }
 
     /* CAMBIAR ESQUEMA DE DICCIONARIOS - REVISAR PROBLEMA C0N CLAVE 0 */
@@ -157,6 +235,11 @@ class ExploraController extends Controller
             );
         }
         return $list;
+    }
+
+    private function getPeriodo($fechaStr) {
+        $parseResult = explode("-", $fechaStr)[0];
+        return $parseResult;
     }
 
     private function parseFechasDestacadas($fechasDestacadasStr) {
