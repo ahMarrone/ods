@@ -109,6 +109,9 @@ function mapMe(geoJsonNacion, geoJsonProvincias, geoJsonDepartamentos) {
         }
     });
 
+    var centerButton = L.easyButton('fa-globe', function(btn, map) {
+        map.fitBounds(centerBounds);
+    }).addTo(map);
     exportarButton.addTo(map);
 
     /*L.easyBar(buttons).addTo(map);*/

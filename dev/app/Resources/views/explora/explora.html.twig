@@ -15,6 +15,7 @@
     <script type="text/javascript" src="{{ asset('js/sideChart.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/loadingModal.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/easy-button.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/simplemodal.js') }}"></script>
 {% endblock %}    
 
 {% block stylesheets %}
@@ -179,7 +180,7 @@
     <div class="modal-content text-center">
     <!--  -->
     <!-- /export/?id_indicador=getIdIndicador() -->
-    <form name="exportar" class="form-horizontal" method="POST" onsubmit="postAction(this);" id="formExportModal">
+    <form name="exportar" class="form-horizontal" method="POST" id="formExportModal">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Seleccione una opción</h4>
@@ -209,6 +210,15 @@
   </div>
 </div>
 
+<div id="globalModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content text-center">
+      <div class="modal-body">
+    </div>
+    </div>
+  </div>
+</div>
+
 </div>
 
 <script type="text/javascript">
@@ -218,11 +228,14 @@
   function hideDiv() {
     document.getElementById('checkboxExportarDiv').style.display = "none";
  }
-  function postAction(form) {
-    var idIndicador = $('#selectorIndicador').val()
-    form.action = "export?id_indicador=" + idIndicador;
- }
+
  $('#formExportModal').submit(function() {
+    var idIndicador = $('#selectorIndicador').val()
+    var fechaSeleccionada = $('#selectorAnio').val()
+    
+    this.action = "export?id_indicador=" + idIndicador;
+    $('#csvRadio', this).val(fechaSeleccionada);
+
     if ($('#pdfRadio', this).is(':checked')) {
       alert('Descargo el mapa!');
       // $('#exportarModal').modal('hide');
@@ -231,7 +244,8 @@
 });
  // $('#myModal').off('hidden.bs.modal').on('hide.bs.modal', function () {
  $('#exportarModal').on('hide.bs.modal', function () {
-   $('#checkboxExportarDiv').hide();
+   $('#checkboxExportarDiv', this).hide();
+   $('input:radio[name="exportar"][id="pdfRadio"]', this).prop('checked', true);
 });
 </script>
 
@@ -278,9 +292,6 @@
         this.model.on('change:idIndicadorSeleccionado', this.render, this);
         this.model.on('change:fechaSeleccionada', this.anioSelected, this);
         this.model.on('change:desgloseSeleccionado', this.render, this);
-
-        console.log();
-
         this.render();
 
         /* Se instancian luego de la ejecución de render() */
@@ -347,7 +358,8 @@
                     that.model.set(idObjetivoSeleccionado, idObjetivo);
                     that.model.set(idObjetivoSeleccionado, idMeta);
                     $(that.el).find('.selectIndicador').val(idIndicadorSeleccionado);
-                    alert('El Indicador seleccionado aún no posee datos disponibles');
+                    waitingDialog.hide();
+                    showSimpleModal(globalModal, 'error', 'El Indicador seleccionado no posee aún datos disponibles');
                   } else {
                     /* Actualizar variables del Modelo */
                     that.model.set('idIndicadorSeleccionado', idIndicador);
@@ -365,14 +377,14 @@
                     }
                     that.model.unset('fechaSeleccionada', {silent: true});
                     that.model.set('fechaSeleccionada', fechaSeleccionada);
+                    waitingDialog.hide();
                   }
-                  waitingDialog.hide();
                  },
                  error: function(data) {
                   that.model.set(idObjetivoSeleccionado, idObjetivo);
                   that.model.set(idObjetivoSeleccionado, idMeta);
                   $(that.el).find('.selectIndicador').val(idIndicadorSeleccionado);
-                  alert('Ha ocurrido un error. Por favor, intente nuevamente');
+                  showSimpleModal(globalModal, 'error', 'Ha ocurrido un error. Por favor, intente nuevamente');
                   waitingDialog.hide();
                 },
           });
@@ -438,6 +450,8 @@
     var fechasDestacadas = indicadores[idIndicadorSeleccionado].fechasDestacadas;
     var fechaSeleccionada;
 
+    var globalModal = 'globalModal';
+
     /* Primer 'período' a mostrar: El primero de los años destacados o si ninguno de 
     estos ha sido definido, el año más lejano a la actualidad de los valores recuperados */
 
@@ -448,7 +462,7 @@
     }
 
     if ($.isEmptyObject(valoresIndicadoresDesgloses)) {
-      waitingDialog.show('El Indicador seleccionado aún no posee datos disponibles',{onHide: function () {alert('Redirecionado!');}});
+      // waitingDialog.show('El Indicador seleccionado aún no posee datos disponibles',{onHide: function () {alert('Redirecionado!');}});
       // setTimeout(function () {waitingDialog.hide();}, 3000);
     } else {
       var modelForm = new ChainSelectData({

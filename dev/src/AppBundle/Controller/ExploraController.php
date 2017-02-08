@@ -7,11 +7,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
-
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-
-
 
 /**
 * Explora Controller
@@ -111,13 +108,14 @@ class ExploraController extends Controller
     */
 
     public function exportAction(Request $request) {
+        $CSV = ";";
         $callbackData = array();
         $idIndicador = $request->query->get('id_indicador');
         $content = $request->request->all();
         // $request->request->get('var_name');
-        $fileContent = '';
+        $fileContent = "";
         $fileName = "ods_".date('dmYHis').".csv";
-        if ((!empty($content)) and (!empty($idIndicador))){
+        if ((!empty($content)) and (!empty($idIndicador))) {
             $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
             $idMeta = $indicador->getFkidmeta()->getId();
             $meta = $this->getDoctrine()->getRepository('AppBundle:Metas')->findOneById($idMeta);
@@ -127,8 +125,14 @@ class ExploraController extends Controller
             $fileContent .= 'Meta: ' . $meta->getDescripcion() . "\r\n";
             $fileContent .= 'Indicador: ' . $indicador->getDescripcion() . "\r\n";
             $fileContent .= "\r\n";
-            /* Filtro cruzado y Fecha */
-            $valoresIndicadoresConfigFecha = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfecha')->findByIdindicador($idIndicador);
+
+            $filter = array('idindicador' => $idIndicador, 'cruzado' => false);
+            if (!(array_key_exists('todos', $content))) {
+                $fecha = $content['exportar'] . '-01-01';
+                $filter['fecha'] = $fecha;
+            }
+
+            $valoresIndicadoresConfigFecha = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfecha')->findBy($filter);
             $valoresIndicadoresConfigFechaMap = array();
             foreach ($valoresIndicadoresConfigFecha as $e) {
                 $id = $e->getId();
@@ -148,47 +152,57 @@ class ExploraController extends Controller
 
             /* Mapping Etiquetas */
             $etiquetas = $this->getDoctrine()->getRepository('AppBundle:Etiquetas')->findByFkiddesgloce($idsDesgloses);
-            $etiquetasMap = $this->buildMap($etiquetas);
-            $cantidadEtiquetas = count($etiquetasMap);
-
+            $etiquetasMap = array();
+            $etiquetasStr = "";
+            $cardinalEtiquetas = 0;
+            foreach ($etiquetas as $e) {
+                $id = $e->getId();
+                $descripcion = $e->getDescripcion();
+                $etiquetasMap[$id] = array($descripcion, $cardinalEtiquetas);
+                $etiquetasStr .= $descripcion . $CSV;
+                $cardinalEtiquetas++;
+            }
             $valores = array();
-            $valores = array_fill(0, $cantidadEtiquetas, 0);
+            $valores = array_fill(0, $cardinalEtiquetas, 0);
             // $database = array_fill_keys(array('dbdriver', 'dbhost', 'dbname', 'dbuser', 'dbpass'), '');
+
+            /* Mapping Referencias Geográficas */
+            $ambito = $indicador->getAmbito();
+            $refGeografica = $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findByAmbito($ambito);
+            $refGeograficaMap = array();
+            foreach ($refGeografica as $e) {
+                $id = $e->getId();
+                $refGeograficaMap[$id] = $e->getDescripcion();
+            }
 
             /* ORDENAR POR ID, IDREFGEO */
             $valoresIndicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')->findBy(
                 array('idvaloresindicadoresconfigfecha' => $idsValoresIndicadoresConfigFecha, 
                       'aprobado' => true));
 
-            // $fileContent .= "Año;Referencia_Geográfica;"
-            // foreach ($ as $key => $value) {
-            //     # code...
-            // }
+            $fileContent .= "Año" . $CSV . "Referencia_Geográfica" . $CSV . $etiquetasStr . "\r\n";
 
             $idRefGeograficaActual = $valoresIndicadores[0]->getIdrefgeografica()->getId();
             foreach ($valoresIndicadores as $e) {
                 $id = $e->getIdvaloresindicadoresconfigfecha()->getId();
                 $idRefGeografica = $e->getIdrefgeografica()->getId();
                 $idEtiqueta = $e->getIdetiqueta();
-                $valor = $e->getValor();
+                $valor = str_replace('.', ',', $e->getValor());
                 if ($idRefGeografica != $idRefGeograficaActual) {
                     $periodo = $valoresIndicadoresConfigFechaMap[$id];
-                    $fileContent .= $periodo . ";" . $idRefGeograficaActual . ";";
-                    foreach ($valores as $v) {
-                        // echo var_dump($v);
-                        $fileContent .= $v . ";";
+                    $fileContent .= $periodo . $CSV;
+                    $fileContent .= $refGeograficaMap[$idRefGeograficaActual] . $CSV;
+                    for ($i = 0; $i < $cardinalEtiquetas ; $i++) { 
+                        $fileContent .= $valores[$i] . $CSV;
+                        $valores[$i] = 0;
                     }
                     $fileContent .= "\r\n";
                     $idRefGeograficaActual = $idRefGeografica;
-                    $valores = array();
-                    $valores = array_fill(0, $cantidadEtiquetas, 0);
                 }
                 $indice = $etiquetasMap[$idEtiqueta][1];
                 $valores[$indice] = $valor;
             }
-
         }
-        // echo var_dump($fileContent);
 
         $response = new Response($fileContent);
         $disposition = $response->headers->makeDisposition(
@@ -197,17 +211,6 @@ class ExploraController extends Controller
         );
         $response->headers->set('Content-Disposition', $disposition);
         return $response;
-    }
-
-    private function buildMap(&$entityList) {
-        $map = array();
-        $i = 0;
-        foreach ($entityList as $e) {
-            $id = $e->getId();
-            $map[$id] = array($e->getDescripcion(), $i);
-            $i++;
-        }
-        return $map;
     }
 
     /* CAMBIAR ESQUEMA DE DICCIONARIOS - REVISAR PROBLEMA C0N CLAVE 0 */
