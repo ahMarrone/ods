@@ -26,7 +26,7 @@ USE `indicadores_ods`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
 INSERT INTO `usuarios` (`id`, `username`, `username_canonical`, `email`, `email_canonical`, `apellido`, `nombre`, `domicilio`, `localidad`, `provincia`, `telefono`, `dependencia`, `observaciones`, `enabled`, `salt`, `password`, `last_login`, `locked`, `expired`, `expires_at`, `confirmation_token`, `password_requested_at`, `roles`, `credentials_expired`, `credentials_expire_at`) VALUES
-(1, 'admin', 'admin', 'admin@admin.com', 'admin@admin.com', '', '', '', '', '', '', '', NULL, 1, 'p004rq1adaso08sw08gskkgcw48o84c', '$2y$13$p004rq1adaso08sw08gskeyrspSFcPvBTyHqX5swLtP1Zxr5RgtaO', '2016-11-06 23:54:25', 0, 0, NULL, NULL, NULL, 'a:1:{i:0;s:10:"ROLE_ADMIN";}', 0, NULL);
+(1, 'root', 'root', 'root@root.com', 'root@root.com', '', '', '', '', '', '', '', NULL, 1, 'p004rq1adaso08sw08gskkgcw48o84c', '$2y$13$p004rq1adaso08sw08gskeyrspSFcPvBTyHqX5swLtP1Zxr5RgtaO', '2016-11-06 23:54:25', 0, 0, NULL, NULL, NULL, 'a:1:{i:0;s:16:"ROLE_SUPER_ADMIN";}', 0, NULL);
 
 INSERT INTO `refGeografica` (`id`, `descripcion`, `ambito`) VALUES
 (0, 'PAIS', 'N'),

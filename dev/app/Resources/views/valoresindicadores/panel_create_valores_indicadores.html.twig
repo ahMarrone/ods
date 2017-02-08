@@ -14,6 +14,7 @@
     <script src="{{ asset('js/underscore-min.js') }}"></script>
     <script src="{{ asset('js/backbone-min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
+    <script src="{{ asset('js/simplemodal.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -45,6 +46,16 @@
       <div id="panelList">
         <div class=".panel"></div>
       </div>
+
+    <div id="globalModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+        </div>
+        </div>
+      </div>
+    </div>
+
 </div>
 
 
@@ -121,6 +132,9 @@
 <script type="text/javascript">
 
     $(document).ready(function() {
+
+
+      var globalModal = 'globalModal';
 
       function cartesianProductOf() {
           return _.reduce(arguments, function(a, b) {
@@ -360,15 +374,15 @@
                   'contentType': 'application/json',
                    success: function(data) {
                       if (data.success){
-                        alert("Valores guardados con éxito");
+                        showSimpleModal(globalModal, 'success', 'Valores GUARDADOS con éxito');
                         that.saveSuccessCallback(data);
                       } else {
-                        alert("NO ha sido posible guardar los valores");
+                        showSimpleModal(globalModal, 'error', 'ERROR! NO ha sido posible guardar los valores');
                       }
                       //location.reload();
                   },
                   error: function(data) {
-                    alert("ERROR! Ocurrió un error mientras se intentaban guardar los datos");
+                    showSimpleModal(globalModal, 'error', 'ERROR! Ocurrió un error mientras se intentaban guardar los datos');
                   },
               });
             },
@@ -407,15 +421,15 @@
                   'contentType': 'application/json',
                    success: function(data) {
                       if (data.success){
-                        alert("Valores eliminados con éxito");
+                        showSimpleModal(globalModal, 'success', 'Valores ELIMINADOS con éxito');
                         that.deleteSuccessCallback(models);
                       } else {
-                        alert("NO ha sido posible eliminar los valores");
+                        showSimpleModal(globalModal, 'error', 'ERROR! NO ha sido posible eliminar los valores');
                       }
                       //location.reload();
                   },
                   error: function(data) {
-                    alert("ERROR! Ocurrió un error mientras se intentaban borrar los datos");
+                    showSimpleModal(globalModal, 'error', 'ERROR! Ocurrió un error mientras se intentaban borrar los datos');
                   },
               });
             },

@@ -44,7 +44,7 @@ class DesglocesPorIndicadorType extends AbstractType
         $builder
             ->add('desglocesSeleccionados',  ChoiceType::class, array(
                                             'mapped' => false, 
-                                            'label'  => 'Desgloces', 
+                                            'label'  => 'Desgloses', 
                                             'required'=>true, 
                                             'choices' => $choice_desgloces,
                                             'choice_attr' => function($key, $val, $index) {
@@ -52,7 +52,7 @@ class DesglocesPorIndicadorType extends AbstractType
                                              },
                                             'expanded'=>true, 
                                             'multiple'=>true, 
-                                            'data' => $this->desgloces_seleccionados // siempre la opcion cero (Sin desgloces esta seleccionada)
+                                            'data' => $this->desgloces_seleccionados // siempre la opcion cero (Sin desgloses esta seleccionada)
                                             )
             )  
         ;
