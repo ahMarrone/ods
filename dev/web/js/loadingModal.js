@@ -2,6 +2,7 @@
  * Module for displaying "Waiting for..." dialog using Bootstrap
  *
  * @author Eugene Maslovich <ehpc@em42.ru>
+ * http://bootsnipp.com/snippets/featured/quotwaiting-forquot-modal-dialog
  */
 
 var waitingDialog = waitingDialog || (function ($) {
@@ -14,7 +15,7 @@ var waitingDialog = waitingDialog || (function ($) {
         '<div class="modal-content">' +
             '<div class="modal-header text-center"><h3 style="margin:0;"></h3></div>' +
             '<div class="modal-body">' +
-                // '<div class="progress progress-striped active" style="margin-bottom:0;"><div class="progress-bar" style="width: 100%"></div></div>' +
+                /*'<div class="progress progress-striped active" style="margin-bottom:0;"><div class="progress-bar" style="width: 100%"></div></div>' +*/
                 '<div id="preloader"><img class="displayed" src="http://www.odsargentina.gob.ar/public/images/loader.png" /></div>' +
             '</div>' +
         '</div></div></div>');
@@ -38,15 +39,18 @@ var waitingDialog = waitingDialog || (function ($) {
             var settings = $.extend({
                 dialogSize: 'm',
                 progressType: '',
+                onlyBody: false,
+                dynamic: true,
                 onHide: null // This callback runs after the dialog was hidden
             }, options);
 
             // Configuring dialog
+
             $dialog.find('.modal-dialog').attr('class', 'modal-dialog').addClass('modal-' + settings.dialogSize);
-            $dialog.find('.progress-bar').attr('class', 'progress-bar');
+            /*$dialog.find('.progress-bar').attr('class', 'progress-bar');
             if (settings.progressType) {
                 $dialog.find('.progress-bar').addClass('progress-bar-' + settings.progressType);
-            }
+            }*/
             $dialog.find('h3').text(message);
             // Adding callbacks
             if (typeof settings.onHide === 'function') {
