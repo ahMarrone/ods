@@ -15,7 +15,7 @@
     <script type="text/javascript" src="{{ asset('js/sideChart.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/loadingModal.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/easy-button.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/simplemodal.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/modalOnSteroids.js') }}"></script>
 {% endblock %}    
 
 {% block stylesheets %}
@@ -67,9 +67,11 @@
       <div class="form-group">
         <label for="selectorObjetivo" class="col-md-3 control-label">Objetivo</label>
         <div class="col-md-9">
-          <select id="selectorObjetivo" class="form-control selectObjetivo" title="<%= this.model.get('objetivos')[this.model.get('idObjetivoSeleccionado')].descripcion %>">
+          <select id="selectorObjetivo" class="form-control selectObjetivo" title="<% if (this.model.get('idObjetivoSeleccionado')) { %>
+          <%= this.model.get('objetivos')[this.model.get('idObjetivoSeleccionado')].descripcion %>
+          <% } %>">
           <% _.each(model.get("objetivos"), function( objetivo, i){ %>
-          <option title="<%= objetivo.descripcion %>" value="<%= objetivo.id %>" <% if (objetivo.id == model.get("idObjetivoSeleccionado")) { %> selected<% }  %>><%= _(objetivo.descripcion).trimByTheMiddle(120) %></option>
+          <option title="<%= objetivo.descripcion %>" value="<%= objetivo.id %>" <% if (objetivo.id == model.get("idObjetivoSeleccionado")) { %> selected<% }  %>><%= _(objetivo.descripcion).trim(42) %></option>
           <% }); %>
           </select>
         </div>
@@ -79,10 +81,12 @@
       <div class="form-group">
         <label for="selectorMeta" class="col-md-3 control-label">Meta</label>
         <div class="col-md-9">
-          <select id="selectorMeta" class="form-control selectMeta" title="<%= this.model.get('metas')[this.model.get('idMetaSeleccionada')].descripcion %>">
+          <select id="selectorMeta" class="form-control selectMeta" title=<% if (this.model.get('idMetaSeleccionada')) { %>
+          "<%= this.model.get('metas')[this.model.get('idMetaSeleccionada')].descripcion %>"
+          <% } %>>
           <% _.each(model.get("metas"), function( meta, i){ %>',
           <% if ( meta.id_objetivo == model.get("idObjetivoSeleccionado") ){ %>
-          <option title="<%= meta.descripcion %>" value="<%= meta.id %>" <% if (meta.id == model.get("idMetaSeleccionada")) { %> selected<% }  %>><%= _(meta.descripcion).trimByTheMiddle(80) %></option>
+          <option title="<%= meta.descripcion %>" value="<%= meta.id %>" <% if (meta.id == model.get("idMetaSeleccionada")) { %> selected<% }  %>><%= _(meta.descripcion).trim(42) %></option>
           <% } %>
           <% }); %>
           </select>
@@ -91,12 +95,16 @@
     </div> <!-- /.col-sm-6 col-lg-4 -->
     <div class="col-sm-6 col-lg-4">
       <div class="form-group">
-        <label for="selectorIndicador" class="col-md-3 control-label">Indicador <% if (model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico) { %><a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico)%>" class="fa fa-info-circle" title="Documento Técnico"></a><% } %></label>
+        <label for="selectorIndicador" class="col-md-3 control-label">Indicador <% if (model.get('idIndicadorSeleccionado')) { %>
+        <% if (model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico) { %><a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico)%>" class="fa fa-info-circle" title="Documento Técnico"></a><% } %>
+        <% } %></label>
         <div class="col-md-9">
-          <select id="selectorIndicador" class="form-control selectIndicador" title="<%= this.model.get('indicadores')[this.model.get('idIndicadorSeleccionado')].descripcion %>">
+          <select <% if (!(model.get('idIndicadorSeleccionado'))) { print ('disabled'); } %> id="selectorIndicador" class="form-control selectIndicador" title="<% if (this.model.get('idIndicadorSeleccionado')) { %>
+          <%= this.model.get('indicadores')[this.model.get('idIndicadorSeleccionado')].descripcion %>
+          <% } %>">
           <% _.each(model.get("indicadores"), function( indicador, i){ %>
           <% if ( indicador.id_meta == model.get("idMetaSeleccionada") ){ %>
-          <option option title="<%= indicador.descripcion %>" value="<%= i %>" <% if (i == model.get("idIndicadorSeleccionado")) { %> selected<% }  %>><%= _(indicador.descripcion ).trimByTheMiddle(20) %></option>
+          <option option title="<%= indicador.descripcion %>" value="<%= i %>" <% if (i == model.get("idIndicadorSeleccionado")) { %> selected<% }  %>><%= _(indicador.descripcion ).trim(42) %></option>
           <% } %>
           <% }); %>
           </select>
@@ -107,7 +115,7 @@
       <div class="form-group">
         <label for="selectorAnio" class="col-md-3 control-label">Año</label>
         <div class="col-md-9">
-          <select id="selectorAnio" class="form-control selectFecha">
+          <select <% if (_.isEmpty(model.get('valoresIndicadoresDesgloses'))) { print ('disabled'); } %> id="selectorAnio" class="form-control selectFecha">
           <% _.each(model.get("valoresIndicadoresDesgloses"), function(e, f){ %>',
           <option title="<%= f %>" value="<%= f %>" <% if (f == model.get("fechaSeleccionada")) { %> selected<% }  %>><%= f %></option>
           <% }); %>
@@ -119,7 +127,7 @@
       <div class="form-group">
         <label for="selectorDesglose" class="col-md-3 control-label">Desglose</label>
         <div class="col-md-9">
-          <select id="selectorDesglose" class="form-control selectDesglose">
+          <select <% if (_.isEmpty(model.get('desgloses'))) { print ('disabled'); } %> id="selectorDesglose" class="form-control selectDesglose">
           <% _.each(model.get("desgloses"), function(desglose, i){ %>
           <!-- MODIFICAR PARA USAR BÚSQUEDA BINARIA  -->
           <% if ( _.indexOf(model.get("valoresIndicadoresDesgloses")[model.get("fechaSeleccionada")].id_desgloses, desglose.id) != -1 ){ %>
@@ -134,11 +142,7 @@
       <div class="form-group">
         <label for="selectorEtiqueta" class="col-md-3 control-label">Etiqueta</label>
         <div class="col-md-9">
-          <% if ( model.get("desgloseSeleccionado") == 0 ) { %>
-          <select disabled id="selectorEtiqueta" class="form-control selectEtiqueta">
-          <% } else { %>
-          <select id="selectorEtiqueta" class="form-control selectEtiqueta">
-          <% } %>
+          <select <% if ((model.get("desgloseSeleccionado") == 0) || (_.isEmpty(model.get('etiquetas')))) { print ('disabled'); } %> id="selectorEtiqueta" class="form-control selectEtiqueta">
           <% model.set('etiquetasActuales', []) %>
           <% _.each(model.get("etiquetas"), function(e, id){ %>
           <% if ( e.id_desglose == model.get("desgloseSeleccionado") ){ %>
@@ -178,8 +182,6 @@
 <div class="modal fade" id="exportarModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">
   <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content text-center">
-    <!--  -->
-    <!-- /export/?id_indicador=getIdIndicador() -->
     <form name="exportar" class="form-horizontal" method="POST" id="formExportModal">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -188,7 +190,6 @@
       <div class="modal-body">
       <div class="form-group">
         <div class="radio">
-        <!-- IdIndicador puede ir en 'value' -->
             <label><input type="radio" id="pdfRadio" name="exportar" onclick="hideDiv()" checked="checked">PDF (Mapa)</label>
         </div>
         <div class="radio">
@@ -210,9 +211,14 @@
   </div>
 </div>
 
-<div id="globalModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-  <div class="modal-dialog" role="document">
+<div id="globalModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="padding-top:15%; overflow-y:visible;">
+  <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content text-center">
+      <div class="modal-header text-center">
+        <h3 style="margin:0;">
+          <i class="fa fa-exclamation-triangle" aria-hidden="true" style="color: red"></i> Aviso Importante
+        </h3>
+      </div>
       <div class="modal-body">
     </div>
     </div>
@@ -243,7 +249,7 @@
     }
 });
  // $('#myModal').off('hidden.bs.modal').on('hide.bs.modal', function () {
- $('#exportarModal').on('hide.bs.modal', function () {
+ $('#exportarModal').on('hidden.bs.modal', function () {
    $('#checkboxExportarDiv', this).hide();
    $('input:radio[name="exportar"][id="pdfRadio"]', this).prop('checked', true);
 });
@@ -252,6 +258,7 @@
 <script type="text/javascript">
   $(document).ready(function() {
 
+    /* INICIALIZAR DE ACUERDO A TIPO */
     var ChainSelectData = Backbone.Model.extend({
       defaults: {
         'objetivos':[],
@@ -287,6 +294,7 @@
         this.model.set('desgloseSeleccionado', desgloseSeleccionado);
 
         /* Eventos a monitorizar */
+        /* VER SI ES POSIBLE REALIZAR UN MAP */
         this.model.on('change:idObjetivoSeleccionado', this.render, this);
         this.model.on('change:idMetaSeleccionada', this.render, this);
         this.model.on('change:idIndicadorSeleccionado', this.render, this);
@@ -330,44 +338,55 @@
           /* Actualizar datos, ir a buscarlos y refrescar */
           /* Bloquear pantalla hasta tanto no se hayan recuperado los datos */
 
-          var idIndicadorSeleccionado = this.model.get('idIndicadorSeleccionado');
-          var metas = this.model.get('metas');
-          var indicadores = this.model.get('indicadores');
-          var idMeta = indicadores[idIndicadorSeleccionado].id_meta;
-          var idObjetivo = metas[idMeta].id_objetivo;
-
           var idIndicador = $(this.el).find('.selectIndicador').val();
           var url = api_urls.refresh + '?id_indicador='+ idIndicador;
           var data;
           var that = this;
 
-          waitingDialog.show('Aguarde un momento por favor...');
-          $.ajax(url, {
-                'type': 'GET',
-                'processData': false,
-                'contentType': 'application/json',
-                 success: function(data) {
-                  var indicador = that.model.get('indicadores')[idIndicador];
-                  var desgloses = data['desgloses'];
-                  var etiquetas = data['etiquetas'];
-                  var valoresIndicadoresDesgloses = data['valoresIndicadoresDesgloses'];
-                  var fechasDestacadas = data['fechasDestacadas'];
-                  var fechaSeleccionadaAnterior = that.model.get('fechaSeleccionada');
+          if (idIndicador == null) {
+            this.model.set({
+              'idIndicadorSeleccionado': idIndicador,
+              'desgloses': [],
+              'etiquetas': [],
+              'valoresIndicadoresDesgloses': [],
+              'fechasDestacadas': [],
+            });
+            that.model.unset('fechaSeleccionada');
+            swap();
+            showModalOnSteroids(globalModal, 'error', 'Ningún Indicador ha sido definido para la Meta seleccionada');
+          } else {
+            waitingDialog.show('Aguarde un momento por favor...');
+            $.ajax(url, {
+                  'type': 'GET',
+                  'processData': false,
+                  'contentType': 'application/json',
+                   success: function(data) {
+                    var indicador = that.model.get('indicadores')[idIndicador];
+                    var desgloses = data['desgloses'];
+                    var etiquetas = data['etiquetas'];
+                    var valoresIndicadoresDesgloses = data['valoresIndicadoresDesgloses'];
+                    var fechasDestacadas = data['fechasDestacadas'];
+                    var fechaSeleccionadaAnterior = that.model.get('fechaSeleccionada');
 
-                  if ($.isEmptyObject(valoresIndicadoresDesgloses)) {
-                    that.model.set(idObjetivoSeleccionado, idObjetivo);
-                    that.model.set(idObjetivoSeleccionado, idMeta);
-                    $(that.el).find('.selectIndicador').val(idIndicadorSeleccionado);
-                    waitingDialog.hide();
-                    showSimpleModal(globalModal, 'error', 'El Indicador seleccionado no posee aún datos disponibles');
-                  } else {
+                    /* FIX DESDE BACKEND */
+                    if ($.isEmptyObject(valoresIndicadoresDesgloses)) {
+                      desgloses = [];
+                      etiquetas = [];
+                    }
+
                     /* Actualizar variables del Modelo */
+                   /* that.model.set({
+                      'idIndicadorSeleccionado': idIndicador,
+                      'desgloses': desgloses,
+                      'etiquetas': etiquetas,
+                      'valoresIndicadoresDesgloses': valoresIndicadoresDesgloses,
+                      'fechasDestacadas': fechasDestacadas,
+                    });*/
                     that.model.set('idIndicadorSeleccionado', idIndicador);
                     that.model.set('desgloses', desgloses);
                     that.model.set('etiquetas', etiquetas);
                     that.model.set('valoresIndicadoresDesgloses', valoresIndicadoresDesgloses);
                     that.model.set('fechasDestacadas', fechasDestacadas);
-                    
                     swap(indicador, etiquetas, valoresIndicadoresDesgloses);
 
                     if (fechasDestacadas.length > 0) {
@@ -375,24 +394,21 @@
                     } else {
                       fechaSeleccionada = Object.keys(valoresIndicadoresDesgloses)[0];
                     }
-                    that.model.unset('fechaSeleccionada', {silent: true});
-                    that.model.set('fechaSeleccionada', fechaSeleccionada);
                     waitingDialog.hide();
-                  }
-                 },
-                 error: function(data) {
-                  that.model.set(idObjetivoSeleccionado, idObjetivo);
-                  that.model.set(idObjetivoSeleccionado, idMeta);
-                  $(that.el).find('.selectIndicador').val(idIndicadorSeleccionado);
-                  showSimpleModal(globalModal, 'error', 'Ha ocurrido un error. Por favor, intente nuevamente');
-                  waitingDialog.hide();
-                },
-          });
-        },
-        fechaClicked: function(event) {
-          this.model.set("fechaSeleccionada", $(this.el).find('.selectFecha').val()); 
-          // console.log("desde select" + this.model.get("fechaSeleccionada"));
-          this.render();
+                    if ($.isEmptyObject(valoresIndicadoresDesgloses)) {
+                      that.model.unset('fechaSeleccionada');
+                      showModalOnSteroids(globalModal, 'error', 'El Indicador seleccionado no posee aún datos disponibles');
+                    } else {
+                      that.model.unset('fechaSeleccionada', {silent: true});
+                    }
+                    that.model.set('fechaSeleccionada', fechaSeleccionada);
+                   },
+                   error: function(data) {
+                    waitingDialog.hide();
+                    showModalOnSteroids(globalModal, 'error', 'Ha ocurrido un error. Por favor, vuelva a cargar la página', true);
+                  },
+            });
+          }   
         },
         anioSelected: function(event){
           if (event.target) {
@@ -409,11 +425,16 @@
         etiquetaSelected: function(event) {
           this.model.set("etiquetaSeleccionada", $(this.el).find('.selectEtiqueta').val());
 
+          var valoresIndicadoresDesgloses = this.model.get('valoresIndicadoresDesgloses');
           var fechaSeleccionada = this.model.get('fechaSeleccionada');
-          var valoresRefGeografica = this.model.get('valoresIndicadoresDesgloses')[fechaSeleccionada].valoresRefGeografica;
           var idEtiquetaSeleccionada = this.model.get('etiquetaSeleccionada');
           var etiquetasActuales = this.model.get('etiquetasActuales');
-          update(valoresRefGeografica, idEtiquetaSeleccionada, etiquetasActuales);
+          if ($.isEmptyObject(valoresIndicadoresDesgloses)) {
+            update();
+          } else {
+            var valoresRefGeografica = valoresIndicadoresDesgloses[fechaSeleccionada].valoresRefGeografica;
+            update(valoresRefGeografica, idEtiquetaSeleccionada, etiquetasActuales);  
+          }
         }
     })
 
@@ -462,8 +483,8 @@
     }
 
     if ($.isEmptyObject(valoresIndicadoresDesgloses)) {
-      // waitingDialog.show('El Indicador seleccionado aún no posee datos disponibles',{onHide: function () {alert('Redirecionado!');}});
       // setTimeout(function () {waitingDialog.hide();}, 3000);
+      showModalOnSteroids(globalModal, 'error', 'El Indicador seleccionado no posee aún datos disponibles', true);
     } else {
       var modelForm = new ChainSelectData({
         'objetivos': objetivos,
@@ -485,13 +506,4 @@
     }
   });
 </script>
-
-
-<!-- http://gis.stackexchange.com/questions/41928/adding-removing-leaflet-geojson-layers -->
-<!-- http://gis.stackexchange.com/questions/68941/how-to-add-remove-legend-with-leaflet-layers-control -->
-
-<!-- http://stackoverflow.com/questions/133925/javascript-post-request-like-a-form-submit -->
-<!-- http://stackoverflow.com/questions/27447755/can-you-set-a-javascript-function-name-as-an-html-attribute -->
-<!-- http://stackoverflow.com/questions/15279716/form-inside-the-modal-bootstrap -->
-<!-- http://stackoverflow.com/questions/13010411/symfony2-force-file-download -->
 {% endblock %}

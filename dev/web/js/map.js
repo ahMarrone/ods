@@ -1,5 +1,5 @@
 var map, tiles, selectedPoligonEvent, sideChartModel, sideChartView, 
-sideChartControl, ambitoIndicador;
+sideChartControl, isSideChartAvailable, ambitoIndicador;
 var NACIONAL = 'N',
     PROVINCIAL = 'P',
     DEPARTAMENTAL = 'D';
@@ -24,18 +24,25 @@ var especialID = 23;
     especialCenterNorthEast = L.latLng(20.02466692199994, -25.02314483699996),
     especialCenterBounds = L.latLngBounds(especialCenterSouthWest, especialCenterNorthEast)
 
-function swap(indicador, etiquetas, valoresIndicadoresDesgloses) {
+function swap(indicador={}, etiquetas={}, valoresIndicadoresDesgloses={}) {
+    /* Indicador No Definido: Asignar ámbito 'NACIONAL' */
     map.removeLayer(tiles[ambitoIndicador]);
-    map.addLayer(tiles[indicador.ambito]);
-    ambitoIndicador = indicador.ambito;
+    ambitoIndicador = ($.isEmptyObject(indicador)) ? NACIONAL : indicador.ambito;
+    isSideChartAvailable = ($.isEmptyObject(valoresIndicadoresDesgloses)) ? false : true;
+    map.addLayer(tiles[ambitoIndicador]);
     sideChartModel.set('indicador', indicador);
     sideChartModel.set('etiquetas', etiquetas);
     sideChartModel.set('valoresIndicadoresDesgloses', valoresIndicadoresDesgloses);
 }
 
-function update(data, idEtiquetaSeleccionada, idsEtiquetasActuales) {
+function update(data={}, idEtiquetaSeleccionada=null, idsEtiquetasActuales=[]) {
     if (map.hasDivSideChart()) {
         map.removeControl(sideChartControl);
+    }
+    if (typeof selectedPoligonEvent !== 'undefined') {
+        isPoligonSelected = false;
+        resetHighlight(selectedPoligonEvent);
+        zoomOut();
     }
     sideChartModel.set('idsEtiquetasActuales', idsEtiquetasActuales);
     sideChartModel.set('idEtiquetaSeleccionada', idEtiquetaSeleccionada);
@@ -110,7 +117,8 @@ function mapMe(geoJsonNacion, geoJsonProvincias, geoJsonDepartamentos) {
     });
 
     var centerButton = L.easyButton('fa-globe', function(btn, map) {
-        map.fitBounds(centerBounds);
+        // map.fitBounds(centerBounds);
+        zoomOut();
     }).addTo(map);
     exportarButton.addTo(map);
 
@@ -178,7 +186,7 @@ function highlightFeature(event) {
             layer.bringToFront();
         }
 
-        if (!map.hasDivSideChart()) {
+        if (!(map.hasDivSideChart()) && isSideChartAvailable) {
             sideChartControl.onAdd = addDivSideChart;
             sideChartControl.onRemove = removeDivSideChart;
             map.addControl(sideChartControl);
@@ -210,7 +218,7 @@ function zoomIn(event) {
     }    
 }
 
-function zoomOut(event) {
+function zoomOut() {
   map.fitBounds(centerBounds);
 }
 
@@ -219,7 +227,7 @@ function seleccionarPoligon(event) {
         if (isPoligonSelected) {
             isPoligonSelected = false;
             resetHighlight(selectedPoligonEvent);
-            zoomOut(event);
+            zoomOut();
         } else {
             isPoligonSelected = true;
             selectedPoligonEvent = event;
