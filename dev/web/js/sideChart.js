@@ -1,7 +1,6 @@
 /// TEMPLATE //////////////
 
 /* HOMOGENEIZAR NOMBRES */
-
 _.mixin({
   getColor: getColor
 });
@@ -37,8 +36,12 @@ var templateSideChart = [
     '</div>',
     '<% } else { %>',
     '<% if (model.get("layerProperties").value) { %>',
-    '<div class="indicador-valor" style="color: <%= _(model.get("layerProperties").value).getColor() %>" >',
+    '<div class="indicador-valor" style="color: <%= _.getColor(model.get("layerProperties").value, model.get("indicador").escala) %>" >',
+    '<% if (model.get("indicador").tipo != "entero" ) { %>',
     '<%= model.get("layerProperties").value.toFixed(3).replace(".", ",") %></div>',
+    '<% } else { %>',
+    '<%= model.get("layerProperties").value %>',
+    '<% } %>',
     '<div class="texto-aclaracion">Al momento sólo se cuenta con datos para el año de referencia</div>',
     '<% } else { %>',
     '<div class="texto-aclaracion">Al momento no se cuenta con datos para el año de referencia</div>',
@@ -48,7 +51,11 @@ var templateSideChart = [
     '<div class="meta">',
     '<% _.each(model.get("indicador").fechasMetas, function(item, i){ %>',
     '<% if (i != 0) { %> - <% } %>',
+    '<% if (model.get("indicador").tipo != "entero" ) { %>',
     'Meta <%= item[0] %>: <%= item[1].toFixed(3).replace(".", ",") %>',
+    '<% } else { %>',
+    'Meta <%= item[0] %>: <%= item[1] %>',
+    '<% } %>',
     '<% }); %>',
     '</div>',
     '<% } %>',
@@ -56,12 +63,12 @@ var templateSideChart = [
     '<table id="legend-colors"><tbody>',
     '<tr>',
     '<% _.each(model.get("indicador").escala, function(value, i){ %>',
-    '<td class="legend-color" style="background-color:<%= _(value + 1).getColor() %>',
+    '<td class="legend-color" style="background-color:<%= _.getColor(value + 1, model.get("indicador").escala) %>',
     ';"></td>',
     '<% }); %>',
     '<tr>',
     '<% _.each(model.get("indicador").escala, function(value, i){ %>',
-    '<td class="legend-breaks"> <%= value %>',
+    '<td class="legend-breaks" width="10%"> <%= value %>',
     '</td>',
     '<% }); %>',
     '</tbody></table>',
@@ -170,7 +177,8 @@ var sideChartView = Backbone.View.extend({
 
     plot: function(chartData, descripcionEtiquetaSeleccionada) {
         /* Máximo 9 Tonos */
-        var colorPattern = ['#800026', '#bd0026', '#e31a1c', '#fc4e2a', '#fd8d3c', '#feb24c', '#fed976', '#ffeda0', '#ffffcc'];
+        var colorPattern = ['#FF0000', '#FE2E2E', '#E10000', '#FF3232', '#AF0000', '#B90A0A', '#C31414', '#D72828', '#EB3C3C'];
+        // var colorPattern = ['#800026', '#bd0026', '#e31a1c', '#fc4e2a', '#fd8d3c', '#feb24c', '#fed976', '#ffeda0', '#ffffcc'];
         colorPattern[chartData.length - 2] = '#045a8d';
         var chart = c3.generate({
             bindto: '#infobox-line-chart',

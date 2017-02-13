@@ -1,5 +1,5 @@
 var map, tiles, selectedPoligonEvent, sideChartModel, sideChartView, 
-sideChartControl, isSideChartAvailable, ambitoIndicador;
+sideChartControl, isSideChartAvailable, ambitoIndicador, escalaColores;
 var NACIONAL = 'N',
     PROVINCIAL = 'P',
     DEPARTAMENTAL = 'D';
@@ -8,14 +8,15 @@ var NACIONAL = 'N',
 // maxBoundsNorthEast = L.latLng(-21.786688039999945, -25.02314483699996),
 
 var maxBoundsSouthWest = L.latLng(-89.99999999999994, -80.02985395599995),
-    maxBoundsNorthEast = L.latLng(-21.786688039999945, -40.02314483699996),
-    centerSouthWest = L.latLng(-53.748710796898976, -107.57812500000001),
-    centerNorthEast = L.latLng(-19.642587534013032, -19.687500000000004),
+    maxBoundsNorthEast = L.latLng(-21.786688039999945, -27.02314483699996),
+    centerSouthWest = L.latLng(-56.5, -10.57812500000001),
+    centerNorthEast = L.latLng(-19.642587534013032, -89.687500000000004),
     maxBounds = L.latLngBounds(maxBoundsSouthWest, maxBoundsNorthEast),
     centerBounds = L.latLngBounds(centerSouthWest, centerNorthEast),
     minZoom = 4,
     isPoligonSelected = false,
     isZoomIn = false;
+    escalaColores = [];
 
 /* En el caso de Tierra del Fuego, Antártida e Islas del Atlántico Sur, se define
 un centro específico */
@@ -30,6 +31,7 @@ function swap(indicador={}, etiquetas={}, valoresIndicadoresDesgloses={}) {
     ambitoIndicador = ($.isEmptyObject(indicador)) ? NACIONAL : indicador.ambito;
     isSideChartAvailable = ($.isEmptyObject(valoresIndicadoresDesgloses)) ? false : true;
     map.addLayer(tiles[ambitoIndicador]);
+    escalaColores = indicador.escala;
     sideChartModel.set('indicador', indicador);
     sideChartModel.set('etiquetas', etiquetas);
     sideChartModel.set('valoresIndicadoresDesgloses', valoresIndicadoresDesgloses);
@@ -55,7 +57,7 @@ function update(data={}, idEtiquetaSeleccionada=null, idsEtiquetasActuales=[]) {
                 valor = data[idRefGeografica][idEtiquetaSeleccionada];
         }
         layer.feature.properties['value'] = valor;
-        layer.setStyle({fillColor: getColor(valor)});
+        layer.setStyle({fillColor: getColor(valor, escalaColores)});
     });
 }
 
@@ -149,7 +151,7 @@ function onEachFeature(feature, layer) {
 
 function style(feature) {
 return {
-    fillColor: getColor(feature.properties.value),
+    fillColor: getColor(feature.properties.value, escalaColores),
     weight: 2,
     opacity: 1,
     color: 'white',
@@ -158,16 +160,24 @@ return {
     };
 }
 
-function getColor(v) {
+function getColor(v, e=[]) {
+    /* Color Scale */
+    var colors = ['#d0d1e6', '#a6bddb', '#74a9cf', '#2b8cbe', '#045a8d'];
+
     if (v === undefined) {
         // color = '#dcdbdb';
         color = '#ffffff';
     } else {
-        color = v > 80 ? '#045a8d' :
-                v > 60 ? '#2b8cbe' : 
-                v > 40 ? '#74a9cf' :
-                v > 20 ? '#a6bddb' :
-                         '#d0d1e6' ;
+        color = v > e[4] ? colors[4] :
+        color = v > e[3] ? colors[3] :
+        color = v > e[2] ? colors[2] :
+        color = v > e[1] ? colors[1] :
+                           colors[0] ;
+        // color = v > 80 ? '#045a8d' :
+        //         v > 60 ? '#2b8cbe' : 
+        //         v > 40 ? '#74a9cf' :
+        //         v > 20 ? '#a6bddb' :
+        //                  '#d0d1e6' ;
     }
     return color;
 }
