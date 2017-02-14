@@ -7,7 +7,7 @@
         <li class="active">Detalle de etiqueta</a></li>
     </ol>
     <div class="page-header">
-          <h1>Detalle de Etiqueta</h1>
+          <h2>Detalle de Etiqueta</h2>
     </div>
 
 <dl class="dl-horizontal">
@@ -21,7 +21,7 @@
 
 
   <div class="row">
-            <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_etiquetas_index') }}">Volver atrás</a>
+            <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_etiquetas_index') }}">Volver</a>
             <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_etiquetas_edit', { 'id': etiqueta.id }) }}">Editar</a>
             {{ form_start(delete_form) }}
 

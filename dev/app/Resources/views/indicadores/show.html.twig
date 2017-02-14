@@ -9,7 +9,7 @@
 </ol>
 
     <div class="page-header">
-          <h1>Detalle de Indicador</h1>
+          <h2>Detalle de Indicador</h2>
     </div>
 
 <dl class="dl-horizontal">
@@ -53,7 +53,7 @@
 </dl>
 
 <div class="row">
-            <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_index') }}">Volver atrás</a>
+            <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_index') }}">Volver</a>
             <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_edit', { 'id': indicadore.id }) }}">Editar</a>
             {{ form_start(delete_form) }}
                 <input class="col-md-1 btn btn-danger option-btn" type="submit" value="Eliminar">

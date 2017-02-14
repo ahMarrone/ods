@@ -41,7 +41,7 @@ class MetasType extends AbstractType
             )
             )
             ->add('descripcion', TextType::class, array(
-                      'label' => 'Descripción'
+                      'label' => 'Descripción', 'attr' => array('maxlength' => 500)
                 )
             )
             /*->add('ambito', ChoiceType::class, 

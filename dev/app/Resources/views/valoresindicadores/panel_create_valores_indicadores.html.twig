@@ -68,7 +68,7 @@
          <% if (this.collection.isRefLeft()) { %>
         <button id="newDataLoader" type="button" class="btn btn-default navbar-btn"><i class="fa fa-plus"></i>  Agregar ficha</button>
         <% }  %>
-        <button id="saveDataLoaders" type="button" class="btn btn-success navbar-btn"><span class="glyphicon glyphicon-save"></span>  Guardar todos</button>
+        <button id="saveNewDataLoaders" type="button" class="btn btn-success navbar-btn <% if (!this.collection.hasNewDataLoaders()) { %> disabled<% }  %>"><span class="glyphicon glyphicon-save"  ></span>  Guardar nuevos</button>
       </ul>
             <% if (this.collection.ambito_indicador == 'D') { %>
           <form class="navbar-form navbar-right" role="search">
@@ -98,7 +98,10 @@
         <div class="panel-heading clearfix">
           <h4 class="panel-title pull-left" style="padding-top: 7.5px;">Carga de datos</h4>
         <div class="btn-group pull-right">
-          <a class="btn btn-sm btn-danger btn-sm deleteObject"><i class="fa fa-trash"></i></a>
+          <% if (model.data_has_changed) { %>
+            <a class="saveDataLoader btn btn-sm btn-success btn-sm"><i class="fa fa-download"></i></a>
+          <% }  %>
+          <a class="deleteObject btn btn-sm btn-danger btn-sm"><i class="fa fa-trash"></i></a>
         </div>
         </div>
         <div class="panel-body">
@@ -241,6 +244,7 @@
             'ref_geografica_parent_id':null,
         		'valor_etiquetas':{},
             'is_preloaded':false,
+            'data_has_changed': false,
 			     },
 		    });
 
@@ -258,6 +262,9 @@
               this.api_urls = options.api_urls;
               this.filterParentID = options.filterParentID;
           };
+        },
+        hasNewDataLoaders: function(){
+          return this.filter({is_preloaded:false}).length;
         },
         isRefLeft: function(){
           if (this.countRefsUsed() == Object.keys(this.refGeograficas).length){
@@ -292,7 +299,7 @@
             template: _.template($('#panelListWrapper').html()),
             events: {
               'click #newDataLoader': 'addNewDataLoader',
-              'click #saveDataLoaders': 'saveDataLoaders',
+              'click #saveNewDataLoaders': 'saveNewDataLoaders',
             },
             initialize: function(options){
                 this.etiquetas = options.etiquetas;
@@ -339,7 +346,6 @@
                   if(a[1]["desc"] > b[1]["desc"]) return 1;
                   return 0;
                 });
-                console.log(sortedRefGeograficas.slice(0, 5));
                 return sortedRefGeograficas;
             },
             getNextUnusedRef: function(){
@@ -356,7 +362,7 @@
             addNewDataLoader: function(){
               var refID = this.getNextUnusedRef();
               if (refID != null){
-                var loader = new RefGeograficaData({id_ref_geografica:refID, is_preloaded:false, valor_etiquetas:{}, ref_geografica_parent_id: this.refGeograficas[refID].parent});
+                var loader = new RefGeograficaData({id_ref_geografica:refID, is_preloaded:false, data_has_changed: false, valor_etiquetas:{}, ref_geografica_parent_id: this.refGeograficas[refID].parent});
                 this.collection.add(loader);
                 this.render();
               }
@@ -367,18 +373,30 @@
                     that.collection.refGeograficas[model.get('id_ref_geografica')].used = true;
                 });
             },
-            saveDataLoaders: function(){
+            getRefGeograficaNames: function(objects){
+                var that = this;
+                var names = [];
+                $.each(objects, function(i, object){
+                   names.push(that.collection.refGeograficas[i].desc);
+                });
+                return names;
+            },
+            saveNewDataLoaders: function(){
+              var dataLoaders = this.prepareDataToSave(this.collection.filter({is_preloaded:false}));
+              this.saveDataLoaders(dataLoaders);
+            },
+            saveDataLoaders: function(modelsData){
               var that = this;
-              var data = this.prepareDataToSave(this.collection.toJSON());
               var url = this.collection.api_urls.edit;
               $.ajax(url,{
-                  'data': JSON.stringify(data),
+                  'data': JSON.stringify(modelsData),
                   'type': 'POST',
                   'processData': false,
                   'contentType': 'application/json',
                    success: function(data) {
                       if (data.success){
-                        showSimpleModal(globalModal, 'success', 'Valores GUARDADOS con éxito');
+                        var refGeograficaNames = that.getRefGeograficaNames(modelsData.objects);
+                        showSimpleModal(globalModal, 'success', 'Valores GUARDADOS con éxito<br><br> <div class="alert alert-info" role="alert">Se han guardado los valores para: <br> '+constructHTMLList(refGeograficaNames)+ '<br><b>Los datos deberán ser aprobados nuevamente por un Administrador para poder visualizarlos</b></div>');
                         that.saveSuccessCallback(data);
                       } else {
                         showSimpleModal(globalModal, 'error', 'ERROR! NO ha sido posible guardar los valores');
@@ -391,8 +409,10 @@
               });
             },
             prepareDataToSave: function(models){
+              console.log(models);
                 var saveObjects = {"fecha":this.collection.fecha, "id_indicador":this.collection.id_indicador,"objects":{}};
-                $.each(models, function(i, models_ref_geografica){
+                $.each(models, function(i, models_object){
+                        models_ref_geografica = models_object.toJSON();
                         saveObjects.objects[models_ref_geografica.id_ref_geografica] = [];
                         $.each(models_ref_geografica.valor_etiquetas, function(id_etiqueta, etiqueta_value){
                           var tmpData = {
@@ -410,6 +430,7 @@
                     model.set("is_preloaded", true);
                     model.set("user",data.user);
                     model.set("dateModif",data.dateModif);
+                    model.set("data_has_changed", false);
                   }
                 });
                 this.render();
@@ -473,6 +494,7 @@
 		template: _.template($('#panelLoader').html()),
     events: {
       "change .refGeogSelect": "refSelected",
+      "click .saveDataLoader": "saveObject",
       "click .deleteObject": "deleteObject",
       "change .etiquetaInput": "etiquetaValueChange"
     },
@@ -482,6 +504,15 @@
       var modelEtiquetas = this.model.get('valor_etiquetas');
       modelEtiquetas[etiquetaId] = value;
       this.model.set('valoresEtiquetas',modelEtiquetas);
+      if (this.model.get('is_preloaded')){
+        this.model.set('data_has_changed', true);
+      }
+      this.render();
+    },
+    saveObject: function(){
+      var models = [this.model];
+      var saveModels = this.parent.prepareDataToSave(models);
+      this.parent.saveDataLoaders(saveModels);
     },
     deleteObject: function(){
       var models = [this.model];
@@ -519,7 +550,6 @@
         var selectHTML = "";
         var sortedRefGeograficas = this.sortedRefGeograficas;
         var parentCollection = this.parent.collection;
-        console.log("aa");
         for (k in sortedRefGeograficas) {
           var nextRef = sortedRefGeograficas[k];
           if (nextRef[0] == this.model.get('id_ref_geografica')){
@@ -538,7 +568,8 @@
 
 		function bindRefGeograficaData(refGeograficaCollection, refGeograficasList){
 			$.each(valoresEtiquetas, function(idRefGeografica, valoresIndicadorValues) {
-    			var ref = new RefGeograficaData({id_ref_geografica:idRefGeografica,is_preloaded:true, ref_geografica_parent_id:refGeograficasList[idRefGeografica].parent});
+    			var ref = new RefGeograficaData({id_ref_geografica:idRefGeografica,is_preloaded:true,
+            data_has_changed:false, ref_geografica_parent_id:refGeograficasList[idRefGeografica].parent});
           refGeograficasList[idRefGeografica].used = true;
     			var refData = {};
     			$.each(valoresIndicadorValues, function(index, data) {

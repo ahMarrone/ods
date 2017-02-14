@@ -1,9 +1,7 @@
 {% extends 'base.html.twig' %}
 
-
 {% block javascripts %}
     {{ parent() }}
-
     <script src="{{ asset('js/underscore-min.js') }}"></script>
     <script src="{{ asset('js/backbone-min.js') }}"></script>
     <script src="{{ asset('js/ThreeSelect.js') }}"></script>
@@ -64,7 +62,7 @@
         </tbody>
     </table>
 
-    <a class="btn btn-success"  href="{{ path('admin_crud_indicadores_new') }}">Nuevo indicador</a>
+    <a class="btn btn-success"  href="{{ path('admin_crud_indicadores_new') }}">Nuevo</a>
 
 
 <script type="text/javascript">

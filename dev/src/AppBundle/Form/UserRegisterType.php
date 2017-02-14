@@ -13,13 +13,13 @@ class UserRegisterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username', null, array('label' => 'Nombre de usuario', 'translation_domain' => 'FOSUserBundle'))
-            ->add('email', LegacyFormHelper::getType('Symfony\Component\Form\Extension\Core\Type\EmailType'), array('label' => 'Email', 'translation_domain' => 'FOSUserBundle'))
+            ->add('email', LegacyFormHelper::getType('Symfony\Component\Form\Extension\Core\Type\EmailType'), array('label' => 'Email', 'attr' => array('class' => 'col-sm-4', 'maxlength' => 50), 'translation_domain' => 'FOSUserBundle'))
+            ->add('username', null, array('label' => 'Nombre de usuario', 'attr' => array('class' => 'col-sm-3', 'maxlength' => 50), 'translation_domain' => 'FOSUserBundle'))
             ->add('plainPassword', LegacyFormHelper::getType('Symfony\Component\Form\Extension\Core\Type\RepeatedType'), array(
                 'type' => LegacyFormHelper::getType('Symfony\Component\Form\Extension\Core\Type\PasswordType'),
                 'options' => array('translation_domain' => 'FOSUserBundle'),
-                'first_options' => array('label' => 'Password'),
-                'second_options' => array('label' => 'Confirmar password'),
+                'first_options' => array('label' => 'Clave', 'attr' => array('class' => 'col-sm-3', 'maxlength' => 50),),
+                'second_options' => array('label' => 'Confirmar clave', 'attr' => array('class' => 'col-sm-3', 'maxlength' => 50),),
                 'invalid_message' => 'fos_user.password.mismatch',
             ))
             ->add('roles', 'choice', array(
@@ -32,14 +32,15 @@ class UserRegisterType extends AbstractType
                 ),
                 'expanded'   => true,
             ))
-            ->add('apellido')
-            ->add('nombre')
-            ->add('domicilio')
-            ->add('localidad')
-            ->add('provincia')
-            ->add('telefono')
-            ->add('dependencia')
-            ->add('observaciones');
+            ->add('apellido', null, array('attr' => array('class' => 'col-sm-6', 'maxlength' => 50)))       
+            ->add('nombre', null, array('attr' => array('class' => 'col-sm-6', 'maxlength' => 50)))
+            ->add('domicilio', null, array('attr' => array('class' => 'col-sm-6', 'maxlength' => 100)))
+            ->add('localidad', null, array('attr' => array('class' => 'col-sm-6', 'maxlength' => 100)))
+            ->add('provincia', null, array('attr' => array('class' => 'col-sm-6', 'maxlength' => 100)))
+            ->add('telefono', null, array('attr' => array('class' => 'col-sm-6', 'maxlength' => 50)))
+            ->add('dependencia', null, array('attr' => array('class' => 'col-sm-12', 'maxlength' => 100)))
+            ->add('observaciones', null, array('attr' => array('maxlength' => 250),));
+            
 
     }
 

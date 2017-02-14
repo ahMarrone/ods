@@ -41,15 +41,15 @@ class IndicadoresType extends AbstractType
             ->add('fkidmeta','hidden',array('mapped'=>false))
             ->add('codigo', IntegerType::class, array(
                 'label' => 'Código del indicador', 'attr' => array('class' => 'col-sm-1')                 
-            ))
-                        
-            ->add('descripcion', TextareaType::class , array('label'  => 'Descripción', 'attr' => array('max_length' => 10, ),))
+            ))                        
+            ->add('descripcion', TextareaType::class , array('label'  => 'Descripción', 'attr' => array('maxlength' => 500, ),))
             ->add('tipo', ChoiceType::class, array('label'  => 'Tipo', 'expanded'=>true, 'required'=>true, 'choices' => array('Porcentual' => 'porcentual', 'Entero' => 'entero', 'Real' => 'real', ), 'data' => $tipoSeleccionado, 'choices_as_values' => true, ))
             ->add('valmin', IntegerType::class , array(
                 'label'  => 'Valor Mínimo ', 
                 'attr' => array(
                     'class' => 'col-sm-2',
                     'step'=>'1',
+                    'max_length' => 10,
                 )
             ))
             ->add('valmax', IntegerType::class , array(
@@ -85,7 +85,7 @@ class IndicadoresType extends AbstractType
             ))
             ->add('fechasdestacadas','hidden')
             ->add('fechametaintermedia', TextType::class, array(
-                'attr' => ['class' => 'col-sm-3 expected-value-datepicker'],
+                'attr' => ['class' => 'col-sm-2 expected-value-datepicker'],
                 'label' => 'Año meta intermedia',
                 'required'=>false,
             ))
@@ -98,7 +98,7 @@ class IndicadoresType extends AbstractType
                     )
                 ))             
             ->add('fechametafinal', TextType::class, array(
-                'attr' => ['class' => 'col-sm-3 expected-value-datepicker'],
+                'attr' => ['class' => 'col-sm-2 expected-value-datepicker'],
                 'label' => 'Año meta final',
                 'required'=>false,
             ))

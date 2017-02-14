@@ -9,7 +9,15 @@
             <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet" />
             <link href='{{ asset('css/datatables.min.css') }}' rel="stylesheet" />
             <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet" />
-            <link href="{{ asset('css/main_ods_style.css') }}" rel="stylesheet" />
+            
+            <!-- Estilo fuente -->
+            <link href='https://fonts.googleapis.com/css?family=Roboto:400,500,700' rel='stylesheet' type='text/css'>
+            <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+            <link href="http://www.odsargentina.gob.ar/public/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+            <link href="{{ asset('odsargentina/css/font-awesome-animation.min.css') }}" rel="stylesheet">
+            <!-- Estilos ODS -->                      
+            <link href="{{ asset('css/panel_ods_style.css') }}" rel="stylesheet" />
+            <link href="{{ asset('odsargentina/css/estilo_ods.css') }}" rel="stylesheet">
 
         {% endblock %} 
 
@@ -21,54 +29,121 @@
 
     </head>
     <body>
-        <!-- MAIN HEADER -->
-        <!--<header>
-           <div class="container">
-              <div class="row">
-                <div class="col-xs-12 col-sm-7 col-md-6">
-                  <div class="logoConsejo pull-left"><a href="http://www.politicassociales.gob.ar/Index"><img class="center-block" alt="Logo Consejo Nacional de Coordinaci&oacute;n de Pol&iacute;ticas Sociales" src="http://www.politicassociales.gob.ar/public/images/LogoConsejo.png"></a></div>
-                  <div class="logoPresidencia"><img alt="Logo Presidencia de la Nación" src="http://www.politicassociales.gob.ar/public/images/LogoPresidenciaWhite.png"></div>
+
+        <!-- HEADER -->  
+        <header>
+          <div class="preHeader">
+            <div class="preLine"></div>
+          </div>
+
+          <!-- START NAVBAR -->
+          <nav id="navegacion-menu" class="navbar navbar-top navbar-default">
+            <div class="container">
+              <div class="row"> 
+                <div class="navbar-header">
+                  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </button>
+
+                  <!-- LOGOS -->
+                  <div class="logoODS">
+                    <h1><a href="http://www.odsargentina.gob.ar/"><img alt="Logo Agenda 2030 - ODS Argentina" src="http://www.odsargentina.gob.ar/public/images/logoODS.png"/></a></h1>
+                  </div>
+
+                  <div class="logoConsejo">
+                    <a href="http://www.politicassociales.gob.ar" target="_blank"><img src="http://www.odsargentina.gob.ar/public/images/logoConsejo.png" alt="Logo Consejo Nacional de Coordinación de Políticas Sociales" /></a>
+                  </div>
+
+                  <div class="logoPresidencia hidden-sm hidden-xs">
+                    <a href="http://www.presidencia.gob.ar" target="_blank"><img alt="Logo Presidencia de la Nación" src="http://www.odsargentina.gob.ar/public/images/logoPresidencia.png"></a>
+                  </div>
                 </div>
-                <div class="col-xs-12 col-sm-5 col-md-6">         
-                  <p class="mensajeAnoyFecha">            
-                      <strong>
-                      2016 - Año del Bicentenario de la Declaración de la Independencia Nacional</strong><br>
-                  </p>
-                </div>  
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+                  <ul class="nav navbar-nav navbar-right">
+
+                    <!-- BTN INICIO -->
+                    <li class="green"><a href="http://www.odsargentina.gob.ar/">Opción 1</a></li>
+
+                    <!-- BTN INSTITUCIONAL -->
+                    <li id="menuIni" class="dropdown yellow">
+                      <a href="#" class="dropdown-toggle yellow" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Opción 2<span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                        <li class="yellow"><a href="http://www.odsargentina.gob.ar/Agenda2030">Agenda 2030</a></li>
+                        <li class="yellow"><a href="http://www.odsargentina.gob.ar/QueSonLosODS">Qué son los ODS</a></li>
+                        <li class="yellow"><a href="http://www.odsargentina.gob.ar/Los17objetivos">Los 17 objetivos</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li class="yellow"><a href="http://www.odsargentina.gob.ar/Consejo#autoridades">Autoridades</a></li>
+                        <li class="yellow"><a href="http://www.odsargentina.gob.ar/Consejo#rol">Rol del Consejo</a></li>
+                        <li class="yellow"><a href="http://www.odsargentina.gob.ar/Consejo#adecuacion">Adecuación</a></li>
+                      </ul>
+                    </li>
+
+                    <!-- BTN PUBLICACIONES -->
+                    <li id="menuPub" class="dropdown lightblue">
+                      <a href="#" class="dropdown-toggle lightblue" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Opción 3<span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                        <!--<li class="lightblue"><a href="InformacionGeneral">Información general</a></li>-->
+                        <li class="lightblue"><a href="http://www.odsargentina.gob.ar/PublicacionesODS">Documentos ODS</a></li>
+                        <li class="lightblue"><a href="http://www.odsargentina.gob.ar/PublicacionesODM">Documentos ODM</a></li>
+                      </ul>
+                    </li>
+
+                    <!-- BTN NOTICIAS -->
+                    <li id="menuNew" class="orange">
+                      <a href="http://www.odsargentina.gob.ar/Noticias">Opción 4</a>
+                    </li>
+
+
+                  </ul> 
+                </div>
               </div>
-            </div>  
-        </header>-->
-  <nav class="navbar navbar-default navbar-fixed-top">
-  <div class="container-fluid">
-  <!-- Brand and toggle get grouped for better mobile display -->
-  <div class="navbar-header">
-  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-  <span class="sr-only">Toggle navigation</span>
-  <span class="icon-bar"></span>
-  <span class="icon-bar"></span>
-  <span class="icon-bar"></span>
-  </button>
-  <a class="navbar-brand" href="#">CNCPS ODS</a>
-  </div>
-
-
-  <!-- Collect the nav links, forms, and other content for toggling -->
-  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav navbar-right pull-right">
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Usuarios <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            {{ include("user_navbar.html.twig") }}
-          </ul>
-        </li>
-      </ul>
-  </div><!-- /.container-fluid -->
-  </nav>
-
-
+            </div>
+          </nav>
+        </header>
+        <!-- END NAVBAR -->
   
         <div  id="main-container" class="container">
             {% block body %}{% endblock %}
         </div>
+
+
+		<hr><hr>
+
+        <!-- New footer! -->
+        <footer>
+          <div class="preLine"></div>
+          <div class="main-footer">
+          </div>
+
+          <div class="subFooter">
+            <div class="container">
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-4 col-xs-12">          
+                  <div class="logoOnuFooter">
+                    <a href="http://www.onu.org.ar" target="_blank"><img src="http://www.odsargentina.gob.ar/public/images/onu.png" alt="Logo de Organización de las Naciones Unidas en Argentina" /></a>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-8 col-xs-12">
+                  <div class="logos-varios">
+                    <div class="logoODS hidden-xs">
+                      <a href="Index"><img src="http://www.odsargentina.gob.ar/public/images/logoODSFooter.png" alt="Logo Agenda 2030 - ODS Argentina" /></a>
+                    </div>  
+                    <div class="logoConsejo">
+                      <a href="http://www.politicassociales.gob.ar" target="_blank"><img src="http://www.odsargentina.gob.ar/public/images/logoConsejoFooter.png" alt="Logo Consejo Nacional de Coordinación de Políticas Sociales" /></a>
+                    </div>        
+                    <div class="logoPresidenciaFooter">
+                      <a href="http://www.presidencia.gob.ar" target="_blank"><img src="http://www.odsargentina.gob.ar/public/images/logoPresidenciaFooter.png" alt="Logo Presidencia de la Nación" /></a>
+                    </div>
+                  </div>
+                </div>  
+              </div>
+            </div>
+          </div>
+        </footer>
+
     </body>
 </html>

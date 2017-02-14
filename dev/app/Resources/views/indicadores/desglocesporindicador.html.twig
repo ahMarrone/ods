@@ -9,10 +9,10 @@
     </ol>
 
     <div class="page-header">
-          <h1>Desgloces por Indicador <small>{{ nombre_indicador }}</small></h1>
+          <h2>Desgloces por Indicador <small>{{ nombre_indicador }}</small></h2>
     </div>
 
-    <div class="alert alert-warning" class="col-md-3" role="alert"><i class="fa fa-warning pull-left"></i>Por favor, defina cuales serán los desgloces permitidos para el nuevo indicador
+    <div class="alert alert-warning" class="col-md-3" role="alert"><i class="fa fa-warning pull-left"></i>Por favor, defina los desgloses permitidos para el nuevo indicador
     </div>
 
     {{ form_start(edit_form) }}
@@ -21,7 +21,7 @@
     {{ form_end(edit_form) }}
 
 <div class="row">
-            <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_index') }}">Volver atrás</a>
+            <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_index') }}">Volver</a>
 </div>
 
 {% endblock %}

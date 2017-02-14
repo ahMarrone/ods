@@ -7,7 +7,7 @@
         <li class="active">Detalle de desglose</a></li>
     </ol>
     <div class="page-header">
-          <h1>Detalle de Desglose</h1>
+          <h2>Detalle de Desglose</h2>
     </div>
 
 <dl class="dl-horizontal">
@@ -17,7 +17,7 @@
 
 
     <div class="row">
-            <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_desgloces_index') }}">Volver atrás</a>
+            <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_desgloces_index') }}">Volver</a>
             <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_desgloces_edit', { 'id': desgloce.id }) }}">Editar</a>
             {{ form_start(delete_form) }}
 

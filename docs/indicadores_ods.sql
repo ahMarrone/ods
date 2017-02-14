@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `agrupamientoRefGeografica` (
 DROP TABLE IF EXISTS `desgloces`;
 CREATE TABLE IF NOT EXISTS `desgloces` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del desgloce',
+  `descripcion` varchar(500) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del desgloce',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=4 ;
 
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `desglocesIndicadores` (
 DROP TABLE IF EXISTS `etiquetas`;
 CREATE TABLE IF NOT EXISTS `etiquetas` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la etiqueta',
+  `descripcion` varchar(500) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la etiqueta',
   `fkIdDesgloce` int(11) unsigned NOT NULL COMMENT 'clave foranea desgloce',
   PRIMARY KEY (`id`),
   KEY `fkIdDesgloce` (`fkIdDesgloce`)
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `fkIdMeta` int(11) unsigned NOT NULL COMMENT 'clave foranea meta',
   `codigo` int(11) unsigned NOT NULL,
-  `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del indicador',
+  `descripcion` varchar(500) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del indicador',
   `tipo` enum('porcentual','entero','real') COLLATE utf8_spanish_ci NOT NULL COMMENT 'tipo de indicador',
   `valMin` bigint(20) NOT NULL COMMENT 'valor minimo dentro del dominio',
   `valMax` bigint(20) NOT NULL COMMENT 'valor maximo dentro del dominio',
@@ -120,7 +120,7 @@ DROP TABLE IF EXISTS `metas`;
 CREATE TABLE IF NOT EXISTS `metas` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `codigo` int(11) unsigned NOT NULL,
-  `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la meta',
+  `descripcion` varchar(500) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la meta',
   `ambito` enum('N','P','D','L','R') COLLATE utf8_spanish_ci NOT NULL,
   `fkIdObjetivo` int(11) unsigned NOT NULL COMMENT 'clave foranea tabla objetivos',
   `idUsuario` int(11) unsigned NOT NULL,
@@ -140,7 +140,7 @@ DROP TABLE IF EXISTS `objetivos`;
 CREATE TABLE IF NOT EXISTS `objetivos` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `codigo` int(11) unsigned NOT NULL,
-  `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del objtivo',
+  `descripcion` varchar(500) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del objtivo',
   PRIMARY KEY (`id`),
   UNIQUE KEY `codigo` (`codigo`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=18 ;
@@ -154,7 +154,7 @@ CREATE TABLE IF NOT EXISTS `objetivos` (
 DROP TABLE IF EXISTS `refGeografica`;
 CREATE TABLE IF NOT EXISTS `refGeografica` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la referencia geografica',
+  `descripcion` varchar(500) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la referencia geografica',
   `ambito` enum('N','P','D','L','R') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito de la ref. geografica',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=554 ;

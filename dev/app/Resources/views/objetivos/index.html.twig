@@ -6,7 +6,7 @@
         <li class="active">Objetivos</a></li>
     </ol>
     <div class="page-header">
-          <h1>Objetivos</h1>
+          <h2>Objetivos</h2>
     </div>
 
  <table id="objetivosTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -34,7 +34,7 @@
         </tbody>
     </table>
             
-    <!--<a class="btn btn-success" href="{{ path('admin_crud_objetivos_new') }}">Nuevo objetivo</a>-->
+    <!--<a class="btn btn-success" href="{{ path('admin_crud_objetivos_new') }}">Nuevo</a>-->
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -48,8 +48,8 @@
             { "width": "70%", "targets": 1 }
         ],
         "pageLength": 20,
-        /*buttons: [
-            {
+        buttons: [
+            /*{
                     extend:'pdf',
                     className:'btn-danger',
                     exportOptions: {
@@ -58,8 +58,8 @@
                     message: "MENSAJE",
                     text: "Exportar PDF",
                     title: "ODS - Objetivos"
-            }
-        ]*/
+            }*/
+        ]
     });
 } );
 </script>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}Objetivos de Desarrollo Sostenible{% endblock %}</title>
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.png') }}" />
+
+        {% block stylesheets %}
+            <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet" />
+            <link href='{{ asset('css/datatables.min.css') }}' rel="stylesheet" />
+            <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet" />
+            <link href="{{ asset('css/main_ods_style.css') }}" rel="stylesheet" />
+
+        {% endblock %} 
+
+        {% block javascripts %}
+            <script src="{{ asset('js/jquery.min.js') }}"></script>
+            <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+            <script src="{{ asset('js/datatables.min.js') }}"></script>
+        {% endblock %}    
+
+    </head>
+    <body>
+        <!-- MAIN HEADER -->
+        <!--<header>
+           <div class="container">
+              <div class="row">
+                <div class="col-xs-12 col-sm-7 col-md-6">
+                  <div class="logoConsejo pull-left"><a href="http://www.politicassociales.gob.ar/Index"><img class="center-block" alt="Logo Consejo Nacional de Coordinaci&oacute;n de Pol&iacute;ticas Sociales" src="http://www.politicassociales.gob.ar/public/images/LogoConsejo.png"></a></div>
+                  <div class="logoPresidencia"><img alt="Logo Presidencia de la Nación" src="http://www.politicassociales.gob.ar/public/images/LogoPresidenciaWhite.png"></div>
+                </div>
+                <div class="col-xs-12 col-sm-5 col-md-6">         
+                  <p class="mensajeAnoyFecha">            
+                      <strong>
+                      2016 - Año del Bicentenario de la Declaración de la Independencia Nacional</strong><br>
+                  </p>
+                </div>  
+              </div>
+            </div>  
+        </header>-->
+  <nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+  <span class="sr-only">Toggle navigation</span>
+  <span class="icon-bar"></span>
+  <span class="icon-bar"></span>
+  <span class="icon-bar"></span>
+  </button>
+  <a class="navbar-brand" href="#">CNCPS ODS</a>
+  </div>
+
+
+  <!-- Collect the nav links, forms, and other content for toggling -->
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right pull-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Usuarios <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            {{ include("user_navbar.html.twig") }}
+          </ul>
+        </li>
+      </ul>
+  </div><!-- /.container-fluid -->
+  </nav>
+
+
+  
+        <div  id="main-container" class="container">
+            {% block body %}{% endblock %}
+        </div>
+    </body>
+</html>
