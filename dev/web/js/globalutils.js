@@ -21,3 +21,13 @@ function appendSpinner(domElement){
 function removeSpinner(){
     $('#refreshSpinner').remove();
 }
+
+
+function constructHTMLList(strings){
+  var list = "<ul>";
+  $.each(strings, function(i, string){
+    list += "<li>"+string+"</li>";
+  });
+  list += "</ul>";
+  return list;
+}
