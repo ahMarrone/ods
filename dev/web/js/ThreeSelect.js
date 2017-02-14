@@ -7,9 +7,10 @@ var template_select = [
 	'	</div>',
 	
 	'	<div class="col-sm-10">',
-    '		<select id="three_select_objetivo" class = "form-control selectOne" name="id_objetivo_selected">',
+    '		<select id="three_select_objetivo" class="form-control selectOne" name="id_objetivo_selected">',
     '			<% _.each(model.get("objetivos"), function( objetivo, i){ %>',
-    '			<option value="<%= objetivo.id %>" <% if (objetivo.id == model.get("objetivo_selected")) { %> selected<% }  %>><%= objetivo.code %> - <%= objetivo.desc %></option>',
+    '			<option value="<%= objetivo.id %>" title="<%= objetivo.code %> - <%= objetivo.desc %>"',
+    '                          <% if (objetivo.id == model.get("objetivo_selected")) { %> selected<% }  %>><%= objetivo.code %> - <%= model.trim(objetivo.desc) %></option>',
 	'			<% }); %>',
     '		</select>',
     '	</div>',
@@ -24,7 +25,8 @@ var template_select = [
         '		<select id="three_select_meta" class="form-control selectTwo" name="id_meta_selected">',
         '			<% _.each(model.get("metas"), function( meta, i){ %>',
         '			<% if ( meta.id_objetivo == model.get("objetivo_selected") ){ %>',
-        '			<option value="<%= meta.id %>" <% if (meta.id == model.get("meta_selected")) { %> selected<% }  %>><%= meta.code_objetivo %>.<%= meta.code %> - <%= meta.desc %></option>',
+        '			<option value="<%= meta.id %>" title="<%= meta.code_objetivo %>.<%= meta.code %> - <%= meta.desc %>"',
+        '                    <% if (meta.id == model.get("meta_selected")) { %> selected<% }  %>><%= meta.code_objetivo %>.<%= meta.code %> - <%= model.trim(meta.desc) %></option>',
         '			<% } %>',
     	'			<% }); %>',
         '		</select>',
@@ -40,7 +42,8 @@ var template_select = [
     	'			<select id="three_select_indicador" class="form-control selectThree" name="id_indicador_selected">',
         '				<% _.each(model.get("indicadores"), function( indicador, i){ %>',
         '				<% if ( indicador.id_meta == model.get("meta_selected") ){ %>',
-        '				<option value="<%= indicador.id %>" <% if (indicador.id == model.get("indicador_selected")) { %> selected<% }  %>><%= indicador.code_objetivo %>.<%= indicador.code_meta %>.<%= indicador.code %> - <%= indicador.desc %></option>',
+        '				<option value="<%= indicador.id %>" title="<%= indicador.code_objetivo %>.<%= indicador.code_meta %>.<%= indicador.code %> - <%= indicador.desc %>"',
+        '                        <% if (indicador.id == model.get("indicador_selected")) { %> selected<% }  %>><%= indicador.code_objetivo %>.<%= indicador.code_meta %>.<%= indicador.code %> - <%= model.trim(indicador.desc) %></option>',
         '				<% } %>',
     	'				<% }); %>',
         '			</select>',
@@ -60,7 +63,18 @@ var ThreeSelectData = Backbone.Model.extend({
 		'objetivos':[],
 		'metas':[],
 		'indicadores':[],
-	}
+	},
+    getMaxTrim: function(){
+        return 130;
+    },
+    trim: function(string) {
+        var max = this.getMaxTrim();
+        var idx = string.indexOf(' ', 0);
+        while ((idx < max) && (idx != -1)) {
+          idx = string.indexOf(' ', idx + 1);
+        }
+        return (idx == -1) ? string : string.substring(0, idx) + '...';
+    },
 });
 
 
@@ -102,7 +116,6 @@ var ThreeSelectView = Backbone.View.extend({
     },
     metaSelected: function(e){
     	this.model.set("meta_selected",$(this.el).find('.selectTwo').val());
-        console.log("meta");
         if (this.listenMetaCallback){
             this.listenMetaCallback();
         }
@@ -116,5 +129,6 @@ var ThreeSelectView = Backbone.View.extend({
         if (this.listenIndicadorCallback){
             this.listenIndicadorCallback();
         }
-    }
+    },
+
 })

@@ -45,21 +45,31 @@ class EtiquetasController extends Controller
     /**
      * Creates a new Etiquetas entity.
      *
-     * @Route("/new", name="admin_crud_etiquetas_new")
+     * @Route("/new/{id_desglose}", name="admin_crud_etiquetas_new", defaults={"id_desglose" = -1})
      * @Method({"GET", "POST"})
      */
     public function newAction(Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
+        $id_desglose = intval($request->get('id_desglose'));
+        $desglose = null;
+        if ($id_desglose != -1){
+            $desglose = $em->getRepository('AppBundle:Desgloces')->findOneById($id_desglose);
+        }
         $etiqueta = new Etiquetas();
         $form = $this->createForm('AppBundle\Form\EtiquetasType', $etiqueta);
         $form->handleRequest($request);
+        $formData = $form->getData();
+        if ($desglose && !$formData->getFkiddesgloce()){
+            $form->get('fkiddesgloce')->setData($desglose);
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($etiqueta);
             $em->flush();
 
-            return $this->redirectToRoute('admin_crud_etiquetas_show', array('id' => $etiqueta->getId()));
+            return $this->redirectToRoute('admin_crud_etiquetas_new', array('id_desglose'=> $etiqueta->getFkiddesgloce()->getId()));
         }
 
         return $this->render('etiquetas/new.html.twig', array(
@@ -101,7 +111,7 @@ class EtiquetasController extends Controller
             $em->persist($etiqueta);
             $em->flush();
 
-            return $this->redirectToRoute('admin_crud_etiquetas_edit', array('id' => $etiqueta->getId()));
+            return $this->redirectToRoute('admin_crud_etiquetas_index');
         }
 
         return $this->render('etiquetas/edit.html.twig', array(

@@ -44,7 +44,7 @@ class MetasType extends AbstractType
                       'label' => 'Descripción'
                 )
             )
-            ->add('ambito', ChoiceType::class, 
+            /*->add('ambito', ChoiceType::class, 
                   array('label'  => 'Ámbito', 
                         'expanded'=>true, 
                         'required'=>true, 
@@ -55,7 +55,7 @@ class MetasType extends AbstractType
                             return $disabled ? ['disabled' => 'disabled'] : [];
                          },
                   )
-            )
+            )*/
             ->add('last_code_used', HiddenType::class, array(
                 'empty_data' => $this->last_code_used,
                 'mapped'=> false

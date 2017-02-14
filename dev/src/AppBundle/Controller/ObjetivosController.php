@@ -97,7 +97,7 @@ class ObjetivosController extends Controller
             $em->persist($objetivo);
             $em->flush();
 
-            return $this->redirectToRoute('admin_crud_objetivos_edit', array('id' => $objetivo->getId()));
+            return $this->redirectToRoute('admin_crud_objetivos_index');
         }
 
         return $this->render('objetivos/edit.html.twig', array(

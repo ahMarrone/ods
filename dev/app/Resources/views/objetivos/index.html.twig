@@ -39,6 +39,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
     var table = $('#objetivosTable').DataTable({
+        dom: 'Bfrtip',
          "language": {
             "url": "/lang/datatables_spanish.json"
         },
@@ -46,7 +47,19 @@
             { "width": "10%", "targets": 0 },
             { "width": "70%", "targets": 1 }
         ],
-        "pageLength": 20
+        "pageLength": 20,
+        /*buttons: [
+            {
+                    extend:'pdf',
+                    className:'btn-danger',
+                    exportOptions: {
+                        columns: [0,1]
+                    },
+                    message: "MENSAJE",
+                    text: "Exportar PDF",
+                    title: "ODS - Objetivos"
+            }
+        ]*/
     });
 } );
 </script>

@@ -45,8 +45,20 @@ class IndicadoresType extends AbstractType
                         
             ->add('descripcion', TextareaType::class , array('label'  => 'Descripción', 'attr' => array('max_length' => 10, ),))
             ->add('tipo', ChoiceType::class, array('label'  => 'Tipo', 'expanded'=>true, 'required'=>true, 'choices' => array('Porcentual' => 'porcentual', 'Entero' => 'entero', 'Real' => 'real', ), 'data' => $tipoSeleccionado, 'choices_as_values' => true, ))
-            ->add('valmin', IntegerType::class , array('label'  => 'Valor Mínimo ', 'scale' => 2, 'attr' => array('class' => 'col-sm-1')))
-            ->add('valmax', IntegerType::class , array('label'  => 'Valor Máximo ', 'scale' => 2, 'attr' => array('class' => 'col-sm-1')))
+            ->add('valmin', IntegerType::class , array(
+                'label'  => 'Valor Mínimo ', 
+                'attr' => array(
+                    'class' => 'col-sm-2',
+                    'step'=>'1',
+                )
+            ))
+            ->add('valmax', IntegerType::class , array(
+                'label'  => 'Valor Máximo ',
+                'attr' => array(
+                    'class' => 'col-sm-2',
+                    'step' => 1,
+                )
+            ))
             ->add('ambito', ChoiceType::class, array(
                 'label'  => 'Ámbito', 
                 'expanded'=>true, 
@@ -73,17 +85,31 @@ class IndicadoresType extends AbstractType
             ))
             ->add('fechasdestacadas','hidden')
             ->add('fechametaintermedia', TextType::class, array(
-                'attr' => ['class' => 'expected-value-datepicker'],
+                'attr' => ['class' => 'col-sm-3 expected-value-datepicker'],
                 'label' => 'Año meta intermedia',
                 'required'=>false,
             ))
-            ->add('valoresperadometaintermedia', NumberType::class, array('label'=>'Valor esperado meta intermedia', 'required'=>false, 'attr' => array('class' => 'col-sm-1')))             
+            ->add('valoresperadometaintermedia', TextType::class, array(
+                'label'=>'Valor esperado meta intermedia', 
+                'required'=>false, 
+                'attr' => array(
+                    'class' => 'col-sm-2 expected-value-input',
+                    'step' => 1,
+                    )
+                ))             
             ->add('fechametafinal', TextType::class, array(
-                'attr' => ['class' => 'expected-value-datepicker'],
+                'attr' => ['class' => 'col-sm-3 expected-value-datepicker'],
                 'label' => 'Año meta final',
                 'required'=>false,
             ))
-            ->add('valoresperadometafinal', NumberType::class , array('label'=> 'Valor esperado meta final', 'required'=>false,  'attr' => array('class' => 'col-sm-1')))
+            ->add('valoresperadometafinal', TextType::class , array(
+                'label'=> 'Valor esperado meta final', 
+                'required'=>false,  
+                'attr' => array(
+                    'class' => 'col-sm-2 expected-value-input',
+                    'step' => 1,
+                    )
+                ))
             ->add('documentpath', FileType::class, array('label' => 'Documento técnico (archivo PDF)', 'required'=>false))
             ->add('last_code_used', HiddenType::class, array(
                 'empty_data' => $this->last_code_used,

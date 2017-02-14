@@ -245,7 +245,7 @@ class IndicadoresController extends Controller
             $em->persist($indicadore);
             $em->flush();
 
-            //return $this->redirectToRoute('admin_crud_indicadores_edit', array('id' => $indicadore->getId()));
+            return $this->redirectToRoute('admin_crud_indicadores_index');
         }
 
         return $this->render('indicadores/edit.html.twig', array(

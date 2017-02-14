@@ -111,6 +111,11 @@
               });
         }
 
+        function indicadorTypeHasChanged(newType){
+            var step = (newType == 'real') ? 0.00001 : 1;
+            console.log(step);
+        }
+
         function init(){
             addThreeSelectControls();
             addHiglightedDatesControls();
@@ -121,11 +126,16 @@
 
         init();
 
-        $('.expected-value-datepicker').datepicker({
+        $('input.expected-value-datepicker').datepicker({
             format: "yyyy",
             minViewMode: 2,
             autoclose: true,
         });
+
+
+        $(':input[name="indicadores[tipo]"]').on('click', function(){
+            indicadorTypeHasChanged(this.value);
+        })
 
         $('form[name="indicadores"]').submit(function() {
             // Seteo fechas destacadas en el formulario

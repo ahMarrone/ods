@@ -79,11 +79,12 @@ class MetasController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->addMetaMetadata($meta);
+            $meta->setAmbito('N');
             $em = $this->getDoctrine()->getManager();
             $em->persist($meta);
             $em->flush();
 
-            return $this->redirectToRoute('admin_crud_metas_show', array('id' => $meta->getId()));
+            return $this->redirectToRoute('admin_crud_metas_index_idObjetivo', array('id_objetivo' => $meta->getFkidobjetivo()->getId()));
         }
 
         return $this->render('metas/new.html.twig', array(
@@ -160,7 +161,7 @@ class MetasController extends Controller
             $em->persist($meta);
             $em->flush();
 
-            return $this->redirectToRoute('admin_crud_metas_edit', array('id' => $meta->getId()));
+            return $this->redirectToRoute('admin_crud_metas_index');
         }
 
         return $this->render('metas/edit.html.twig', array(

@@ -124,10 +124,15 @@
               });
         }
 
+        function indicadorTypeHasChanged(newType){
+            var step = (newType == 'real') ? 0.00001 : 1;
+            console.log(step);
+        }
+
         addThreeSelectControls();
         addHiglightedDatesControls();
 
-        $('.expected-value-datepicker').datepicker({
+        $('input.expected-value-datepicker').datepicker({
             format: 'yyyy',
             minViewMode: 2,
             autoclose: true,
@@ -137,6 +142,10 @@
             // Seteo fechas destacadas en el formulario
             $('#indicadores_fechasdestacadas').val(modelHighlightDates.getFormattedDates());
         });
+
+        $(':input[name="indicadores[tipo]"]').on('click', function(){
+            indicadorTypeHasChanged(this.value);
+        })
 
         /*$('#three_select_meta').on('change', function(){
             alert('change');

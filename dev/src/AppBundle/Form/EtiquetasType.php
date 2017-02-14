@@ -20,6 +20,9 @@ class EtiquetasType extends AbstractType
             ->add('fkiddesgloce', EntityType::class, array(
                     'class' => 'AppBundle:Desgloces',
                     'label'=> "Desglose",
+                    'choice_attr' => function($key, $val, $index) {
+                        return $index ? [] : ['disabled' => 'disabled'];
+                    },
             ))
             ->add('descripcion')
         ;

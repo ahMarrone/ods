@@ -50,7 +50,7 @@ class DesglocesController extends Controller
             $em->persist($desgloce);
             $em->flush();
 
-            return $this->redirectToRoute('admin_crud_desgloces_show', array('id' => $desgloce->getId()));
+            return $this->redirectToRoute('admin_crud_desgloces_index');
         }
 
         return $this->render('desgloces/new.html.twig', array(
@@ -92,7 +92,7 @@ class DesglocesController extends Controller
             $em->persist($desgloce);
             $em->flush();
 
-            return $this->redirectToRoute('admin_crud_desgloces_edit', array('id' => $desgloce->getId()));
+            return $this->redirectToRoute('admin_crud_desgloces_index');
         }
 
         return $this->render('desgloces/edit.html.twig', array(

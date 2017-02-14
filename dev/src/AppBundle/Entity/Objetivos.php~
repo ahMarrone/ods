@@ -52,4 +52,19 @@ class Objetivos
     {
         return $this->id;
     }
+
+
+    // Ojo! Acá tuve que 'tocar' lo que retorna __toString() porque necesito solo el 'Id' en el CRUD de 'Indicadores'.
+    // Hay que ver bien cómo controlar esto.-
+
+    public function __toString()
+    {
+        return $this->getDescripcion();  
+        
+    }
+
+
+    public function getDisplayName(){
+        return $this->getId() . " - "  . $this->getDescripcion();
+    }
 }
