@@ -30,9 +30,11 @@
 {% block body %}
 
 <div id=mainContainer>
-<div class="container-fluid" id='divFluid' style="padding-top: 15px;">
+<div class="container-fluid"  style="padding-top: 15px;">
+<div class="row">
+<div class = "col-sm-4">
+<div class="container-fluid" id='divFluid'>
 <script id="formLoader" type="text/template">
-
 <%_.mixin({
   trim: function(string, max) {
     var idx = string.indexOf(' ', 0);
@@ -62,25 +64,20 @@
     return result;
   }
 });%>
-  <form class="form-horizontal" role="form">
-    <div class="col-sm-6 col-lg-4">
+<form class="form-horizontal" role="form">
+      <h3 class="text-center" style="color: #0c4da2;margin-top: 10px">Plataforma de seguimiento de la Agenda 2030</h3>
       <div class="form-group">
-        <label for="selectorObjetivo" class="col-md-3 control-label">Objetivo</label>
-        <div class="col-md-9">
-          <select id="selectorObjetivo" class="form-control selectObjetivo" title="<% if (this.model.get('idObjetivoSeleccionado')) { %>
+        <label for="selectorObjetivo" control-label">Objetivo</label>
+          <select  id="selectorObjetivo" class="form-control selectObjetivo" title="<% if (this.model.get('idObjetivoSeleccionado')) { %>
           <%= this.model.get('objetivos')[this.model.get('idObjetivoSeleccionado')].descripcion %>
           <% } %>">
           <% _.each(model.get("objetivos"), function( objetivo, i){ %>
           <option title="<%= objetivo.descripcion %>" value="<%= objetivo.id %>" <% if (objetivo.id == model.get("idObjetivoSeleccionado")) { %> selected<% }  %>><%= _(objetivo.descripcion).trim(42) %></option>
           <% }); %>
           </select>
-        </div>
       </div> <!-- /.form-group -->
-    </div> <!-- /.col-sm-6 col-lg-4 -->
-    <div class="col-sm-6 col-lg-4">
       <div class="form-group">
-        <label for="selectorMeta" class="col-md-3 control-label">Meta</label>
-        <div class="col-md-9">
+        <label for="selectorMeta" class="control-label">Meta</label>
           <select id="selectorMeta" class="form-control selectMeta" title=<% if (this.model.get('idMetaSeleccionada')) { %>
           "<%= this.model.get('metas')[this.model.get('idMetaSeleccionada')].descripcion %>"
           <% } %>>
@@ -90,15 +87,11 @@
           <% } %>
           <% }); %>
           </select>
-        </div>
       </div> <!-- /.form-group -->
-    </div> <!-- /.col-sm-6 col-lg-4 -->
-    <div class="col-sm-6 col-lg-4">
       <div class="form-group">
-        <label for="selectorIndicador" class="col-md-3 control-label">Indicador <% if (model.get('idIndicadorSeleccionado')) { %>
+        <label for="selectorIndicador" class="control-label">Indicador <% if (model.get('idIndicadorSeleccionado')) { %>
         <% if (model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico) { %><a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico)%>" class="fa fa-info-circle" title="Documento Técnico"></a><% } %>
         <% } %></label>
-        <div class="col-md-9">
           <select <% if (!(model.get('idIndicadorSeleccionado'))) { print ('disabled'); } %> id="selectorIndicador" class="form-control selectIndicador" title="<% if (this.model.get('idIndicadorSeleccionado')) { %>
           <%= this.model.get('indicadores')[this.model.get('idIndicadorSeleccionado')].descripcion %>
           <% } %>">
@@ -108,25 +101,17 @@
           <% } %>
           <% }); %>
           </select>
-        </div>
       </div> <!-- /.form-group -->
-    </div> <!-- /.col-sm-6 col-lg-4 -->
-    <div class="col-sm-6 col-lg-4">
       <div class="form-group">
-        <label for="selectorAnio" class="col-md-3 control-label">Año</label>
-        <div class="col-md-9">
+        <label for="selectorAnio" class="control-label">Año</label>
           <select <% if (_.isEmpty(model.get('valoresIndicadoresDesgloses'))) { print ('disabled'); } %> id="selectorAnio" class="form-control selectFecha">
           <% _.each(model.get("valoresIndicadoresDesgloses"), function(e, f){ %>',
           <option title="<%= f %>" value="<%= f %>" <% if (f == model.get("fechaSeleccionada")) { %> selected<% }  %>><%= f %></option>
           <% }); %>
           </select>
-        </div>
       </div> <!-- /.form-group -->
-    </div> <!-- /.col-sm-6 col-lg-4 -->
-    <div class="col-sm-6 col-lg-4">
       <div class="form-group">
-        <label for="selectorDesglose" class="col-md-3 control-label">Desglose</label>
-        <div class="col-md-9">
+        <label for="selectorDesglose" class="control-label">Desglose</label>
           <select <% if (_.isEmpty(model.get('desgloses'))) { print ('disabled'); } %> id="selectorDesglose" class="form-control selectDesglose">
           <% _.each(model.get("desgloses"), function(desglose, i){ %>
           <!-- MODIFICAR PARA USAR BÚSQUEDA BINARIA  -->
@@ -135,13 +120,9 @@
           <% } %>
           <% }); %>
           </select>
-        </div>
       </div> <!-- /.form-group -->
-    </div> <!-- /.col-sm-6 col-lg-4 -->
-    <div class="col-sm-6 col-lg-4">
       <div class="form-group">
-        <label for="selectorEtiqueta" class="col-md-3 control-label">Etiqueta</label>
-        <div class="col-md-9">
+        <label for="selectorEtiqueta" class="control-label">Etiqueta</label>
           <select <% if ((model.get("desgloseSeleccionado") == 0) || (_.isEmpty(model.get('etiquetas')))) { print ('disabled'); } %> id="selectorEtiqueta" class="form-control selectEtiqueta">
           <% model.set('etiquetasActuales', []) %>
           <% _.each(model.get("etiquetas"), function(e, id){ %>
@@ -151,15 +132,13 @@
           <% } %>
           <% }); %>
           </select>
-        </div>
       </div> <!-- /.form-group -->
-    </div> <!-- /.col-sm-6 col-lg-4 -->
-  </form>  
-</script>
+    </form>  
+    </script>
+    </div>
 </div>
-
-<div class="container-fluid mapCanvas" id="mapCanvas"></div>
-
+<div class = "col-sm-8">
+<div class="container-fluid mapCanvas" id="mapCanvas"></div>    
 <table class="table table-responsive" id='fechasDestacadasDiv'>
 <script id="fechasDestacadasLoader" type="text/template">
 <tbody>
@@ -177,6 +156,11 @@
     </tr>
 </script>
 </table>
+</div>
+</div>
+
+</div>
+
 
 <!-- Modal Exportar -->
 <div class="modal fade" id="exportarModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">
@@ -283,7 +267,7 @@
 
       initialize: function() {
         var idIndicadorSeleccionado = this.model.get('idIndicadorSeleccionado');
-        var indicador = this.model.get('indicadores');
+        var indicador = this.model.get('indicadores')[idIndicadorSeleccionado];
         var fechaSeleccionada = this.model.get('fechaSeleccionada');
         var valoresIndicadoresDesgloses = this.model.get('valoresIndicadoresDesgloses');
         var valoresRefGeografica = valoresIndicadoresDesgloses[fechaSeleccionada].valoresRefGeografica;
@@ -305,9 +289,10 @@
         /* Se instancian luego de la ejecución de render() */
         var idEtiquetaSeleccionada = this.model.get('etiquetaSeleccionada');
         var etiquetasActuales = this.model.get('etiquetasActuales');
+        var escalaColores = indicador.escala;
 
         /* Inicializar mapa */
-        swap(indicadores[idIndicadorSeleccionado], etiquetas, valoresIndicadoresDesgloses);
+        swap(indicador, etiquetas, valoresIndicadoresDesgloses);
         update(valoresRefGeografica, idEtiquetaSeleccionada, etiquetasActuales);
 
         },
@@ -424,6 +409,7 @@
         },
         etiquetaSelected: function(event) {
           this.model.set("etiquetaSeleccionada", $(this.el).find('.selectEtiqueta').val());
+
 
           var valoresIndicadoresDesgloses = this.model.get('valoresIndicadoresDesgloses');
           var fechaSeleccionada = this.model.get('fechaSeleccionada');

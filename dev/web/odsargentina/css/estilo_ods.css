@@ -636,7 +636,7 @@ a:visited { text-decoration: none; }
 
   h2 { font-size: 22px; color: gray; text-transform: uppercase; }
 
-  h3 { font-size: 16px; }
+  h3 { font-size: 16px; color: gray; text-transform: uppercase; }
 
   h4 { font-size: 14px; }
 

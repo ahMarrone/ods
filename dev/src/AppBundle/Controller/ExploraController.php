@@ -19,15 +19,17 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 class ExploraController extends Controller
 {
     /**
-     * @Route("/{idIndicador}", name="explora_initialize", requirements={"idIndicador": "\d+"})
+     * @Route("/", name="explora_initialize")
      */
-    public function initializeAction(Request $request, $idIndicador)
+    public function initializeAction(Request $request)
     {
         // echo var_dump($idIndicador);
 
         /* Recuperar Metas, Objetivos, Indicadores, Desgloses, Etiquetas junto 
         con los correspondientes valores para cada Referencia Geogŕafica de acuerdo
         al indicador seleccionado */
+
+        $idIndicador = 1;
 
         $objetivos = $this->getObjetivosPreload();
         $metas = $this->getMetasPreload();
@@ -115,6 +117,7 @@ class ExploraController extends Controller
         // $request->request->get('var_name');
         $fileContent = "";
         $fileName = "ods_".date('dmYHis').".csv";
+        /* REVISAR FUNCIÓN empty($idIndicador) */
         if ((!empty($content)) and (!empty($idIndicador))) {
             $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
             $idMeta = $indicador->getFkidmeta()->getId();
@@ -174,6 +177,7 @@ class ExploraController extends Controller
                 $id = $e->getId();
                 $refGeograficaMap[$id] = $e->getDescripcion();
             }
+            // echo var_dump($idsValoresIndicadoresConfigFecha);
 
             /* ORDENAR POR ID, IDREFGEO */
             $valoresIndicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')->findBy(
@@ -181,7 +185,6 @@ class ExploraController extends Controller
                       'aprobado' => true));
 
             $fileContent .= "Año" . $CSV . "Referencia_Geográfica" . $CSV . $etiquetasStr . "\r\n";
-
             $idRefGeograficaActual = $valoresIndicadores[0]->getIdrefgeografica()->getId();
             foreach ($valoresIndicadores as $e) {
                 $id = $e->getIdvaloresindicadoresconfigfecha()->getId();
@@ -202,6 +205,13 @@ class ExploraController extends Controller
                 $indice = $etiquetasMap[$idEtiqueta][1];
                 $valores[$indice] = $valor;
             }
+            $periodo = $valoresIndicadoresConfigFechaMap[$id];
+            $fileContent .= $periodo . $CSV;
+            $fileContent .= $refGeograficaMap[$idRefGeograficaActual] . $CSV;
+            for ($i = 0; $i < $cardinalEtiquetas ; $i++) { 
+                $fileContent .= $valores[$i] . $CSV;
+            }
+            $fileContent .= "\r\n";
         }
 
         $response = new Response($fileContent);
@@ -267,12 +277,23 @@ class ExploraController extends Controller
         return $interseccion;
     }
 
+    private function buildScale($tipo, $minimo, $maximo) {
+        $lenght = 5;
+        $scale = array();
+        $step = floor(($maximo - $minimo) / $lenght);
+        $scale[0] = floatval($minimo);
+        for ($i = 1; $i < $lenght; $i++) { 
+            $scale[$i] = $scale[$i-1] + $step;
+        }
+        return $scale;
+    }
+
     private function getIndicadoresPreload() {
         $list = array();
         /* Si se desean filtrar los indicadores por meta seleccionada, descomentar y reemplazar  */
         // $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByFkidmeta($idMeta);
 
-        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByVisible(true);    
+        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByVisible(true);
 
         foreach ($indicadores as $i) {
             $idIndicador = $i->getId();
@@ -281,8 +302,11 @@ class ExploraController extends Controller
             $list[$idIndicador]['id_meta'] = $i->getFkidmeta()->getId();
             $list[$idIndicador]['ambito'] = $i->getAmbito();
             $list[$idIndicador]['documentoTecnico'] = $i->getDocumentPath();
-            /* CONSTRUIR ESCALA A PARTIR DE valMin y ValMax o de acuerdo al Tipo de Indicador */
-            $list[$idIndicador]['escala'] = array(0, 20, 40, 60, 80);
+            $list[$idIndicador]['tipo'] = $i->getTipo();
+            $list[$idIndicador]['valMin'] = $i->getValmin();
+            $list[$idIndicador]['valMax'] = $i->getValmax();
+            // $list[$idIndicador]['escala'] = array(0, 20, 40, 60, 80);
+            $list[$idIndicador]['escala'] = $this->buildScale($list[$idIndicador]['tipo'], $list[$idIndicador]['valMin'], $list[$idIndicador]['valMax']);
             $list[$idIndicador]['fechasDestacadas'] = $this->parseFechasDestacadas($i->getFechasDestacadas());
             /* Metas: Fechas/ValoresEsperados */
             $list[$idIndicador]['fechasMetas'] = array();
