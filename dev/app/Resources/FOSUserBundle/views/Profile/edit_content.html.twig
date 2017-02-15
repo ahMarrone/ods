@@ -1,0 +1,22 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+
+    <ol class="breadcrumb">
+        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
+            <li><a href="{{ path('admin_users_index') }}">Administrar usuarios</a></li>
+        {% endif %}
+        <li><a href="{{ path('fos_user_profile_show', {'id': user.id}) }}">Perfil de usuario</a></li>
+        <li class="active">Editar perfil</a></li>
+    </ol>
+
+	<div class="page-header">
+		<h2>Perfil de <span style="color:#034EA2">'{{ user.username }}'</div></h2>
+	</div>
+{{ form_start(form, { 'action': path('fos_user_profile_edit', {'id': user.id }), 'attr': { 'class': 'fos_user_profile_edit' } }) }}
+    {{ form_widget(form) }}
+    <hr>
+    <div>
+        <input class="col-md-1 col-md-offset-2 btn btn-success option-btn" type="submit" value="Editar" />
+    </div>
+{{ form_end(form) }}

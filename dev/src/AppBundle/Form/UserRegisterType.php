@@ -6,6 +6,7 @@ namespace AppBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+
 use FOS\UserBundle\Util\LegacyFormHelper;
 
 class UserRegisterType extends AbstractType

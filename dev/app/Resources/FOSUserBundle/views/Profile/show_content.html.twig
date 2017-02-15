@@ -1,6 +1,9 @@
 {% trans_default_domain 'FOSUserBundle' %}
 <ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
+			<li><a href="{{ path('admin_users_index') }}">Administrar usuarios</a></li>
+        {% endif %}
         <li class="active">Perfil de usuario</a></li>
     </ol>
 
@@ -51,4 +54,7 @@
 	  		<dd> {{ user.observaciones}}</dd>
 		</dl>
 	</div>
+
+	<hr>
+	<a href="{{ path('fos_user_profile_edit', {'id': user.id}) }}" class="btn btn-warning col-md-offset-2" title="Editar" href=""><i class="fa fa-edit fa-fw" aria-hidden="true"></i> Editar perfil</a>
 
