@@ -5,6 +5,10 @@ body {
   /*padding-top: 40px; */
 }
 
+#main-container{
+  padding: 10px 0px 10px 0px;
+}
+
 a:link { text-decoration: none; }
 a:hover { text-decoration: underline; }
 a:active { text-decoration: none; }
@@ -297,7 +301,7 @@ a:visited { text-decoration: none; }
 
 
   /* HOME (Index) */
-  #home h3 { font-weight: bold; text-transform: uppercase; }
+  #home h3 { font-weight: bold;}
 
   #home h4 { font-weight: bold; text-transform: uppercase; }
 
@@ -504,7 +508,7 @@ a:visited { text-decoration: none; }
   /* INICIO */
   /* LOS 17 OBJETIVOS (Los17objetivos) */
   #objetivos h2 { color: gray; text-transform: uppercase; }
-  #objetivos h3 { font-weight: bold; text-transform: uppercase; color: gray; margin-top: -1px; margin-bottom: 25px; margin-left: 5px; }
+  #objetivos h3 { font-weight: bold; color: gray; margin-top: -1px; margin-bottom: 25px; margin-left: 5px; }
   #objetivos .list { font-weight: bold; }
   #objetivos .list.red { color: red; }
   #objetivos .list.darkred { color: darkred; }
@@ -636,7 +640,7 @@ a:visited { text-decoration: none; }
 
   h2 { font-size: 22px; color: gray; text-transform: uppercase; }
 
-  h3 { font-size: 16px; color: gray; text-transform: uppercase; }
+  h3 { font-size: 16px; color: gray; }
 
   h4 { font-size: 14px; }
 
@@ -901,7 +905,7 @@ a:visited { text-decoration: none; }
 
 
   /* HOME (Index) */
-  #home h3 { font-weight: bold; text-transform: uppercase; }
+  #home h3 { font-weight: bold; }
 
   #home h4 { font-weight: bold; text-transform: uppercase; }
 
@@ -1100,7 +1104,7 @@ a:visited { text-decoration: none; }
   /* INICIO */
   /* LOS 17 OBJETIVOS (Los17objetivos) */
   #objetivos h2 { color: gray; text-transform: uppercase; }
-  #objetivos h3 { font-weight: bold; text-transform: uppercase; color: gray; margin-top: -1px; margin-bottom: 25px; margin-left: 0; }
+  #objetivos h3 { font-weight: bold; color: gray; margin-top: -1px; margin-bottom: 25px; margin-left: 0; }
   #objetivos h4 { font-weight: bold; font-size: 14px; }
   #objetivos .list { font-weight: bold; }
   #objetivos .list.red { color: red; }
@@ -1500,7 +1504,7 @@ a:visited { text-decoration: none; }
 
 
   /* HOME (Index) */
-  #home h3 { font-weight: bold; text-transform: uppercase; }
+  #home h3 { font-weight: bold; }
 
   #home h4 { font-weight: bold; text-transform: uppercase; }
 
@@ -2102,7 +2106,7 @@ a:visited { text-decoration: none; }
 
 
   /* HOME (Index) */
-  #home h3 { font-weight: bold; text-transform: uppercase; }
+  #home h3 { font-weight: bold; text-transform: }
 
   #home h4 { font-weight: bold; text-transform: uppercase; }
 
