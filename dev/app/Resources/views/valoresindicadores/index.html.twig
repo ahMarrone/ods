@@ -157,6 +157,15 @@
 	    }
 	};
 
+	$.fn.dataTable.ext.buttons.selectVisibles = {
+	    text: 'Seleccionar visibles',
+	    action: function ( e, dt, node, config ) {
+	    	console.log("select");
+	    	console.log(node);
+	    	table.rows( { page: 'current' } ).select();
+	    }
+	};
+
 	$('#valoresindicadoresTable tfoot th').each( function () {
         var title = $(this).text();
         $(this).html( '<input type="text" placeholder="Buscar '+title+'" />' );
@@ -164,15 +173,32 @@
 
 
     var table = $('#valoresindicadoresTable').DataTable({
-    	dom: 'Bfrtip',
+    	dom: 'Bi<"clear">lfrtp',
     	buttons: [
         'selectAll',
+        'selectVisibles',
         'selectNone',
         'aproveAll',
         'disaproveAll',
     	],
 	    language: {
-	    	//"url": "/lang/datatables_spanish.json",
+		    "sLengthMenu":     "Mostrar _MENU_ registros",
+		    "sZeroRecords":    "No se encontraron resultados",
+		    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+		    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+		    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+		    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+		    "sSearch":         "Buscar:",
+		    "oPaginate": {
+		        "sFirst":    "Primero",
+		        "sLast":     "Último",
+		        "sNext":     "Siguiente",
+		        "sPrevious": "Anterior"
+		    },
+		    "oAria": {
+		        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+		        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+		    },
 	        buttons: {
 	            selectAll: "Seleccionar todos",
 	            selectNone: "Deseleccionar todos"
