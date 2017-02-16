@@ -85,6 +85,7 @@ class ObjetivosController extends Controller
      */
     public function editAction(Request $request, Objetivos $objetivo)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $deleteForm = $this->createDeleteForm($objetivo);
         $editForm = $this->createForm('AppBundle\Form\ObjetivosType', $objetivo, array(
                 'disable_form' => true,

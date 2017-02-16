@@ -25,7 +25,9 @@
                 <td>
 
                     <a class="btn btn-primary" title="Ver" href="{{ path('admin_crud_objetivos_show', { 'id': objetivo.id }) }}"><i class="fa fa-eye fa-fw" aria-hidden="true"></i></a>
-                    <a class="btn btn-warning" title="Editar" href="{{ path('admin_crud_objetivos_edit', { 'id': objetivo.id }) }}"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a class="btn btn-warning" title="Editar" href="{{ path('admin_crud_objetivos_edit', { 'id': objetivo.id }) }}"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
+                    {% endif %}
                     <a class="btn btn-info" title="Ver Metas" href="{{ path('admin_crud_metas_index_idObjetivo', { 'id_objetivo': objetivo.id }) }}"><i class="fa fa-edit fa-map-o" aria-hidden="true"></i></a>
 
                 </td>

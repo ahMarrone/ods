@@ -115,7 +115,7 @@ class ProfileController extends Controller
         } else {
             $em = $this->getDoctrine()->getManager();
             if ($this->getUser()->getId() != $id_user){
-                $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN', $this->getUser(), 'Unable to access this page!');
+                $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
             }
             $user = $em->getRepository('AppBundle:Usuarios')->findOneById($id_user);
         }

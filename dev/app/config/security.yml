@@ -33,4 +33,3 @@ security:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/users, role: ROLE_SUPER_ADMIN }
-        - { path: ^/admin/, role: ROLE_ADMIN }

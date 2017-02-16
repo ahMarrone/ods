@@ -31,6 +31,7 @@ class ValoresIndicadoresController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $etiquetas = $valoresindicadores = NULL;
         $indicadorDesc = "";
         $idIndicador = intval($request->get('id_indicador'));
@@ -360,6 +361,7 @@ class ValoresIndicadoresController extends Controller
      * @Method({"POST"})
      */
     public function aproveDataAction(Request $request){
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $content = $this->get("request")->getContent();
         if (!empty($content)){
             $data = json_decode($content, true); 

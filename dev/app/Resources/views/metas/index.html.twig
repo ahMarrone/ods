@@ -44,9 +44,9 @@
                 <td>
 
                             <a class="btn btn-primary" title="Ver" href="{{ path('admin_crud_metas_show', { 'id': meta.id }) }}"><i class="fa fa-eye fa-fw" aria-hidden="true"></i></a>
-
-                            <a class="btn btn-warning" title="Editar" href="{{ path('admin_crud_metas_edit', { 'id': meta.id }) }}"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
-
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a class="btn btn-warning" title="Editar" href="{{ path('admin_crud_metas_edit', { 'id': meta.id }) }}"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
+                            {% endif %}
                             <a class="btn btn-info" title="Ver Indicadores" href="{{ path('admin_crud_indicadores_index_idMeta', { 'id_meta': meta.id }) }}"><i class="fa fa-edit fa-map" aria-hidden="true"></i></a>
                 </td>
             </tr>
@@ -54,7 +54,9 @@
         </tbody>
     </table>
 
-    <a class="btn btn-success" href="{{ path('admin_crud_metas_new') }}">Nueva</a>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a class="btn btn-success" href="{{ path('admin_crud_metas_new') }}">Nueva</a>
+    {% endif %}
 
 
 

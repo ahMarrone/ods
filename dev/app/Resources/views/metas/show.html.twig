@@ -21,9 +21,12 @@
 
 <div class="row">
             <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_metas_index') }}">Volver atrás</a>
-            <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_metas_edit', { 'id': meta.id }) }}">Editar</a>
-            {{ form_start(delete_form) }}
-                <input class="col-md-1 btn btn-danger option-btn" type="submit" value="Eliminar">
-            {{ form_end(delete_form) }}
+            {% if is_granted('ROLE_ADMIN') %}
+                <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_metas_edit', { 'id': meta.id }) }}">Editar</a>
+                {{ form_start(delete_form) }}
+                    <input class="col-md-1 btn btn-danger option-btn" type="submit" value="Eliminar">
+                {{ form_end(delete_form) }}
+            {% endif %}
+
 </div>
 {% endblock %}

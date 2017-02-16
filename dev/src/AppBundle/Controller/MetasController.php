@@ -70,6 +70,7 @@ class MetasController extends Controller
      */
     public function newAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $meta = new Metas();
         $form = $this->createForm('AppBundle\Form\MetasType', $meta, array(
             'entity_manager' => $this->getDoctrine()->getManager(),
@@ -147,6 +148,7 @@ class MetasController extends Controller
      */
     public function editAction(Request $request, Metas $meta)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $deleteForm = $this->createDeleteForm($meta);
         $editForm = $this->createForm('AppBundle\Form\MetasType', $meta, array(
             'entity_manager' => $this->getDoctrine()->getManager(),
@@ -180,6 +182,7 @@ class MetasController extends Controller
      */
     public function deleteAction(Request $request, Metas $meta)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $form = $this->createDeleteForm($meta);
         $form->handleRequest($request);
 

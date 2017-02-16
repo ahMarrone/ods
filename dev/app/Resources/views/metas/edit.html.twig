@@ -21,14 +21,15 @@
     {{ form_start(edit_form) }}
         {{ form_widget(edit_form) }}
         <hr>
-        <input class="col-md-1 col-md-offset-2 btn btn-success option-btn" type="submit" value="Editar" />
+          <input class="col-md-1 col-md-offset-2 btn btn-success option-btn" type="submit" value="Editar" />
     {{ form_end(edit_form) }}
 
-<div class="row">
-            {{ form_start(delete_form) }}
-                <input class="col-md-1 btn btn-danger option-btn" type="submit" value="Eliminar">
-            {{ form_end(delete_form) }}
-</div>
+            <div class="row">
+                        {{ form_start(delete_form) }}
+                            <input class="col-md-1 btn btn-danger option-btn" type="submit" value="Eliminar">
+                        {{ form_end(delete_form) }}
+            </div>
+
 
 
 <script type="text/javascript">

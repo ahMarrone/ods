@@ -65,6 +65,7 @@ class IndicadoresController extends Controller
      */
     public function newAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $indicadore = new Indicadores();
         $params = $this->getRequest()->request->all();
         if (isset($params['id_meta_selected'])){
@@ -198,6 +199,7 @@ class IndicadoresController extends Controller
      */
     public function editAction(Request $request, Indicadores $indicadore)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $params = $this->getRequest()->request->all();
         if (isset($params['id_meta_selected'])){
             $meta = $this->getDoctrine()->getRepository('AppBundle:Metas')->findOneById($params["id_meta_selected"]);
@@ -267,6 +269,7 @@ class IndicadoresController extends Controller
      */
     public function deleteAction(Request $request, Indicadores $indicadore)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $form = $this->createDeleteForm($indicadore);
         $form->handleRequest($request);
 

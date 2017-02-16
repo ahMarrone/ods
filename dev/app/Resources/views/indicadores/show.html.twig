@@ -54,9 +54,11 @@
 
 <div class="row">
             <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_index') }}">Volver</a>
-            <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_edit', { 'id': indicadore.id }) }}">Editar</a>
-            {{ form_start(delete_form) }}
-                <input class="col-md-1 btn btn-danger option-btn" type="submit" value="Eliminar">
-            {{ form_end(delete_form) }}
+            {% if is_granted('ROLE_ADMIN') %}
+                <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_edit', { 'id': indicadore.id }) }}">Editar</a>
+                {{ form_start(delete_form) }}
+                    <input class="col-md-1 btn btn-danger option-btn" type="submit" value="Eliminar">
+                {{ form_end(delete_form) }}
+            {% endif %}
 
 {% endblock %}

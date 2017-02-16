@@ -24,8 +24,9 @@
                 <td><a href="{{ path('admin_crud_desgloces_show', { 'id': desgloce.id }) }}">{{ desgloce.descripcion }}</a></td>
                 <td>
                     <a class="btn btn-primary" title="Ver" href="{{ path('admin_crud_desgloces_show', { 'id': desgloce.id }) }}"><i class="fa fa-eye fa-fw" aria-hidden="true"></i></a>
-                    <a class="btn btn-warning" title="Editar" href="{{ path('admin_crud_desgloces_edit', { 'id': desgloce.id }) }}"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
-
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a class="btn btn-warning" title="Editar" href="{{ path('admin_crud_desgloces_edit', { 'id': desgloce.id }) }}"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
+                    {% endif %}    
                     <a class="btn btn-info" title="Ver Etiquetas" href="{{ path('admin_crud_etiquetas_index_idDesgloce', { 'id_desgloce': desgloce.id }) }}"><i class="fa fa-tags fa-fw" aria-hidden="true"></i></a>
                 </td>
             </tr>
@@ -33,7 +34,9 @@
         </tbody>
     </table>
 
+    {% if is_granted('ROLE_ADMIN') %}
      <a class="btn btn-success" href="{{ path('admin_crud_desgloces_new') }}">Nuevo</a>
+    {% endif %} 
 
 <script type="text/javascript">
     $(document).ready(function() {

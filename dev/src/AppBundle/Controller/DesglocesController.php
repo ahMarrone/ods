@@ -41,6 +41,7 @@ class DesglocesController extends Controller
      */
     public function newAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $desgloce = new Desgloces();
         $form = $this->createForm('AppBundle\Form\DesglocesType', $desgloce);
         $form->handleRequest($request);
@@ -83,6 +84,7 @@ class DesglocesController extends Controller
      */
     public function editAction(Request $request, Desgloces $desgloce)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $deleteForm = $this->createDeleteForm($desgloce);
         $editForm = $this->createForm('AppBundle\Form\DesglocesType', $desgloce);
         $editForm->handleRequest($request);
@@ -110,6 +112,7 @@ class DesglocesController extends Controller
      */
     public function deleteAction(Request $request, Desgloces $desgloce)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $form = $this->createDeleteForm($desgloce);
         $form->handleRequest($request);
 
