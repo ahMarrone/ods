@@ -85,9 +85,12 @@ class IndicadoresController extends Controller
             /*$datetime = new \DateTime();
             $newDate = $datetime->createFromFormat('Y-m-d', '2015-01-01');
             $newDate->format('d-m-Y');*/
-            $indicadore->setFechametaintermedia($indicadore->formatYearToDB($indicadore->getFechametaintermedia()));
-            $indicadore->setFechametafinal($indicadore->formatYearToDB($indicadore->getFechametafinal()));
-
+            if ($indicadore->getFechametaintermedia() != NULL){
+                $indicadore->setFechametaintermedia($indicadore->formatYearToDB($indicadore->getFechametaintermedia()));
+            }
+            if ($indicadore->getFechametafinal() != NULL){
+                $indicadore->setFechametafinal($indicadore->formatYearToDB($indicadore->getFechametafinal()));
+            }
             // documento técnico
             $document = $indicadore->getDocumentPath();
             if ($document){
@@ -214,8 +217,12 @@ class IndicadoresController extends Controller
         }
 
         // Formateo fechas a 'yyyy' para visualizacion
-        $indicadore->setFechametaintermedia(explode('-',$indicadore->getFechametaintermedia())[0]);
+        if ($indicadore->getFechametaintermedia() != NULL){
+            $indicadore->setFechametaintermedia(explode('-',$indicadore->getFechametaintermedia())[0]);
+        }
+        if ($indicadore->getFechametafinal() != NULL){
         $indicadore->setFechametafinal(explode('-',$indicadore->getFechametafinal())[0]);
+        }   
         $editForm = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore, array(
                 'scopes_enabled' => array('N'=>false,'P'=>false,'D'=>false), // en modo edicion, no se puede cambiar el ambito del indicador
                 'last_code_used' => $indicadore->getCodigo(),
@@ -227,8 +234,12 @@ class IndicadoresController extends Controller
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->addIndicadorMetadata($indicadore);
 
-            $indicadore->setFechametaintermedia($indicadore->formatYearToDB($indicadore->getFechametaintermedia()));
-            $indicadore->setFechametafinal($indicadore->formatYearToDB($indicadore->getFechametafinal()));
+            if ($indicadore->getFechametaintermedia() != NULL){
+                $indicadore->setFechametaintermedia($indicadore->formatYearToDB($indicadore->getFechametaintermedia()));
+            }
+            if ($indicadore->getFechametafinal() != NULL){
+                $indicadore->setFechametafinal($indicadore->formatYearToDB($indicadore->getFechametafinal()));
+            }
 
             // documento técnico
             $document = $indicadore->getDocumentPath();

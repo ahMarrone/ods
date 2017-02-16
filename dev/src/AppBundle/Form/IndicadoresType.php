@@ -130,9 +130,9 @@ class IndicadoresType extends AbstractType
         {
             $context->addViolationAt('codigo', 'El código de indicador para esta meta ya está utilizado!');
         }
-        if (!$this->checkValidDates($indicador->getFechametaintermedia(), $indicador->getFechametafinal())){
+        /*if (!$this->checkValidDates($indicador->getFechametaintermedia(), $indicador->getFechametafinal())){
             $context->addViolationAt('fechametafinal',"El año de la meta final debe ser posterior al año de meta intermedia");
-        }
+        }*/
     }
 
     private function checkValidDates($fechaIntermedia, $fechaFinal){
