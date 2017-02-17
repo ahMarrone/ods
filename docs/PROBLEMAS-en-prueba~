@@ -1,0 +1,21 @@
+==== Problemas encontrados ====
+
+* Cuando se definen 'desgloses' para un indicador, el INSERT usa el 'id' de desgloce que corresponde al orden de visaulización, no el valor real del 'id'. Esto me pasó porque tenía los desgloses con id (4,5,6) y cuando fue a insertar intentó hacer: 
+
+'INSERT INTO desglocesIndicadores (idIndicador, idDesgloce) VALUES (5, 1)'
+
+para el desglose cuyo id es 4.
+
+
+
+
+* Eliminar un indicador da un error SQL porque hay que borrar primero 'desglocesIndicadores' para ese indicador.
+
+* Al cargar un indicador departamental, la lista de selección de provincia no me muestra las opciones (sí, cuando
+la voy recorriendo). Debe ser el estilo que le pusimos de ods.
+
+
+
+
+
+

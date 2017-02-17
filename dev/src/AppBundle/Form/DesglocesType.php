@@ -15,7 +15,7 @@ class DesglocesType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('descripcion')
+            ->add('descripcion', null , array('label'  => 'Descripción', 'attr' => array('class' => 'col-sm-8', 'maxlength' => 100, ),))
         ;
     }
     
