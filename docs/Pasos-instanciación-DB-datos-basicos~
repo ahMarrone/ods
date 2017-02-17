@@ -1,0 +1,68 @@
+
+
+* Crear la BD (con datos mínimos cargados) con el script
+
+
+
+* Si se desean borrar datos de prueba el orden es el siguiente:
+
+
+=== Borrar solo 'valores de los indicadores' existentes ===
+delete from valoresIndicadores;
+delete from valoresIndicadoresConfigFecha;
+delete from valoresIndicadoresConfigFechaDesgloces;
+
+=== Borrar también los 'indicadores' existentes ===
+delete from desglocesIndicadores;
+delete from indicadores;
+
+=== Borrar también las 'metas' existentes ===
+delete from metas;
+
+=== Borrar también las 'etiquetas' y 'desgloses' ===
+delete from etiquetas where id > 0;
+delete from desgloces where id > 0;
+
+o
+
+INSERT INTO `desgloces` (`id`, `descripcion`) VALUES (0, 'Sin desglose');
+INSERT INTO `etiquetas` (`id`, `descripcion`, `fkIdDesgloce`) VALUES (0, 'Sin etiqueta', 0);
+
+(OJO! con los id porque después de borrar no se resetea en 'AUTO_INCREMENT'). Le tuve que poner a mano
+el 'AUTOINCREMENT=0' en los 'CREATE TABLE'  (me olvidé de desmarcar la opción AUTO_INCREMENT en la exportación)
+
+
+
+
+* Crear un usuario específico para la BD 'indicadores_ods' y asignarle permisos sobre ésta.
+
+CREATE USER 'dbods_user'@'localhost' IDENTIFIED BY 'C57xYT544+12x';
+GRANT ALL ON indicadores_ods.* TO 'dbods_user'@'localhost';
+
+
+* Configurar este usuario en la aplicación nuestra (que no sea 'root')
+
+dev/apps/config/parameters.yml
+
+Por ejemplo,
+
+parameters:
+    database_host: 127.0.0.1
+    database_port: null
+    database_name: indicadores_ods
+    database_user: dbods_user
+    database_password: C57xYT544+12x
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: null
+    mailer_password: null
+    secret: 5da3719d01d0489717eed24956031b11405eb9c7
+
+
+
+
+
+
+
+
+
