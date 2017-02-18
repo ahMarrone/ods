@@ -29,8 +29,8 @@
 
 {% block body %}
 
-<div id=mainContainer>
-<div class="container-fluid"  style="padding-top: 15px;">
+<div id="mainContainer">
+<div class="container-fluid">
 <div class="row">
 <div class = "col-sm-4">
 <div class="container-fluid" id='divFluid'>
@@ -65,25 +65,25 @@
   }
 });%>
 <form class="form-horizontal" role="form">
-      <h3 class="text-center" style="color: #0c4da2;margin-top: 10px">Plataforma de seguimiento de la Agenda 2030</h3>
+      <h3 class="text-center" style="color: #0c4da2;margin-top: 10px;text-transform: uppercase;">Plataforma De Seguimiento De Los Objetivos De Desarrollo Sostenible</h3>
       <div class="form-group">
         <label for="selectorObjetivo" control-label">Objetivo</label>
-          <select  id="selectorObjetivo" class="form-control selectObjetivo" title="<% if (this.model.get('idObjetivoSeleccionado')) { %>
-          <%= this.model.get('objetivos')[this.model.get('idObjetivoSeleccionado')].descripcion %>
+          <select  id="selectorObjetivo" class="form-control selectObjetivo" title="<% if (model.get('idObjetivoSeleccionado')) { %>
+          <%= model.get('objetivos')[model.get('idObjetivoSeleccionado')].descripcion %>
           <% } %>">
           <% _.each(model.get("objetivos"), function( objetivo, i){ %>
-          <option title="<%= objetivo.descripcion %>" value="<%= objetivo.id %>" <% if (objetivo.id == model.get("idObjetivoSeleccionado")) { %> selected<% }  %>><%= _(objetivo.descripcion).trim(42) %></option>
+          <option title="<%= objetivo.codigo %> - <%= objetivo.descripcion %>" value="<%= i %>" <% if (i == model.get("idObjetivoSeleccionado")) { %> selected<% }  %>><%= objetivo.codigo %> - <%= _(objetivo.descripcion).trim(42) %></option>
           <% }); %>
           </select>
       </div> <!-- /.form-group -->
       <div class="form-group">
         <label for="selectorMeta" class="control-label">Meta</label>
-          <select id="selectorMeta" class="form-control selectMeta" title=<% if (this.model.get('idMetaSeleccionada')) { %>
-          "<%= this.model.get('metas')[this.model.get('idMetaSeleccionada')].descripcion %>"
+          <select id="selectorMeta" class="form-control selectMeta" title=<% if (model.get('idMetaSeleccionada')) { %>
+          "<%= model.get('metas')[model.get('idMetaSeleccionada')].descripcion %>"
           <% } %>>
           <% _.each(model.get("metas"), function( meta, i){ %>',
           <% if ( meta.id_objetivo == model.get("idObjetivoSeleccionado") ){ %>
-          <option title="<%= meta.descripcion %>" value="<%= meta.id %>" <% if (meta.id == model.get("idMetaSeleccionada")) { %> selected<% }  %>><%= _(meta.descripcion).trim(42) %></option>
+          <option title="<%= meta.codigo %> - <%= meta.descripcion %>" value="<%= i %>" <% if (i == model.get("idMetaSeleccionada")) { %> selected<% }  %>><%= meta.codigo %> - <%= _(meta.descripcion).trim(42) %></option>
           <% } %>
           <% }); %>
           </select>
@@ -92,12 +92,12 @@
         <label for="selectorIndicador" class="control-label">Indicador <% if (model.get('idIndicadorSeleccionado')) { %>
         <% if (model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico) { %><a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico)%>" class="fa fa-info-circle" title="Documento Técnico"></a><% } %>
         <% } %></label>
-          <select <% if (!(model.get('idIndicadorSeleccionado'))) { print ('disabled'); } %> id="selectorIndicador" class="form-control selectIndicador" title="<% if (this.model.get('idIndicadorSeleccionado')) { %>
-          <%= this.model.get('indicadores')[this.model.get('idIndicadorSeleccionado')].descripcion %>
+          <select <% if (!(model.get('idIndicadorSeleccionado'))) { print ('disabled'); } %> id="selectorIndicador" class="form-control selectIndicador" title="<% if (model.get('idIndicadorSeleccionado')) { %>
+          <%= model.get('indicadores')[model.get('idIndicadorSeleccionado')].descripcion %>
           <% } %>">
           <% _.each(model.get("indicadores"), function( indicador, i){ %>
           <% if ( indicador.id_meta == model.get("idMetaSeleccionada") ){ %>
-          <option option title="<%= indicador.descripcion %>" value="<%= i %>" <% if (i == model.get("idIndicadorSeleccionado")) { %> selected<% }  %>><%= _(indicador.descripcion ).trim(42) %></option>
+          <option option title="<%= indicador.codigo %>-<%= indicador.descripcion %>" value="<%= i %>" <% if (i == model.get("idIndicadorSeleccionado")) { %> selected<% }  %>><%= indicador.codigo %> - <%= _(indicador.descripcion ).trim(42) %></option>
           <% } %>
           <% }); %>
           </select>
@@ -139,7 +139,7 @@
 </div>
 <div class = "col-sm-8">
 <div class="container-fluid mapCanvas" id="mapCanvas"></div>    
-<table class="table table-responsive" id='fechasDestacadasDiv'>
+<table class="table table-responsive" id='fechasDestacadasDiv' style="margin-bottom: 0px;">
 <script id="fechasDestacadasLoader" type="text/template">
 <tbody>
     <tr>
@@ -195,6 +195,24 @@
   </div>
 </div>
 
+<!-- Modal Bienvenidos -->
+<div class="modal fade" id="bienvenidosModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content text-center">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h2 class="modal-title" id="myModalLabel">¡Bienvenidos!</h2>
+      </div>
+      <div class="modal-body">
+      <h3 style="text-transform: uppercase;">Plataforma de Seguimiento de los <br> Objetivos de Desarrollo Sostenible</h3>
+      </div>
+      <!-- <div class="modal-footer">
+      </div> -->
+    </div>
+  </div>
+</div>
+
+
 <div id="globalModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="padding-top:15%; overflow-y:visible;">
   <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content text-center">
@@ -227,7 +245,6 @@
     $('#csvRadio', this).val(fechaSeleccionada);
 
     if ($('#pdfRadio', this).is(':checked')) {
-      alert('Descargo el mapa!');
       // $('#exportarModal').modal('hide');
       return false;
     }
@@ -241,6 +258,8 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
+
+    $('#bienvenidosModal').modal('show')
 
     /* INICIALIZAR DE ACUERDO A TIPO */
     var ChainSelectData = Backbone.Model.extend({
@@ -456,6 +475,8 @@
     var api_urls = {{ api_urls|json_encode|raw }};
     var fechasDestacadas = indicadores[idIndicadorSeleccionado].fechasDestacadas;
     var fechaSeleccionada;
+
+    /* CAMBIAR OBJETIVO, META E INDICADOR SELECCIONADO DE ACUERDO AL INDICADOR */
 
     var globalModal = 'globalModal';
 

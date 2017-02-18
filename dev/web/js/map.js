@@ -166,7 +166,8 @@ function getColor(v, e=[]) {
 
     if (v === undefined) {
         // color = '#dcdbdb';
-        color = '#ffffff';
+        // color = '#ffffff';
+        color = '#eeeeee';
     } else {
         color = v > e[4] ? colors[4] :
         color = v > e[3] ? colors[3] :

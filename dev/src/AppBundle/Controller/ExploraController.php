@@ -29,16 +29,17 @@ class ExploraController extends Controller
         con los correspondientes valores para cada Referencia Geogŕafica de acuerdo
         al indicador seleccionado */
 
-        $idIndicador = 1;
-
         $objetivos = $this->getObjetivosPreload();
         $metas = $this->getMetasPreload();
         $indicadores = $this->getIndicadoresPreload();
 
-        /* Antes de continuar verificar si el Indicador solicitado se encuentra 'visible' */
+        /* Primer Indicador de la Tabla (Visible) */
+        $idIndicador = array_keys($indicadores)[0];
 
-        if (!array_key_exists($idIndicador, $indicadores)) {
-            throw $this->createNotFoundException('Indicador no encontrado');
+        // /* Antes de continuar verificar si el Indicador solicitado se encuentra 'visible' */
+
+        if (!(isset($idIndicador))) {
+            throw $this->createNotFoundException('Aún no existen Indicadores');
         }
 
         /* MODIFICAR PARA NO UTILIZAR CONSULTA SINO DATOS YA RECUPERADOS (Objetivos, Metas, Indicadores) */
@@ -223,16 +224,13 @@ class ExploraController extends Controller
         return $response;
     }
 
-    /* CAMBIAR ESQUEMA DE DICCIONARIOS - REVISAR PROBLEMA C0N CLAVE 0 */
-
     private function getObjetivosPreload(){
         $list = array();
         $objetivos =  $this->getDoctrine()->getRepository('AppBundle:Objetivos')->findAll();
         foreach ($objetivos as $o) {
-            array_push($list, array(
-                'id'=>$o->getId(),
-                'descripcion'=>$o->getDescripcion())
-            );
+            $id = $o->getId();
+            $list[$id] = array('codigo'=>$o->getCodigo(),
+                               'descripcion'=>$o->getDescripcion());
         }
         return $list;
     }
@@ -241,11 +239,10 @@ class ExploraController extends Controller
         $list = array();
         $metas =  $this->getDoctrine()->getRepository('AppBundle:Metas')->findAll();
         foreach ($metas as $m) {
-            array_push($list, array(
-                'id'=>$m->getId(),
-                'descripcion'=>$m->getDescripcion(),
-                'id_objetivo'=>$m->getFkidobjetivo()->getId())
-            );
+            $id = $m->getId();
+            $list[$id] = array('codigo'=>$m->getFkidobjetivo()->getCodigo() . "." . $m->getCodigo(),
+                               'descripcion'=>$m->getDescripcion(),
+                               'id_objetivo'=>$m->getFkidobjetivo()->getId());
         }
         return $list;
     }
@@ -298,6 +295,7 @@ class ExploraController extends Controller
         foreach ($indicadores as $i) {
             $idIndicador = $i->getId();
             $list[$idIndicador] = array();
+            $list[$idIndicador]['codigo'] = $i->getFkidmeta()->getFkidobjetivo()->getCodigo() . "." . $i->getFkidmeta()->getCodigo() . "." . $i->getCodigo();
             $list[$idIndicador]['descripcion'] = $i->getDescripcion();
             $list[$idIndicador]['id_meta'] = $i->getFkidmeta()->getId();
             $list[$idIndicador]['ambito'] = $i->getAmbito();
@@ -305,7 +303,6 @@ class ExploraController extends Controller
             $list[$idIndicador]['tipo'] = $i->getTipo();
             $list[$idIndicador]['valMin'] = $i->getValmin();
             $list[$idIndicador]['valMax'] = $i->getValmax();
-            // $list[$idIndicador]['escala'] = array(0, 20, 40, 60, 80);
             $list[$idIndicador]['escala'] = $this->buildScale($list[$idIndicador]['tipo'], $list[$idIndicador]['valMin'], $list[$idIndicador]['valMax']);
             $list[$idIndicador]['fechasDestacadas'] = $this->parseFechasDestacadas($i->getFechasDestacadas());
             /* Metas: Fechas/ValoresEsperados */
