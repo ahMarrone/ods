@@ -33,7 +33,7 @@
       </join-columns>
     </many-to-one>
     <many-to-many field="iddesgloce" target-entity="Desgloces" inversed-by="idindicador">
-      <join-table name="desglocesindicadores">
+      <join-table name="desglocesIndicadores">
         <join-columns>
           <join-column name="idIndicador" referenced-column-name="id"/>
         </join-columns>
