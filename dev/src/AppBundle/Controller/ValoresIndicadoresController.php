@@ -89,7 +89,10 @@ class ValoresIndicadoresController extends Controller
                 'ref_geograficas' => $refGeograficas,
                 'filter_ref_geograficas' => $this->getParentRefGeograficas($ambitoIndicador),
                 'valores_indicadores' => $valoresindicadores,
+                'value_type' => $indicador->getTipo(),
                 'step' => $step,
+                'range_min' => $indicador->getValmin(),
+                'range_max'=> $indicador->getValmax(),
                 'api_urls' => array('edit'=> $this->generateUrl('admin_crud_valoresindicadores_saveobjects'), 
                                     'delete'=> $this->generateUrl('admin_crud_valoresindicadores_deleteobjects')
                 )
