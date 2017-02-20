@@ -31,17 +31,17 @@ USE `indicadores_ods`;
 
 DROP TABLE IF EXISTS `agrupamientoRefGeografica`;
 CREATE TABLE IF NOT EXISTS `agrupamientoRefGeografica` (
-  `id_1` int(11) unsigned NOT NULL,
-  `id_2` int(11) unsigned NOT NULL,
-  PRIMARY KEY (`id_1`,`id_2`),
-  KEY `refGeografica_ibfk_2` (`id_2`)
+  `id1` int(11) unsigned NOT NULL,
+  `id2` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`id1`,`id2`),
+  KEY `refGeografica_ibfk_2` (`id2`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `agrupamientoRefGeografica`
 --
 
-INSERT INTO `agrupamientoRefGeografica` (`id_1`, `id_2`) VALUES
+INSERT INTO `agrupamientoRefGeografica` (`id1`, `id2`) VALUES
 (31, 1),
 (54, 1),
 (57, 1),
@@ -1566,8 +1566,8 @@ CREATE TABLE IF NOT EXISTS `valoresIndicadoresConfigFechaDesgloces` (
 -- Filtros para la tabla `agrupamientoRefGeografica`
 --
 ALTER TABLE `agrupamientoRefGeografica`
-  ADD CONSTRAINT `refGeografica_ibfk_1` FOREIGN KEY (`id_1`) REFERENCES `refGeografica` (`id`),
-  ADD CONSTRAINT `refGeografica_ibfk_2` FOREIGN KEY (`id_2`) REFERENCES `refGeografica` (`id`);
+  ADD CONSTRAINT `refGeografica_ibfk_1` FOREIGN KEY (`id1`) REFERENCES `refGeografica` (`id`),
+  ADD CONSTRAINT `refGeografica_ibfk_2` FOREIGN KEY (`id2`) REFERENCES `refGeografica` (`id`);
 
 --
 -- Filtros para la tabla `desglocesIndicadores`
