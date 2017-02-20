@@ -36,16 +36,10 @@ class ExploraController extends Controller
         /* Primer Indicador de la Tabla (Visible) */
         $idIndicador = array_keys($indicadores)[0];
 
-        // /* Antes de continuar verificar si el Indicador solicitado se encuentra 'visible' */
-
+        /* Antes de continuar verificar si el Indicador solicitado se encuentra 'visible' */
         if (!(isset($idIndicador))) {
             throw $this->createNotFoundException('Aún no existen Indicadores');
         }
-
-        /* MODIFICAR PARA NO UTILIZAR CONSULTA SINO DATOS YA RECUPERADOS (Objetivos, Metas, Indicadores) */
-        $reverseSearchResult = $this->reverseSearchByIndicador($idIndicador)[0];
-        $idObjetivoSeleccionado = $reverseSearchResult['objetivo'];
-        $idMetaSeleccionada = $reverseSearchResult['meta'];
 
         /* ENCONTRAR UNA SOLUCIÓN MÁS ELEGANTE */
         $reverseDesgloses = array();
@@ -63,8 +57,6 @@ class ExploraController extends Controller
             'desgloses' => $desgloses,
             'etiquetas' => $etiquetas,
             'valoresIndicadoresDesgloses' => $valoresIndicadoresDesgloses,
-            'idObjetivoSeleccionado' => $idObjetivoSeleccionado,
-            'idMetaSeleccionada' => $idMetaSeleccionada,
             'idIndicadorSeleccionado' => $idIndicador,
             'api_urls' => array('refresh'=> $this->generateUrl('explora_refresh'),
                                 'export'=> $this->generateUrl('export_refresh'))
@@ -73,7 +65,7 @@ class ExploraController extends Controller
 
     /**
      * Refrescar 'valoresIndicadoresDesgloses' al seleccionar un nuevo 'Indicador'
-     * @Route("/refresh", name="explora_refresh")
+     * @Route("/api/refresh", name="explora_refresh")
      * @Method({"GET"})
     */
 
@@ -106,7 +98,7 @@ class ExploraController extends Controller
 
     /**
      * Exportar datos del Indicador
-     * @Route("/export", name="export_refresh")
+     * @Route("/api/export", name="export_refresh")
      * @Method({"POST"})
     */
 
@@ -336,11 +328,6 @@ class ExploraController extends Controller
             $etiquetas[$id] = array('descripcion' => $descripcion,
                                     'id_desglose' => $e->getFkiddesgloce()->getId());
 
-            // array_push($etiquetas, array(
-            //     'id' => $id,
-            //     'descripcion' => $descripcion,
-            //     'id_desglose' => $e->getFkiddesgloce()->getId())
-            // );
             $maximoID = max($maximoID, $e->getId());
 
         }
@@ -351,11 +338,6 @@ class ExploraController extends Controller
             $maximoID += 1;
             /* Se crean nuevas etiquetas con la descripción 'Total' para cada desglose
             Para ello, se comienza desde el ID de etiqueta más alto */
-            // array_push($etiquetas, array(
-            //     'id' => $maximoID,
-            //     'descripcion' => 'Total',
-            //     'id_desglose' => $idDesglose)
-            // );
 
             $etiquetas[$maximoID] = array('descripcion' => 'Total',
                                           'id_desglose' => $idDesglose);
@@ -378,9 +360,6 @@ class ExploraController extends Controller
         }
         return $desgloses;
     }
-
-    /* VER QUÉ SUCEDE CUANDO NO EXISTEN VALORES CARGADOS PARA EL INDICADOR SELECCIONADO */
-    /* VERIFICAR QUE FILTRO POR APROBADO FUNCIONE CORRECTAMENTE */
 
     private function getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses){
         $entidad = $this->filterValoresIndicadoresConfigFechaByIndicador($idIndicador);
