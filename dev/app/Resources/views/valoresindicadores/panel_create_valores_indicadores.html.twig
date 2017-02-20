@@ -15,7 +15,6 @@
     <script src="{{ asset('js/backbone-min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('js/globalutils.js') }}"></script>
-    <script src="{{ asset('js/jquery.numberfield.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -42,7 +41,10 @@
           <b>Cruzar etiquetas:</b> {{ cruzado ? "Si" : "No"}}.
         </span>
         <span>
-          <b>Ámbito indicador:</b> {{indicador_ambito}}
+          <b>Ámbito indicador:</b> {{indicador_ambito}}.
+        </span>
+        <span>
+          <b>Tipo de indicador:</b> {{value_type}}
         </span>
       </div>
     </div>
@@ -63,7 +65,7 @@
 
 
 <script id="panelListWrapper" type="text/template">
-<nav id="navbar-panel-create" class="navbar row">
+<nav class="navbar row second-navbar-panel">
   <div class="container-fluid">
     <div class="">
       <ul class="nav navbar-nav">
@@ -121,7 +123,7 @@
           <div class="form-group">
             <label><%= parent.contructLabelEtiqueta(etiquetas_id) %></label>
             <div>
-              <input type="number" step="{{step}}" max="100" min="0" class="form-control etiquetaInput" data-etiqueta-id="<%= id_formatted %>" value="<%= model.valor_etiquetas[id_formatted] %>">
+              <input type="number" step="{{step}}" max="{{range_max}}" min="{{range_min}}" class="form-control etiquetaInput" data-etiqueta-id="<%= id_formatted %>" value="<%= model.valor_etiquetas[id_formatted] %>">
             </div>
           </div>
            <% }); %>
@@ -231,6 +233,10 @@
         var refGeograficasFilters = {{filter_ref_geograficas|json_encode|raw}};
         valoresEtiquetas = _.groupBy(valoresEtiquetas, 'id_ref_geografica');
 
+        var value_type = {{ value_type|json_encode|raw}};
+        var range_min = {{range_min}};
+        var range_max = {{range_max}};
+
         var refGeograficaCollection = null;
         var refGeograficaPanelList = null;
 
@@ -309,6 +315,9 @@
                 this.refGeograficas = options.refGeograficasList;
                 this.sortedRefGeograficas = this.sortRefGeograficas();
                 this.refGeograficasFilters = options.refGeograficasFilters;
+                this.value_type = options.value_type;
+                this.range_min = options.range_min;
+                this.range_max = options.range_max;
                 _.bindAll(this, "renderPanel");
                 this.render();
             },
@@ -328,7 +337,11 @@
                 $('#filterCardsSelect').selectpicker({
                   noneSelectedText: 'Filtrar por provincia'
                 });
-
+                var firstInputEtiqueta = $('.etiquetaInput')[0];
+                if (firstInputEtiqueta){
+                  $(firstInputEtiqueta).focus();
+                }
+                  //$('.etiquetaInput')[0].focus();
               $('#filterCardsSelect').on('change', function() {
               //that.applyFilter(this.value);
                   if (this.value != -1){
@@ -362,7 +375,6 @@
             },
             addNewDataLoader: function(){
               var refID = this.getNextUnusedRef();
-              console.log(refID);
               if (refID != null){
                 var loader = new RefGeograficaData({id_ref_geografica:refID, is_preloaded:false, data_has_changed: false, valor_etiquetas:{}, ref_geografica_parent_id: this.refGeograficas[refID].parent});
                 this.collection.add(loader);
@@ -514,9 +526,11 @@
       "change .etiquetaInput": "etiquetaValueChange"
     },
     etiquetaValueChange: function(event){
-      console.log(event.target.value);
       var etiquetaId = $(event.target).data('etiqueta-id');
       var value = event.target.value;
+      value = (this.parent.value_type == "entero") ? Math.round(value): value;
+      value =  (value > this.parent.range_max) ? this.parent.range_max : value;
+      value =  (value < this.parent.range_min) ? this.parent.range_min : value;
       var modelEtiquetas = this.model.get('valor_etiquetas');
       modelEtiquetas[etiquetaId] = value;
       this.model.set('valoresEtiquetas',modelEtiquetas);
@@ -610,7 +624,7 @@
             api_urls: api_urls
       });
     bindRefGeograficaData(refGeograficaCollection, refGeograficasList);
-    refGeograficaPanelList = new RefGeograficaPanelList({collection:refGeograficaCollection, etiquetas: etiquetas, etiquetas_metadata: etiquetasMetadata, refGeograficasList: refGeograficasList})
+    refGeograficaPanelList = new RefGeograficaPanelList({collection:refGeograficaCollection, etiquetas: etiquetas, etiquetas_metadata: etiquetasMetadata, refGeograficasList: refGeograficasList, value_type: value_type, range_min: range_min, range_max: range_max})
     refGeograficaPanelList.render();
   }
 

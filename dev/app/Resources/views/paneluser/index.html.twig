@@ -1,6 +1,19 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('css/valoresindicadores.css') }}" rel="stylesheet" />
+{% endblock %}
+
+
 {% block body %}
+
+<div class="row">
+   <p class="navbar-text pull-left" style="font-weight:bold;font-size:18px;">Bienvenido <span style="color:#034EA2">'{{app.user.username}}'</span></p>
+     <p class="navbar-text pull-right"><a href="{{ path('fos_user_security_logout') }}" class="navbar-link">Cerrar sesión</a></p>
+</div>
+
 	<div class="row">
 	<ol class="breadcrumb">
   		<li class="active">Panel de usuario</li>
