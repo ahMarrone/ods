@@ -40,7 +40,10 @@ class IndicadoresType extends AbstractType
         $builder
             ->add('fkidmeta','hidden',array('mapped'=>false))
             ->add('codigo', IntegerType::class, array(
-                'label' => 'Código del indicador', 'attr' => array('class' => 'col-sm-1')                 
+                'label' => 'Código del indicador', 'attr' => array(
+                    'class' => 'col-sm-1',
+                    'min'=> 0,
+                )                 
             ))                        
             ->add('descripcion', TextareaType::class , array('label'  => 'Descripción', 'attr' => array('maxlength' => 500, ),))
             ->add('tipo', ChoiceType::class, array('label'  => 'Tipo', 'expanded'=>true, 'required'=>true, 'choices' => array('Porcentual' => 'porcentual', 'Entero' => 'entero', 'Real' => 'real', ), 'data' => $tipoSeleccionado, 'choices_as_values' => true, ))
