@@ -25,7 +25,7 @@ SET time_zone = "+00:00";
 -- Volcado de datos para la tabla `agrupamientoRefGeografica`
 --
 
-INSERT INTO `agrupamientoRefGeografica` (`id_1`, `id_2`) VALUES
+INSERT INTO `agrupamientoRefGeografica` (`id1`, `id2`) VALUES
 (31, 1),
 (54, 1),
 (57, 1),

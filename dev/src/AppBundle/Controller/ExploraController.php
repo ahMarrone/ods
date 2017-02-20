@@ -117,9 +117,9 @@ class ExploraController extends Controller
             $meta = $this->getDoctrine()->getRepository('AppBundle:Metas')->findOneById($idMeta);
             $idObjetivo = $meta->getFkidobjetivo()->getId();
             $objetivo = $this->getDoctrine()->getRepository('AppBundle:Objetivos')->findOneById($idObjetivo);
-            $fileContent .= 'Objetivo: ' . $objetivo->getDescripcion() . "\r\n";
-            $fileContent .= 'Meta: ' . $meta->getDescripcion() . "\r\n";
-            $fileContent .= 'Indicador: ' . $indicador->getDescripcion() . "\r\n";
+            $fileContent .= 'Objetivo: ' . $objetivo->getCodigo(). ":" . $objetivo->getDescripcion() . "\r\n";
+            $fileContent .= 'Meta: ' . $meta->getFkidobjetivo()->getCodigo() . "." . $meta->getCodigo() . ":" . $meta->getDescripcion() . "\r\n";
+            $fileContent .= 'Indicador: ' . $indicador->getFkidmeta()->getFkidobjetivo()->getCodigo() . "." . $indicador->getFkidmeta()->getCodigo() . "." . $indicador->getCodigo() . ":" . $indicador->getDescripcion() . "\r\n";
             $fileContent .= "\r\n";
 
             $filter = array('idindicador' => $idIndicador, 'cruzado' => false);
@@ -170,14 +170,33 @@ class ExploraController extends Controller
                 $id = $e->getId();
                 $refGeograficaMap[$id] = $e->getDescripcion();
             }
-            // echo var_dump($idsValoresIndicadoresConfigFecha);
+            if ($ambito == 'D') {
+                $fileContent .= "Año" . $CSV . "Provincia" . $CSV . "Referencia_Geográfica" . $CSV . $etiquetasStr . "\r\n";
+                $provincias = $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findByAmbito('P');
+                $provinciasMap = array();
+                foreach ($provincias as $e) {
+                    $id = $e->getId();
+                    $descripcion = $e->getDescripcion();
+                    $provinciasMap[$id] = $descripcion;
+                }
+                $idsRefGeografica = array_keys($refGeograficaMap);
+                $agrupamientoRefGeografica = $this->getDoctrine()->getRepository('AppBundle:Agrupamientorefgeografica')->findById1($idsRefGeografica);
+                $agrupamientoRefGeograficaMap = array();
+                foreach ($agrupamientoRefGeografica as $e) {
+                    $idDepartamento = $e->getId1();
+                    $idProvincia = $e->getId2();
+                    $agrupamientoRefGeograficaMap[$idDepartamento] = $provinciasMap[$idProvincia];
+                }
+            } else {
+                $fileContent .= "Año" . $CSV . "Referencia_Geográfica" . $CSV . $etiquetasStr . "\r\n";    
+            }
+            
 
             /* ORDENAR POR ID, IDREFGEO */
             $valoresIndicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')->findBy(
                 array('idvaloresindicadoresconfigfecha' => $idsValoresIndicadoresConfigFecha, 
                       'aprobado' => true));
-
-            $fileContent .= "Año" . $CSV . "Referencia_Geográfica" . $CSV . $etiquetasStr . "\r\n";
+            
             $idRefGeograficaActual = $valoresIndicadores[0]->getIdrefgeografica()->getId();
             foreach ($valoresIndicadores as $e) {
                 $id = $e->getIdvaloresindicadoresconfigfecha()->getId();
@@ -187,6 +206,9 @@ class ExploraController extends Controller
                 if ($idRefGeografica != $idRefGeograficaActual) {
                     $periodo = $valoresIndicadoresConfigFechaMap[$id];
                     $fileContent .= $periodo . $CSV;
+                    if ($ambito == 'D') {
+                        $fileContent .= $agrupamientoRefGeograficaMap[$idRefGeograficaActual] . $CSV;
+                    }
                     $fileContent .= $refGeograficaMap[$idRefGeograficaActual] . $CSV;
                     for ($i = 0; $i < $cardinalEtiquetas ; $i++) { 
                         $fileContent .= $valores[$i] . $CSV;
@@ -200,6 +222,9 @@ class ExploraController extends Controller
             }
             $periodo = $valoresIndicadoresConfigFechaMap[$id];
             $fileContent .= $periodo . $CSV;
+            if ($ambito == 'D') {
+                $fileContent .= $agrupamientoRefGeograficaMap[$idRefGeograficaActual] . $CSV;
+            }
             $fileContent .= $refGeograficaMap[$idRefGeograficaActual] . $CSV;
             for ($i = 0; $i < $cardinalEtiquetas ; $i++) { 
                 $fileContent .= $valores[$i] . $CSV;

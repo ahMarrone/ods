@@ -215,7 +215,6 @@ function resetHighlight(event) {
 }
 
 function zoomIn(event) {
-
     if (ambitoIndicador == PROVINCIAL) {
         if (event.target.feature.properties.id == especialID) {
             tileBounds = especialCenterBounds;
@@ -238,7 +237,9 @@ function seleccionarPoligon(event) {
         if (isPoligonSelected) {
             isPoligonSelected = false;
             resetHighlight(selectedPoligonEvent);
-            zoomOut();
+            if (ambitoIndicador == PROVINCIAL) {
+                zoomOut();
+            }
         } else {
             isPoligonSelected = true;
             selectedPoligonEvent = event;
