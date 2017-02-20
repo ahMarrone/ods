@@ -41,7 +41,10 @@
           <b>Cruzar etiquetas:</b> {{ cruzado ? "Si" : "No"}}.
         </span>
         <span>
-          <b>Ámbito indicador:</b> {{indicador_ambito}}
+          <b>Ámbito indicador:</b> {{indicador_ambito}}.
+        </span>
+        <span>
+          <b>Tipo de indicador:</b> {{value_type}}
         </span>
       </div>
     </div>
@@ -372,7 +375,6 @@
             },
             addNewDataLoader: function(){
               var refID = this.getNextUnusedRef();
-              console.log(refID);
               if (refID != null){
                 var loader = new RefGeograficaData({id_ref_geografica:refID, is_preloaded:false, data_has_changed: false, valor_etiquetas:{}, ref_geografica_parent_id: this.refGeograficas[refID].parent});
                 this.collection.add(loader);
@@ -524,13 +526,11 @@
       "change .etiquetaInput": "etiquetaValueChange"
     },
     etiquetaValueChange: function(event){
-      console.log(event.target.value);
       var etiquetaId = $(event.target).data('etiqueta-id');
       var value = event.target.value;
-      if (value > this.parent.range_max){
-        console.log($(event.target));
-        $(event.target).val(100);
-      }
+      value = (this.parent.value_type == "entero") ? Math.round(value): value;
+      value =  (value > this.parent.range_max) ? this.parent.range_max : value;
+      value =  (value < this.parent.range_min) ? this.parent.range_min : value;
       var modelEtiquetas = this.model.get('valor_etiquetas');
       modelEtiquetas[etiquetaId] = value;
       this.model.set('valoresEtiquetas',modelEtiquetas);
