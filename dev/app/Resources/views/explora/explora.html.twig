@@ -22,7 +22,7 @@
     {{ parent() }}
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="{{ asset('leaflet/leaflet.css') }}" />
-    <link rel="stylesheet" href="{{ asset('css/miscStyle.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/estilo_explora.css') }}" />
     <link rel="stylesheet" href="{{ asset('c3/c3.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/easy-button.css') }}" />
 {% endblock %}
@@ -212,7 +212,6 @@
   </div>
 </div>
 
-
 <div id="globalModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="padding-top:15%; overflow-y:visible;">
   <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content text-center">
@@ -226,37 +225,10 @@
     </div>
   </div>
 </div>
-
 </div>
 
 <script type="text/javascript">
-  function showDiv() {
-    document.getElementById('checkboxExportarDiv').style.display = "block";
- }
-  function hideDiv() {
-    document.getElementById('checkboxExportarDiv').style.display = "none";
- }
-
- $('#formExportModal').submit(function() {
-    var idIndicador = $('#selectorIndicador').val()
-    var fechaSeleccionada = $('#selectorAnio').val()
-    
-    this.action = "export?id_indicador=" + idIndicador;
-    $('#csvRadio', this).val(fechaSeleccionada);
-
-    if ($('#pdfRadio', this).is(':checked')) {
-      // $('#exportarModal').modal('hide');
-      return false;
-    }
-});
- // $('#myModal').off('hidden.bs.modal').on('hide.bs.modal', function () {
- $('#exportarModal').on('hidden.bs.modal', function () {
-   $('#checkboxExportarDiv', this).hide();
-   $('input:radio[name="exportar"][id="pdfRadio"]', this).prop('checked', true);
-});
-</script>
-
-<script type="text/javascript">
+  var api_urls = {{ api_urls|json_encode|raw }};
   $(document).ready(function() {
 
     $('#bienvenidosModal').modal('show')
@@ -470,13 +442,10 @@
     var desgloses = {{ desgloses|json_encode|raw }};
     var etiquetas = {{ etiquetas|json_encode|raw }};
     var idIndicadorSeleccionado = {{ idIndicadorSeleccionado }};
-    var idObjetivoSeleccionado = {{ idObjetivoSeleccionado }};
-    var idMetaSeleccionada = {{ idMetaSeleccionada }};
-    var api_urls = {{ api_urls|json_encode|raw }};
+    var idMetaSeleccionada = indicadores[idIndicadorSeleccionado].id_meta;
+    var idObjetivoSeleccionado = metas[idMetaSeleccionada].id_objetivo;
     var fechasDestacadas = indicadores[idIndicadorSeleccionado].fechasDestacadas;
     var fechaSeleccionada;
-
-    /* CAMBIAR OBJETIVO, META E INDICADOR SELECCIONADO DE ACUERDO AL INDICADOR */
 
     var globalModal = 'globalModal';
 
@@ -511,6 +480,31 @@
       var viewForm = new ChainSelectView({model:modelForm});
       var viewFechasDestacadas = new FechasDestacadasView({model:modelForm});
     }
+  });
+ 
+ function showDiv() {
+    document.getElementById('checkboxExportarDiv').style.display = "block";
+ }
+  function hideDiv() {
+    document.getElementById('checkboxExportarDiv').style.display = "none";
+ }
+
+ $('#formExportModal').submit(function() {
+    var idIndicador = $('#selectorIndicador').val()
+    var fechaSeleccionada = $('#selectorAnio').val()
+    
+    this.action = api_urls.export + '?id_indicador='+ idIndicador;
+    $('#csvRadio', this).val(fechaSeleccionada);
+
+    if ($('#pdfRadio', this).is(':checked')) {
+      // $('#exportarModal').modal('hide');
+      return false;
+    }
+  });
+   // $('#myModal').off('hidden.bs.modal').on('hide.bs.modal', function () {
+  $('#exportarModal').on('hidden.bs.modal', function () {
+    $('#checkboxExportarDiv', this).hide();
+    $('input:radio[name="exportar"][id="pdfRadio"]', this).prop('checked', true);
   });
 </script>
 {% endblock %}

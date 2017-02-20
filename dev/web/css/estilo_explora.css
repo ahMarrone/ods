@@ -33,6 +33,7 @@
 
 .infobox {
     /*font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', sans-serif;*/
+    font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
     z-index: 100;
     position: absolute;
     top: 60px;
@@ -42,6 +43,12 @@
     background-color: rgba(255,255,255,0.8);
     display: block;
     border: 5px solid #045a8d;
+}
+
+.infobox .line-chart {
+    max-height: 160px; 
+    max-width: 250px; 
+    position: relative;
 }
 
 .infobox h4 {
