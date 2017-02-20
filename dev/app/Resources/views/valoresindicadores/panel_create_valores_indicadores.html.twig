@@ -334,7 +334,11 @@
                 $('#filterCardsSelect').selectpicker({
                   noneSelectedText: 'Filtrar por provincia'
                 });
-
+                var firstInputEtiqueta = $('.etiquetaInput')[0];
+                if (firstInputEtiqueta){
+                  $(firstInputEtiqueta).focus();
+                }
+                  //$('.etiquetaInput')[0].focus();
               $('#filterCardsSelect').on('change', function() {
               //that.applyFilter(this.value);
                   if (this.value != -1){
