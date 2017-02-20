@@ -6,7 +6,7 @@
     </id>
     <field name="descripcion" type="string" column="descripcion" length="5000" nullable="false"/>
     <many-to-many field="idvaloresindicadoresconfigfecha" target-entity="Valoresindicadoresconfigfecha" inversed-by="iddesgloce">
-      <join-table name="valoresindicadoresconfigfechadesgloces">
+      <join-table name="valoresIndicadoresConfigFechaDesgloces">
         <join-columns>
           <join-column name="idDesgloce" referenced-column-name="id"/>
         </join-columns>

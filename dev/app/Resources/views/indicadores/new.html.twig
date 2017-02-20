@@ -112,8 +112,13 @@
         }
 
         function indicadorTypeHasChanged(newType){
-            var step = (newType == 'real') ? 0.00001 : 1;
-            console.log(step);
+            if (newType == 'entero'){
+                $('.input-user-entry').each(function(index){
+                    if ($(this).val()){
+                      $(this).val(parseInt($(this).val()));  
+                  }
+                })
+            }
         }
 
         function init(){
@@ -137,10 +142,23 @@
             indicadorTypeHasChanged(this.value);
         })
 
+        $('.range-input-entry').on('change', function(){
+            $(this).val(Math.floor($(this).val()));
+        })
+
+        
+        $(".expected-value-input").change( function() {
+            if ($(':input[name="indicadores[tipo]"]:checked').val() == 'entero'){
+                $(this).val(parseInt($(this).val()));
+            }
+        })
+
         $('form[name="indicadores"]').submit(function() {
             // Seteo fechas destacadas en el formulario
             $('#indicadores_fechasdestacadas').val(modelHighlightDates.getFormattedDates());
         });
+
+
 
     });
 </script>

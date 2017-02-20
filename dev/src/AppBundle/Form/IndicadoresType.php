@@ -47,7 +47,7 @@ class IndicadoresType extends AbstractType
             ->add('valmin', IntegerType::class , array(
                 'label'  => 'Valor Mínimo ', 
                 'attr' => array(
-                    'class' => 'col-sm-2',
+                    'class' => 'col-sm-2 input-user-entry range-input-entry',
                     'step'=>'1',
                     'max_length' => 10,
                 )
@@ -55,7 +55,7 @@ class IndicadoresType extends AbstractType
             ->add('valmax', IntegerType::class , array(
                 'label'  => 'Valor Máximo ',
                 'attr' => array(
-                    'class' => 'col-sm-2',
+                    'class' => 'col-sm-2 input-user-entry range-input-entry',
                     'step' => 1,
                 )
             ))
@@ -93,7 +93,7 @@ class IndicadoresType extends AbstractType
                 'label'=>'Valor esperado meta intermedia', 
                 'required'=>false, 
                 'attr' => array(
-                    'class' => 'col-sm-2 expected-value-input',
+                    'class' => 'col-sm-2 expected-value-input input-user-entry',
                     'step' => 1,
                     )
                 ))             
@@ -106,7 +106,7 @@ class IndicadoresType extends AbstractType
                 'label'=> 'Valor esperado meta final', 
                 'required'=>false,  
                 'attr' => array(
-                    'class' => 'col-sm-2 expected-value-input',
+                    'class' => 'col-sm-2 expected-value-input input-user-entry',
                     'step' => 1,
                     )
                 ))

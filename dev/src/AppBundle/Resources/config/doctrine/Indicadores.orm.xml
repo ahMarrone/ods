@@ -42,5 +42,6 @@
         </inverse-join-columns>
       </join-table>
     </many-to-many>
+    
   </entity>
 </doctrine-mapping>

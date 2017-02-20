@@ -10,6 +10,9 @@ use AppBundle\Entity\Indicadores;
 use AppBundle\Entity\Metas;
 use AppBundle\Form\IndicadoresType;
 use AppBundle\Entity\Desglocesindicadores;
+use AppBundle\Entity\Valoresindicadores;
+use AppBundle\Entity\Valoresindicadoresconfigfecha;
+use AppBundle\Entity\Valoresindicadoresconfigfechadesgloces;
 
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -283,14 +286,26 @@ class IndicadoresController extends Controller
         $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $form = $this->createDeleteForm($indicadore);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            $configfechaEntity = $em->getRepository('AppBundle:Valoresindicadoresconfigfecha')->findByIdindicador($indicadore->getId());
+            $configfechaDesglosesEntity = $em->getRepository('AppBundle:Valoresindicadoresconfigfechadesgloces')->findByIdvaloresindicadoresconfigfecha($configfechaEntity);
+            $valoresIndicadores = $em->getRepository('AppBundle:Valoresindicadores')->findByIdvaloresindicadoresconfigfecha($configfechaEntity);
+            $this->deleteEntities($em,$valoresIndicadores);
+            $this->deleteEntities($em,$configfechaDesglosesEntity);
+            $this->deleteEntities($em,$configfechaEntity);
             $em->remove($indicadore);
             $em->flush();
         }
 
         return $this->redirectToRoute('admin_crud_indicadores_index');
+    }
+
+
+    private function deleteEntities($em, $entities){
+        foreach ($entities as $entity) {
+            $em->remove($entity);
+        }
     }
 
     /**

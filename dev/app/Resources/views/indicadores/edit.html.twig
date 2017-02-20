@@ -125,8 +125,13 @@
         }
 
         function indicadorTypeHasChanged(newType){
-            var step = (newType == 'real') ? 0.00001 : 1;
-            console.log(step);
+            if (newType == 'entero'){
+                $('.input-user-entry').each(function(index){
+                    if ($(this).val()){
+                      $(this).val(parseInt($(this).val()));  
+                  }
+                })
+            }
         }
 
         addThreeSelectControls();
@@ -145,6 +150,18 @@
 
         $(':input[name="indicadores[tipo]"]').on('click', function(){
             indicadorTypeHasChanged(this.value);
+        })
+
+        
+        $('.range-input-entry').on('change', function(){
+            $(this).val(Math.floor($(this).val()));
+        })
+
+        
+        $(".expected-value-input").change( function() {
+            if ($(':input[name="indicadores[tipo]"]:checked').val() == 'entero'){
+                $(this).val(parseInt($(this).val()));
+            }
         })
 
         /*$('#three_select_meta').on('change', function(){

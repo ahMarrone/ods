@@ -18,4 +18,8 @@
         <join-column name="idDesgloce" referenced-column-name="id"/>
       </join-columns>
     </one-to-one>
+
+
+
+    
 </doctrine-mapping>
