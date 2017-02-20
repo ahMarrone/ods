@@ -15,6 +15,7 @@
     <script src="{{ asset('js/backbone-min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('js/globalutils.js') }}"></script>
+    <script src="{{ asset('js/jquery.numberfield.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -29,7 +30,8 @@
         </ol>
 
         <div class="page-header">
-          <h1>Carga valores indicadores <small>{{indicador_desc}}</small></h1>
+          <h2>Carga valores indicadores</h2>
+          <h3 style="">{{indicador_desc}}</h3>
         </div>
       <div class="alert alert-info" class="col-md-3" role="alert"><b>Período:</b> {{fecha}}.
         <span>
@@ -351,16 +353,16 @@
             getNextUnusedRef: function(){
               var refID = null;
               var that = this;
-                $.each(this.refGeograficas, function(index, value) {
-                  if (!value.used && (value.parent == that.collection.filterParentID)){
-                    refID = index;
-                    return;
+                $.each(this.sortedRefGeograficas, function(index, value) {
+                  if (refID == null && !value[1].used && (value[1].parent == that.collection.filterParentID)){
+                    refID = value[0];
                   }
                 });
                 return refID;
             },
             addNewDataLoader: function(){
               var refID = this.getNextUnusedRef();
+              console.log(refID);
               if (refID != null){
                 var loader = new RefGeograficaData({id_ref_geografica:refID, is_preloaded:false, data_has_changed: false, valor_etiquetas:{}, ref_geografica_parent_id: this.refGeograficas[refID].parent});
                 this.collection.add(loader);
@@ -388,28 +390,29 @@
             saveDataLoaders: function(modelsData){
               var that = this;
               var url = this.collection.api_urls.edit;
-              $.ajax(url,{
-                  'data': JSON.stringify(modelsData),
-                  'type': 'POST',
-                  'processData': false,
-                  'contentType': 'application/json',
-                   success: function(data) {
-                      if (data.success){
-                        var refGeograficaNames = that.getRefGeograficaNames(modelsData.objects);
-                        showSimpleModal(globalModal, 'success', 'Valores GUARDADOS con éxito<br><br> <div class="alert alert-info" role="alert">Se han guardado los valores para: <br> '+constructHTMLList(refGeograficaNames)+ '<br><b>Los datos deberán ser aprobados nuevamente por un Administrador para poder visualizarlos</b></div>');
-                        that.saveSuccessCallback(data);
-                      } else {
-                        showSimpleModal(globalModal, 'error', 'ERROR! NO ha sido posible guardar los valores');
-                      }
-                      //location.reload();
-                  },
-                  error: function(data) {
-                    showSimpleModal(globalModal, 'error', 'ERROR! Ocurrió un error mientras se intentaban guardar los datos');
-                  },
-              });
+              if (Object.keys(modelsData.objects).length){
+                $.ajax(url,{
+                    'data': JSON.stringify(modelsData),
+                    'type': 'POST',
+                    'processData': false,
+                    'contentType': 'application/json',
+                     success: function(data) {
+                        if (data.success){
+                          var refGeograficaNames = that.getRefGeograficaNames(modelsData.objects);
+                          showSimpleModal(globalModal, 'success', 'Valores GUARDADOS con éxito<br><br> <div class="alert alert-info" role="alert">Se han guardado los valores para: <br> '+constructHTMLList(refGeograficaNames)+ '<br><b>Los datos deberán ser aprobados nuevamente por un Administrador para poder visualizarlos</b></div>');
+                          that.saveSuccessCallback(data, modelsData);
+                        } else {
+                          showSimpleModal(globalModal, 'error', 'ERROR! NO ha sido posible guardar los valores');
+                        }
+                        //location.reload();
+                    },
+                    error: function(data) {
+                      showSimpleModal(globalModal, 'error', 'ERROR! Ocurrió un error mientras se intentaban guardar los datos');
+                    },
+                });
+              } 
             },
             prepareDataToSave: function(models){
-              console.log(models);
                 var saveObjects = {"fecha":this.collection.fecha, "id_indicador":this.collection.id_indicador,"objects":{}};
                 $.each(models, function(i, models_object){
                         models_ref_geografica = models_object.toJSON();
@@ -424,16 +427,28 @@
                 });
                 return saveObjects;
             },
-            saveSuccessCallback: function(data){ // ejecutar cuando se han guardado con éxito los valores
+            getModelByIDRefGeografica: function(idRefGeografica){
+                var foundModel = null;
                 this.collection.each(function(model){
-                  if (Object.keys(model.get('valor_etiquetas')).length){
-                    model.set("is_preloaded", true);
-                    model.set("user",data.user);
-                    model.set("dateModif",data.dateModif);
-                    model.set("data_has_changed", false);
+                  if (model.get('id_ref_geografica') == idRefGeografica){
+                    foundModel = model;
+                    return false;
                   }
                 });
-                this.render();
+                return foundModel;
+            },
+            saveSuccessCallback: function(metadata, models){ // ejecutar cuando se han guardado con éxito los valores
+              var that = this;
+              $.each(Object.keys(models.objects), function(k, modelIdRef){
+                  var model = that.getModelByIDRefGeografica(modelIdRef);
+                  if (model && Object.keys(model.get('valor_etiquetas')).length){
+                    model.set("is_preloaded", true);
+                    model.set("user",metadata.user);
+                    model.set("dateModif",metadata.dateModif);
+                    model.set("data_has_changed", false);
+                  }
+              });
+              this.render();
             },
             deleteDataLoaders:function(models){
                 var data = this.prepareDataToDelete(models);
@@ -499,6 +514,7 @@
       "change .etiquetaInput": "etiquetaValueChange"
     },
     etiquetaValueChange: function(event){
+      console.log(event.target.value);
       var etiquetaId = $(event.target).data('etiqueta-id');
       var value = event.target.value;
       var modelEtiquetas = this.model.get('valor_etiquetas');
@@ -599,9 +615,6 @@
   }
 
 		initLoad();
-
-
-
 
     });
 

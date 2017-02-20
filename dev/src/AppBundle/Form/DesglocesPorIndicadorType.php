@@ -39,7 +39,7 @@ class DesglocesPorIndicadorType extends AbstractType
             {
                 $this_etiquetas = " " . $all_etiquetas[$this_id];
             }
-            $choice_desgloces[$key]="". $newkey . $this_etiquetas;
+            $choice_desgloces[$this_id]="". $newkey . $this_etiquetas;
         }
         $builder
             ->add('desglocesSeleccionados',  ChoiceType::class, array(
