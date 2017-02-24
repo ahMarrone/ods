@@ -19,12 +19,10 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 class ExploraController extends Controller
 {
     /**
-     * @Route("/", name="explora_initialize")
+     * @Route(name="explora_initialize")
      */
     public function initializeAction(Request $request)
     {
-        // echo var_dump($idIndicador);
-
         /* Recuperar Metas, Objetivos, Indicadores, Desgloses, Etiquetas junto 
         con los correspondientes valores para cada Referencia Geogŕafica de acuerdo
         al indicador seleccionado */
@@ -33,12 +31,15 @@ class ExploraController extends Controller
         $metas = $this->getMetasPreload();
         $indicadores = $this->getIndicadoresPreload();
 
-        /* Primer Indicador de la Tabla (Visible) */
-        $idIndicador = array_keys($indicadores)[0];
-
-        /* Antes de continuar verificar si el Indicador solicitado se encuentra 'visible' */
-        if (!(isset($idIndicador))) {
-            throw $this->createNotFoundException('Aún no existen Indicadores');
+        $idIndicador = json_decode($request->query->get('id'));
+        if (isset($idIndicador)) {
+            /* Antes de continuar verificar si el Indicador solicitado existe y se encuentra 'visible' */    
+            if (!(array_key_exists($idIndicador, $indicadores))) {
+                throw $this->createNotFoundException('Indicador Inexistente');        
+            }
+        } else {
+            /* Primer Indicador de la Tabla (Visible) */
+            $idIndicador = array_keys($indicadores)[0];
         }
 
         /* ENCONTRAR UNA SOLUCIÓN MÁS ELEGANTE */
