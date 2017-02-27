@@ -41,6 +41,8 @@
 <script type="text/javascript">
     $(document).ready(function() {
     $('#desglocesTable').DataTable({
+		dom: 'Bfrtip',
+
          "language": {
             "url": "/lang/datatables_spanish.json"
         },
@@ -50,6 +52,49 @@
                     { "width": "20%", "targets": 2 },
 
                 ],
+                
+                buttons: [	
+     		{
+                    extend:'csv',
+                    className:'btn-info',
+                    exportOptions: {
+                        columns: ':visible',
+                    },
+                    message: "Objetivos de Desarrollo Sostenible\nDESGLOSES",                    
+                    text: "CSV",
+                    title: "ODS-Desgloses",
+            },            
+
+			{
+                    extend:'excel',
+                    className:'btn-success',
+                    exportOptions: {
+                        columns: ':visible',
+                    },
+                    message: "Objetivos de Desarrollo Sostenible\nDESGLOSES",                    
+                    text: "EXCEL",
+                    title: "ODS-Desgloses"
+            },            
+
+			{
+                    extend:'pdf',
+                    className:'btn-danger',
+                    exportOptions: {
+                        columns: ':visible',
+                    },
+                    message: "Objetivos de Desarrollo Sostenible\nDESGLOSES",                    
+                    text: "PDF",
+                    title: "ODS-Desgloses"
+            },      
+				
+            {
+                extend: 'colvis',
+                text: "Columnas Visibles"
+            }          
+        ]
+        
+                
+                
     });
 } );
 </script>

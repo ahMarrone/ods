@@ -39,12 +39,53 @@
 <script type="text/javascript">
     $(document).ready(function() {
     $('#etiquetasTable').DataTable({
+		dom: 'Bfrtip',         
          "language": {
             "url": "/lang/datatables_spanish.json"
         },
        "columnDefs": [
             { "visible": false, "targets": 0 },
             { "width": "20%", "targets": 1 },
+        ],
+        
+         buttons: [	
+     		{
+                    extend:'csv',
+                    className:'btn-info',
+                    exportOptions: {
+                        columns: ':visible',
+                    },
+                    message: "Objetivos de Desarrollo Sostenible\nETIQUETAS",                    
+                    text: "CSV",
+                    title: "ODS-Etiquetas",
+            },            
+
+			{
+                    extend:'excel',
+                    className:'btn-success',
+                    exportOptions: {
+                        columns: ':visible',
+                    },
+                    message: "Objetivos de Desarrollo Sostenible\nETIQUETAS",                    
+                    text: "EXCEL",
+                    title: "ODS-Etiquetas"
+            },            
+
+			{
+                    extend:'pdf',
+                    className:'btn-danger',
+                    exportOptions: {
+                        columns: ':visible',
+                    },
+                    message: "Objetivos de Desarrollo Sostenible\nETIQUETAS",                    
+                    text: "PDF",
+                    title: "ODS-Etiquetas"
+            },      
+				
+            {
+                extend: 'colvis',
+                text: "Columnas Visibles"
+            }          
         ],
         "order": [[ 1, "asc" ]],
         "pageLength": 25
