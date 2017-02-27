@@ -58,6 +58,7 @@
                                 <a class="btn btn-info" title="Configurar desgloces" href="{{ path('admin_crud_desglocesporindicador_new', { 'id_indicador': indicadore.id }) }}"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
                                 <a class="btn btn-success" title="Aprobar/Desaprobar valores" href="{{ path('admin_crud_valoresindicadores_index', { 'id_indicador': indicadore.id }) }}"><i class="fa fa-check-circle fa-fw" aria-hidden="true"></i></a>
                             {% endif %}
+                            <a class="btn btn-default" title="Ver en mapa" href="{{ path('explora_initialize', { 'id': indicadore.id }) }}"><i class="fa fa-map fa-fw" aria-hidden="true"></i></a>
                 </td>
             </tr>
         {% endfor %}
@@ -88,7 +89,7 @@
                 "columnDefs": [
                     { "visible": false, "targets": 0 },
                     { "visible": false, "targets": 1 },
-                    { "width": "60%","title": "Descripción", "targets": 3 },
+                    { "width": "45%","title": "Descripción", "targets": 3 },
                     { "title": "Valor mín.", "targets": 5 },
                     { "title": "Valor máx.", "targets": 6 },
                     { "width": "25%", "targets": 9 },

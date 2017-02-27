@@ -20,6 +20,7 @@
                 <th>Nombre</th>
                 <th>Email</th>
                 <th>Dependencia</th>
+                <th>Habilitado</th>
                 <th>Rol</th>
                 <th>Acciones</th>
             </tr>
@@ -32,6 +33,7 @@
                 <td>{{ usuario.nombre }}</td>
                 <td>{{ usuario.email }}</td>
                 <td>{{ usuario.dependencia }}</td>
+                <td>{{ usuario.enabled ? "Sí" : "No"}}</td>
                 <td>
                 {% for role in usuario.roles %}
   					{{ role }}
@@ -40,6 +42,11 @@
                 <td>
                     <a href="{{ path('fos_user_profile_show', {'id':usuario.id})}}" class="btn btn-primary" title="Ver" href=""><i class="fa fa-eye fa-fw" aria-hidden="true"></i></a>
                     <a href="{{ path('fos_user_profile_edit', {'id':usuario.id})}}" class="btn btn-warning" title="Editar" href=""><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
+                    {% if usuario.enabled == true %} 
+                    <a href="{{ path('fos_user_profile_disable', {'id':usuario.id})}}" class="btn btn-danger" title="Deshabilitar" href=""><i class="fa fa-times fa-fw" aria-hidden="true"></i></a>
+                    {% else %}
+                    <a href="{{ path('fos_user_profile_disable', {'id':usuario.id})}}" class="btn btn-success" title="Habilitar" href=""><i class="fa fa-check-square-o fa-fw" aria-hidden="true"></i></a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
