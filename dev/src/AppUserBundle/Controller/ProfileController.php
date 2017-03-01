@@ -16,6 +16,7 @@ use FOS\UserBundle\Event\FormEvent;
 use FOS\UserBundle\Event\GetResponseUserEvent;
 use FOS\UserBundle\Form\Factory\FactoryInterface;
 use FOS\UserBundle\FOSUserEvents;
+use FOS\UserBundle\Event\UserEvent;
 use FOS\UserBundle\Model\UserInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -106,8 +107,41 @@ class ProfileController extends Controller
         ));
     }
 
+    /**
+     * Disable the user.
+     *
+     * @param Request $request
+     *
+     * @return bool true if user was disabled, false otherwise
+     */
 
+    public function disableAction(Request $request)
+    {   
+        $id_user = intval($request->get('id'));
+        $user = $this->getDestinationUserObject($id_user);
+        if (!is_object($user) || !$user instanceof UserInterface) {
+            throw new AccessDeniedException('This user does not have access to this section.');
+        }
+
+        if ($user->isEnabled()) {
+            $user->setEnabled(false);
+        } else {
+            $user->setEnabled(true);
+        }
+
+        /** @var $dispatcher EventDispatcherInterface */
+        $dispatcher = $this->get('event_dispatcher');
+
+        /** @var $userManager UserManagerInterface */
+        $userManager = $this->get('fos_user.user_manager');
+        
+        $userManager->updateUser($user);
+        $event = new UserEvent($user, $this->getRequest());
+        $dispatcher->dispatch(FOSUserEvents::USER_DEACTIVATED, $event);
+        return $this->redirectToRoute("admin_users_index");
+    }
     
+
     private function getDestinationUserObject($id_user){
         $user = null;
         if ($id_user == 0){

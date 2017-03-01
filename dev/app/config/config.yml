@@ -84,6 +84,13 @@ fos_user:
     profile:
         form:
             type: AppBundle\Form\UserProfileType
+    service:
+        mailer: fos_user.mailer.default
+    resetting:
+        email:
+            from_email:
+                address:        resetting@example.com
+                sender_name:    Demo Resetting
 
 
 framework:

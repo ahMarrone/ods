@@ -62,7 +62,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-
+    
         var table = null;
 
         var objetivos = {{ objetivos|json_encode|raw}};
@@ -70,8 +70,10 @@
 
         var objetivo_selected = {{objetivo_selected}};
 
+
         function initTable(){
             table = $('#metasTable').DataTable({
+				dom: 'Bfrtip',
                  "language": {
                     "url": "/lang/datatables_spanish.json"
                 },
@@ -82,6 +84,53 @@
                     { "width": "80%", "targets": 3 },
                     { "width": "15%", "targets": 4 }
                 ],
+                
+                
+                
+                buttons: [	
+     		{
+                    extend:'csv',
+                    className:'btn-info',
+                    exportOptions: {
+                        columns: ':visible',
+                    },
+                    message: "Objetivos de Desarrollo Sostenible\nMETAS",                    
+                    text: "CSV",
+                    title: "ODS-Metas",
+            },            
+
+			{
+                    extend:'excel',
+                    className:'btn-success',
+                    exportOptions: {
+                        columns: ':visible',
+                    },
+                    message: "Objetivos de Desarrollo Sostenible\nMETAS",                    
+                    text: "EXCEL",
+                    title: "ODS-Metas"
+            },            
+
+			{
+                    extend:'pdf',
+                    className:'btn-danger',
+                    exportOptions: {
+                        columns: ':visible',
+                    },
+                    message: "Objetivos de Desarrollo Sostenible\nMETAS",                    
+                    text: "PDF",
+                    title: "ODS-Metas"
+            },      
+				
+            {
+                extend: 'colvis',
+                text: "Columnas Visibles"
+            }
+            
+            
+          
+        ]
+                
+                
             });
         }
 

@@ -169,12 +169,13 @@ var sideChartView = Backbone.View.extend({
             var etiquetas = this.model.get("etiquetas");
             var idEtiquetaSeleccionada = this.model.get("idEtiquetaSeleccionada");
             var descripcionEtiquetaSeleccionada = etiquetas[idEtiquetaSeleccionada].descripcion;
-            this.plot(chartData, descripcionEtiquetaSeleccionada);    
+            var tipo = this.model.get("indicador").tipo;
+            this.plot(chartData, descripcionEtiquetaSeleccionada, tipo);    
         }
         return this;
     },
 
-    plot: function(chartData, descripcionEtiquetaSeleccionada) {
+    plot: function(chartData, descripcionEtiquetaSeleccionada, tipo) {
         /* Máximo 9 Tonos */
         var colorPattern = ['#FF0000', '#FE2E2E', '#E10000', '#FF3232', '#AF0000', '#B90A0A', '#C31414', '#D72828', '#EB3C3C'];
         colorPattern[chartData.length - 2] = '#045a8d';
@@ -186,7 +187,11 @@ var sideChartView = Backbone.View.extend({
             tooltip: {
                 format: {
                     value: function(value) {
-                        return d3.format(",.3f")(value).replace('.', ' ').replace(/,/g, '.').replace(' ', ',')
+                        valueFormatted = value;
+                        if (tipo != "entero") {
+                            valueFormatted = d3.format(",.3f")(value).replace('.', ' ').replace(/,/g, '.').replace(' ', ',');
+                        }
+                        return valueFormatted;
                     }
                 }
             },

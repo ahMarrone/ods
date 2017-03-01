@@ -16,4 +16,10 @@
         <default key="id">0</default>
     </route>
 
+    <route id="fos_user_profile_disable" path="/disable/{id}" methods="GET">
+        <default key="_controller">FOSUserBundle:Profile:disable</default>
+        <requirement key="id">\d+</requirement>
+        <default key="id">0</default>
+    </route>
+
 </routes>
