@@ -11,7 +11,8 @@
 
 <div class="row">
    <p class="navbar-text pull-left" style="font-weight:bold;font-size:18px;">Bienvenido <span style="color:#034EA2">'{{app.user.username}}'</span></p>
-     <p class="navbar-text pull-right"><a href="{{ path('fos_user_security_logout') }}" class="navbar-link">Cerrar sesión</a></p>
+     <p class="navbar-text pull-right" style="margin-left:2px;"><a href="{{ path('fos_user_security_logout') }}" class="navbar-link btn btn-primary"></i> Cerrar sesión</a></p>
+     <p class="navbar-text pull-right" style="margin-right:0px;"><a href="{{ asset('manual/ods_usermanual.pdf') }}" class="navbar-link btn btn-info" target="_blank" title="Ver manual de usuario" ><i class="fa fa-book"></i>  Manual de usuario</a></p>
 </div>
 
 	<div class="row">
@@ -95,6 +96,12 @@
       <a class="quick-btn" href="{{ path('admin_crud_valoresindicadores_preload') }}">
         <i class="fa fa-plus-circle fa-3x"></i>
         <span>Cargar</span> 
+      </a>
+    </div>
+      <div class="col-md-1">
+      <a class="quick-btn" href="{{ path('admin_crud_valoresindicadores_visualize') }}">
+        <i class="fa fa-eye fa-3x"></i>
+        <span>Visualizar</span> 
       </a>
     </div>
 	</div>

@@ -1,0 +1,268 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('css/bootstrap-datepicker3.min.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/underscore-min.js') }}"></script>
+    <script src="{{ asset('js/backbone-min.js') }}"></script>
+    <script src="{{ asset('js/ThreeSelect.js') }}"></script>
+    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+
+	<ol class="breadcrumb">
+        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        <li class="active">Visualizar valores indicadores</a></li>
+    </ol>
+    <div class="page-header">
+          <h2>Visualizar valores de indicadores</h2>
+    </div>
+
+
+	<h3>Selección de parámetros</h3>
+	<form id="preloaddataForm" action="{{ path('admin_crud_valoresindicadores_new') }}" method="post" class="form-horizontal" > 
+		<div id="selects"></div>
+		<div class="form-group">
+			<label class="col-sm-2  control-label" for="dateValuePicker">Período</label>
+			<div class="col-sm-2">
+				<input type="text" id="dateValuePicker" name="periodData" class="col-sm-2 expected-value-datepicker form-control" value="2014">
+			</div>
+		</div> 
+	</form>
+
+
+
+
+	<button id="requestVisualizeData" type="button" data-loading-text="Actualizando..." class="btn btn-success col-md-offset-2">Actualizar valores</button>
+
+
+	<h3>Tabla de datos</h3>
+	<table id="valoresindicadoresTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+	<thead>
+	<tr>
+		<th>Ref. geográfica</th>
+		<th>Ref. geográfica padre</th>
+		<th>Etiqueta</th>
+		<th>Valor</th>
+		<th>Aprobado</th>
+	</tr>
+	</thead>
+	<tfoot>
+		<tr>
+			<th>Ref. geográfica</th>
+			<th>Ref. geográfica padre</th>
+			<th>Etiqueta</th>
+			<th>Valor</th>
+			<th>Aprobado</th>
+		</tr>
+	</tfoot>
+	</table>
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+
+        var objetivos = {{ objetivos|json_encode|raw}};
+        var metas = {{ metas|json_encode|raw}};
+        var indicadores = {{ indicadores|json_encode|raw}};
+
+        var table = null;
+        var showNoValues = true;
+
+
+    	$.fn.dataTable.ext.buttons.hideNoValue = {
+		    text: 'Ocultar/Mostrar registros sin valor',
+		    action: function ( e, dt, node, config ) {
+		    	showNoValues = !showNoValues;
+		    	if (showNoValues){
+		    		table.columns(4).search("").draw();
+		    	} else {
+		    		table.columns(4).search("[No|Si]", true).draw();
+		    	}
+		    }
+		};
+
+        // Inicio Threeselect y datepicker
+        function initViewControls(){
+	    	var model = new ThreeSelectData({
+	    		'objetivos': objetivos,
+	    		'metas': metas,
+	    		'indicadores': indicadores
+	    	});
+	    	var view = new ThreeSelectView({el: $("#selects") ,model:model});
+    	}
+
+    	function serializeFormData(){
+    		var string = "";
+    		string += "id_indicador="+$('#three_select_indicador').val()+"&"+
+    				  "fecha="+$('#dateValuePicker').val();
+    		return string;
+    	}
+
+    	function initTable(){
+		  	$('#valoresindicadoresTable tfoot th').each( function () {
+	        	var title = $(this).text();
+	        	$(this).html( '<input type="text" placeholder="Buscar '+title+'" />' );
+	    	});
+    		table = $('#valoresindicadoresTable').DataTable({
+    			dom: 'Bfrtip',
+				"ajax": {
+					"url": '/admin/crud/valoresindicadores/visualize/getdata',
+					"type": 'GET',
+					"data": function ( d ) {
+						return serializeFormData();
+					}
+				},
+				"order": [[ 4, "desc" ]],
+				"pageLength": 50,
+				"language": {
+				    "sLengthMenu":     "Mostrar _MENU_ registros",
+				    "sZeroRecords":    "No se encontraron resultados",
+				    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+				    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+				    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+				    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+				    "sSearch":         "Buscar:",
+				    "oPaginate": {
+				        "sFirst":    "Primero",
+				        "sLast":     "Último",
+				        "sNext":     "Siguiente",
+				        "sPrevious": "Anterior"
+				    },
+				    "oAria": {
+				        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+				        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+				    },
+			    },
+			    "columnDefs": [
+			   		{
+		            	"targets":[0],
+		            	"width": "20%",
+		            },
+		            {
+		            	"targets":[1],
+		            	"width": "20%",
+		            },
+		            {
+		            	"targets":[2],
+		            	"width": "25%",
+		            },
+		    		{
+		            	"targets":[3],
+		            	"className": "dt-right",
+		            	"width": "25%",
+		            },
+		            {
+		            	"targets":[4],
+		            	"className": "dt-right",
+		            	"width": "10%",
+		            },
+		        ],
+		        buttons: [
+		        	'hideNoValue',	
+					{
+		                extend:'csv',
+		                className:'btn-info',
+		                exportOptions: {
+		                    //columns: [0,1]
+		                },
+		                text: "CSV",
+		                title: "Plataforma ODS - Valores indicadores",
+		            },            
+
+					{
+		                    extend:'excel',
+		                    className:'btn-success',
+		                    exportOptions: {
+		                        //columns: [0,1]
+		                    },
+		                    message: "MENSAJE",
+		                    text: "EXCEL",
+		                    title: "Plataforma ODS - Valores indicadores"
+		            },            
+					{
+		                    extend:'pdf',
+		                    className:'btn-danger',
+		                    exportOptions: {
+		                        columns: ':visible'
+		                    },
+		                    message: function(a, b, c){
+		                    	return  "Objetivo: " +  $('#three_select_objetivo option:selected').attr('title') + "\n" + 
+		                    			"Meta: " +  $('#three_select_meta option:selected').attr('title') + "\n" + 
+		                    			"Indicador: " + $('#three_select_indicador option:selected').attr('title') + "\n" + 
+		                    			"Período: " + $('#dateValuePicker').val(); 
+		                    },                 
+		                    text: "PDF",
+		                    title: "Plataforma ODS - Valores indicadores"
+		            },            
+		            /*{
+		                extend: 'colvis',
+		                text: "Columnas Visibles"
+		            }*/
+		            
+		            
+		          
+		        ]
+    		});
+    	}
+
+
+    	function initFilters(){
+		    table.columns().every( function () {
+		        var that = this;
+		        $( 'input', this.footer() ).on( 'keyup change', function () {
+		            if ( that.search() !== this.value ) {
+		                that.search( this.value ).draw();
+		            }
+		        } );
+		    } );
+    	}
+
+
+		function init(){
+		  initViewControls();
+		  $('#dateValuePicker').datepicker({
+		            format: "yyyy",
+		            minViewMode: 2,
+		            daysOfWeekDisabled: "1,2,3,4,5,6",
+		            autoclose: true
+		    });
+		  initTable();
+		  initFilters();
+		}
+
+
+		function resetRequestState(){
+			console.log("reset");
+			$btn.button('reset');
+			initFilters();
+		}
+
+		var $btn;
+
+		$('#requestVisualizeData').on('click', function(){
+			$btn = $(this);
+			$btn.button('loading');
+			table.ajax.reload(resetRequestState());
+		})
+
+
+
+        init();
+
+
+        // Cambiar estado boton request
+        // Agregar botones y filtro a tabla
+        // EXPORTAR!
+
+	})
+
+</script>
+
+{% endblock %}
