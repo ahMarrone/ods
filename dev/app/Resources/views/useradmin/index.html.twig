@@ -42,10 +42,13 @@
                 <td>
                     <a href="{{ path('fos_user_profile_show', {'id':usuario.id})}}" class="btn btn-primary" title="Ver" href=""><i class="fa fa-eye fa-fw" aria-hidden="true"></i></a>
                     <a href="{{ path('fos_user_profile_edit', {'id':usuario.id})}}" class="btn btn-warning" title="Editar" href=""><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
+                    <a href="{{ path('fos_user_resetting_request') }}" class="btn btn-info" title="Reestablecer Contraseña" href=""><i class="fa fa-unlock fa-fw" aria-hidden="true"></i></a>
+                    {% if 'ROLE_SUPER_ADMIN' not in usuario.roles %}
                     {% if usuario.enabled == true %} 
                     <a href="{{ path('fos_user_profile_disable', {'id':usuario.id})}}" class="btn btn-danger" title="Deshabilitar" href=""><i class="fa fa-times fa-fw" aria-hidden="true"></i></a>
                     {% else %}
                     <a href="{{ path('fos_user_profile_disable', {'id':usuario.id})}}" class="btn btn-success" title="Habilitar" href=""><i class="fa fa-check-square-o fa-fw" aria-hidden="true"></i></a>
+                    {% endif %}
                     {% endif %}
                 </td>
             </tr>
