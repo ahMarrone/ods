@@ -69,6 +69,9 @@ class ValoresIndicadoresController extends Controller
             'metas'=>$metas,
             'indicadores'=>$indicadores,
             'valoresindicadores' => $valoresindicadores,
+            'api_urls' => array(
+                'indicador_dates'=> $this->generateUrl('admin_crud_valoresindicadores_indicador_dates'),
+            )
         ));
     }
 

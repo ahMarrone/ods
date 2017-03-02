@@ -28,6 +28,7 @@
 	<h3>Selección de parámetros</h3>
 	<form id="preloaddataForm" action="{{ path('admin_crud_valoresindicadores_new') }}" method="post" class="form-horizontal" > 
 		<div id="selects"></div>
+		<div id="alertsDates" class="alert alert-info col-md-offset-2" role="alert"><b>Este indicador tiene datos cargados en los períodos:</b>  <span id="indicadorDatesWithData"></span></div>
 		<div class="form-group">
 			<label class="col-sm-2  control-label" for="dateValuePicker">Período</label>
 			<div class="col-sm-2">
@@ -39,7 +40,7 @@
 
 
 
-	<button id="requestVisualizeData" type="button" data-loading-text="Actualizando..." class="btn btn-success col-md-offset-2">Actualizar valores</button>
+	<button id="requestVisualizeData" type="button" data-loading-text="Actualizando..." class="btn btn-success col-md-offset-2">Actualizar tabla</button>
 
 
 	<h3>Tabla de datos</h3>
@@ -68,6 +69,8 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 
+		var api_urls = {{ api_urls|json_encode|raw}};
+
         var objetivos = {{ objetivos|json_encode|raw}};
         var metas = {{ metas|json_encode|raw}};
         var indicadores = {{ indicadores|json_encode|raw}};
@@ -76,6 +79,17 @@
         var showNoValues = true;
 
 
+
+    	function serializeFormData(){
+    		var string = "";
+    		string += "id_indicador="+$('#three_select_indicador').val()+"&"+
+    				  "fecha="+$('#dateValuePicker').val();
+    		return string;
+    	}
+
+
+
+		
     	$.fn.dataTable.ext.buttons.hideNoValue = {
 		    text: 'Ocultar/Mostrar registros sin valor',
 		    action: function ( e, dt, node, config ) {
@@ -87,23 +101,6 @@
 		    	}
 		    }
 		};
-
-        // Inicio Threeselect y datepicker
-        function initViewControls(){
-	    	var model = new ThreeSelectData({
-	    		'objetivos': objetivos,
-	    		'metas': metas,
-	    		'indicadores': indicadores
-	    	});
-	    	var view = new ThreeSelectView({el: $("#selects") ,model:model});
-    	}
-
-    	function serializeFormData(){
-    		var string = "";
-    		string += "id_indicador="+$('#three_select_indicador').val()+"&"+
-    				  "fecha="+$('#dateValuePicker').val();
-    		return string;
-    	}
 
     	function initTable(){
 		  	$('#valoresindicadoresTable tfoot th').each( function () {
@@ -216,9 +213,9 @@
     	}
 
     	function getHeadingExportMessage(){
-        	return  "Objetivo: " +  $('#three_select_objetivo option:selected').attr('title') + "\n" + 
-					"Meta: " +  $('#three_select_meta option:selected').attr('title') + "\n" + 
-					"Indicador: " + $('#three_select_indicador option:selected').attr('title') + "\n" + 
+        	return  "Objetivo: " +  $('#three_select_objetivo option:selected').attr('title') + "\n\n" + 
+					"Meta: " +  $('#three_select_meta option:selected').attr('title') + "\n\n" + 
+					"Indicador: " + $('#three_select_indicador option:selected').attr('title') + "\n\n" + 
 					"Período: " + $('#dateValuePicker').val() +  "\n\n";
     	}
 
@@ -235,6 +232,36 @@
     	}
 
 
+    	function updateIndicadorDatesValues(data){
+    		var newDatesHTML = "";
+    		for (i in data){
+    			var ref = "<a class='btn btn-default loadIndicadorDate'>"+data[i]+"</a>  ";
+    			newDatesHTML += ref;
+    		}
+    		$('#indicadorDatesWithData').html(newDatesHTML);
+    	}
+
+
+    	function getIndicadorDates(){
+    		var idIndicador = $('#three_select_indicador').val();
+    		var url = api_urls.indicador_dates + '?id_indicador='+ idIndicador;
+    		data = {'id':idIndicador};
+    		$('#indicadorDatesWithData').html('<i class="fa fa-spinner fa-spin fa-fw"></i>');
+    		$.ajax(url,{
+                  'data': JSON.stringify(data),
+                  'type': 'GET',
+                  'processData': false,
+                  'contentType': 'application/json',
+                   success: function(data) {
+	                    updateIndicadorDatesValues(data);
+                   },
+                   error: function(data) {
+                    console.log("ERROR");
+                  },
+              });
+    	}
+
+
 		function init(){
 		  initViewControls();
 		  $('#dateValuePicker').datepicker({
@@ -245,6 +272,7 @@
 		    });
 		  initTable();
 		  initFilters();
+		  getIndicadorDates();
 		}
 
 
@@ -254,6 +282,18 @@
 			initFilters();
 		}
 
+
+
+        // Inicio Threeselect y datepicker
+        function initViewControls(){
+	    	var model = new ThreeSelectData({
+	    		'objetivos': objetivos,
+	    		'metas': metas,
+	    		'indicadores': indicadores
+	    	});
+	    	var view = new ThreeSelectView({el: $("#selects") ,model:model, indicadorChangeCallback: getIndicadorDates});
+    	}
+
 		var $btn;
 
 		$('#requestVisualizeData').on('click', function(){
@@ -261,6 +301,10 @@
 			$btn.button('loading');
 			table.ajax.reload(resetRequestState());
 		})
+
+		$('#alertsDates').on('click', '.loadIndicadorDate', function() {
+			$('#dateValuePicker').val($(this).text());
+		});
 
 
 
