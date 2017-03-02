@@ -49,6 +49,22 @@
       <h2>Objetivos, metas e indicadores</h2>
     </div>
   </div>
+  {% if is_granted('ROLE_ADMIN') %}
+      {% if dataToAprove %}
+        <div class="alert alert-warning alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Existen indicadores con valores sin aprobar!</strong>
+        {% for id, codigo in dataToAprove %}
+          <a href="{{ path('admin_crud_valoresindicadores_index', { 'id_indicador': id }) }}">{{codigo}}</a>
+          {% if not loop.last %}
+            ,
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endif %}
+
+
   <div class="row">
     <div class="col-md-1">
       <a class="quick-btn" href="{{ path('admin_crud_objetivos_index') }}">

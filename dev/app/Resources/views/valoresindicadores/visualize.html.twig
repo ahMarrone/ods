@@ -31,7 +31,7 @@
 		<div class="form-group">
 			<label class="col-sm-2  control-label" for="dateValuePicker">Período</label>
 			<div class="col-sm-2">
-				<input type="text" id="dateValuePicker" name="periodData" class="col-sm-2 expected-value-datepicker form-control" value="2014">
+				<input type="text" id="dateValuePicker" name="periodData" class="col-sm-2 expected-value-datepicker form-control" value="">
 			</div>
 		</div> 
 	</form>
@@ -165,6 +165,10 @@
 		            },
 		        ],
 		        buttons: [
+		        	{
+		                extend: 'colvis',
+		                text: "Columnas Visibles"
+		            },
 		        	'hideNoValue',	
 					{
 		                extend:'csv',
@@ -187,29 +191,35 @@
 		                    title: "Plataforma ODS - Valores indicadores"
 		            },            
 					{
-		                    extend:'pdf',
+		                    extend:'pdfHtml5',
 		                    className:'btn-danger',
 		                    exportOptions: {
 		                        columns: ':visible'
 		                    },
-		                    message: function(a, b, c){
-		                    	return  "Objetivo: " +  $('#three_select_objetivo option:selected').attr('title') + "\n" + 
-		                    			"Meta: " +  $('#three_select_meta option:selected').attr('title') + "\n" + 
-		                    			"Indicador: " + $('#three_select_indicador option:selected').attr('title') + "\n" + 
-		                    			"Período: " + $('#dateValuePicker').val(); 
-		                    },                 
 		                    text: "PDF",
-		                    title: "Plataforma ODS - Valores indicadores"
-		            },            
-		            /*{
-		                extend: 'colvis',
-		                text: "Columnas Visibles"
-		            }*/
+		                    title: "Plataforma ODS - Valores indicadores",
+		                    customize: function ( doc ) {
+		                    	doc.content.splice(1, 0, 
+		                    		{
+								        text: getHeadingExportMessage(),
+								        alignment: 'left'
+								    }
+                				)
+		            		}
+		            }            
+
 		            
 		            
 		          
 		        ]
     		});
+    	}
+
+    	function getHeadingExportMessage(){
+        	return  "Objetivo: " +  $('#three_select_objetivo option:selected').attr('title') + "\n" + 
+					"Meta: " +  $('#three_select_meta option:selected').attr('title') + "\n" + 
+					"Indicador: " + $('#three_select_indicador option:selected').attr('title') + "\n" + 
+					"Período: " + $('#dateValuePicker').val() +  "\n\n";
     	}
 
 

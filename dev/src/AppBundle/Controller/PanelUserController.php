@@ -25,7 +25,12 @@ class PanelUserController extends Controller
     public function indexAction()
     {
         $stats = $this->getStats();
-        return $this->render('paneluser/index.html.twig', array('stats'=>$stats));
+        $dataToApprove = $this->getDataToApprove();
+        return $this->render('paneluser/index.html.twig', array(
+            'stats'=>$stats,
+            'dataToAprove' => $dataToApprove
+            )
+        );
     }
 
 
@@ -44,6 +49,24 @@ class PanelUserController extends Controller
             "indicadores_count" => count($indicadores)
         );
         return $stats;
+    }
+
+
+    private function getDataToApprove(){
+        $result = array();
+        $rows = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')
+                               ->getIndicadoresDataToApprove();
+        foreach ($rows as $config) {
+            $result[$config->getIdindicador()->getId()] = $this->getIndicadorCode($config->getIdindicador());
+        }
+        return $result;
+    }
+
+
+    private function getIndicadorCode($indicadorObject){
+        return $indicadorObject->getFkidmeta()->getFkidobjetivo()->getCodigo() . "." . 
+               $indicadorObject->getFkidmeta()->getCodigo() . "." . 
+               $indicadorObject->getCodigo();
     }
 
 }

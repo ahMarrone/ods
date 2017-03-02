@@ -64,4 +64,16 @@ class ValoresindicadoresRepository extends EntityRepository
             ->getResult();
     }
 
+
+    public function getIndicadoresDataToApprove(){
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('c')
+           ->from('AppBundle:Valoresindicadoresconfigfecha', 'c')
+           ->innerJoin('AppBundle:Valoresindicadores', 'v', 'WITH', 'c.id = v.idvaloresindicadoresconfigfecha')
+           ->where('v.aprobado = 0')
+           ->groupBy('c.idindicador');
+        $query = $qb->getQuery(); 
+        return $query->getResult();
+    }
+
 }
