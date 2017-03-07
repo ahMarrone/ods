@@ -276,8 +276,7 @@
 		}
 
 
-		function resetRequestState(){
-			console.log("reset");
+		function resetRequestState(data){
 			$btn.button('reset');
 			initFilters();
 		}
@@ -299,7 +298,7 @@
 		$('#requestVisualizeData').on('click', function(){
 			$btn = $(this);
 			$btn.button('loading');
-			table.ajax.reload(resetRequestState());
+			table.ajax.reload(resetRequestState);
 		})
 
 		$('#alertsDates').on('click', '.loadIndicadorDate', function() {
