@@ -42,13 +42,15 @@ class ValoresIndicadoresController extends Controller
             $configfechaEntity = $em->getRepository('AppBundle:Valoresindicadoresconfigfecha')->findByIdindicador($idIndicador);
             $valoresindicadores = $em->getRepository('AppBundle:Valoresindicadores')->findByIdvaloresindicadoresconfigfecha($configfechaEntity);
             $etiquetas = $this->getKeyValueEtiquetas($em->getRepository('AppBundle:Etiquetas')->findAll());
+            return $this->render('valoresindicadores/index.html.twig', array(
+                'valoresindicadores' => $valoresindicadores,
+                'etiquetas'=> $etiquetas,
+                'indicador' => $indicador,
+                'api_urls' => array('aproveData'=> $this->generateUrl('admin_crud_valoresindicadores_aproveData'))
+            ));
+        } else {
+            return $this->redirectToRoute('paneluser_index');
         }
-        return $this->render('valoresindicadores/index.html.twig', array(
-            'valoresindicadores' => $valoresindicadores,
-            'etiquetas'=> $etiquetas,
-            'indicador_desc' => $indicadorDesc,
-            'api_urls' => array('aproveData'=> $this->generateUrl('admin_crud_valoresindicadores_aproveData'))
-        ));
     }
 
 
@@ -203,7 +205,7 @@ class ValoresIndicadoresController extends Controller
             return $this->render('valoresindicadores/panel_create_valores_indicadores.html.twig', array(
                 'fecha' => $fecha,
                 'indicador_id' => $indicador->getId(),
-                'indicador_desc' => $indicador->getDescripcion(),
+                'indicador' => $indicador,
                 'indicador_ambito' => $ambitoIndicador,
                 'desgloces' => $desgloces,
                 'etiquetas_desgloces' => $etiquetasDesgloces,
