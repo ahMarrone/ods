@@ -72,7 +72,7 @@
          <% if (this.collection.isRefLeft()) { %>
         <button id="newDataLoader" type="button" class="btn btn-default navbar-btn"><i class="fa fa-plus"></i>  Agregar ficha</button>
         <% }  %>
-        <button id="saveNewDataLoaders" type="button" class="btn btn-success navbar-btn <% if (!this.collection.hasNewDataLoaders()) { %> disabled<% }  %>"><span class="glyphicon glyphicon-save"  ></span>  Guardar nuevos</button>
+        <button id="saveNewDataLoaders" type="button" class="btn btn-success navbar-btn <% if (!this.collection.hasNewDataLoaders()) { %> disabled<% }  %>"><span class="fa fa-download"  ></span>  Guardar nuevos</button>
       </ul>
             <% if (this.collection.ambito_indicador == 'D') { %>
           <form class="navbar-form navbar-right" role="search">
@@ -334,9 +334,10 @@
                 this.$el.html( this.template({collection: this.collection}));
                 this.collection.each(this.renderPanel);
                 $('[data-toggle="tooltip"]').tooltip({html: true}); 
-                $('#filterCardsSelect').selectpicker({
-                  noneSelectedText: 'Filtrar por provincia'
-                });
+                
+                /*$('#filterCardsSelect').selectpicker({
+                  container: 'body'
+                });*/
                 var firstInputEtiqueta = $('.etiquetaInput')[0];
                 if (firstInputEtiqueta){
                   $(firstInputEtiqueta).focus();

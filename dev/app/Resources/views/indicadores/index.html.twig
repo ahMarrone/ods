@@ -117,18 +117,23 @@
                     text: "EXCEL",
                     title: "ODS-Indicadores"
             },            
-
-			{
-                    extend:'pdf',
+            {
+                    extend:'pdfHtml5',
                     className:'btn-danger',
                     exportOptions: {
-                        columns: ':visible',
+                                columns: ':visible'
                     },
-                    message: "Objetivos de Desarrollo Sostenible\nINDICADORES",                    
                     text: "PDF",
-                    title: "ODS-Indicadores"
-            },      
-				
+                    title: "Plataforma ODS - Indicadores",
+                    customize: function ( doc ) {
+                        doc.content.splice(1, 0, 
+                            {
+                                text: getHeadingExportMessage(),
+                                alignment: 'left'
+                            }
+                        )
+                    }
+            },     
             {
                 extend: 'colvis',
                 text: "Columnas Visibles",
@@ -152,6 +157,12 @@
                 } 
                 return false;
         });
+
+
+
+        function getHeadingExportMessage(){
+            return  "Objetivo: " +  $('#three_select_objetivo option:selected').attr('title') + "\n\n" +  "Meta: " +  $('#three_select_meta option:selected').attr('title') + "\n\n";
+        }
 
         function filterTableIndicadores(){
             meta_selected = $('#three_select_meta').val();

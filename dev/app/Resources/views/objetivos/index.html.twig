@@ -72,18 +72,15 @@
                     text: "EXCEL",
                     title: "ODS-Objetivos"
             },            
-
 			{
-                    extend:'pdf',
+                    extend:'pdfHtml5',
                     className:'btn-danger',
                     exportOptions: {
-                        columns: [0,1]
+                                columns: ':visible'
                     },
-                    message: "Objetivos de Desarrollo Sostenible",                    
                     text: "PDF",
-                    title: "ODS-Objetivos"
+                    title: "Plataforma ODS - Objetivos",
             },            
-					
             {
                 extend: 'colvis',
                 text: "Columnas Visibles"
@@ -93,6 +90,12 @@
           
         ]
     });
+
+
+
+    
+
+
 } );
 </script>
 {% endblock %}
