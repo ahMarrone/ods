@@ -40,12 +40,14 @@ class ProfileController extends Controller
     {   
         $id_user = intval($request->get('id'));
         $user = $this->getDestinationUserObject($id_user);
+        $service = $this->get('app.utils.scopes_service');
         if (!is_object($user) || !$user instanceof UserInterface) {
             throw new AccessDeniedException('This user does not have access to this section.');
         }
 
         return $this->render('FOSUserBundle:Profile:show.html.twig', array(
             'user' => $user,
+            'roles_map' => $service->getMapRoles()
         ));
     }
 
@@ -78,6 +80,11 @@ class ProfileController extends Controller
 
         $form = $formFactory->createForm();
         $form->setData($user);
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN') || $id_user == 1 ) {
+            $form->remove('roles');
+        } else {
+            $form->get('roles')->setData($user->getRoles()[0]);
+        }
 
         $form->handleRequest($request);
 
@@ -87,7 +94,10 @@ class ProfileController extends Controller
 
             $event = new FormEvent($form, $request);
             $dispatcher->dispatch(FOSUserEvents::PROFILE_EDIT_SUCCESS, $event);
-
+            if ($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+                $newRole = $form["roles"]->getData();
+                $user->setRoles(array($newRole));
+            }
             $userManager->updateUser($user);
 
             if (null === $response = $event->getResponse()) {

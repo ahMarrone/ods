@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_panel_users.html.twig' %}
 
 
 {% block javascripts %}
@@ -9,7 +9,7 @@
     <script src="{{ asset('js/ThreeSelect.js') }}"></script>
 {% endblock %}
 
-{% block body %}
+{% block panel_body %}
     <ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
         <li class="active">Metas</a></li>

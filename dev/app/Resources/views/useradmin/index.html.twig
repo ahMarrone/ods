@@ -1,6 +1,6 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_panel_users.html.twig' %}
 
-{% block body %}
+{% block panel_body %}
 
 <ol class="breadcrumb">
     <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
@@ -10,7 +10,6 @@
      <div class="page-header">
           <h2>Administrar Usuarios</h2>
     </div>
-
 
 <table id="usuariosTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
@@ -28,16 +27,14 @@
         <tbody>
         {% for usuario in usuarios %}
             <tr>
-                <td><a href="{{ path('fos_user_profile_show')}}">{{ usuario.username }}</a></td>
+                <td><a href="{{ path('fos_user_profile_show', {'id':usuario.id})}}">{{ usuario.username }}</a></td>
                 <td>{{ usuario.apellido }}</td>
                 <td>{{ usuario.nombre }}</td>
                 <td>{{ usuario.email }}</td>
                 <td>{{ usuario.dependencia }}</td>
                 <td>{{ usuario.enabled ? "Sí" : "No"}}</td>
                 <td>
-                {% for role in usuario.roles %}
-  					{{ role }}
-				{% endfor %}
+                    {{ roles_map[usuario.roles[0]]}}
                 </td>
                 <td>
                     <a href="{{ path('fos_user_profile_show', {'id':usuario.id})}}" class="btn btn-primary" title="Ver" href=""><i class="fa fa-eye fa-fw" aria-hidden="true"></i></a>

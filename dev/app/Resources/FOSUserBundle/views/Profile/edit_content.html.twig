@@ -11,7 +11,7 @@
     </ol>
 
 	<div class="page-header">
-		<h2>Perfil de <span style="color:#034EA2">'{{ user.username }}'</div></h2>
+		<h2>Editar perfil de <span style="color:#034EA2">'{{ user.username }}'</div></h2>
 	</div>
 {{ form_start(form, { 'action': path('fos_user_profile_edit', {'id': user.id }), 'attr': { 'class': 'fos_user_profile_edit' } }) }}
     {{ form_widget(form) }}
