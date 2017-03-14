@@ -42,13 +42,15 @@ class ValoresIndicadoresController extends Controller
             $configfechaEntity = $em->getRepository('AppBundle:Valoresindicadoresconfigfecha')->findByIdindicador($idIndicador);
             $valoresindicadores = $em->getRepository('AppBundle:Valoresindicadores')->findByIdvaloresindicadoresconfigfecha($configfechaEntity);
             $etiquetas = $this->getKeyValueEtiquetas($em->getRepository('AppBundle:Etiquetas')->findAll());
+            return $this->render('valoresindicadores/index.html.twig', array(
+                'valoresindicadores' => $valoresindicadores,
+                'etiquetas'=> $etiquetas,
+                'indicador' => $indicador,
+                'api_urls' => array('aproveData'=> $this->generateUrl('admin_crud_valoresindicadores_aproveData'))
+            ));
+        } else {
+            return $this->redirectToRoute('paneluser_index');
         }
-        return $this->render('valoresindicadores/index.html.twig', array(
-            'valoresindicadores' => $valoresindicadores,
-            'etiquetas'=> $etiquetas,
-            'indicador_desc' => $indicadorDesc,
-            'api_urls' => array('aproveData'=> $this->generateUrl('admin_crud_valoresindicadores_aproveData'))
-        ));
     }
 
 
@@ -112,6 +114,95 @@ class ValoresIndicadoresController extends Controller
             ));
             $valoresindicadores = $em->getRepository('AppBundle:Valoresindicadores')->findByIdvaloresindicadoresconfigfecha($configfechaEntity);
             $regGeograficasWithoutData = $this->filterRefGeograficas($indicador->getAmbito());
+            $regGeograficasWithoutData = $this->initRefGeograficasUsedEtiquetas($regGeograficasWithoutData);
+            $mapEtiquetas = $this->getKeyValueEtiquetas($em->getRepository('AppBundle:Etiquetas')->findAll());
+            $usedEtiquetas = array();
+            $refGeogMemoize = array();
+            $indicadorEtiquetas = array();
+            // PIDO DATOS EXISTENTES
+            foreach ($valoresindicadores as $valor) {
+                // achico universo de refgeograficas con datos sin cargar
+                //unset($regGeograficasWithoutData[$valor->getIdrefgeografica()->getId()]);
+                //echo var_dump($valor->getIdetiqueta());
+                array_push($regGeograficasWithoutData[$valor->getIdrefgeografica()->getId()]["used_labels"], $valor->getIdetiqueta());
+                if ($ambitoIndicador == 'N'){
+                    $parent = "-";
+                } else if ($ambitoIndicador == 'P') {
+                    $parent = 'PAIS';
+                } else {
+                    $refParent = $this->getAgrupamientoRefGeografica($valor->getIdrefgeografica()->getId());
+                    $parent = $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findOneById($refParent->getId2())->getDescripcion();
+                }
+                $newEtiquetaLabel = $this->mapEtiquetaKeyToString($mapEtiquetas,$valor->getIdetiqueta());
+                $usedEtiquetas[$valor->getIdetiqueta()] = $newEtiquetaLabel;
+                $aprobado = $valor->getAprobado() ? "Si" : "No";
+                $tmp_data = $this->bindDataToVisualize(
+                    $valor->getIdrefgeografica()->getDescripcion(), 
+                    $parent,
+                    $newEtiquetaLabel,
+                    $valor->getValor(),
+                    $aprobado
+                );
+                array_push($data, $tmp_data);
+            }
+            //echo var_dump($regGeograficasWithoutData);
+            // INSERTO DATOS FALTANTES
+            //  (ref. geog en los cuales no se han cargado datos)
+            foreach ($usedEtiquetas as $idEtiqueta => $descEtiqueta) {
+                foreach ($regGeograficasWithoutData as $key => $refData) {
+                    if (!in_array($idEtiqueta, $refData["used_labels"])){
+                        $parent = $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findOneById($refData["parent"])->getDescripcion();
+                        $tmp_data = $this->bindDataToVisualize(
+                            $refData["desc"], 
+                            $parent,
+                            $descEtiqueta,
+                            "SIN VALOR",
+                            "-"
+                        );
+                        array_push($data, $tmp_data);
+                    }
+                }
+            }
+            /*foreach ($regGeograficasWithoutData as $key => $refData) {
+                foreach ($usedEtiquetas as $idEtiqueta => $descEtiqueta) {
+                    $parent = $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findOneById($refData["parent"])->getDescripcion();
+                    $tmp_data = $this->bindDataToVisualize(
+                        $refData["desc"], 
+                        $parent,
+                        $descEtiqueta,
+                        "SIN VALOR",
+                        "-"
+                    );
+                    array_push($data, $tmp_data);
+                }
+            }*/
+
+        }
+        return $data;
+    }
+
+
+    private function initRefGeograficasUsedEtiquetas($refs){
+        foreach ($refs as $key => $refData) {
+            $refs[$key]["used_labels"] = array();
+        }
+        //echo var_dump($refs[$key]["used_labels"]);
+        return $refs;
+    }
+
+
+    /*private function requestVisualizeData($idIndicador, $fecha){
+        $data = array();
+        $em = $this->getDoctrine()->getManager();
+        $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
+        if ($indicador){
+            $ambitoIndicador = $indicador->getAmbito();
+            $configfechaEntity = $em->getRepository('AppBundle:Valoresindicadoresconfigfecha')->findBy(array(
+                'idindicador' => $idIndicador,
+                'fecha' => $fecha
+            ));
+            $valoresindicadores = $em->getRepository('AppBundle:Valoresindicadores')->findByIdvaloresindicadoresconfigfecha($configfechaEntity);
+            $regGeograficasWithoutData = $this->filterRefGeograficas($indicador->getAmbito());
             //echo var_dump($regGeograficasWithoutData);
             $mapEtiquetas = $this->getKeyValueEtiquetas($em->getRepository('AppBundle:Etiquetas')->findAll());
             $usedEtiquetas = array();
@@ -159,7 +250,7 @@ class ValoresIndicadoresController extends Controller
 
         }
         return $data;
-    }
+    }*/
 
     private function bindDataToVisualize($refDesc, $parent, $descEtiqueta, $value, $aprobado){
         $bindedData = array();
@@ -203,7 +294,7 @@ class ValoresIndicadoresController extends Controller
             return $this->render('valoresindicadores/panel_create_valores_indicadores.html.twig', array(
                 'fecha' => $fecha,
                 'indicador_id' => $indicador->getId(),
-                'indicador_desc' => $indicador->getDescripcion(),
+                'indicador' => $indicador,
                 'indicador_ambito' => $ambitoIndicador,
                 'desgloces' => $desgloces,
                 'etiquetas_desgloces' => $etiquetasDesgloces,

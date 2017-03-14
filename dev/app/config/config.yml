@@ -7,12 +7,12 @@ imports:
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    locale: en
+    locale: es
     indicadores_technical_documents_directory: '%kernel.root_dir%/../web/uploads/indicadores'
 
 framework:
     #esi:             ~
-    #translator:      { fallbacks: ["%locale%"] }
+    translator:      { fallbacks: ["%locale%"] }
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -91,7 +91,3 @@ fos_user:
             from_email:
                 address:        resetting@example.com
                 sender_name:    Demo Resetting
-
-
-framework:
-    translator: { fallback: es }

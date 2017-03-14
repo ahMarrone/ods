@@ -26,9 +26,10 @@ class AdminUsersController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $usuarios = $em->getRepository('AppBundle:Usuarios')->findAll();
-
+        $service = $this->get('app.utils.scopes_service');
         return $this->render('useradmin/index.html.twig', array(
             'usuarios' => $usuarios,
+            'roles_map' => $service->getMapRoles()
         ));
     }
 

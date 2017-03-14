@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_panel_users.html.twig' %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -14,7 +14,7 @@
     <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
 {% endblock %}
 
-{% block body %}
+{% block panel_body %}
 
 	<ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
@@ -48,7 +48,7 @@
 	<thead>
 	<tr>
 		<th>Ref. geográfica</th>
-		<th>Ref. geográfica padre</th>
+		<th>Ref. geográfica superior</th>
 		<th>Etiqueta</th>
 		<th>Valor</th>
 		<th>Aprobado</th>
@@ -57,7 +57,7 @@
 	<tfoot>
 		<tr>
 			<th>Ref. geográfica</th>
-			<th>Ref. geográfica padre</th>
+			<th>Ref. geográfica  superior</th>
 			<th>Etiqueta</th>
 			<th>Valor</th>
 			<th>Aprobado</th>
@@ -140,20 +140,20 @@
 			    "columnDefs": [
 			   		{
 		            	"targets":[0],
-		            	"width": "20%",
+		            	"width": "25%",
 		            },
 		            {
 		            	"targets":[1],
-		            	"width": "20%",
+		            	"width": "25%",
 		            },
 		            {
 		            	"targets":[2],
-		            	"width": "25%",
+		            	"width": "20%",
 		            },
 		    		{
 		            	"targets":[3],
 		            	"className": "dt-right",
-		            	"width": "25%",
+		            	"width": "20%",
 		            },
 		            {
 		            	"targets":[4],

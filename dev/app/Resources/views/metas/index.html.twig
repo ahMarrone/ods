@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_panel_users.html.twig' %}
 
 
 {% block javascripts %}
@@ -9,7 +9,7 @@
     <script src="{{ asset('js/ThreeSelect.js') }}"></script>
 {% endblock %}
 
-{% block body %}
+{% block panel_body %}
     <ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
         <li class="active">Metas</a></li>
@@ -109,18 +109,23 @@
                     text: "EXCEL",
                     title: "ODS-Metas"
             },            
-
-			{
-                    extend:'pdf',
+            {
+                    extend:'pdfHtml5',
                     className:'btn-danger',
                     exportOptions: {
-                        columns: ':visible',
+                                columns: ':visible'
                     },
-                    message: "Objetivos de Desarrollo Sostenible\nMETAS",                    
                     text: "PDF",
-                    title: "ODS-Metas"
-            },      
-				
+                    title: "Plataforma ODS - Metas",
+                    customize: function ( doc ) {
+                        doc.content.splice(1, 0, 
+                            {
+                                text: getHeadingExportMessage(),
+                                alignment: 'left'
+                            }
+                        )
+                    }
+            },  
             {
                 extend: 'colvis',
                 text: "Columnas Visibles",
@@ -133,6 +138,10 @@
                 
                 
             });
+        }
+
+        function getHeadingExportMessage(){
+            return  "Objetivo: " +  $('#three_select_objetivo option:selected').attr('title') + "\n\n";
         }
 
 

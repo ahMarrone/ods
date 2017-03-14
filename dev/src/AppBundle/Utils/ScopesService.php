@@ -46,4 +46,19 @@ class ScopesService {
     public function getIndicadorScope(){
         return $this->getUserScope();
     }
+
+
+    public function getMapRoles(){
+        return array(
+            'ROLE_SUPER_ADMIN' => 'root',
+            'ROLE_ADMIN' => 'Administrador',
+            'ROLE_USER' => 'Data entry'
+        );
+    }
+
+
+
+    public function getRoleName($role_code){
+        return $this->getMapRoles()[$role_code];
+    }
 }

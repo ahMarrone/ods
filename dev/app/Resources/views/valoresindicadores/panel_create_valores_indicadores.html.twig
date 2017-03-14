@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_panel_users.html.twig' %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -17,7 +17,7 @@
     <script src="{{ asset('js/globalutils.js') }}"></script>
 {% endblock %}
 
-{% block body %}
+{% block panel_body %}
 
   <div class="container">
       <div class="row">
@@ -30,7 +30,7 @@
 
         <div class="page-header">
           <h2>Carga valores indicadores</h2>
-          <h3 style="">{{indicador_desc}}</h3>
+          <h2><small>{{indicador.fkidmeta.fkidobjetivo.codigo}}.{{indicador.fkidmeta.codigo}}.{{indicador.codigo}} - {{indicador.descripcion}}</small></h2>
         </div>
       <div class="alert alert-info" class="col-md-3" role="alert"><b>Período:</b> {{fecha}}.
         <span>
@@ -72,7 +72,7 @@
          <% if (this.collection.isRefLeft()) { %>
         <button id="newDataLoader" type="button" class="btn btn-default navbar-btn"><i class="fa fa-plus"></i>  Agregar ficha</button>
         <% }  %>
-        <button id="saveNewDataLoaders" type="button" class="btn btn-success navbar-btn <% if (!this.collection.hasNewDataLoaders()) { %> disabled<% }  %>"><span class="glyphicon glyphicon-save"  ></span>  Guardar nuevos</button>
+        <button id="saveNewDataLoaders" type="button" class="btn btn-success navbar-btn <% if (!this.collection.hasNewDataLoaders()) { %> disabled<% }  %>"><span class="fa fa-download"  ></span>  Guardar nuevos</button>
       </ul>
             <% if (this.collection.ambito_indicador == 'D') { %>
           <form class="navbar-form navbar-right" role="search">
@@ -334,9 +334,10 @@
                 this.$el.html( this.template({collection: this.collection}));
                 this.collection.each(this.renderPanel);
                 $('[data-toggle="tooltip"]').tooltip({html: true}); 
-                $('#filterCardsSelect').selectpicker({
-                  noneSelectedText: 'Filtrar por provincia'
-                });
+                
+                /*$('#filterCardsSelect').selectpicker({
+                  container: 'body'
+                });*/
                 var firstInputEtiqueta = $('.etiquetaInput')[0];
                 if (firstInputEtiqueta){
                   $(firstInputEtiqueta).focus();

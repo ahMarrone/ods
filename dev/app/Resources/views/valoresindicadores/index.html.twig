@@ -1,11 +1,11 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_panel_users.html.twig' %}
 
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('js/globalutils.js') }}"></script>
 {% endblock %}
 
-{% block body %}
+{% block panel_body %}
     <ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
         <li><a href="{{ path('admin_crud_indicadores_index') }}">Indicadores</a></li>
@@ -13,7 +13,7 @@
     </ol>
     <div class="page-header">
           <h2>Valores de indicadores</h2>
-          <h2><small>{{indicador_desc}}</small></h2>
+          <h2><small>{{indicador.fkidmeta.fkidobjetivo.codigo}}.{{indicador.fkidmeta.codigo}}.{{indicador.codigo}} - {{indicador.descripcion}}</small></h2>
     </div>
 
 

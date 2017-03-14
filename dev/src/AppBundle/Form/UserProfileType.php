@@ -15,6 +15,17 @@ class UserProfileType extends AbstractType
         $builder
             ->add('apellido', null, array('attr' => array('class' => 'col-sm-6', 'maxlength' => 50)))       
             ->add('nombre', null, array('attr' => array('class' => 'col-sm-6', 'maxlength' => 50)))
+            ->add('roles', 'choice', array(
+                'mapped' => false,
+                'required' => true,
+                'label'    => 'Rol de usuario',
+                'choices' => array(
+                    'ROLE_ADMIN' => 'Administrador',
+                    'ROLE_USER' => 'Data entry',
+                ),
+                'disabled' => false,
+                'expanded'   => true,
+            ))
             ->add('domicilio', null, array('attr' => array('class' => 'col-sm-6', 'maxlength' => 100)))
             ->add('localidad', null, array('attr' => array('class' => 'col-sm-6', 'maxlength' => 100)))
             ->add('provincia', null, array('attr' => array('class' => 'col-sm-6', 'maxlength' => 100)))
