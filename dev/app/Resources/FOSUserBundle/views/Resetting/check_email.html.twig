@@ -1,0 +1,22 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block fos_user_content %}
+
+{% if app.user %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
+            <li><a href="{{ path('admin_users_index') }}">Administrar usuarios</a></li>
+        {% endif %}
+        <li class="active"> Reestablecer Contraseña</a></li>
+    </ol>
+{% else %}
+<br>
+{% endif %}
+
+<p>
+{{ 'resetting.check_email'|trans({'%tokenLifetime%': tokenLifetime}) }}
+</p>
+{% endblock %}

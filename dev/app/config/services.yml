@@ -16,6 +16,11 @@ services:
         tags:
             - { name: form.type, alias: app_user_profile }
 
+    app.form.resetting:
+        class: AppBundle\Form\UserRequestPasswordType
+        tags:
+            - { name: form.type, alias: app_user_request_password }
+
     app.utils.scopes_service:
         class: AppBundle\Utils\ScopesService
         arguments: ["@doctrine.orm.entity_manager","@security.token_storage"]

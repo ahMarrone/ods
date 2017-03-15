@@ -1,0 +1,40 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% if app.user %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
+            <li><a href="{{ path('admin_users_index') }}">Administrar usuarios</a></li>
+        {% endif %}
+        <li class="active"> Reestablecer Contraseña</a></li>
+    </ol>
+{% else %}
+<br>
+<p>
+Por favor, ingrese su correo electrónico para comenzar el proceso de reestablecimiento de contraseña
+</p>
+{% endif %}
+
+<form name="fos_user_resetting_form" method="post" action= {{ path('fos_user_resetting_send_email') }} class="fos_user_resetting_request form-horizontal">
+    <div id="fos_user_resetting_form">
+        {% if app.user %}
+        <div class="form-group">
+            <label class="col-sm-2 control-label required" for="fos_user_resetting_form_email">E-mail</label>
+            <div class="col-sm-3 col-sm-10">
+                <input type="email" id="email" name="email" readonly="readonly" required="required" class="col-sm-3 form-control" maxlength="50" value={{ user.email }}>
+            </div>
+        </div>
+        {% else %}
+        <div class="form-group">
+            <label class="col-sm-2 control-label required" for="fos_user_resetting_form_email">E-mail</label>
+            <div class="col-sm-3 col-sm-10">
+                <input type="email" id="email" name="email" required="required" class="col-sm-3 form-control" maxlength="50">
+            </div>
+        </div>
+        {% endif %}
+        <hr>
+        <div>
+            <input class="col-md-1 col-md-offset-2 btn btn-success option-btn" type="submit" value="Enviar">
+        </div>
+    </div>
+</form>
