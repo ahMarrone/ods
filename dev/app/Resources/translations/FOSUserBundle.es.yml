@@ -49,7 +49,7 @@ resetting:
         success: 'La contraseña se ha cambiado con éxito'
     email:
         subject: 'Restablecer Contraseña'
-        message: "Estimado %username%,\n\nPara restablecer tu contraseña por favor visite el siguiente enlace: %confirmationUrl%\n\nAtentamente,\nEquipo ODS.\n"
+        message: "Estimado %username%,\n\nPara restablecer su contraseña por favor visite el siguiente enlace: %confirmationUrl%\n\nAtentamente,\nEquipo ODS.\n"
 layout:
     logout: Salir
     login: Entrar

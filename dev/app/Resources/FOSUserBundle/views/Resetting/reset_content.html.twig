@@ -8,6 +8,8 @@
         {% endif %}
         <li class="active"> Reestablecer Contraseña</a></li>
     </ol>
+{% else %}
+<br>
 {% endif %}
 
 {{ form_start(form, { 'action': path('fos_user_resetting_reset', {'token': token}), 'attr': { 'class': 'fos_user_resetting_reset' } }) }}

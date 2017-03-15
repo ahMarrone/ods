@@ -89,9 +89,9 @@ fos_user:
     service:
         mailer: fos_user.mailer.default
     resetting:
-        # form:
-        #     type: AppBundle\Form\ResettingFormType
+        form:
+            type: AppBundle\Form\UserResettingType
         email:
             from_email:
-                address:    usuario@email.com
-                sender_name: Usuario   
+                address:    "%mailer_address%"
+                sender_name: "%mailer_sender_name%"   

@@ -17,9 +17,9 @@ services:
             - { name: form.type, alias: app_user_profile }
 
     app.form.resetting:
-        class: AppBundle\Form\UserRequestPasswordType
+        class: AppBundle\Form\UserResettingType
         tags:
-            - { name: form.type, alias: app_user_request_password }
+            - { name: form.type, alias: app_user_resetting }
 
     app.utils.scopes_service:
         class: AppBundle\Utils\ScopesService
