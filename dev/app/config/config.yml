@@ -69,6 +69,8 @@ doctrine:
 swiftmailer:
     transport: "%mailer_transport%"
     host:      "%mailer_host%"
+    encryption: "%mailer_encryption%"
+    auth_mode: "%mailer_auth_mode%"
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
@@ -87,7 +89,9 @@ fos_user:
     service:
         mailer: fos_user.mailer.default
     resetting:
+        form:
+            type: AppBundle\Form\UserResettingType
         email:
             from_email:
-                address:        resetting@example.com
-                sender_name:    Demo Resetting
+                address:    "%mailer_address%"
+                sender_name: "%mailer_sender_name%"   

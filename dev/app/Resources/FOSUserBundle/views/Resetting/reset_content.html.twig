@@ -1,0 +1,21 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% if app.user %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
+            <li><a href="{{ path('admin_users_index') }}">Administrar usuarios</a></li>
+        {% endif %}
+        <li class="active"> Reestablecer Contraseña</a></li>
+    </ol>
+{% else %}
+<br>
+{% endif %}
+
+{{ form_start(form, { 'action': path('fos_user_resetting_reset', {'token': token}), 'attr': { 'class': 'fos_user_resetting_reset' } }) }}
+    {{ form_widget(form) }}
+    <hr>
+    <div>
+        <input class="col-md-2 col-md-offset-2 btn btn-success option-btn" type="submit" value="{{ 'resetting.reset.submit'|trans }}" />
+    </div>
+{{ form_end(form) }}

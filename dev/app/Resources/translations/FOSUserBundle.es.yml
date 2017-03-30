@@ -39,11 +39,7 @@ registration:
         message: "Hola %username%!\n\nPara completar la validación de tu cuenta - por favor visita %confirmationUrl%\n\nAtentamente,\nel Equipo.\n"
 resetting:
     password_already_requested: 'La contraseña para este usuario ya ha sido solicitada dentro de las 24 horas.'
-    check_email: |
-       Un email ha sido enviado. Contiene un enlace de activación que debes presionar para restablecer tu contraseña.
-        Nota: Solo se puede solicitar una nueva contraseña dentro %tokenLifetime% horas.
-
-       Si no recibe un correo electrónico, comprueba tu carpeta de correo no deseado o inténtelo de nuevo.
+    check_email: "Un e-mail con instrucciones para reestablecer su contraseña ha sido enviado a la casilla proporcionada, dicha solicitud posee una validez de %tokenLifetime% horas. En caso de no recibir este correo electrónico, compruebe su carpeta de correo no deseado o contáctese con el administrador"
     request:
         username: 'Nombre de usuario'
         submit: 'Restablecer contraseña'
@@ -53,7 +49,7 @@ resetting:
         success: 'La contraseña se ha cambiado con éxito'
     email:
         subject: 'Restablecer Contraseña'
-        message: "Hola %username%!\n\nPara restablecer tu contraseña - por favor visita %confirmationUrl%\n\nAtentamente,\nel Equipo.\n"
+        message: "Estimado %username%,\n\nPara restablecer su contraseña por favor visite el siguiente enlace: %confirmationUrl%\n\nAtentamente,\nEquipo ODS.\n"
 layout:
     logout: Salir
     login: Entrar

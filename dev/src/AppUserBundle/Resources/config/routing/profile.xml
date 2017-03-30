@@ -21,5 +21,4 @@
         <requirement key="id">\d+</requirement>
         <default key="id">0</default>
     </route>
-
 </routes>
