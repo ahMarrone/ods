@@ -100,17 +100,20 @@
           'contentType': 'application/json',
            success: function(data) {
               if (data.success){
-                showSimpleModal(globalModal, 'success', 'Valores GUARDADOS con éxito');
+                showSimpleModal(globalModal, 'success', 'Valores GUARDADOS con éxito', acceptAproveRequest, "Actualizar tabla");
                 updateRowsAproveStatus(rows,data["action"]);
               } else {
                 showSimpleModal(globalModal, 'error', data.msg);
               }
-              location.reload();
           },
           error: function(data) {
             showSimpleModal(globalModal, 'error', "ERROR! Ocurrió un error mientras se intentaban guardar los datos");
           },
       });
+	}
+
+	function acceptAproveRequest(){
+		location.reload();
 	}
 
 
