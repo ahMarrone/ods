@@ -162,7 +162,7 @@ class MetasController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($meta);
             $em->flush();
-
+            $this->get('app.utils.scopes_service')->addEditSuccessToRequest($request);
             return $this->redirectToRoute('admin_crud_metas_index');
         }
 

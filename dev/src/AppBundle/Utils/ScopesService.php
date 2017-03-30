@@ -61,4 +61,17 @@ class ScopesService {
     public function getRoleName($role_code){
         return $this->getMapRoles()[$role_code];
     }
+
+
+    public function addSuccessMessageToRequest($request, $msg){
+        $request->getSession()
+                ->getFlashBag()
+                ->add('success', $msg)
+            ;
+    }
+
+    public function addEditSuccessToRequest($request){
+        $this->addSuccessMessageToRequest($request, 'Los cambios se han guardado con éxito');
+    }
+
 }

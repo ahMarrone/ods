@@ -97,7 +97,7 @@ class ObjetivosController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($objetivo);
             $em->flush();
-
+            $this->get('app.utils.scopes_service')->addEditSuccessToRequest($request);
             return $this->redirectToRoute('admin_crud_objetivos_index');
         }
 

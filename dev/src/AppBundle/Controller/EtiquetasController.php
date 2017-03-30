@@ -110,7 +110,7 @@ class EtiquetasController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($etiqueta);
             $em->flush();
-
+            $this->get('app.utils.scopes_service')->addEditSuccessToRequest($request);
             return $this->redirectToRoute('admin_crud_etiquetas_index');
         }
 

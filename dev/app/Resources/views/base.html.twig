@@ -107,6 +107,16 @@
         <!-- END NAVBAR -->
   
         <div  id="main-container" class="container">
+
+            {% if app.session.flashBag.has('success') %}
+                <div class="alert alert-success">
+                  <i class="fa fa-check-circle" aria-hidden="true"></i>
+                    {% for msg in app.session.flashBag.get('success') %}
+                        {{ msg }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             {% block body %}{% endblock %}
         </div>
 
