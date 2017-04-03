@@ -118,10 +118,22 @@ function mapMe(geoJsonNacion, geoJsonProvincias, geoJsonDepartamentos) {
         }
     });
 
-    var centerButton = L.easyButton('fa-globe', function(btn, map) {
-        // map.fitBounds(centerBounds);
-        zoomOut();
-    }).addTo(map);
+    var centerButton = L.easyButton({
+      id: 'centerButton',       // an id for the generated button
+      position: 'topleft',      // inherited from L.Control -- the corner it goes in
+      type: 'replace',          // set to animate when you're comfy with css
+      leafletClasses: true,     // use leaflet classes to style the button?
+      states:[{                 // specify different icons and responses for your button
+        stateName: 'center',
+        onClick: function(button, map){
+            zoomOut();
+        },
+        title: 'Centrar Mapa',
+        icon: 'fa-globe'
+      }]
+    });
+
+    centerButton.addTo(map);
     exportarButton.addTo(map);
 
     /*L.easyBar(buttons).addTo(map);*/

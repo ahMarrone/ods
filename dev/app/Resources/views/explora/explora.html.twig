@@ -111,7 +111,7 @@
           </select>
       </div> <!-- /.form-group -->
       <div class="form-group">
-        <label for="selectorDesglose" class="control-label">Desglose</label>
+        <label for="selectorDesglose" class="control-label">Desglose <i class="fa fa-question-circle" aria-hidden="true" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."></i></label>
           <select <% if (_.isEmpty(model.get('desgloses'))) { print ('disabled'); } %> id="selectorDesglose" class="form-control selectDesglose">
           <% _.each(model.get("desgloses"), function(desglose, i){ %>
           <!-- MODIFICAR PARA USAR BÚSQUEDA BINARIA  -->
@@ -122,13 +122,13 @@
           </select>
       </div> <!-- /.form-group -->
       <div class="form-group">
-        <label for="selectorEtiqueta" class="control-label">Etiqueta</label>
+        <label for="selectorEtiqueta" class="control-label">Etiqueta <i class="fa fa-question-circle" aria-hidden="true" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."></i></label>
           <select <% if ((model.get("desgloseSeleccionado") == 0) || (_.isEmpty(model.get('etiquetas')))) { print ('disabled'); } %> id="selectorEtiqueta" class="form-control selectEtiqueta">
           <% model.set('etiquetasActuales', []) %>
           <% _.each(model.get("etiquetas"), function(e, id){ %>
           <% if ( e.id_desglose == model.get("desgloseSeleccionado") ){ %>
           <% model.get('etiquetasActuales').push(id); %>
-          <option title="<%= e.descripcion %>" value="<%= id %>" <% if ( e.descripcion == "Total" ) { model.set('etiquetaSeleccionada', id ) %> selected<% } %>><% if ( id != 0 ) { %> <%= e.descripcion %> <% } %></option>
+          <option title="<%= e.descripcion %>" value="<%= id %>" <% if ( e.descripcion.toLowerCase() == "total" ) { model.set('etiquetaSeleccionada', id ) %> selected<% } %>><% if ( id != 0 ) { %> <%= e.descripcion %> <% } %></option>
           <% } %>
           <% }); %>
           </select>
@@ -278,8 +278,14 @@
         this.render();
 
         /* Se instancian luego de la ejecución de render() */
-        var idEtiquetaSeleccionada = this.model.get('etiquetaSeleccionada');
         var etiquetasActuales = this.model.get('etiquetasActuales');
+
+        /* En el caso en que no se agregue la etiqueta 'Total' o se encuentre mal escrita */
+        if (typeof this.model.get('etiquetaSeleccionada') === 'undefined') {
+          this.model.set('etiquetaSeleccionada', etiquetasActuales[0])
+        }
+        
+        var idEtiquetaSeleccionada = this.model.get('etiquetaSeleccionada');
         var escalaColores = indicador.escala;
 
         /* Inicializar mapa */
@@ -446,6 +452,9 @@
     var idObjetivoSeleccionado = metas[idMetaSeleccionada].id_objetivo;
     var fechasDestacadas = indicadores[idIndicadorSeleccionado].fechasDestacadas;
     var fechaSeleccionada;
+
+    delete etiquetas['foo'];
+    delete desgloses['foo'];
 
     var globalModal = 'globalModal';
 

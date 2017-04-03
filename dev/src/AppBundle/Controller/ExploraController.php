@@ -41,13 +41,10 @@ class ExploraController extends Controller
             /* Primer Indicador de la Tabla (Visible) */
             $idIndicador = array_keys($indicadores)[0];
         }
-
-        /* ENCONTRAR UNA SOLUCIÓN MÁS ELEGANTE */
-        $reverseDesgloses = array();
-        $etiquetas = $this->getEtiquetasByIndicadorPreload($idIndicador, $reverseDesgloses);
-
+        
+        $etiquetas = $this->getEtiquetasByIndicadorPreload($idIndicador);
         $desgloses = $this->getDesglosesByIndicadorPreload($idIndicador);
-        $valoresIndicadoresDesgloses = $this->getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses);
+        $valoresIndicadoresDesgloses = $this->getValoresIndicadoresDesgloses($idIndicador);
         $indicadores[$idIndicador]['fechasDestacadas'] = $this->intersectFechasDestacadas(
             $indicadores[$idIndicador]['fechasDestacadas'], array_keys($valoresIndicadoresDesgloses));
 
@@ -82,12 +79,11 @@ class ExploraController extends Controller
         */
 
         if (isset($idIndicador)) {
-            $reverseDesgloses = array();
             $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
             $fechasDestacadasIndicador = $this->parseFechasDestacadas($indicador->getFechasDestacadas());
-            $callbackData['etiquetas'] = $this->getEtiquetasByIndicadorPreload($idIndicador, $reverseDesgloses);;
+            $callbackData['etiquetas'] = $this->getEtiquetasByIndicadorPreload($idIndicador);
             $callbackData['desgloses'] = $this->getDesglosesByIndicadorPreload($idIndicador);;
-            $callbackData['valoresIndicadoresDesgloses'] = $this->getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses);
+            $callbackData['valoresIndicadoresDesgloses'] = $this->getValoresIndicadoresDesgloses($idIndicador);
             $fechasDestacadasDefinidas = array_keys($callbackData['valoresIndicadoresDesgloses']);
             $callbackData['fechasDestacadas'] = $this->intersectFechasDestacadas($fechasDestacadasIndicador, $fechasDestacadasDefinidas);
         } else {
@@ -336,47 +332,21 @@ class ExploraController extends Controller
         return $list;
     }
 
-    private function getEtiquetasByIndicadorPreload($idIndicador, &$reverseDesgloses){
+    private function getEtiquetasByIndicadorPreload($idIndicador){
         $etiquetasEntity = $this->filterEtiquetasByIndicador($idIndicador);
-        $etiquetas = array();
-        $desgloses = array();
-        $maximoID = 0;
+        $etiquetas = array('foo' => NULL);
         foreach ($etiquetasEntity as $e){
-
             $id = $e->getId();
-            if ($id == 0) {
-                $descripcion = 'Total';
-            } else {
-                $descripcion = $e->getDescripcion();
-                array_push($desgloses, $e->getFkiddesgloce()->getId());
-            }
-
+            $descripcion = $e->getDescripcion();        
             $etiquetas[$id] = array('descripcion' => $descripcion,
                                     'id_desglose' => $e->getFkiddesgloce()->getId());
-
-            $maximoID = max($maximoID, $e->getId());
-
         }
-
-        $desgloses = array_unique($desgloses);
-
-        foreach ($desgloses as $idDesglose) {
-            $maximoID += 1;
-            /* Se crean nuevas etiquetas con la descripción 'Total' para cada desglose
-            Para ello, se comienza desde el ID de etiqueta más alto */
-
-            $etiquetas[$maximoID] = array('descripcion' => 'Total',
-                                          'id_desglose' => $idDesglose);
-
-            $reverseDesgloses[$idDesglose] = $maximoID;
-        }
-
         return $etiquetas;
     }
 
     private function getDesglosesByIndicadorPreload($idIndicador){
         $desglosesEntity = $this->filterDesglosesByIndicador($idIndicador);
-        $desgloses = array();
+        $desgloses = array('foo' => NULL);
         foreach ($desglosesEntity as $d){
             array_push($desgloses, array(
                 'id' => $d->getId(),
@@ -387,7 +357,7 @@ class ExploraController extends Controller
         return $desgloses;
     }
 
-    private function getValoresIndicadoresDesgloses($idIndicador, $reverseDesgloses){
+    private function getValoresIndicadoresDesgloses($idIndicador){
         $entidad = $this->filterValoresIndicadoresConfigFechaByIndicador($idIndicador);
         $atributos = array();
         $atributosPorFecha = array();
@@ -427,19 +397,6 @@ class ExploraController extends Controller
             $fecha = $atributos[$idValoresIndicadoresConfigFecha]['fecha'];
             if (array_key_exists($fecha, $atributosPorFecha)) {
                 array_push($atributosPorFecha[$fecha]['id_desgloses'], $idDesglose);    
-            }
-        }
-
-        $desglosesAcumulados = $this->sumValoresIndicadores($idsValoresIndicadoresConfigFecha);
-        foreach ($desglosesAcumulados as $columnas) {
-            $idValoresIndicadoresConfigFecha = $columnas['idValoresIndicadoresConfigFecha'];
-            $fecha = $atributos[$idValoresIndicadoresConfigFecha]['fecha'];
-            $idRefGeografica = $columnas['idRefGeografica'];
-            $idDesglose = $columnas['idDesglose'];
-            if ($idDesglose != 0) {
-                /* Aquel desglose con ID = 0, corresponde a 'Sin Desglose' */
-                $idEtiquetaAcumulado = $reverseDesgloses[$idDesglose];
-                $atributosPorFecha[$fecha]['valoresRefGeografica'][$idRefGeografica][$idEtiquetaAcumulado] = floatval($columnas['acumulado']);
             }
         }
 
