@@ -60,6 +60,7 @@ var ThreeSelectData = Backbone.Model.extend({
 	defaults: {
         'objetivo_selected': null,
         'meta_selected':null,
+        'indicador_selected':null,
 		'objetivos':[],
 		'metas':[],
 		'indicadores':[],
@@ -80,15 +81,20 @@ var ThreeSelectData = Backbone.Model.extend({
 
 var ThreeSelectView = Backbone.View.extend({
 	initialize: function(options) {
+        console.log(this.model.get('objetivo_selected'));
+        console.log(this.model.get('indicador_selected'));
         if (this.model.get('objetivo_selected') == null){
 		  this.model.set('objetivo_selected',this.model.get('objetivos')[0].id);
         }
         if ((this.model.get('meta_selected') == null) && (this.model.get('metas').length)) {
             this.model.set('meta_selected',this.model.get('metas')[0].id);
         }
-        if (this.model.get('indicadores').length) {
+        if ((this.model.get('indicador_selected') == null) && (this.model.get('indicadores').length)) {
             this.model.set('indicador_selected',this.model.get('indicadores')[0].id);
         }
+        /*if (this.model.get('indicadores').length) {
+            this.model.set('indicador_selected',this.model.get('indicadores')[0].id);
+        }*/
 		this.model.on('change:objetivo_selected', this.render, this);
         this.model.on('change:meta_selected', this.render, this);
         this.listenObjetivoCallback = options.objetivoChangeCallback;

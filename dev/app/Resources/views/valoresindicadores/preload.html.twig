@@ -130,6 +130,10 @@
         var configModel = null;
         var configView = null;
 
+        var objetivo_selected = {{id_objetivo_selected}};
+        var meta_selected = {{id_meta_selected}};
+        var indicador_selected = {{id_indicador_selected}};
+
         var globalModal = 'globalModal';
 
         function cartesianProductOf() {
@@ -401,14 +405,16 @@
 
 
 
-        var objetivos = {{ objetivos|json_encode|raw}};
-        var metas = {{ metas|json_encode|raw}};
-        var indicadores = {{ indicadores|json_encode|raw}};
-
+      var objetivos = {{ objetivos|json_encode|raw}};
+      var metas = {{ metas|json_encode|raw}};
+      var indicadores = {{ indicadores|json_encode|raw}};
     	var model = new ThreeSelectData({
     		'objetivos': objetivos,
     		'metas': metas,
-    		'indicadores': indicadores
+    		'indicadores': indicadores,
+        'objetivo_selected': objetivo_selected,
+        'meta_selected': meta_selected,
+        'indicador_selected': indicador_selected,
     	});
     	var view = new ThreeSelectView({el: $("#selects") ,model:model, indicadorChangeCallback: listenIndicadorChange});
 

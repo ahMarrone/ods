@@ -609,4 +609,15 @@ class Indicadores
     public function formatYearToDB($fecha){
         return $fecha . "-01-01";
     }
+
+
+    public function isFechaHito($fecha){
+        $dates = split(";", $this->getFechasdestacadas());
+        foreach ($dates as $tmpDate) {
+            if ($tmpDate == $fecha){
+                return true;
+            }
+        }
+        return false;
+    }
 }

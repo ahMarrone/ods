@@ -274,8 +274,8 @@ class ValoresIndicadoresController extends Controller
     {
         $params = $this->getRequest()->request->all();
         $idIndicador = (isset($params["id_indicador_selected"])) ? $params["id_indicador_selected"] : NULL;
-        $fecha =  (isset($params["fecha"])) ? $params["fecha"] : NULL;
-        $fecha = $this->formatDateToDB($fecha);
+        $plain_fecha =  (isset($params["fecha"])) ? $params["fecha"] : NULL;
+        $fecha = $this->formatDateToDB($plain_fecha);
         $configfecha = $this->getIndicadorConfigByKey($idIndicador, $fecha);
         
         if ($configfecha){
@@ -291,8 +291,10 @@ class ValoresIndicadoresController extends Controller
             $valoresindicadores = $this->parseEntityValoresindicadores($valoresindicadores);
             $ambitoIndicador = $indicador->getAmbito();
             $step = ($indicador->getTipo() == 'entero') ? "1" : "0.01";
+            $is_fecha_hito = $indicador->isFechaHito($fecha);
             return $this->render('valoresindicadores/panel_create_valores_indicadores.html.twig', array(
                 'fecha' => $fecha,
+                'is_fecha_hito' => $is_fecha_hito,
                 'indicador_id' => $indicador->getId(),
                 'indicador' => $indicador,
                 'indicador_ambito' => $ambitoIndicador,
@@ -315,8 +317,6 @@ class ValoresIndicadoresController extends Controller
 			return $this->redirectToRoute('admin_crud_valoresindicadores_preload'); 
         }
     }
-
-
     // Retorna lista de ref. geograficas que actuan como filtro de otras.
     // EJ: La lista de provincias actuan como filtro para las departamentales
     private function getParentRefGeograficas($ambitoIndicador){
@@ -355,14 +355,30 @@ class ValoresIndicadoresController extends Controller
      * PRELOAD ValoresIndicadores entity.
      *
      * @Route("/preload", name="admin_crud_valoresindicadores_preload")
+     * @Route("/preload/{id_indicador}", name="admin_crud_valoresindicadores_preload_indicador")
      * @Method({"GET"})
      */
     public function preloadAction(Request $request){
         list($objetivos, $metas, $indicadores) = $this->preparePreloadData();
+        $id_objetivo_selected = $objetivos[0]["id"];
+        $id_meta_selected = $metas[0]["id"];
+        $id_indicador_selected = $indicadores[0]["id"];
+        $user_indicador_selected = intval($request->get('id_indicador'));
+        if ($user_indicador_selected){
+            $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($user_indicador_selected);
+            if ($indicador){
+                $id_indicador_selected = $indicador->getId();
+                $id_meta_selected = $indicador->getFkidmeta()->getId();
+                $id_objetivo_selected = $indicador->getFkidmeta()->getFkidobjetivo()->getId();
+            }
+        }
         return $this->render('valoresindicadores/preload.html.twig', array(
             'objetivos'=>$objetivos,
             'metas'=>$metas,
             'indicadores'=>$indicadores,
+            'id_indicador_selected' => $id_indicador_selected,
+            'id_meta_selected' => $id_meta_selected,
+            'id_objetivo_selected' => $id_objetivo_selected,
             'api_urls' => array(
                 'indicador_dates'=> $this->generateUrl('admin_crud_valoresindicadores_indicador_dates'),
                 'indicador_desgloces_config' => $this->generateUrl('admin_crud_valoresindicadores_indicador_desgloces_config'),

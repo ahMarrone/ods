@@ -32,7 +32,13 @@
           <h2>Carga valores indicadores</h2>
           <h2><small>{{indicador.fkidmeta.fkidobjetivo.codigo}}.{{indicador.fkidmeta.codigo}}.{{indicador.codigo}} - {{indicador.descripcion}}</small></h2>
         </div>
-      <div class="alert alert-info" class="col-md-3" role="alert"><b>Período:</b> {{fecha}}.
+
+        {% if is_fecha_hito %}
+          <div class="alert alert-warning" class="col-md-3" role="alert"> <i class="fa fa-exclamation-triangle" aria-hidden="true">  </i><b> ATENCION! </b> Usted está cargando valores para un período predeterminado como <b>hito</b> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
+        {% endif %}
+
+        {% set dateParts =  fecha| split('-') %}
+      <div class="alert alert-info" class="col-md-3" role="alert"><b>Período: {{dateParts[0]}}</b> .
         <span>
           <b>Desglozando por:</b>
         {{ desgloces|join(', ') }}.
@@ -47,6 +53,7 @@
           <b>Tipo de indicador:</b> {{value_type}}
         </span>
       </div>
+
     </div>
       <div id="panelList">
         <div class=".panel"></div>
@@ -74,16 +81,17 @@
         <% }  %>
         <button id="saveNewDataLoaders" type="button" class="btn btn-success navbar-btn <% if (!this.collection.hasNewDataLoaders()) { %> disabled<% }  %>"><span class="fa fa-download"  ></span>  Guardar nuevos</button>
       </ul>
-            <% if (this.collection.ambito_indicador == 'D') { %>
           <form class="navbar-form navbar-right" role="search">
+          <a id="goBackPreload" href="{{ path('admin_crud_valoresindicadores_preload_indicador', { 'id_indicador': indicador.id }) }}" type="button" class="btn btn-default navbar-btn"><span class="fa fa-arrow-left"  ></span>  Pantalla precarga</a>
+          <% if (this.collection.ambito_indicador == 'D') { %>
           <div class="form-group">
               <select id="filterCardsSelect">
                 <%= this.collection.getFilterOptions() %>
               </select>
           </div>
-        </form>
         <p class="navbar-text pull-right">Filtrar por provincia: </p>
           <% }  %>
+          </form>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
