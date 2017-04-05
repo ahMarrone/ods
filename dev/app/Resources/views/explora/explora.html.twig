@@ -364,6 +364,9 @@
                       'valoresIndicadoresDesgloses': valoresIndicadoresDesgloses,
                       'fechasDestacadas': fechasDestacadas,
                     });*/
+
+                    delete etiquetas['foo'];
+                    delete desgloses['foo'];
                     that.model.set('idIndicadorSeleccionado', idIndicador);
                     that.model.set('desgloses', desgloses);
                     that.model.set('etiquetas', etiquetas);

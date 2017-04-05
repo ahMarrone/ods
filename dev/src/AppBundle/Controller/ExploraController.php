@@ -132,6 +132,9 @@ class ExploraController extends Controller
                 $valoresIndicadoresConfigFechaMap[$id] = $this->getPeriodo($e->getFecha());
             }
             $idsValoresIndicadoresConfigFecha = array_keys($valoresIndicadoresConfigFechaMap);
+            
+            // echo var_dump($valoresIndicadoresConfigFechaMap);
+            // echo var_dump($idsValoresIndicadoresConfigFecha);
 
             /* Mapping Desgloses */
             $valoresIndicadoresConfigFechaDesgloces = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfechadesgloces')->findByIdvaloresindicadoresconfigfecha($idsValoresIndicadoresConfigFecha);
@@ -188,20 +191,24 @@ class ExploraController extends Controller
                 $fileContent .= "Año" . $CSV . "Referencia_Geográfica" . $CSV . $etiquetasStr . "\r\n";    
             }
             
+            // echo var_dump($idsValoresIndicadoresConfigFecha);
 
             /* ORDENAR POR ID, IDREFGEO */
             $valoresIndicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')->findBy(
-                array('idvaloresindicadoresconfigfecha' => $idsValoresIndicadoresConfigFecha, 
-                      'aprobado' => true));
+                array('idvaloresindicadoresconfigfecha' => $idsValoresIndicadoresConfigFecha));
+
             
             $idRefGeograficaActual = $valoresIndicadores[0]->getIdrefgeografica()->getId();
+            $idValoresIndicadoresConfigFechaActual = $valoresIndicadores[0]->getIdvaloresindicadoresconfigfecha()->getId();
             foreach ($valoresIndicadores as $e) {
                 $id = $e->getIdvaloresindicadoresconfigfecha()->getId();
                 $idRefGeografica = $e->getIdrefgeografica()->getId();
                 $idEtiqueta = $e->getIdetiqueta();
                 $valor = str_replace('.', ',', $e->getValor());
-                if ($idRefGeografica != $idRefGeograficaActual) {
-                    $periodo = $valoresIndicadoresConfigFechaMap[$id];
+                // echo var_dump($idRefGeografica);
+                // echo var_dump($idRefGeograficaActual);
+                if (($idRefGeografica != $idRefGeograficaActual) || ($id != $idValoresIndicadoresConfigFechaActual)) {
+                    $periodo = $valoresIndicadoresConfigFechaMap[$idValoresIndicadoresConfigFechaActual];
                     $fileContent .= $periodo . $CSV;
                     if ($ambito == 'D') {
                         $fileContent .= $agrupamientoRefGeograficaMap[$idRefGeograficaActual] . $CSV;
@@ -213,6 +220,7 @@ class ExploraController extends Controller
                     }
                     $fileContent .= "\r\n";
                     $idRefGeograficaActual = $idRefGeografica;
+                    $idValoresIndicadoresConfigFechaActual = $id;
                 }
                 $indice = $etiquetasMap[$idEtiqueta][1];
                 $valores[$indice] = $valor;
@@ -235,6 +243,7 @@ class ExploraController extends Controller
             $fileName
         );
         $response->headers->set('Content-Disposition', $disposition);
+        
         return $response;
     }
 
