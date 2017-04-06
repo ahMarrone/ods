@@ -132,9 +132,6 @@ class ExploraController extends Controller
                 $valoresIndicadoresConfigFechaMap[$id] = $this->getPeriodo($e->getFecha());
             }
             $idsValoresIndicadoresConfigFecha = array_keys($valoresIndicadoresConfigFechaMap);
-            
-            // echo var_dump($valoresIndicadoresConfigFechaMap);
-            // echo var_dump($idsValoresIndicadoresConfigFecha);
 
             /* Mapping Desgloses */
             $valoresIndicadoresConfigFechaDesgloces = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfechadesgloces')->findByIdvaloresindicadoresconfigfecha($idsValoresIndicadoresConfigFecha);
@@ -190,13 +187,11 @@ class ExploraController extends Controller
             } else {
                 $fileContent .= "Año" . $CSV . "Referencia_Geográfica" . $CSV . $etiquetasStr . "\r\n";    
             }
-            
-            // echo var_dump($idsValoresIndicadoresConfigFecha);
 
             /* ORDENAR POR ID, IDREFGEO */
             $valoresIndicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')->findBy(
-                array('idvaloresindicadoresconfigfecha' => $idsValoresIndicadoresConfigFecha));
-
+                array('idvaloresindicadoresconfigfecha' => $idsValoresIndicadoresConfigFecha,
+                      'aprobado' => true));
             
             $idRefGeograficaActual = $valoresIndicadores[0]->getIdrefgeografica()->getId();
             $idValoresIndicadoresConfigFechaActual = $valoresIndicadores[0]->getIdvaloresindicadoresconfigfecha()->getId();
@@ -205,8 +200,6 @@ class ExploraController extends Controller
                 $idRefGeografica = $e->getIdrefgeografica()->getId();
                 $idEtiqueta = $e->getIdetiqueta();
                 $valor = str_replace('.', ',', $e->getValor());
-                // echo var_dump($idRefGeografica);
-                // echo var_dump($idRefGeograficaActual);
                 if (($idRefGeografica != $idRefGeograficaActual) || ($id != $idValoresIndicadoresConfigFechaActual)) {
                     $periodo = $valoresIndicadoresConfigFechaMap[$idValoresIndicadoresConfigFechaActual];
                     $fileContent .= $periodo . $CSV;
@@ -243,7 +236,6 @@ class ExploraController extends Controller
             $fileName
         );
         $response->headers->set('Content-Disposition', $disposition);
-        
         return $response;
     }
 
@@ -370,8 +362,6 @@ class ExploraController extends Controller
         $entidad = $this->filterValoresIndicadoresConfigFechaByIndicador($idIndicador);
         $atributos = array();
         $atributosPorFecha = array();
-        /* ORDENARLOS POR IDS! */
-        /* SOLO RECUPERAR IDs Sin Cruces */
         $idsValoresIndicadoresConfigFecha = array(); /* Lista de IDs */
 
         foreach ($entidad as $e){
@@ -434,11 +424,10 @@ class ExploraController extends Controller
                 ->getResult();
     }
 
-    /* REEMPLAZAR POR FUNCIÓN NATIVA DE SYMFONY */
     private function filterValoresIndicadoresConfigFechaByIndicador($idIndicador) {
         return $this->getDoctrine()->getManager()->createQuery(
                 'SELECT e FROM AppBundle:Valoresindicadoresconfigfecha e WHERE 
-                e.idindicador = :idIndicador'
+                e.idindicador = :idIndicador AND e.cruzado = FALSE'
                 )->setParameter('idIndicador', $idIndicador)
                 ->getResult();
     }
@@ -477,6 +466,5 @@ class ExploraController extends Controller
             )->fetchAll();
     }
 }
-// http://librosweb.es/libro/symfony_2_x/capitulo_8/buscando_objetos.html
 
 

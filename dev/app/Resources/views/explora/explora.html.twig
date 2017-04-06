@@ -111,7 +111,7 @@
           </select>
       </div> <!-- /.form-group -->
       <div class="form-group">
-        <label for="selectorDesglose" class="control-label">Desglose <i class="fa fa-question-circle" aria-hidden="true" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."></i></label>
+        <label for="selectorDesglose" class="control-label">Desglose <i class="fa fa-question-circle" aria-hidden="true" title="Separación de los valores del indicador de acuerdo a diferentes criterios desagregados que permiten una vista más detallada de la información (Por ejemplo, desglose por 'sexo', 'edad', etc.)"></i></label>
           <select <% if (_.isEmpty(model.get('desgloses'))) { print ('disabled'); } %> id="selectorDesglose" class="form-control selectDesglose">
           <% _.each(model.get("desgloses"), function(desglose, i){ %>
           <!-- MODIFICAR PARA USAR BÚSQUEDA BINARIA  -->
@@ -122,7 +122,7 @@
           </select>
       </div> <!-- /.form-group -->
       <div class="form-group">
-        <label for="selectorEtiqueta" class="control-label">Etiqueta <i class="fa fa-question-circle" aria-hidden="true" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."></i></label>
+        <label for="selectorEtiqueta" class="control-label">Etiqueta <i class="fa fa-question-circle" aria-hidden="true" title=" Cada una de las desagregaciones posibles para un desglose particular (Por ejemplo, para el desglose 'sexo', las etiquetas son: 'femenino', 'masculino' y ' total')."></i></label>
           <select <% if ((model.get("desgloseSeleccionado") == 0) || (_.isEmpty(model.get('etiquetas')))) { print ('disabled'); } %> id="selectorEtiqueta" class="form-control selectEtiqueta">
           <% model.set('etiquetasActuales', []) %>
           <% _.each(model.get("etiquetas"), function(e, id){ %>
@@ -158,9 +158,7 @@
 </table>
 </div>
 </div>
-
 </div>
-
 
 <!-- Modal Exportar -->
 <div class="modal fade" id="exportarModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">
@@ -186,7 +184,6 @@
     </div>
       <div class="modal-footer">
         <div class="col-sm-6 col-md-4 col-md-offset-3">
-        <!-- <input class="btn btn-primary color" type="submit" name="exportar" id="botonExportar" value="Exportar"> -->
           <button type="submit" class="btn btn-primary"><i class="fa fa-download fa-lg"></i> Exportar</button>
         </div>
       </div>
@@ -398,7 +395,6 @@
         anioSelected: function(event){
           if (event.target) {
             this.model.set("fechaSeleccionada", $(this.el).find('.selectFecha').val());
-            // this.model.set("fechaSeleccionada", event.target.value);
           }
           this.render();
           this.desgloseSelected();
@@ -471,7 +467,6 @@
     }
 
     if ($.isEmptyObject(valoresIndicadoresDesgloses)) {
-      // setTimeout(function () {waitingDialog.hide();}, 3000);
       showModalOnSteroids(globalModal, 'error', 'El Indicador seleccionado no posee aún datos disponibles', true);
     } else {
       var modelForm = new ChainSelectData({
@@ -488,7 +483,6 @@
         'fechaSeleccionada': fechaSeleccionada
       });
 
-      // var view = new ThreeSelectView({el: $("#selects"), model:model});
       var viewForm = new ChainSelectView({model:modelForm});
       var viewFechasDestacadas = new FechasDestacadasView({model:modelForm});
     }
@@ -513,7 +507,7 @@
       return false;
     }
   });
-   // $('#myModal').off('hidden.bs.modal').on('hide.bs.modal', function () {
+
   $('#exportarModal').on('hidden.bs.modal', function () {
     $('#checkboxExportarDiv', this).hide();
     $('input:radio[name="exportar"][id="pdfRadio"]', this).prop('checked', true);
