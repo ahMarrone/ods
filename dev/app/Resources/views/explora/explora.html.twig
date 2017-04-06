@@ -172,9 +172,6 @@
       <div class="modal-body">
       <div class="form-group">
         <div class="radio">
-            <label><input type="radio" id="pdfRadio" name="exportar" onclick="hideDiv()" checked="checked">PDF (Mapa)</label>
-        </div>
-        <div class="radio">
           <label><input type="radio" id="csvRadio" name="exportar" onclick="showDiv()">CSV (Datos)</label>
         </div>
         <div id="checkboxExportarDiv" class="checkbox" style="display:none;">
@@ -501,16 +498,11 @@
     
     this.action = api_urls.export + '?id_indicador='+ idIndicador;
     $('#csvRadio', this).val(fechaSeleccionada);
-
-    if ($('#pdfRadio', this).is(':checked')) {
-      // $('#exportarModal').modal('hide');
-      return false;
-    }
   });
 
   $('#exportarModal').on('hidden.bs.modal', function () {
     $('#checkboxExportarDiv', this).hide();
-    $('input:radio[name="exportar"][id="pdfRadio"]', this).prop('checked', true);
+    $('input:radio[name="exportar"][id="csvRadio"]', this).prop('checked', false);
   });
 </script>
 {% endblock %}
