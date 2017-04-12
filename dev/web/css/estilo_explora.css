@@ -137,14 +137,6 @@ table#legend-colors tr td.legend-breaks {
 }
 
 /* Line charts */
-body.page-node .c3 svg {
-    /*font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', sans-serif;*/
-    font-size: 12px;
-    font-weight: 200;
-}
-body.page-node .infobox .c3 svg {
-    font-size: 8px;
-}
 body.page-node .c3 svg text {
     fill: #aaa;
 }

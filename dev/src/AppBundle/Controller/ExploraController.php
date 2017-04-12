@@ -30,6 +30,10 @@ class ExploraController extends Controller
         $objetivos = $this->getObjetivosPreload();
         $metas = $this->getMetasPreload();
         $indicadores = $this->getIndicadoresPreload();
+        $desgloses = NULL;
+        $etiquetas = NULL;
+        $valoresIndicadoresDesgloses = NULL;
+        $idIndicadorSeleccionado = NULL;
 
         $idIndicador = json_decode($request->query->get('id'));
         if (isset($idIndicador)) {
@@ -37,16 +41,14 @@ class ExploraController extends Controller
             if (!(array_key_exists($idIndicador, $indicadores))) {
                 throw $this->createNotFoundException('Indicador Inexistente');        
             }
-        } else {
             /* Primer Indicador de la Tabla (Visible) */
             $idIndicador = array_keys($indicadores)[0];
-        }
-        
-        $etiquetas = $this->getEtiquetasByIndicadorPreload($idIndicador);
-        $desgloses = $this->getDesglosesByIndicadorPreload($idIndicador);
-        $valoresIndicadoresDesgloses = $this->getValoresIndicadoresDesgloses($idIndicador);
-        $indicadores[$idIndicador]['fechasDestacadas'] = $this->intersectFechasDestacadas(
+            $etiquetas = $this->getEtiquetasByIndicadorPreload($idIndicador);
+            $desgloses = $this->getDesglosesByIndicadorPreload($idIndicador);
+            $valoresIndicadoresDesgloses = $this->getValoresIndicadoresDesgloses($idIndicador);
+            $indicadores[$idIndicador]['fechasDestacadas'] = $this->intersectFechasDestacadas(
             $indicadores[$idIndicador]['fechasDestacadas'], array_keys($valoresIndicadoresDesgloses));
+        }
 
         return $this->render('explora/explora.html.twig', array(
             'objetivos' => $objetivos,
