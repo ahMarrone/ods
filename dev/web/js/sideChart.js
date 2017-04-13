@@ -13,7 +13,7 @@ function swapInArray(left, right, v) {
 
 function expandSideChart(descripcion, refGeografica) {
     var modalObj = $('#sideChartModal');
-    modalObj.find('h3').text(descripcion + '(' + refGeografica + ')');
+    modalObj.find('h3').text(descripcion + ' (' + refGeografica + ')');
     modalObj.modal('show');
 
 }
@@ -25,14 +25,18 @@ function plot(chartData, descripcionEtiquetaSeleccionada, tipo, el) {
     if (el == 'infobox-line-chart') {
         size = {height: 160, width: 250};
         padding = {top: 5, right: 10, /*bottom: 0,*/ left: 20};
+        grid = {y: { show: false }}
     } else { // (el == 'modal-line-chart')
         size = {height: 240, width: 480}
         padding = {top: 5, right: 10, /*bottom: 0,*/ left: 30};
+        grid = {y: { show: true }}
     }
 
     /* Máximo 9 Tonos */
-    var colorPattern = ['#FF0000', '#FE2E2E', '#E10000', '#FF3232', '#AF0000', '#B90A0A', '#C31414', '#D72828', '#EB3C3C'];
-    colorPattern[chartData.length - 2] = '#045a8d';
+    /*var colorPattern = ['#FF0000', '#FE2E2E', '#E10000', '#FF3232', '#AF0000', '#B90A0A', '#C31414', '#D72828', '#EB3C3C'];
+    colorPattern[chartData.length - 2] = '#045a8d';*/
+    var colorPattern = ['#F9C314', '#4C9F45', '#024DA1', '#E3253C', '#F26A2B', '#6DCFF6', '#07699D', '#A21C43', '#BD8929'];
+    colorPattern[chartData.length - 2] = '#000000';
     var chart = c3.generate({
         bindto: '#' + el,
         data: { x: 'x', columns: chartData },
@@ -51,6 +55,7 @@ function plot(chartData, descripcionEtiquetaSeleccionada, tipo, el) {
         },
         padding: padding,
         size: size,
+        grid: grid
     });
 
     descripcionEtiquetaSeleccionada = descripcionEtiquetaSeleccionada.replace(" ", "-");

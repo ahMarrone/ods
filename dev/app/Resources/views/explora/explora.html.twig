@@ -68,7 +68,7 @@
       <h3 class="text-center" style="color: #0c4da2;margin-top: 10px;text-transform: uppercase;">Plataforma De Seguimiento De Los Objetivos De Desarrollo Sostenible</h3>
       <div class="form-group">
         <label for="selectorObjetivo" control-label">Objetivo</label>
-          <select  id="selectorObjetivo" class="form-control selectObjetivo" title="<% if (model.get('idObjetivoSeleccionado') != -1) { %><%= model.get('objetivos')[model.get('idObjetivoSeleccionado')].descripcion %><% } %>">
+          <select id="selectorObjetivo" class="form-control selectObjetivo" title="<% if (model.get('idObjetivoSeleccionado') != -1) { %><%= model.get('objetivos')[model.get('idObjetivoSeleccionado')].descripcion %><% } %>">
           <% if (model.get("idObjetivoSeleccionado") == -1) { %>
           <option title="<Seleccionar un Objetivo>" value="-1">&#60; Seleccionar un Objetivo &#62;</option>
           <% } %>
@@ -265,6 +265,7 @@
         'fechasDestacadas': [],
         'rutaDocumentosTecnicos': "{{ asset('uploads/indicadores/') }}",
         'indicadoresDisponibles': 0,
+        'backgroundColorsODS': []
       }
     });
 
@@ -474,6 +475,12 @@
     /* Incializar Mapa */
     mapMe(poligonoNacion, poligonoProvincias, poligonoDepartamentos);
     
+    var backgroundColorsODS = ['#E3253C', '#DAA338', '#4E9F45', '#C3232E',
+                               '#EC412D', '#28BEE2', '#F8C127', '#A21C43',
+                               '#EE6A2B', '#DA1A67', '#F89D29', '#BD899',
+                               '#407F44', '#1D96D3', '#5CB847', '#07699D',
+                               '#19486A'];
+
     var globalModal = 'globalModal';
     var objetivos = {{ objetivos|json_encode|raw }};
     var metas = {{ metas|json_encode|raw }};
@@ -515,14 +522,16 @@
         'idObjetivoSeleccionado': idObjetivoSeleccionado,
         'idMetaSeleccionada': idMetaSeleccionada,
         'idIndicadorSeleccionado': idIndicadorSeleccionado,
-        'fechaSeleccionada': fechaSeleccionada
+        'fechaSeleccionada': fechaSeleccionada,
+        'backgroundColorsODS': backgroundColorsODS
         });
       }
     } else {
       var modelForm = new ChainSelectData({
         'objetivos': objetivos,
         'metas': metas,
-        'indicadores': indicadores
+        'indicadores': indicadores,
+        'backgroundColorsODS': backgroundColorsODS
       });  
     }
 

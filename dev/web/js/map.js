@@ -174,7 +174,8 @@ return {
 
 function getColor(v, e=[]) {
     /* Color Scale */
-    var colors = ['#d0d1e6', '#a6bddb', '#74a9cf', '#2b8cbe', '#045a8d'];
+    // var colors = ['#d0d1e6', '#a6bddb', '#74a9cf', '#2b8cbe', '#045a8d'];
+    var colors = ['#F0F7DA', '#C9DF8A', '#77AB59', '#3B7D3D', '#234D20'];
 
     if (v === undefined) {
         // color = '#dcdbdb';
