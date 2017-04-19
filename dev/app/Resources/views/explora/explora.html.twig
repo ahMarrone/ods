@@ -264,8 +264,7 @@
         'fechaSeleccionada': null,
         'fechasDestacadas': [],
         'rutaDocumentosTecnicos': "{{ asset('uploads/indicadores/') }}",
-        'indicadoresDisponibles': 0,
-        'backgroundColorsODS': []
+        'indicadoresDisponibles': 0
       }
     });
 
@@ -474,12 +473,6 @@
 
     /* Incializar Mapa */
     mapMe(poligonoNacion, poligonoProvincias, poligonoDepartamentos);
-    
-    var backgroundColorsODS = ['#E3253C', '#DAA338', '#4E9F45', '#C3232E',
-                               '#EC412D', '#28BEE2', '#F8C127', '#A21C43',
-                               '#EE6A2B', '#DA1A67', '#F89D29', '#BD899',
-                               '#407F44', '#1D96D3', '#5CB847', '#07699D',
-                               '#19486A'];
 
     var globalModal = 'globalModal';
     var objetivos = {{ objetivos|json_encode|raw }};
@@ -522,16 +515,14 @@
         'idObjetivoSeleccionado': idObjetivoSeleccionado,
         'idMetaSeleccionada': idMetaSeleccionada,
         'idIndicadorSeleccionado': idIndicadorSeleccionado,
-        'fechaSeleccionada': fechaSeleccionada,
-        'backgroundColorsODS': backgroundColorsODS
+        'fechaSeleccionada': fechaSeleccionada
         });
       }
     } else {
       var modelForm = new ChainSelectData({
         'objetivos': objetivos,
         'metas': metas,
-        'indicadores': indicadores,
-        'backgroundColorsODS': backgroundColorsODS
+        'indicadores': indicadores
       });  
     }
 

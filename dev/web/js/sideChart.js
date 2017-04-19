@@ -35,7 +35,7 @@ function plot(chartData, descripcionEtiquetaSeleccionada, tipo, el) {
     /* Máximo 9 Tonos */
     /*var colorPattern = ['#FF0000', '#FE2E2E', '#E10000', '#FF3232', '#AF0000', '#B90A0A', '#C31414', '#D72828', '#EB3C3C'];
     colorPattern[chartData.length - 2] = '#045a8d';*/
-    var colorPattern = ['#F9C314', '#4C9F45', '#024DA1', '#E3253C', '#F26A2B', '#6DCFF6', '#07699D', '#A21C43', '#BD8929'];
+    var colorPattern = ['#6DCFF6', '#F26A2B', '#E3253C', '#024DA1', '#4C9F45', '#F9C314', '#07699D', '#A21C43', '#BD8929'];
     colorPattern[chartData.length - 2] = '#000000';
     var chart = c3.generate({
         bindto: '#' + el,
