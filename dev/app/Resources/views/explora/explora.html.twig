@@ -91,7 +91,7 @@
           </select>
       </div> <!-- /.form-group -->
       <div class="form-group">
-        <label for="selectorIndicador" class="control-label">Indicador <% if (model.get("idIndicadorSeleccionado" != -1)) { %>
+        <label for="selectorIndicador" class="control-label">Indicador <% if (model.get("idIndicadorSeleccionado") != -1) { %>
         <% if (model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico) { %><a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico)%>" class="fa fa-info-circle" title="Ficha Técnica"></a><% } %>
         <% } %></label>
           <select <% if (model.get("idMetaSeleccionada") == -1) { print ('disabled'); } %> id="selectorIndicador" class="form-control selectIndicador" title="<% if (model.get("idIndicadorSeleccionado") != -1) { %><%= model.get('indicadores')[model.get('idIndicadorSeleccionado')].descripcion %><% } %>">
