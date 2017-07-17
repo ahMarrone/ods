@@ -49,6 +49,7 @@ function plot(chartData, descripcionEtiquetaSeleccionada, tipo, el) {
                     if (tipo != "entero") {
                         valueFormatted = d3.format(",.2f")(value).replace('.', ' ').replace(/,/g, '.').replace(' ', ',');
                     }
+                    if (tipo == "porcentual") { valueFormatted += ' %' }
                     return valueFormatted;
                 }
             }
@@ -103,6 +104,7 @@ var templateSideChart = [
             '<% } else { %>',
                 '<%= model.get("layerProperties").value %>',
             '<% } %>',
+            '<% if (model.get("indicador").tipo == "porcentual" ) { %> % <% } %>',
     '</div>',
     '<div class="texto-aclaracion">Al momento sólo se cuenta con datos para el año de referencia</div>',
         '<% } else { %>',
