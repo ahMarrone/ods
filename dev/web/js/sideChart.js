@@ -117,6 +117,7 @@ var templateSideChart = [
             '<% if (i != 0) { %> - <% } %>',
             '<% if (model.get("indicador").tipo != "entero" ) { %>',
                 'Meta <%= item[0] %>: <%= item[1].toFixed(2).replace(".", ",") %>',
+                '<% if (model.get("indicador").tipo == "porcentual" ) { %> % <% } %>',
             '<% } else { %>',
                 'Meta <%= item[0] %>: <%= item[1] %>',
             '<% } %>',
