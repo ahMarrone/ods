@@ -169,15 +169,18 @@ class IndicadoresController extends Controller
     }
 
     private function getIndicadorNextCode($idMeta){
-        $em = $this->getDoctrine()->getManager();
-        $highest_id = $em->createQueryBuilder()
-            ->select('MAX(e.codigo)')
-            ->from('AppBundle:Indicadores', 'e')
-            ->where('e.fkidmeta = ?1')
-            ->setParameter(1, $idMeta)
-            ->getQuery()
-            ->getSingleScalarResult();
-        $highest_id = $highest_id + 1;
+        $highest_id = 1;
+        if ($idMeta){
+            $em = $this->getDoctrine()->getManager();
+            $connection = $em->getConnection();
+            $statement = $connection->prepare("SELECT MAX(codigo) FROM indicadores WHERE CONVERT(codigo, unsigned integer) > 0 AND fkIdMeta = :idmeta");
+            $statement->bindValue('idmeta', $idMeta);
+            $statement->execute();
+            $results = $statement->fetchAll();
+            if ($results){
+                $highest_id = $results[0]["MAX(codigo)"] + 1;
+            }
+        }
         return array("next_indicador_code" => $highest_id);
     }
 

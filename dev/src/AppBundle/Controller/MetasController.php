@@ -128,15 +128,18 @@ class MetasController extends Controller
     }
 
     private function getMetaNextCode($idObjetivo){
-        $em = $this->getDoctrine()->getManager();
-        $highest_id = $em->createQueryBuilder()
-            ->select('MAX(e.codigo)')
-            ->from('AppBundle:Metas', 'e')
-            ->where('e.fkidobjetivo = ?1')
-            ->setParameter(1, $idObjetivo)
-            ->getQuery()
-            ->getSingleScalarResult();
-        $highest_id = $highest_id + 1;
+        $highest_id = 1;
+        if ($idObjetivo){
+            $em = $this->getDoctrine()->getManager();
+            $connection = $em->getConnection();
+            $statement = $connection->prepare("SELECT MAX(codigo) FROM metas WHERE CONVERT(codigo, unsigned integer) > 0 AND fkIdObjetivo = :idobjetivo");
+            $statement->bindValue('idobjetivo', $idObjetivo);
+            $statement->execute();
+            $results = $statement->fetchAll();
+            if ($results){
+                $highest_id = $results[0]["MAX(codigo)"] + 1;
+            }
+        }
         return array("next_meta_code" => $highest_id);
     }
 
