@@ -21,7 +21,7 @@ class Metas
     private $id;
 
         /**
-     * @var integer
+     * @var string
      */
     private $codigo;
 
@@ -183,7 +183,7 @@ class Metas
     /**
      * Set codigo
      *
-     * @param integer $codigo
+     * @param string $codigo
      * @return Metas
      */
     public function setCodigo($codigo)
@@ -196,7 +196,7 @@ class Metas
     /**
      * Get codigo
      *
-     * @return integer 
+     * @return string 
      */
     public function getCodigo()
     {

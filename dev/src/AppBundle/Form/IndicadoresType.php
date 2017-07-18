@@ -39,10 +39,9 @@ class IndicadoresType extends AbstractType
         $this->last_code_used = $options['last_code_used'];
         $builder
             ->add('fkidmeta','hidden',array('mapped'=>false))
-            ->add('codigo', IntegerType::class, array(
+            ->add('codigo', TextType::class, array(
                 'label' => 'Código del indicador', 'attr' => array(
                     'class' => 'col-sm-1',
-                    'min'=> 0,
                 )                 
             ))                        
             ->add('descripcion', TextareaType::class , array('label'  => 'Descripción', 'attr' => array('maxlength' => 500, ),))

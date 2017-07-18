@@ -8,7 +8,7 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="codigo" type="integer" column="codigo" nullable="false"/>
+    <field name="codigo" type="string" column="codigo" length="4" nullable="false"/>
     <field name="descripcion" type="string" column="descripcion" length="5000" nullable="false"/>
     <field name="ambito" type="string" column="ambito" nullable="false"/>
     <field name="fechamodificacion" type="string" column="fechaModificacion" nullable="false"/>

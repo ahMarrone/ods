@@ -36,10 +36,9 @@ class MetasType extends AbstractType
                           'label'=> "Objetivo",
                     )
             )
-            ->add('codigo', IntegerType::class, array(
+            ->add('codigo', TextType::class, array(
                   'label' => "Código de meta", 'attr' => array(
                   'class' => 'col-sm-1',
-                  'min'=> 0,
                   )
             )
             )

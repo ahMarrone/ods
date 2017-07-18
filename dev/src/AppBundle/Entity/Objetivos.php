@@ -20,7 +20,7 @@ class Objetivos
     private $id;
 
     /**
-     * @var integer
+     * @var string
      */
     private $codigo;
 
@@ -78,7 +78,7 @@ class Objetivos
     /**
      * Set codigo
      *
-     * @param integer $codigo
+     * @param string $codigo
      * @return Objetivos
      */
     public function setCodigo($codigo)
@@ -91,7 +91,7 @@ class Objetivos
     /**
      * Get codigo
      *
-     * @return integer 
+     * @return string 
      */
     public function getCodigo()
     {

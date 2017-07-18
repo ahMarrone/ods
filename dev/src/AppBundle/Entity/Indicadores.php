@@ -19,7 +19,7 @@ class Indicadores
 
 
     /**
-     * @var integer
+     * @var string
      */
     private $codigo;
 
@@ -585,7 +585,7 @@ class Indicadores
     /**
      * Set codigo
      *
-     * @param integer $codigo
+     * @param string $codigo
      * @return Indicadores
      */
     public function setCodigo($codigo)
@@ -598,7 +598,7 @@ class Indicadores
     /**
      * Get codigo
      *
-     * @return integer 
+     * @return string 
      */
     public function getCodigo()
     {
