@@ -27,28 +27,33 @@ class ExploraController extends Controller
         con los correspondientes valores para cada Referencia Geogŕafica de acuerdo
         al indicador seleccionado */
 
-        $objetivos = $this->getObjetivosPreload();
-        $metas = $this->getMetasPreload();
-        $indicadores = $this->getIndicadoresPreload();
+        $idMeta = NULL;
+        $idxMeta = -1;
+        $idIndicador = json_decode($request->query->get('id'));
+        $idxIndicador = -1;
         $desgloses = NULL;
         $etiquetas = NULL;
         $valoresIndicadoresDesgloses = NULL;
-        $idIndicadorSeleccionado = NULL;
 
-        $idIndicador = json_decode($request->query->get('id'));
+        $indicadores = $this->getIndicadoresPreload($idIndicador, $idxIndicador);
+
         if (isset($idIndicador)) {
             /* Antes de continuar verificar si el Indicador solicitado existe y se encuentra 'visible' */    
-            if (!(array_key_exists($idIndicador, $indicadores))) {
+            if ($idxIndicador == -1) {
                 throw $this->createNotFoundException('Indicador Inexistente');        
             }
             /* Primer Indicador de la Tabla (Visible) */
-            $idIndicador = array_keys($indicadores)[0];
+            // $idIndicador = array_keys($indicadores)[0];
             $etiquetas = $this->getEtiquetasByIndicadorPreload($idIndicador);
             $desgloses = $this->getDesglosesByIndicadorPreload($idIndicador);
             $valoresIndicadoresDesgloses = $this->getValoresIndicadoresDesgloses($idIndicador);
-            $indicadores[$idIndicador]['fechasDestacadas'] = $this->intersectFechasDestacadas(
-            $indicadores[$idIndicador]['fechasDestacadas'], array_keys($valoresIndicadoresDesgloses));
+            $indicadores[$idxIndicador]['fechasDestacadas'] = $this->intersectFechasDestacadas(
+            $indicadores[$idxIndicador]['fechasDestacadas'], array_keys($valoresIndicadoresDesgloses));
+            $idMeta = $indicadores[$idxIndicador]['id_meta'];  
         }
+
+        $objetivos = $this->getObjetivosPreload();
+        $metas = $this->getMetasPreload($idMeta, $idxMeta);
 
         return $this->render('explora/explora.html.twig', array(
             'objetivos' => $objetivos,
@@ -57,7 +62,8 @@ class ExploraController extends Controller
             'desgloses' => $desgloses,
             'etiquetas' => $etiquetas,
             'valoresIndicadoresDesgloses' => $valoresIndicadoresDesgloses,
-            'idIndicadorSeleccionado' => $idIndicador,
+            'idxIndicadorSeleccionado' => $idxIndicador,
+            'idxMetaSeleccionada' => $idxMeta,
             'api_urls' => array('refresh'=> $this->generateUrl('explora_refresh'),
                                 'export'=> $this->generateUrl('export_refresh'))
         ));
@@ -252,14 +258,20 @@ class ExploraController extends Controller
         return $list;
     }
 
-    private function getMetasPreload(){
+    private function getMetasPreload($id, &$idx){
         $list = array();
         $metas =  $this->getDoctrine()->getRepository('AppBundle:Metas')->findAll();
+        $indice = 0;
         foreach ($metas as $m) {
-            $id = $m->getId();
-            $list[$id] = array('codigo'=>$m->getFkidobjetivo()->getCodigo() . "." . $m->getCodigo(),
-                               'descripcion'=>$m->getDescripcion(),
-                               'id_objetivo'=>$m->getFkidobjetivo()->getId());
+            if ($id == $m->getId()) {
+                $idx = $indice;
+            }
+            $meta = array('id'=>$m->getId(),
+                          'codigo'=>$m->getFkidobjetivo()->getCodigo() . "." . $m->getCodigo(),
+                          'descripcion'=>$m->getDescripcion(),
+                          'id_objetivo'=>$m->getFkidobjetivo()->getId());
+            array_push($list, $meta);
+            $indice++;
         }
         return $list;
     }
@@ -302,34 +314,38 @@ class ExploraController extends Controller
         return $scale;
     }
 
-    private function getIndicadoresPreload() {
+    private function getIndicadoresPreload($id, &$idx) {
         $list = array();
         /* Si se desean filtrar los indicadores por meta seleccionada, descomentar y reemplazar  */
         // $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByFkidmeta($idMeta);
-
-        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByVisible(true);
-
+        $indice = 0;
+        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findBy(array('visible' => true), array('codigo' => 'ASC'));
         foreach ($indicadores as $i) {
-            $idIndicador = $i->getId();
-            $list[$idIndicador] = array();
-            $list[$idIndicador]['codigo'] = $i->getFkidmeta()->getFkidobjetivo()->getCodigo() . "." . $i->getFkidmeta()->getCodigo() . "." . $i->getCodigo();
-            $list[$idIndicador]['descripcion'] = $i->getDescripcion();
-            $list[$idIndicador]['id_meta'] = $i->getFkidmeta()->getId();
-            $list[$idIndicador]['ambito'] = $i->getAmbito();
-            $list[$idIndicador]['documentoTecnico'] = $i->getDocumentPath();
-            $list[$idIndicador]['tipo'] = $i->getTipo();
-            $list[$idIndicador]['valMin'] = $i->getValmin();
-            $list[$idIndicador]['valMax'] = $i->getValmax();
-            $list[$idIndicador]['escala'] = $this->buildScale($list[$idIndicador]['tipo'], $list[$idIndicador]['valMin'], $list[$idIndicador]['valMax']);
-            $list[$idIndicador]['fechasDestacadas'] = $this->parseFechasDestacadas($i->getFechasDestacadas());
+            if ($id == $i->getId()) {
+                $idx = $indice;
+            }
+            $indicador = array(
+                'id'=>$i->getId(),
+                'codigo'=>$i->getFkidmeta()->getFkidobjetivo()->getCodigo() . "." . $i->getFkidmeta()->getCodigo() . "." . $i->getCodigo(),
+                'descripcion'=>$i->getDescripcion(),
+                'id_meta'=>$i->getFkidmeta()->getId(),
+                'ambito'=>$i->getAmbito(),
+                'documentoTecnico'=>$i->getDocumentPath(),
+                'tipo'=>$i->getTipo(),
+                'valMin'=>$i->getValmin(),
+                'valMax'=>$i->getValmax(),
+                'escala'=>$this->buildScale($i->getTipo(), $i->getValmin(), $i->getValmax()),
+                'fechasDestacadas'=>$this->parseFechasDestacadas($i->getFechasDestacadas()),
+                'fechasMetas'=>array());
             /* Metas: Fechas/ValoresEsperados */
-            $list[$idIndicador]['fechasMetas'] = array();
             if ($i->getFechametaintermedia() != NULL) {
-                array_push($list[$idIndicador]['fechasMetas'], array(date('Y', strtotime($i->getFechametaintermedia())), floatval($i->getValoresperadometaintermedia())));
+                array_push($indicador['fechasMetas'], array(date('Y', strtotime($i->getFechametaintermedia())), floatval($i->getValoresperadometaintermedia())));
             }
             if ($i->getFechametafinal() != NULL) {
-                array_push($list[$idIndicador]['fechasMetas'], array(date('Y', strtotime($i->getFechametafinal())), floatval($i->getValoresperadometafinal())));
+                array_push($indicador['fechasMetas'], array(date('Y', strtotime($i->getFechametafinal())), floatval($i->getValoresperadometafinal())));
             }
+            array_push($list, $indicador);
+            $indice++;
         }
 
         return $list;

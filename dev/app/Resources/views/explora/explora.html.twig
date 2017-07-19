@@ -79,13 +79,13 @@
       </div> <!-- /.form-group -->
       <div class="form-group">
         <label for="selectorMeta" class="control-label">Meta</label>
-          <select <% if ((model.get('idObjetivoSeleccionado') == -1)) { print ('disabled'); } %> id="selectorMeta" class="form-control selectMeta" title="<% if (model.get('idMetaSeleccionada') != -1) { %><%= model.get('metas')[model.get('idMetaSeleccionada')].descripcion %><% } %>">
-          <% if (model.get("idMetaSeleccionada") == -1) { %>
+          <select <% if ((model.get('idObjetivoSeleccionado') == -1)) { print ('disabled'); } %> id="selectorMeta" class="form-control selectMeta" title="<% if (model.get('idxMetaSeleccionada') != -1) { %><%= model.get('metas')[model.get('idxMetaSeleccionada')].descripcion %><% } %>">
+          <% if (model.get("idxMetaSeleccionada") == -1) { %>
           <option title="Seleccionar una Meta" value="-1">&#60; Seleccionar una Meta &#62; </option>
           <% } %>
           <% _.each(model.get("metas"), function(meta, i){ %>
           <% if ( meta.id_objetivo == model.get("idObjetivoSeleccionado") ){ %>
-          <option title="<%= meta.codigo %> - <%= meta.descripcion %>" value="<%= i %>" <% if (i == model.get("idMetaSeleccionada")) { %> selected<% }  %>><%= meta.codigo %> - <%= _(meta.descripcion).trim(42) %></option>
+          <option title="<%= meta.codigo %> - <%= meta.descripcion %>" value="<%= i %>" id="<%= meta.id %>" <% if (i == model.get("idxMetaSeleccionada")) { %> selected<% }  %>><%= meta.codigo %> - <%= _(meta.descripcion).trim(42) %></option>
           <% } %>
           <% }); %>
           </select>
@@ -94,15 +94,15 @@
         <label for="selectorIndicador" class="control-label">Indicador <% if (model.get("idIndicadorSeleccionado") != -1) { %>
         <% if (model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico) { %><a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico)%>" class="fa fa-info-circle" title="Ficha Técnica"></a><% } %>
         <% } %></label>
-          <select <% if (model.get("idMetaSeleccionada") == -1) { print ('disabled'); } %> id="selectorIndicador" class="form-control selectIndicador" title="<% if (model.get("idIndicadorSeleccionado") != -1) { %><%= model.get('indicadores')[model.get('idIndicadorSeleccionado')].descripcion %><% } %>">
+          <select <% if (model.get("idxMetaSeleccionada") == -1) { print ('disabled'); } %> id="selectorIndicador" class="form-control selectIndicador" title="<% if (model.get("idIndicadorSeleccionado") != -1) { %><%= model.get('indicadores')[model.get('idIndicadorSeleccionado')].descripcion %><% } %>">
           <% if (model.get("idIndicadorSeleccionado") == -1) { %>
-          <option title="Seleccionar un Indicador" value="-1">&#60; Seleccionar un Indicador &#62; </option>
+          <option title="Seleccionar un Indicador" value="-1" id="-1">&#60; Seleccionar un Indicador &#62; </option>
           <% } %>
           <% model.set("indicadoresDisponibles", 0) %>
           <% _.each(model.get("indicadores"), function( indicador, i){ %>
           <% if ( indicador.id_meta == model.get("idMetaSeleccionada") ){ %>
           <% model.set("indicadoresDisponibles", model.get("indicadoresDisponibles") + 1) %>
-          <option option title="<%= indicador.codigo %>-<%= indicador.descripcion %>" value="<%= i %>" <% if (i == model.get("idIndicadorSeleccionado")) { %> selected<% }  %>><%= indicador.codigo %> - <%= _(indicador.descripcion ).trim(42) %></option>
+          <option option title="<%= indicador.codigo %>-<%= indicador.descripcion %>" value="<%= i %>" id="<%= indicador.id %>" <% if (i == model.get("idIndicadorSeleccionado")) { %> selected<% }  %>><%= indicador.codigo %> - <%= _(indicador.descripcion ).trim(42) %></option>
           <% } %>
           <% }); %>
           </select>
@@ -259,6 +259,7 @@
         'etiquetasActuales': [],
         'fechasDestacadas': [],
         'idObjetivoSeleccionado': -1,
+        'idxMetaSeleccionada': -1,
         'idMetaSeleccionada': -1,
         'idIndicadorSeleccionado': -1,
         'fechaSeleccionada': null,
@@ -289,7 +290,7 @@
         /* Eventos a monitorizar */
         /* VER SI ES POSIBLE REALIZAR UN MAP */
         this.model.on('change:idObjetivoSeleccionado', this.render, this);
-        this.model.on('change:idMetaSeleccionada', this.render, this);
+        this.model.on('change:idxMetaSeleccionada', this.render, this);
         this.model.on('change:idIndicadorSeleccionado', this.render, this);
         this.model.on('change:fechaSeleccionada', this.anioSelected, this);
         this.model.on('change:desgloseSeleccionado', this.render, this);
@@ -333,12 +334,14 @@
           return this;
         },
         objetivoSelected: function(event) {
-          this.model.set("idMetaSeleccionada", -1)
+          this.model.set("idxMetaSeleccionada", -1);
+          this.model.set("idMetaSeleccionada", -1);
           this.model.set("idObjetivoSeleccionado", event.target.value);
           this.metaSelected();
         },
         metaSelected: function(e) {
-          this.model.set("idMetaSeleccionada", $(this.el).find('.selectMeta').val());
+          this.model.set("idxMetaSeleccionada", $(this.el).find('.selectMeta').val());
+          this.model.set("idMetaSeleccionada", $(this.el).find('.selectMeta').children(':selected').attr('id'));
           this.model.set("idIndicadorSeleccionado", -1)
           this.indicadorSelected();
         },
@@ -347,7 +350,9 @@
           /* Bloquear pantalla hasta tanto no se hayan recuperado los datos */
 
           var idMeta = $(this.el).find('.selectMeta').val();
-          var idIndicador = $(this.el).find('.selectIndicador').val();
+          // var idIndicador = $(this.el).find('.selectIndicador').val();
+          var idxIndicador = $(this.el).find('.selectIndicador').val();
+          var idIndicador = $(this.el).find('.selectIndicador').children(':selected').attr('id');
           var indicadoresDisponibles = this.model.get("indicadoresDisponibles");
           var url = api_urls.refresh + '?id_indicador='+ idIndicador;
           var data;
@@ -375,7 +380,7 @@
                   'processData': false,
                   'contentType': 'application/json',
                    success: function(data) {
-                    var indicador = that.model.get('indicadores')[idIndicador];
+                    var indicador = that.model.get('indicadores')[idxIndicador];
                     var desgloses = data['desgloses'];
                     var etiquetas = data['etiquetas'];
                     var valoresIndicadoresDesgloses = data['valoresIndicadoresDesgloses'];
@@ -399,7 +404,7 @@
 
                     delete etiquetas['foo'];
                     delete desgloses['foo'];
-                    that.model.set('idIndicadorSeleccionado', idIndicador);
+                    that.model.set('idIndicadorSeleccionado', idxIndicador);
                     that.model.set('desgloses', desgloses);
                     that.model.set('etiquetas', etiquetas);
                     that.model.set('valoresIndicadoresDesgloses', valoresIndicadoresDesgloses);
@@ -478,14 +483,15 @@
     var objetivos = {{ objetivos|json_encode|raw }};
     var metas = {{ metas|json_encode|raw }};
     var indicadores = {{ indicadores|json_encode|raw }};
-    var idIndicadorSeleccionado = {{ idIndicadorSeleccionado|json_encode }};
+    var idIndicadorSeleccionado = {{ idxIndicadorSeleccionado|json_encode }};
+    var idxMetaSeleccionada = {{ idxMetaSeleccionada|json_encode }};
 
-    if ( idIndicadorSeleccionado ) {
+    if ( idIndicadorSeleccionado != -1 ) {
       var valoresIndicadoresDesgloses = {{ valoresIndicadoresDesgloses|json_encode|raw }};
       var desgloses = {{ desgloses|json_encode|raw }};
       var etiquetas = {{ etiquetas|json_encode|raw }};
-      var idMetaSeleccionada = indicadores[idIndicadorSeleccionado].id_meta;
-      var idObjetivoSeleccionado = metas[idMetaSeleccionada].id_objetivo;
+      var idMetaSeleccionada = metas[idxMetaSeleccionada].id;
+      var idObjetivoSeleccionado = metas[idxMetaSeleccionada].id_objetivo;
       var fechasDestacadas = indicadores[idIndicadorSeleccionado].fechasDestacadas;
       var fechaSeleccionada;
       
@@ -513,6 +519,7 @@
         'etiquetas': etiquetas,
         'fechasDestacadas': fechasDestacadas,
         'idObjetivoSeleccionado': idObjetivoSeleccionado,
+        'idxMetaSeleccionada': idxMetaSeleccionada,
         'idMetaSeleccionada': idMetaSeleccionada,
         'idIndicadorSeleccionado': idIndicadorSeleccionado,
         'fechaSeleccionada': fechaSeleccionada
@@ -538,7 +545,8 @@
  }
 
  $('#formExportModal').submit(function() {
-    var idIndicador = $('#selectorIndicador').val()
+    // var idIndicador = $('#selectorIndicador').val()
+    var idIndicador = $('#selectorIndicador').children(':selected').attr('id');
     var fechaSeleccionada = $('#selectorAnio').val()
     
     this.action = api_urls.export + '?id_indicador='+ idIndicador;
