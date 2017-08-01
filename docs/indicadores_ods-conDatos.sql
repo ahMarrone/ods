@@ -1494,16 +1494,6 @@ INSERT INTO `metas` VALUES (2,1,'Para 2030, erradicar la pobreza extrema para to
 UNLOCK TABLES;
 
 --
--- `etiquetas`
---
-
-LOCK TABLES `etiquetas` WRITE;
-/*!40000 ALTER TABLE `etiquetas` DISABLE KEYS */;
-INSERT INTO `etiquetas` VALUES (8,'Femenino 1',1),(9,'Masculino 1',1),(10,'Plena',3),(11,'Medio Tiempo',3),(12,'Desocupado',3),(13,'Urbana',2),(14,'Rural',2),(16,'Total 1',1),(17,'Aborigen',4),(18,'Blanca',4),(19,'Negra',4),(20,'total',2);
-/*!40000 ALTER TABLE `etiquetas` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- `desgloces`
 --
 
@@ -1511,6 +1501,16 @@ LOCK TABLES `desgloces` WRITE;
 /*!40000 ALTER TABLE `desgloces` DISABLE KEYS */;
 INSERT INTO `desgloces` VALUES (1,'Sexo'),(2,'Área'),(3,'Ocupación'),(4,'Etnia');
 /*!40000 ALTER TABLE `desgloces` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- `etiquetas`
+--
+
+LOCK TABLES `etiquetas` WRITE;
+/*!40000 ALTER TABLE `etiquetas` DISABLE KEYS */;
+INSERT INTO `etiquetas` VALUES (8,'Femenino 1',1),(9,'Masculino 1',1),(10,'Plena',3),(11,'Medio Tiempo',3),(12,'Desocupado',3),(13,'Urbana',2),(14,'Rural',2),(16,'Total 1',1),(17,'Aborigen',4),(18,'Blanca',4),(19,'Negra',4),(20,'total',2);
+/*!40000 ALTER TABLE `etiquetas` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
