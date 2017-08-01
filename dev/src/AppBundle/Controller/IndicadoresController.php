@@ -41,23 +41,29 @@ class IndicadoresController extends Controller
         $objetivos = $this->getObjetivosPreload();
         $metas = $this->getMetasPreload();
         $indicadores = $em->getRepository('AppBundle:Indicadores')->findAll();
+        if (count($metas)){
+            if ($id_meta == 0){
+                $objetivo_seleccionado = $objetivos[0]["id"];
+                $meta_seleccionada = $metas[0]["id"];
+            } else {
+                $meta = $em->getRepository('AppBundle:Metas')->findOneById($id_meta);
+                $meta_seleccionada = $meta->getId();
+                $objetivo_seleccionado = $meta->getFkidobjetivo()->getId();
+            }
 
-        if ($id_meta == 0){
-            $objetivo_seleccionado = $objetivos[0]["id"];
-            $meta_seleccionada = $metas[0]["id"];
+            return $this->render('indicadores/index.html.twig', array(
+                'indicadores' => $indicadores,
+                'objetivos' => $this->getObjetivosPreload(),
+                'metas' => $this->getMetasPreload(),
+                'objetivo_seleccionado' => $objetivo_seleccionado,
+                'meta_seleccionada' => $meta_seleccionada,            
+            ));
         } else {
-            $meta = $em->getRepository('AppBundle:Metas')->findOneById($id_meta);
-            $meta_seleccionada = $meta->getId();
-            $objetivo_seleccionado = $meta->getFkidobjetivo()->getId();
+            $request->getSession()
+                ->getFlashBag()
+            ->add('warning', "Por favor, verifique que exista al menos una Meta cargada en el sistema");
+            return $this->redirectToRoute('paneluser_index');
         }
-
-        return $this->render('indicadores/index.html.twig', array(
-            'indicadores' => $indicadores,
-            'objetivos' => $this->getObjetivosPreload(),
-            'metas' => $this->getMetasPreload(),
-            'objetivo_seleccionado' => $objetivo_seleccionado,
-            'meta_seleccionada' => $meta_seleccionada,            
-        ));
     }
 
     /**
