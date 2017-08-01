@@ -80,6 +80,7 @@ class DesglocesPorIndicadorController extends Controller
                 }
             }
             $em->flush();
+            $request->getSession()->getFlashBag()->add('success', "La configuración de desgloses del indicador ha sido actualizada correctamente");
             return $this->redirectToRoute('admin_crud_indicadores_index');
         }
 
