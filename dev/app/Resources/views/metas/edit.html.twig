@@ -26,7 +26,7 @@
 
             <div class="row">
                         {{ form_start(delete_form) }}
-                            <input class="col-md-1 btn btn-danger option-btn" type="submit" value="Eliminar">
+                            <input class="col-md-1 btn btn-danger option-btn" {{ meta_has_indicadores ? 'disabled' : '' }} type="submit" value="Eliminar"> <span style="color:red">  {{ meta_has_indicadores ? '*No se puede eliminar una meta que tiene Indicadores asociados.' :  '' }} </span>
                         {{ form_end(delete_form) }}
             </div>
 

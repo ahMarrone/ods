@@ -151,6 +151,7 @@ class MetasController extends Controller
      */
     public function editAction(Request $request, Metas $meta)
     {
+        $em = $this->getDoctrine()->getManager();
         $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $deleteForm = $this->createDeleteForm($meta);
         $editForm = $this->createForm('AppBundle\Form\MetasType', $meta, array(
@@ -162,15 +163,15 @@ class MetasController extends Controller
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->addMetaMetadata($meta);
-            $em = $this->getDoctrine()->getManager();
             $em->persist($meta);
             $em->flush();
             $this->get('app.utils.scopes_service')->addEditSuccessToRequest($request);
             return $this->redirectToRoute('admin_crud_metas_index');
         }
-
+        $indicadoresMeta = $em->getRepository('AppBundle:Indicadores')->findByfkidmeta($meta->getId());
         return $this->render('metas/edit.html.twig', array(
             'meta' => $meta,
+            'meta_has_indicadores' => count($indicadoresMeta),
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
             'api_urls' => array('get_next_meta_code'=> $this->generateUrl('admin_crud_metas_get_next_meta_code'))
@@ -191,8 +192,14 @@ class MetasController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->remove($meta);
-            $em->flush();
+            $indicadoresMeta = $em->getRepository('AppBundle:Indicadores')->findByfkidmeta($meta->getId());
+            if (count($indicadoresMeta)) {
+                $request->getSession()->getFlashBag()->add('warning', "No se puede eliminar una meta que tiene Indicadores asociados");
+                return $this->redirectToRoute('paneluser_index');
+            } else {
+                $em->remove($meta);
+                $em->flush();
+            }
         }
 
         return $this->redirectToRoute('admin_crud_metas_index');
