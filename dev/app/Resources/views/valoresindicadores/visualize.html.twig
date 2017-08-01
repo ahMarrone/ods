@@ -79,6 +79,7 @@
         var showNoValues = true;
 
 
+		var $btn;
 
     	function serializeFormData(){
     		var string = "";
@@ -233,12 +234,20 @@
 
 
     	function updateIndicadorDatesValues(data){
+    		console.log(data);
     		var newDatesHTML = "";
     		for (i in data){
     			var ref = "<a class='btn btn-default loadIndicadorDate'>"+data[i]+"</a>  ";
     			newDatesHTML += ref;
     		}
     		$('#indicadorDatesWithData').html(newDatesHTML);
+    		// Por defecto, pido datos del ultimo año disponible
+    		if (data.length){
+    			$('#dateValuePicker').val(data[data.length-1]);
+    		} else {
+    			$('#dateValuePicker').val("");
+    		}
+    		fetchvisualizeData();
     	}
 
 
@@ -293,16 +302,20 @@
 	    	var view = new ThreeSelectView({el: $("#selects") ,model:model, indicadorChangeCallback: getIndicadorDates});
     	}
 
-		var $btn;
 
-		$('#requestVisualizeData').on('click', function(){
-			$btn = $(this);
+		function fetchvisualizeData(){
+			$btn = $('#requestVisualizeData');
 			$btn.button('loading');
 			table.ajax.reload(resetRequestState);
+		}
+
+		$('#requestVisualizeData').on('click', function(){
+			fetchvisualizeData();
 		})
 
 		$('#alertsDates').on('click', '.loadIndicadorDate', function() {
 			$('#dateValuePicker').val($(this).text());
+			fetchvisualizeData();
 		});
 
 
