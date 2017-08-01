@@ -50,13 +50,18 @@ class IndicadoresController extends Controller
                 $meta_seleccionada = $meta->getId();
                 $objetivo_seleccionado = $meta->getFkidobjetivo()->getId();
             }
-
+            $dataToApprove = $this->getDictDataToApprove($this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')
+                               ->getIndicadoresDataToApprove());
+            $indicadoresHasData = $this->getDictDataToApprove($this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')
+                               ->getIndicadoresHasData());
             return $this->render('indicadores/index.html.twig', array(
                 'indicadores' => $indicadores,
                 'objetivos' => $this->getObjetivosPreload(),
                 'metas' => $this->getMetasPreload(),
                 'objetivo_seleccionado' => $objetivo_seleccionado,
-                'meta_seleccionada' => $meta_seleccionada,            
+                'meta_seleccionada' => $meta_seleccionada,
+                'indicador_has_data' => $indicadoresHasData,
+                'data_to_approve' => $dataToApprove         
             ));
         } else {
             $request->getSession()
@@ -64,6 +69,15 @@ class IndicadoresController extends Controller
             ->add('warning', "Por favor, verifique que exista al menos una Meta cargada en el sistema");
             return $this->redirectToRoute('paneluser_index');
         }
+    }
+
+
+    private function getDictDataToApprove($dataToApprove){
+        $result = array();
+        foreach ($dataToApprove as $config) {
+            $result[$config->getIdindicador()->getId()] = 1;
+        }
+        return $result;
     }
 
     /**
