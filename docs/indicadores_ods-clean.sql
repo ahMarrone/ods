@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `agrupamientoRefGeografica` (
   `id2` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id1`,`id2`),
   KEY `refGeografica_ibfk_2` (`id2`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `agrupamientoRefGeografica`
@@ -582,7 +582,7 @@ INSERT INTO `agrupamientoRefGeografica` (`id1`, `id2`) VALUES
 DROP TABLE IF EXISTS `desgloces`;
 CREATE TABLE IF NOT EXISTS `desgloces` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del desgloce',
+  `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del desglose',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=0 ;
 
@@ -603,7 +603,7 @@ CREATE TABLE IF NOT EXISTS `desglocesIndicadores` (
   PRIMARY KEY (`idIndicador`,`idDesgloce`),
   KEY `idIndicador` (`idIndicador`),
   KEY `idDesgloce` (`idDesgloce`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 -- --------------------------------------------------------
 
@@ -722,7 +722,7 @@ CREATE TABLE IF NOT EXISTS `refGeografica` (
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la referencia geografica',
   `ambito` enum('N','P','D','L','R') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito de la ref. geografica',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=0 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci ;
 
 --
 -- Volcado de datos para la tabla `refGeografica`
@@ -1395,7 +1395,7 @@ CREATE TABLE IF NOT EXISTS `valoresIndicadoresConfigFechaDesgloces` (
   `idValoresIndicadoresConfigFecha` int(11) unsigned NOT NULL,
   PRIMARY KEY (`idDesgloce`,`idValoresIndicadoresConfigFecha`),
   KEY `desglocesSeleccionados_ibfk_2` (`idValoresIndicadoresConfigFecha`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci ;
 
 --
 -- Restricciones para tablas volcadas
