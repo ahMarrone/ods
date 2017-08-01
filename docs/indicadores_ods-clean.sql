@@ -20,6 +20,7 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `indicadores_ods`
 --
+DROP DATABASE IF EXISTS `indicadores_ods`;
 CREATE DATABASE IF NOT EXISTS `indicadores_ods` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 USE `indicadores_ods`;
 
@@ -612,7 +613,7 @@ CREATE TABLE IF NOT EXISTS `desglocesIndicadores` (
 
 DROP TABLE IF EXISTS `etiquetas`;
 CREATE TABLE IF NOT EXISTS `etiquetas` (
-  `id` int(11) unsigned NOT NULL 	,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la etiqueta',
   `fkIdDesgloce` int(11) unsigned NOT NULL COMMENT 'clave foranea desgloce',
   PRIMARY KEY (`id`),
@@ -717,7 +718,7 @@ INSERT INTO `objetivos` (`id`, `codigo`, `descripcion`) VALUES
 
 DROP TABLE IF EXISTS `refGeografica`;
 CREATE TABLE IF NOT EXISTS `refGeografica` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(11) unsigned NOT NULL,
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la referencia geografica',
   `ambito` enum('N','P','D','L','R') COLLATE utf8_spanish_ci NOT NULL COMMENT 'ambito de la ref. geografica',
   PRIMARY KEY (`id`)
@@ -1468,3 +1469,5 @@ SET FOREIGN_KEY_CHECKS=1;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */; 
+
+SET SQL_MODE = "";
