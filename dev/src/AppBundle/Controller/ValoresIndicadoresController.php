@@ -65,16 +65,23 @@ class ValoresIndicadoresController extends Controller
         $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $em = $this->getDoctrine()->getManager();
         list($objetivos, $metas, $indicadores) = $this->preparePreloadData();
-        $valoresindicadores = $em->getRepository('AppBundle:Valoresindicadores')->findAll();
-        return $this->render('valoresindicadores/visualize.html.twig', array(
-            'objetivos'=>$objetivos,
-            'metas'=>$metas,
-            'indicadores'=>$indicadores,
-            'valoresindicadores' => $valoresindicadores,
-            'api_urls' => array(
-                'indicador_dates'=> $this->generateUrl('admin_crud_valoresindicadores_indicador_dates'),
-            )
-        ));
+        if (count($metas) && count($indicadores)){
+            $valoresindicadores = $em->getRepository('AppBundle:Valoresindicadores')->findAll();
+            return $this->render('valoresindicadores/visualize.html.twig', array(
+                'objetivos'=>$objetivos,
+                'metas'=>$metas,
+                'indicadores'=>$indicadores,
+                'valoresindicadores' => $valoresindicadores,
+                'api_urls' => array(
+                    'indicador_dates'=> $this->generateUrl('admin_crud_valoresindicadores_indicador_dates'),
+                )
+            ));
+        } else {
+            $request->getSession()
+                ->getFlashBag()
+            ->add('warning', "Por favor, verifique que existan al menos una Meta y un Indicador cargados en el sistema");
+            return $this->redirectToRoute('paneluser_index'); 
+        }
     }
 
 
@@ -360,31 +367,38 @@ class ValoresIndicadoresController extends Controller
      */
     public function preloadAction(Request $request){
         list($objetivos, $metas, $indicadores) = $this->preparePreloadData();
-        $id_objetivo_selected = $objetivos[0]["id"];
-        $id_meta_selected = $metas[0]["id"];
-        $id_indicador_selected = $indicadores[0]["id"];
-        $user_indicador_selected = intval($request->get('id_indicador'));
-        if ($user_indicador_selected){
-            $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($user_indicador_selected);
-            if ($indicador){
-                $id_indicador_selected = $indicador->getId();
-                $id_meta_selected = $indicador->getFkidmeta()->getId();
-                $id_objetivo_selected = $indicador->getFkidmeta()->getFkidobjetivo()->getId();
+        if (count($metas) && count($indicadores)){
+            $id_objetivo_selected = $objetivos[0]["id"];
+            $id_meta_selected = $metas[0]["id"];
+            $id_indicador_selected = $indicadores[0]["id"];
+            $user_indicador_selected = intval($request->get('id_indicador'));
+            if ($user_indicador_selected){
+                $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($user_indicador_selected);
+                if ($indicador){
+                    $id_indicador_selected = $indicador->getId();
+                    $id_meta_selected = $indicador->getFkidmeta()->getId();
+                    $id_objetivo_selected = $indicador->getFkidmeta()->getFkidobjetivo()->getId();
+                }
             }
+            return $this->render('valoresindicadores/preload.html.twig', array(
+                'objetivos'=>$objetivos,
+                'metas'=>$metas,
+                'indicadores'=>$indicadores,
+                'id_indicador_selected' => $id_indicador_selected,
+                'id_meta_selected' => $id_meta_selected,
+                'id_objetivo_selected' => $id_objetivo_selected,
+                'api_urls' => array(
+                    'indicador_dates'=> $this->generateUrl('admin_crud_valoresindicadores_indicador_dates'),
+                    'indicador_desgloces_config' => $this->generateUrl('admin_crud_valoresindicadores_indicador_desgloces_config'),
+                    'save_desgloces_config' => $this->generateUrl('admin_crud_valoresindicadores_indicador_save_desgloces_config')
+                )
+            ));
+        } else {
+            $request->getSession()
+                ->getFlashBag()
+                ->add('warning', "Por favor, verifique que existan al menos una Meta y un Indicador cargados en el sistema");
+            return $this->redirectToRoute('paneluser_index'); 
         }
-        return $this->render('valoresindicadores/preload.html.twig', array(
-            'objetivos'=>$objetivos,
-            'metas'=>$metas,
-            'indicadores'=>$indicadores,
-            'id_indicador_selected' => $id_indicador_selected,
-            'id_meta_selected' => $id_meta_selected,
-            'id_objetivo_selected' => $id_objetivo_selected,
-            'api_urls' => array(
-                'indicador_dates'=> $this->generateUrl('admin_crud_valoresindicadores_indicador_dates'),
-                'indicador_desgloces_config' => $this->generateUrl('admin_crud_valoresindicadores_indicador_desgloces_config'),
-                'save_desgloces_config' => $this->generateUrl('admin_crud_valoresindicadores_indicador_save_desgloces_config')
-            )
-        ));
     }
 
     // Retorna lista de objetivos, metas e indicadores. Relacionados mediante sus id's. (Mejorar)

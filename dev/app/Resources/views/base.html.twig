@@ -117,6 +117,16 @@
                 </div>
             {% endif %}
 
+            {% if app.session.flashBag.has('warning') %}
+                <div class="alert alert-warning">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                    {% for msg in app.session.flashBag.get('warning') %}
+                        {{ msg }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             {% block body %}{% endblock %}
         </div>
 
