@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class ObjetivosType extends AbstractType
 {
@@ -19,7 +20,11 @@ class ObjetivosType extends AbstractType
                     'disabled' => $options['disable_form'],
                 )
             )
-            ->add('descripcion')
+            ->add('descripcion', TextareaType::class, array(
+                      'label' => 'Descripción', 'attr' => array('maxlength' => 500, 'rows' => 4)
+                )
+            )
+
         ;
     }
     

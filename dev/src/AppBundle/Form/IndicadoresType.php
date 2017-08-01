@@ -44,7 +44,7 @@ class IndicadoresType extends AbstractType
                     'class' => 'col-sm-1',
                 )                 
             ))                        
-            ->add('descripcion', TextareaType::class , array('label'  => 'Descripción', 'attr' => array('maxlength' => 500, ),))
+            ->add('descripcion', TextareaType::class , array('label'  => 'Descripción', 'attr' => array('maxlength' => 500, 'rows' => 4),))
             ->add('tipo', ChoiceType::class, array('label'  => 'Tipo', 'expanded'=>true, 'required'=>true, 'choices' => array('Porcentual' => 'porcentual', 'Entero' => 'entero', 'Real' => 'real', ), 'data' => $tipoSeleccionado, 'choices_as_values' => true, ))
             ->add('valmin', IntegerType::class , array(
                 'label'  => 'Valor Mínimo ', 

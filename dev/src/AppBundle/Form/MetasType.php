@@ -12,6 +12,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 
 use Symfony\Component\Validator\Constraints as Assert;
@@ -42,8 +43,8 @@ class MetasType extends AbstractType
                   )
             )
             )
-            ->add('descripcion', TextType::class, array(
-                      'label' => 'Descripción', 'attr' => array('maxlength' => 500)
+            ->add('descripcion', TextareaType::class, array(
+                      'label' => 'Descripción', 'attr' => array('maxlength' => 500, 'rows' => 4)
                 )
             )
             /*->add('ambito', ChoiceType::class, 

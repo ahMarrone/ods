@@ -55,7 +55,7 @@
                             <a class="btn btn-primary" title="Ver" href="{{ path('admin_crud_indicadores_show', { 'id': indicadore.id }) }}"><i class="fa fa-eye fa-fw" aria-hidden="true"></i></a>
                             {% if is_granted('ROLE_ADMIN') %}
                                 <a class="btn btn-warning" title="Editar" href="{{ path('admin_crud_indicadores_edit', { 'id': indicadore.id }) }}"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
-                                <a class="btn btn-info" title="Configurar desgloces" href="{{ path('admin_crud_desglocesporindicador_new', { 'id_indicador': indicadore.id }) }}"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
+                                <a class="btn btn-info" title="Configurar desgloses" href="{{ path('admin_crud_desglocesporindicador_new', { 'id_indicador': indicadore.id }) }}"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
                                 <a class="btn btn-success" title="Aprobar/Desaprobar valores" href="{{ path('admin_crud_valoresindicadores_index', { 'id_indicador': indicadore.id }) }}"><i class="fa fa-check-circle fa-fw" aria-hidden="true"></i></a>
                             {% endif %}
                             <a class="btn btn-default" title="Ver en mapa" href="{{ path('explora_initialize', { 'id': indicadore.id }) }}"><i class="fa fa-map fa-fw" aria-hidden="true"></i></a>
