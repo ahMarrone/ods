@@ -23,9 +23,5 @@
   <div class="row">
             <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_etiquetas_index') }}">Volver</a>
             <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_etiquetas_edit', { 'id': etiqueta.id }) }}">Editar</a>
-            {{ form_start(delete_form) }}
-
-                <input class="btn btn-danger col-md-1 option-btn" type="submit" value="Eliminar">
-            {{ form_end(delete_form) }}
 </div>
 {% endblock %}

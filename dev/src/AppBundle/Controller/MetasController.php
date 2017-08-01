@@ -84,7 +84,7 @@ class MetasController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($meta);
             $em->flush();
-
+            $request->getSession()->getFlashBag()->add('success', "La Meta ha sido dada de alta correctamente");
             return $this->redirectToRoute('admin_crud_metas_index_idObjetivo', array('id_objetivo' => $meta->getFkidobjetivo()->getId()));
         }
 
@@ -199,6 +199,7 @@ class MetasController extends Controller
             } else {
                 $em->remove($meta);
                 $em->flush();
+                $request->getSession()->getFlashBag()->add('success', "La Meta ha sido eliminada correctamente");
             }
         }
 

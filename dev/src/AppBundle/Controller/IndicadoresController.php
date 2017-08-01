@@ -130,6 +130,7 @@ class IndicadoresController extends Controller
             $em->persist($indicadore);
             $em->flush();
             $this->saveBaseDesglocesIndicadores($indicadore);
+            $request->getSession()->getFlashBag()->add('success', "El Indicador ha sido dado de alta correctamente");
             return $this->redirectToRoute("admin_crud_indicadores_index_idMeta", array('id_meta'=>$indicadore->getFkidmeta()->getId()));
             //return $this->redirectToRoute('admin_crud_indicadores_show', array('id'=> $indicadore->getId()));
             //return $this->redirectToRoute('admin_crud_desglocesporindicador_new', array('id_indicador' => $indicadore->getId()));
@@ -319,6 +320,7 @@ class IndicadoresController extends Controller
             $this->deleteEntities($em,$configfechaEntity);
             $em->remove($indicadore);
             $em->flush();
+            $request->getSession()->getFlashBag()->add('success', "El indicador ha sido eliminado correctamente");
         }
 
         return $this->redirectToRoute('admin_crud_indicadores_index');

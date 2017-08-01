@@ -50,7 +50,7 @@ class DesglocesController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($desgloce);
             $em->flush();
-
+            $request->getSession()->getFlashBag()->add('success', "El Desglose ha sido dado de alta correctamente");
             return $this->redirectToRoute('admin_crud_desgloces_index');
         }
 
@@ -120,6 +120,7 @@ class DesglocesController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->remove($desgloce);
             $em->flush();
+            $request->getSession()->getFlashBag()->add('success', "El Desglose ha sido eliminado correctamente");
         }
 
         return $this->redirectToRoute('admin_crud_desgloces_index');

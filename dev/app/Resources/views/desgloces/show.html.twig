@@ -20,10 +20,6 @@
             <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_desgloces_index') }}">Volver</a>
             {% if is_granted('ROLE_ADMIN') %}
             <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_desgloces_edit', { 'id': desgloce.id }) }}">Editar</a>
-            {{ form_start(delete_form) }}
-
-                <input class="btn btn-danger col-md-1 option-btn" type="submit" value="Eliminar">
-            {{ form_end(delete_form) }}
             {% endif %}
 
 </div>

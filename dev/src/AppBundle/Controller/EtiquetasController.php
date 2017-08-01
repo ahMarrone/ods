@@ -68,7 +68,7 @@ class EtiquetasController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($etiqueta);
             $em->flush();
-
+            $request->getSession()->getFlashBag()->add('success', "La Etiqueta ha sido dada de alta correctamente");
             return $this->redirectToRoute('admin_crud_etiquetas_new', array('id_desglose'=> $etiqueta->getFkiddesgloce()->getId()));
         }
 
@@ -136,6 +136,7 @@ class EtiquetasController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->remove($etiqueta);
             $em->flush();
+            $request->getSession()->getFlashBag()->add('success', "La Etiqueta ha sido eliminada correctamente");
         }
 
         return $this->redirectToRoute('admin_crud_etiquetas_index');
