@@ -3,6 +3,10 @@ _.mixin({
   getColor: getColor
 });
 
+function cmp(a, b) {
+    return a - b;
+}
+
 function swapInArray(left, right, v) {
     var aux;
 

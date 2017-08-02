@@ -316,10 +316,17 @@ class ExploraController extends Controller
 
     private function getIndicadoresPreload($id, &$idx) {
         $list = array();
+
+        $indicadoresValidos = $this->getValidIndicadores();
+        $ids = array();
+        foreach ($indicadoresValidos as $i) {
+            array_push($ids, $i->getidindicador()->getId());
+        }
+
         /* Si se desean filtrar los indicadores por meta seleccionada, descomentar y reemplazar  */
         // $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByFkidmeta($idMeta);
         $indice = 0;
-        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findBy(array('visible' => true), array('codigo' => 'ASC'));
+        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findBy(array('id' => $ids, 'visible' => true), array('codigo' => 'ASC'));
         foreach ($indicadores as $i) {
             if ($id == $i->getId()) {
                 $idx = $indice;
@@ -482,6 +489,18 @@ class ExploraController extends Controller
             array($idsSet),
             array(\Doctrine\DBAL\Connection::PARAM_INT_ARRAY)
             )->fetchAll();
+    }
+
+    private function getValidIndicadores(){
+        $qb = $this->getDoctrine()->getManager()->createQueryBuilder();
+        // $qb->select('IDENTITY (c.idindicador)')
+        $qb->select('c')
+           ->from('AppBundle:Valoresindicadoresconfigfecha', 'c')
+           ->innerJoin('AppBundle:Valoresindicadores', 'v', 'WITH', 'c.id = v.idvaloresindicadoresconfigfecha')
+           ->where('v.aprobado = 1')
+           ->groupBy('c.idindicador');
+        $query = $qb->getQuery(); 
+        return $query->getResult();
     }
 }
 
