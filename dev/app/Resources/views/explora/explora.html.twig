@@ -69,9 +69,7 @@
       <div class="form-group">
         <label for="selectorObjetivo" control-label">Objetivo</label>
           <select id="selectorObjetivo" class="form-control selectObjetivo" title="<% if (model.get('idObjetivoSeleccionado') != -1) { %><%= model.get('objetivos')[model.get('idObjetivoSeleccionado')].descripcion %><% } %>">
-          <% if (model.get("idObjetivoSeleccionado") == -1) { %>
-          <option title="<Seleccionar un Objetivo>" value="-1">&#60; Seleccionar un Objetivo &#62;</option>
-          <% } %>
+          <option title="< TODOS >" value="-1">&#60; TODOS &#62;</option>
           <% _.each(model.get("objetivos"), function(objetivo, i){ %>
           <option title="<%= objetivo.codigo %> - <%= objetivo.descripcion %>" value="<%= i %>" <% if (i == model.get("idObjetivoSeleccionado")) { %> selected<% }  %>><% if (objetivo.codigo) { print (objetivo.codigo + " - " ); } %><%= _(objetivo.descripcion).trim(42) %></option>
           <% }); %>
@@ -79,28 +77,29 @@
       </div> <!-- /.form-group -->
       <div class="form-group">
         <label for="selectorMeta" class="control-label">Meta</label>
-          <select <% if ((model.get('idObjetivoSeleccionado') == -1)) { print ('disabled'); } %> id="selectorMeta" class="form-control selectMeta" title="<% if (model.get('idxMetaSeleccionada') != -1) { %><%= model.get('metas')[model.get('idxMetaSeleccionada')].descripcion %><% } %>">
-          <% if (model.get("idxMetaSeleccionada") == -1) { %>
-          <option title="Seleccionar una Meta" value="-1">&#60; Seleccionar una Meta &#62; </option>
-          <% } %>
-          <% _.each(model.get("metas"), function(meta, i){ %>
-          <% if ( meta.id_objetivo == model.get("idObjetivoSeleccionado") ){ %>
-          <option title="<%= meta.codigo %> - <%= meta.descripcion %>" value="<%= i %>" id="<%= meta.id %>" <% if (i == model.get("idxMetaSeleccionada")) { %> selected<% }  %>><%= meta.codigo %> - <%= _(meta.descripcion).trim(42) %></option>
+          <select id="selectorMeta" class="form-control selectMeta" title="<% if (model.get('idxMetaSeleccionada') != -1) { %><%= model.get('metas')[model.get('idxMetaSeleccionada')].descripcion %><% } %>">
+          <option title="< TODOS >" value="-1" id="-1">&#60; TODOS &#62; </option>
+          <% model.set('subconjuntoMetas', []) %>
+          <% _.each(model.get('metas'), function(meta, i){ %>
+          <% if ( meta.id_objetivo == model.get("idObjetivoSeleccionado") || model.get("idObjetivoSeleccionado") == -1 ){ %>
+          <% model.get('subconjuntoMetas').push(meta.id) %>
+          <option title="<%= meta.codigo %> - <%= meta.descripcion %>" value="<%= i %>" id="<%= meta.id %>" <% if (meta.id == model.get("idMetaSeleccionada")) { %> selected<% }  %>><%= meta.codigo %> - <%= _(meta.descripcion).trim(42) %></option>
           <% } %>
           <% }); %>
+          <% model.set('subconjuntoMetas', model.get('subconjuntoMetas').sort(cmp)) %>
           </select>
       </div> <!-- /.form-group -->
       <div class="form-group">
         <label for="selectorIndicador" class="control-label">Indicador <% if (model.get("idIndicadorSeleccionado") != -1) { %>
         <% if (model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico) { %><a target="_blank" href="<%= model.get('rutaDocumentosTecnicos').concat(model.get('indicadores')[model.get('idIndicadorSeleccionado')].documentoTecnico)%>" class="fa fa-info-circle" title="Ficha Técnica"></a><% } %>
         <% } %></label>
-          <select <% if (model.get("idxMetaSeleccionada") == -1) { print ('disabled'); } %> id="selectorIndicador" class="form-control selectIndicador" title="<% if (model.get("idIndicadorSeleccionado") != -1) { %><%= model.get('indicadores')[model.get('idIndicadorSeleccionado')].descripcion %><% } %>">
+          <select id="selectorIndicador" class="form-control selectIndicador" title="<% if (model.get("idIndicadorSeleccionado") != -1) { %><%= model.get('indicadores')[model.get('idIndicadorSeleccionado')].descripcion %><% } %>">
           <% if (model.get("idIndicadorSeleccionado") == -1) { %>
           <option title="Seleccionar un Indicador" value="-1" id="-1">&#60; Seleccionar un Indicador &#62; </option>
           <% } %>
           <% model.set("indicadoresDisponibles", 0) %>
           <% _.each(model.get("indicadores"), function( indicador, i){ %>
-          <% if ( indicador.id_meta == model.get("idMetaSeleccionada") ){ %>
+          <% if ( (indicador.id_meta == model.get("idMetaSeleccionada")) || ( (model.get("idMetaSeleccionada") == -1) && (_.indexOf(model.get("subconjuntoMetas"), indicador.id_meta, true) != -1)) ){ %>
           <% model.set("indicadoresDisponibles", model.get("indicadoresDisponibles") + 1) %>
           <option option title="<%= indicador.codigo %>-<%= indicador.descripcion %>" value="<%= i %>" id="<%= indicador.id %>" <% if (i == model.get("idIndicadorSeleccionado")) { %> selected<% }  %>><%= indicador.codigo %> - <%= _(indicador.descripcion ).trim(42) %></option>
           <% } %>
@@ -265,7 +264,8 @@
         'fechaSeleccionada': null,
         'fechasDestacadas': [],
         'rutaDocumentosTecnicos': "{{ asset('uploads/indicadores/') }}",
-        'indicadoresDisponibles': 0
+        'indicadoresDisponibles': 0,
+        'subconjuntoMetas': []
       }
     });
 
@@ -290,7 +290,7 @@
         /* Eventos a monitorizar */
         /* VER SI ES POSIBLE REALIZAR UN MAP */
         this.model.on('change:idObjetivoSeleccionado', this.render, this);
-        this.model.on('change:idxMetaSeleccionada', this.render, this);
+        this.model.on('change:idMetaSeleccionada', this.render, this);
         this.model.on('change:idIndicadorSeleccionado', this.render, this);
         this.model.on('change:fechaSeleccionada', this.anioSelected, this);
         this.model.on('change:desgloseSeleccionado', this.render, this);
@@ -342,7 +342,13 @@
         metaSelected: function(e) {
           this.model.set("idxMetaSeleccionada", $(this.el).find('.selectMeta').val());
           this.model.set("idMetaSeleccionada", $(this.el).find('.selectMeta').children(':selected').attr('id'));
-          this.model.set("idIndicadorSeleccionado", -1)
+          this.model.set("idIndicadorSeleccionado", -1);
+          console.log(this.model.get("idMetaSeleccionada"));
+          if (this.model.get("idMetaSeleccionada") != -1) {
+            var idxMetaSeleccionada = this.model.get("idxMetaSeleccionada");
+            var idObjetivoSeleccionado = this.model.get("metas")[idxMetaSeleccionada].id_objetivo;
+            this.model.set("idObjetivoSeleccionado", idObjetivoSeleccionado);
+          }
           this.indicadorSelected();
         },
         indicadorSelected: function(e) {
@@ -371,7 +377,7 @@
             update();
             if (idMeta != -1 && indicadoresDisponibles == 0) {
               $(this.el).find('.selectIndicador').prop('disabled', true);
-              showModalOnSteroids(globalModal, 'error', 'Ningún Indicador ha sido definido para la Meta seleccionada');
+              // showModalOnSteroids(globalModal, 'error', 'Ningún Indicador ha sido definido para la Meta seleccionada');
             }
           } else {
             waitingDialog.show('Aguarde un momento por favor...');
@@ -424,6 +430,9 @@
                       that.model.unset('fechaSeleccionada', {silent: true});
                     }
                     that.model.set('fechaSeleccionada', fechaSeleccionada);
+
+                    that.model.set("idMetaSeleccionada", indicador.id_meta);
+
                    },
                    error: function(data) {
                     waitingDialog.hide();
