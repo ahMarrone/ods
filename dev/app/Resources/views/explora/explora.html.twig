@@ -1,4 +1,4 @@
-{% extends 'base_explora.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block javascripts %}
     {{ parent() }}
@@ -264,6 +264,7 @@
         'fechaSeleccionada': null,
         'fechasDestacadas': [],
         'rutaDocumentosTecnicos': "{{ asset('uploads/indicadores/') }}",
+        'rutaRepresentacionNumerica': "{{ path('admin_crud_valoresindicadores_visualize') }}",
         'indicadoresDisponibles': 0,
         'subconjuntoMetas': []
       }
@@ -343,7 +344,6 @@
           this.model.set("idxMetaSeleccionada", $(this.el).find('.selectMeta').val());
           this.model.set("idMetaSeleccionada", $(this.el).find('.selectMeta').children(':selected').attr('id'));
           this.model.set("idIndicadorSeleccionado", -1);
-          console.log(this.model.get("idMetaSeleccionada"));
           if (this.model.get("idMetaSeleccionada") != -1) {
             var idxMetaSeleccionada = this.model.get("idxMetaSeleccionada");
             var idObjetivoSeleccionado = this.model.get("metas")[idxMetaSeleccionada].id_objetivo;
@@ -375,7 +375,7 @@
             that.model.unset('fechaSeleccionada');
             swap();
             update();
-            if (idMeta != -1 && indicadoresDisponibles == 0) {
+            if (indicadoresDisponibles == 0) {
               $(this.el).find('.selectIndicador').prop('disabled', true);
               // showModalOnSteroids(globalModal, 'error', 'Ningún Indicador ha sido definido para la Meta seleccionada');
             }
@@ -432,6 +432,9 @@
                     that.model.set('fechaSeleccionada', fechaSeleccionada);
 
                     that.model.set("idMetaSeleccionada", indicador.id_meta);
+                    var idxMeta = $(that.el).find('.selectMeta').val();
+                    var idObjetivoSeleccionado = that.model.get("metas")[idxMeta].id_objetivo;
+                    that.model.set("idObjetivoSeleccionado", idObjetivoSeleccionado);
 
                    },
                    error: function(data) {
