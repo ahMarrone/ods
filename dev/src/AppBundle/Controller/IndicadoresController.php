@@ -43,8 +43,8 @@ class IndicadoresController extends Controller
         $indicadores = $em->getRepository('AppBundle:Indicadores')->findAll();
         if (count($metas)){
             if ($id_meta == 0){
-                $objetivo_seleccionado = $objetivos[0]["id"];
-                $meta_seleccionada = $metas[0]["id"];
+                $objetivo_seleccionado = -1;
+                $meta_seleccionada = -1;
             } else {
                 $meta = $em->getRepository('AppBundle:Metas')->findOneById($id_meta);
                 $meta_seleccionada = $meta->getId();

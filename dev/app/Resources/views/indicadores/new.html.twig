@@ -74,7 +74,8 @@
         function addThreeSelectControls(){
             modelThreeSelect = new ThreeSelectData({
                 'objetivos': objetivos,
-                'metas': metas
+                'metas': metas,
+                'objetivo_selected': objetivos[0]['id']
             });
             viewThreeSelect = new ThreeSelectView({el: $("#selects"), model:modelThreeSelect,
             metaChangeCallback: getNextIndicadorCode

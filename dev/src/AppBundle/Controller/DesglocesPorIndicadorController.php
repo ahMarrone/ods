@@ -84,13 +84,48 @@ class DesglocesPorIndicadorController extends Controller
             return $this->redirectToRoute('admin_crud_indicadores_index');
         }
 
+        // Armo datos para tabla de configuracion por fecha
+        $config_by_fecha = array();
+        $configsfecha = $this->getIndicadorConfigById($id_indicador);
+        foreach ($configsfecha as $config) {
+            $userDesgloces = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfechadesgloces')->findByIdvaloresindicadoresconfigfecha($config->getId());
+            list($desgloces, $etiquetasDesgloces) = $this->getEtiquetasDesgloce($userDesgloces);
+            $cantValoresIndicadores = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')->findByIdvaloresindicadoresconfigfecha($config->getId());
+            $config_by_fecha[$config->getId()] = array('fecha' => $config->getFecha(), 'cruzado' => $config->getCruzado(),'desgloces'=> $desgloces, 'etiquetas_desgloces'=> $etiquetasDesgloces, 'cant_valores'=> count($cantValoresIndicadores));
+        }
         return $this->render('indicadores/desglocesporindicador.html.twig', array(
             'desgloces' => $desgloces,
             'indicador' => $indicador,
             'edit_form' => $form->createView(),
             'nombre_indicador' => $indicador->getDescripcion(),
+            'config_by_fecha' => $config_by_fecha,
+            'api_urls' => array('deleteData'=> $this->generateUrl('admin_crud_desglocesporindicador_delete', array('id_indicador'=>$indicador->getId(), 'id_config'=>0)))
         ));   
     }
+
+    /**
+   * @Route("/desglocesporindicador/delete/{id_indicador}/{id_config}", requirements={"id_indicador":"\d+", "id_config":"\d+"}, name="admin_crud_desglocesporindicador_delete"))
+   *  @Method("GET")
+   */
+    public function deleteAction(Request $request, $id_indicador, $id_config){ 
+        $configToDelete = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfecha')
+                               ->findOneById($id_config);
+        if ($configToDelete){
+            // tengo que eliminar los datos en valoresIndicadoresConfigFechaDesgloces y valoresIndicadoresConfigFecha
+            $em = $this->getDoctrine()->getManager();
+            $userDesgloces = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfechadesgloces')->findByIdvaloresindicadoresconfigfecha($id_config);
+            foreach ($userDesgloces as $desglose){
+                $em->remove($desglose);
+            }            
+            $em->remove($configToDelete);
+            $em->flush();
+            $request->getSession()->getFlashBag()->add('success', "La configuración para el período seleccionado ha sido eliminada");
+        }
+        return $this->redirectToRoute('admin_crud_desglocesporindicador_new', array('id_indicador'=>$id_indicador));
+    }
+
+
+
 
 
     private function desgloceIndicadorExists($desgloceIndicador){
@@ -103,5 +138,32 @@ class DesglocesPorIndicadorController extends Controller
         } else {
             return false;
         }
+    }
+
+
+    private function getIndicadorConfigById($idIndicador){
+        $em = $this->getDoctrine()->getManager();
+        $config = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfecha')
+                               ->findByIdindicador($idIndicador);
+        if ($config){
+            return $config;
+        }         
+        return array();
+    }
+
+    private function getEtiquetasDesgloce($desglocesIndicador){
+        $desgloces = array();
+        $etiquetasDesgloce = array();
+        foreach ($desglocesIndicador as $desgloceIndicador) {
+            $desgloce = $this->getDoctrine()->getRepository('AppBundle:Desgloces')->findOneById($desgloceIndicador->getIddesgloce());
+            $etiquetas =  $this->getDoctrine()->getRepository('AppBundle:Etiquetas')->findByFkiddesgloce($desgloce);
+            $desgloces[$desgloce->getId()] = $desgloce->getDescripcion();
+            $tmpEtiquetas = array();
+            foreach ($etiquetas as $e) {
+                array_push($tmpEtiquetas, array("id_etiqueta"=>$e->getId(), "desc"=>$e->getDescripcion()));
+            }
+            $etiquetasDesgloce[$desgloce->getId()] = $tmpEtiquetas;
+        }
+        return array($desgloces, $etiquetasDesgloce);
     }
 }

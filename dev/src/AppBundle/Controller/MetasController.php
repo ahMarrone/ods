@@ -31,7 +31,7 @@ class MetasController extends Controller
         $em = $this->getDoctrine()->getManager();
         $objetivos = $this->getObjetivosPreload();
         $metas = $em->getRepository('AppBundle:Metas')->findAll();
-        $objetivoSelected = (intval($id_objetivo) == 0) ? $objetivos[0]['id'] : intval($id_objetivo);
+        $objetivoSelected = (intval($id_objetivo) == 0) ? -1 : intval($id_objetivo);
         /*if (intval($id_objetivo) == 0)
         {
             $metas = $em->getRepository('AppBundle:Metas')->findAll();

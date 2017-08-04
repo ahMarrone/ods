@@ -147,9 +147,9 @@
 
         $.fn.dataTable.ext.search.push(
             function( settings, data, dataIndex ) {
-                if (parseInt(data[0]) == objetivo_selected){
+                if (objetivo_selected == -1 || (parseInt(data[0]) == objetivo_selected)){
                     return true;
-                } 
+                }
                 return false;
         });
 

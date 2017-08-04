@@ -75,6 +75,8 @@
         var metas = {{ metas|json_encode|raw}};
         var indicadores = {{ indicadores|json_encode|raw}};
 
+        var view;
+        var model;
         var table = null;
         var showNoValues = true;
 
@@ -290,16 +292,75 @@
 			initFilters();
 		}
 
+		function objetivoChange(){
+			console.log("change objeetivo");
+			console.log(model.get('objetivo_selected'));
+            if (model.get('objetivo_selected') == -1){
+                model.set('meta_selected', -1,  { silent: true });
+                model.set('indicador_selected', -1,  { silent: true });
+            }
+		}
+
+		function metaChange(){
+			console.log("change meta");
+			console.log(model.get('meta_selected'));
+            if (model.get('meta_selected') != -1){
+                metaText = $('#three_select_meta option[value='+model.get('meta_selected')+']').text();
+                objetivoMeta = metaText.split('-')[0].split('.')[0];
+                console.log(objetivoMeta);
+                model.set('objetivo_selected', objetivoMeta,  { silent: true });
+                $('#three_select_objetivo option[value='+objetivoMeta+']').attr('selected','selected');
+            }
+            console.log(model.get('indicador_selected'));
+		}
+
+
+
+    	function getMetaValFromCode(code){
+    		console.log(code);
+    		option = $('#three_select_meta option').filter(function() { 
+    			return $(this).text().indexOf(code) === 0; 
+    		});
+    		return $(option[0]).val();
+    	}
+
+    	function reloadTree(objValue, metaValue, indValue){
+
+    	}
+
+		function indicadorChange(){
+			console.log("change indicador");
+			console.log(model.get('objetivo_selected'));
+			console.log(model.get('meta_selected'));
+			console.log(model.get('indicador_selected'));
+            if (model.get('indicador_selected') != null && model.get('indicador_selected') != -1){
+                indicadorText = $('#three_select_indicador option:selected').text();
+                indicadorCode = indicadorText.split('-')[0].split('.');
+                console.log(indicadorCode);
+            	//model.set('objetivo_selected', indicadorCode[0], { silent: true });
+            	//$('#three_select_objetivo option[value='+indicadorCode[0]+']').attr('selected','selected');
+				//objetivoChange();
+				//$('#three_select_meta option[value=val2]').attr('selected','selected');
+				metaVal = getMetaValFromCode(indicadorCode[0]+'.'+indicadorCode[1]);
+                //model.set('meta_selected', metaVal);
+                //metaChange();
+            }
+            //view.render();
+			getIndicadorDates();
+		}
+
 
 
         // Inicio Threeselect y datepicker
         function initViewControls(){
-	    	var model = new ThreeSelectData({
+	    	model = new ThreeSelectData({
 	    		'objetivos': objetivos,
 	    		'metas': metas,
-	    		'indicadores': indicadores
+	    		'indicadores': indicadores,
+	    		'add_global_option': true,
 	    	});
-	    	var view = new ThreeSelectView({el: $("#selects") ,model:model, indicadorChangeCallback: getIndicadorDates});
+	    	view = new ThreeSelectView({el: $("#selects") ,model:model, objetivoChangeCallback: objetivoChange,
+                metaChangeCallback: metaChange, indicadorChangeCallback: indicadorChange});
     	}
 
 

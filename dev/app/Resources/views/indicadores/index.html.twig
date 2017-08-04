@@ -161,6 +161,19 @@
 
         $.fn.dataTable.ext.search.push(
             function( settings, data, dataIndex ) {
+               //console.log(data);
+                                                                  console.log(objetivo_selected);
+               console.log(meta_selected);
+                if (objetivo_selected == -1){
+                    return true;
+                }
+                if (meta_selected == -1){
+                    currentObjetivo = data[2].split(".")[0];
+                    if (objetivo_selected == currentObjetivo){
+                        return true;
+                    }
+                }
+
                 if (parseInt(data[0]) == meta_selected){
                     return true;
                 } 
@@ -175,7 +188,22 @@
 
         function filterTableIndicadores(){
             meta_selected = $('#three_select_meta').val();
+            objetivo_selected = $('#three_select_objetivo').val();
+            if (meta_selected != -1){
+                metaText = $('#three_select_meta option:selected').text();
+                objetivoMeta = metaText.split('-')[0].split('.')[0];
+                $('#three_select_objetivo').val(objetivoMeta);
+                objetivo_selected = objetivoMeta;
+            }
             table.draw();
+        }
+
+        function objetivoChange(){
+            console.log("ojb change!!!!!");
+            objetivo_selected = $('#three_select_objetivo').val();
+            if (objetivo_selected == -1){
+                $('#three_select_meta').val(-1);
+            }
         }
 
         function initThreeSelect(){
@@ -184,10 +212,10 @@
                 'metas': metas,
                 'objetivo_selected': objetivo_selected,
                 'meta_selected': meta_selected,
+                'add_global_option': true,
             });
-            console.log(metas);
             viewThreeSelect = new ThreeSelectView({el: $("#selects"), model:modelThreeSelect,
-                objetivo_selected: objetivo_selected, meta_selected: meta_selected,
+                objetivo_selected: objetivo_selected, meta_selected: meta_selected, objetivoChangeCallback: objetivoChange,
                 metaChangeCallback: filterTableIndicadores,
             });
         }

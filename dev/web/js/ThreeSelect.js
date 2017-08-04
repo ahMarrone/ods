@@ -8,6 +8,9 @@ var template_select = [
 	
 	'	<div class="col-sm-10">',
     '		<select id="three_select_objetivo" class="form-control selectOne" name="id_objetivo_selected">',
+    '           <% if (model.get("add_global_option")) {%>',
+    '               <option title="< TODOS >" value="-1" <% if (model.get("objectivo_selected") == null || model.get("objectivo_selected") == -1) { %> selected <% }  %>>&#60; TODOS &#62;</option>',
+    '           <% } %>',
     '			<% _.each(model.get("objetivos"), function( objetivo, i){ %>',
     '			<option value="<%= objetivo.id %>" title="<%= objetivo.code %> - <%= objetivo.desc %>"',
     '                          <% if (objetivo.id == model.get("objetivo_selected")) { %> selected<% }  %>><%= objetivo.code %> - <%= model.trim(objetivo.desc) %></option>',
@@ -23,8 +26,11 @@ var template_select = [
 		'	</div>',   
 		'	<div class="col-sm-10">',
         '		<select id="three_select_meta" class="form-control selectTwo" name="id_meta_selected">',
+        '           <% if (model.get("add_global_option")) {%>',
+        '           <option title="< TODOS >" value="-1" <% if (model.get("meta_selected") == null || model.get("meta_selected") == -1) { %> selected <% }  %> >&#60; TODOS &#62;</option>',
+        '           <% } %>',
         '			<% _.each(model.get("metas"), function( meta, i){ %>',
-        '			<% if ( meta.id_objetivo == model.get("objetivo_selected") ){ %>',
+        '			<% if (model.get("objetivo_selected") == -1 || meta.id_objetivo == model.get("objetivo_selected")){ %>',
         '			<option value="<%= meta.id %>" title="<%= meta.code_objetivo %>.<%= meta.code %> - <%= meta.desc %>"',
         '                    <% if (meta.id == model.get("meta_selected")) { %> selected<% }  %>><%= meta.code_objetivo %>.<%= meta.code %> - <%= model.trim(meta.desc) %></option>',
         '			<% } %>',
@@ -40,8 +46,11 @@ var template_select = [
         '		</div>',        
         '		<div class="col-sm-10">',
     	'			<select id="three_select_indicador" class="form-control selectThree" name="id_indicador_selected">',
+        '               <% if (model.get("add_global_option")) {%>',
+        '                   <option title="< Seleccione un indicador >" value="-1" <% if (model.get("meta_selected") == null || model.get("meta_selected") == -1) { %> selected <% }  %> >&#60; Seleccione un indicador &#62;</option>',                    
+        '               <% } %>',
         '				<% _.each(model.get("indicadores"), function( indicador, i){ %>',
-        '				<% if ( indicador.id_meta == model.get("meta_selected") ){ %>',
+        '				<% if ( (model.get("objetivo_selected") == -1) || (model.get("meta_selected") == -1 &&  indicador.code_objetivo == model.get("objetivo_selected")) || (indicador.id_meta == model.get("meta_selected")) ){ %>',
         '				<option value="<%= indicador.id %>" title="<%= indicador.code_objetivo %>.<%= indicador.code_meta %>.<%= indicador.code %> - <%= indicador.desc %>"',
         '                        <% if (indicador.id == model.get("indicador_selected")) { %> selected<% }  %>><%= indicador.code_objetivo %>.<%= indicador.code_meta %>.<%= indicador.code %> - <%= model.trim(indicador.desc) %></option>',
         '				<% } %>',
@@ -81,16 +90,16 @@ var ThreeSelectData = Backbone.Model.extend({
 
 var ThreeSelectView = Backbone.View.extend({
 	initialize: function(options) {
-        console.log(this.model.get('objetivo_selected'));
-        console.log(this.model.get('indicador_selected'));
+        //console.log(this.model.get('objetivo_selected'));
+        //console.log(this.model.get('indicador_selected'));
         if (this.model.get('objetivo_selected') == null){
-		  this.model.set('objetivo_selected',this.model.get('objetivos')[0].id);
+		  this.model.set('objetivo_selected',-1);
         }
         if ((this.model.get('meta_selected') == null) && (this.model.get('metas').length)) {
-            this.model.set('meta_selected',this.model.get('metas')[0].id);
+            this.model.set('meta_selected',-1);
         }
         if ((this.model.get('indicador_selected') == null) && (this.model.get('indicadores').length)) {
-            this.model.set('indicador_selected',this.model.get('indicadores')[0].id);
+            this.model.set('indicador_selected',-1);
         }
         /*if (this.model.get('indicadores').length) {
             this.model.set('indicador_selected',this.model.get('indicadores')[0].id);
@@ -114,10 +123,10 @@ var ThreeSelectView = Backbone.View.extend({
     },
     objetivoSelected: function(e){
     	this.model.set("objetivo_selected", e.target.value);
-        $('.selectTwo').trigger('change');
         if (this.listenObjetivoCallback){
             this.listenObjetivoCallback();
         }
+        $('.selectTwo').trigger('change');
         //this.metaSelected();
     },
     metaSelected: function(e){

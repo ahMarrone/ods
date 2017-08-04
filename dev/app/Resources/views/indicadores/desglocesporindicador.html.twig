@@ -5,23 +5,109 @@
     <ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
         <li><a href="{{ path('admin_crud_indicadores_index') }}">Indicadores</a></li>
-        <li class="active">Desgloces indicador</a></li>
+        <li class="active">Desgloses indicador</a></li>
     </ol>
 
     <div class="page-header">
-          <h2>Desgloces por Indicador <small>{{ nombre_indicador }}</small></h2>
+          <h2>Configuración de desgloses del indicador<small>{{ nombre_indicador }}</small></h2>
     </div>
 
-    <div class="alert alert-warning" class="col-md-3" role="alert"><i class="fa fa-warning pull-left"></i>Por favor, defina los desgloses permitidos para el nuevo indicador
+    <h3>Desgloses permitidos</h3>
+
+    <div class="alert alert-warning" class="col-md-3" role="alert"><i class="fa fa-warning pull-left"></i>Por favor, defina cuales serán los desgloses permitidos para el indicador
     </div>
 
     {{ form_start(edit_form) }}
         {{ form_widget(edit_form) }}
-        <input  class="col-md-1 btn btn-success option-btn"  type="submit" value="Actualizar" />
+        <input  class="col-md-1 btn btn-success option-btn"  type="submit" value="Guardar" />
     {{ form_end(edit_form) }}
 
-<div class="row">
-            <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_index') }}">Volver</a>
+    <div class="row">
+                <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_index') }}">Volver</a>
+    </div>
+
+    <h3>Configuraciones guardadas por período</h3>
+
+    <table id="configByFechaTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Período</th>
+                <th>Desgloses</th>
+                <th>Etiquetas</th>
+                <th>Etiquetas cruzadas</th>                
+                <th>Valores cargados para el período</th>                
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for id_config, config in config_by_fecha %}
+            <tr>
+                <td>{{ config.fecha|date("Y")}}</td>
+                <td>{{config.desgloces | join('/')}}</td>
+                <td>
+                {% for desglose in config.etiquetas_desgloces %}
+                    {% for etiqueta_data in desglose %}
+                        {{etiqueta_data['desc']}}
+                        {% if not loop.last %}/{% endif %}
+                    {% endfor %}
+                    {% if not loop.last %}<br>{% endif %}
+                {% endfor %}
+                </td>
+                <td>{{ config.cruzado ? "Si" : "No"}}</td>
+                <td>{{ config.cant_valores }}</td>
+                {{id_config}}
+                <td>
+                    <button type="button" class="btn btn-danger btnDeleteConfig" value="{{id_config}}" title="Eliminar" {{ config.cant_valores > 0  ? 'disabled disabled="disabled"' : ''  }} ><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteDesgloseFechaModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel"><i class="fa fa-exclamation-triangle" style="color:red;"></i>   ATENCIÓN! </h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger" role="alert">Está a punto de borrar la configuración de desgloses para el período <span id="modalConfigValue"></span></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button id="confirmDeleteDesglose" type="button" class="btn btn-danger">Eliminar configuración</button>
+      </div>
+    </div>
+  </div>
 </div>
 
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $('#configByFechaTable').DataTable({
+            "language": {
+                "url": "/lang/datatables_spanish.json"
+            },
+        });
+
+        var indicador = {{indicador.id}};
+        var configSelected = 0;
+
+        $('#confirmDeleteDesglose').on('click', function(){
+            window.location.replace("/admin/crud/desglocesporindicador/delete/"+indicador+"/"+configSelected);
+        });
+
+        $('.btnDeleteConfig').on('click', function(){
+            configSelected = $(this).attr("value");
+            row = $('button[value='+configSelected+']')[0];
+            $('#modalConfigValue').text(($(row).closest('tr').children(":first").text()));
+            $('#deleteDesgloseFechaModal').modal();
+        });
+
+
+    });
+
+</script>
 {% endblock %}
