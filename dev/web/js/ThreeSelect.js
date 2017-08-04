@@ -126,6 +126,11 @@ var ThreeSelectView = Backbone.View.extend({
         if (this.listenObjetivoCallback){
             this.listenObjetivoCallback();
         }
+        if (this.model.get("add_global_option") && this.model.get("objetivo_selected") == -1){
+            console.log("reset objetivo");
+            $('#three_select_meta').val(-1);
+            this.model.set('meta_selected', -1);
+        }
         $('.selectTwo').trigger('change');
         //this.metaSelected();
     },
@@ -133,6 +138,11 @@ var ThreeSelectView = Backbone.View.extend({
     	this.model.set("meta_selected",$(this.el).find('.selectTwo').val());
         if (this.listenMetaCallback){
             this.listenMetaCallback();
+        }
+        if (this.model.get("add_global_option") && this.model.get("meta_selected") == -1){
+            console.log("reset indicador");
+            $('#three_select_indicador').val(-1);
+            this.model.set('indicador_selected', -1);
         }
         if (this.model.get('indicadores').length){
             $('.selectThree').trigger('change');

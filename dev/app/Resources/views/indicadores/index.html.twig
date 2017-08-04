@@ -193,17 +193,10 @@
                 metaText = $('#three_select_meta option:selected').text();
                 objetivoMeta = metaText.split('-')[0].split('.')[0];
                 $('#three_select_objetivo').val(objetivoMeta);
+                modelThreeSelect.set('objetivo_selected', objetivoMeta);
                 objetivo_selected = objetivoMeta;
             }
             table.draw();
-        }
-
-        function objetivoChange(){
-            console.log("ojb change!!!!!");
-            objetivo_selected = $('#three_select_objetivo').val();
-            if (objetivo_selected == -1){
-                $('#three_select_meta').val(-1);
-            }
         }
 
         function initThreeSelect(){
@@ -215,7 +208,7 @@
                 'add_global_option': true,
             });
             viewThreeSelect = new ThreeSelectView({el: $("#selects"), model:modelThreeSelect,
-                objetivo_selected: objetivo_selected, meta_selected: meta_selected, objetivoChangeCallback: objetivoChange,
+                objetivo_selected: objetivo_selected, meta_selected: meta_selected,
                 metaChangeCallback: filterTableIndicadores,
             });
         }

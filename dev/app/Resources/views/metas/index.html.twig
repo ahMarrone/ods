@@ -163,9 +163,10 @@
             modelThreeSelect = new ThreeSelectData({
                 'objetivos': objetivos,
                 'objetivo_selected': objetivo_selected,
+                'add_global_option': true
             });
             viewThreeSelect = new ThreeSelectView({el: $("#selects"), model:modelThreeSelect,
-                objetivoChangeCallback: filterTableMetas });
+                objetivoChangeCallback: filterTableMetas});
         }
 
         function init(){ 

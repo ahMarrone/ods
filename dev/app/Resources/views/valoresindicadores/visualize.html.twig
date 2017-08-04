@@ -246,30 +246,34 @@
     		// Por defecto, pido datos del ultimo año disponible
     		if (data.length){
     			$('#dateValuePicker').val(data[data.length-1]);
+    			fetchvisualizeData();
     		} else {
     			$('#dateValuePicker').val("");
     		}
-    		fetchvisualizeData();
     	}
 
 
     	function getIndicadorDates(){
     		var idIndicador = $('#three_select_indicador').val();
     		var url = api_urls.indicador_dates + '?id_indicador='+ idIndicador;
-    		data = {'id':idIndicador};
-    		$('#indicadorDatesWithData').html('<i class="fa fa-spinner fa-spin fa-fw"></i>');
-    		$.ajax(url,{
-                  'data': JSON.stringify(data),
-                  'type': 'GET',
-                  'processData': false,
-                  'contentType': 'application/json',
-                   success: function(data) {
-	                    updateIndicadorDatesValues(data);
-                   },
-                   error: function(data) {
-                    console.log("ERROR");
-                  },
-              });
+    		if (idIndicador != null && idIndicador != -1){
+	    		data = {'id':idIndicador};
+	    		$('#indicadorDatesWithData').html('<i class="fa fa-spinner fa-spin fa-fw"></i>');
+	    		$.ajax(url,{
+	                  'data': JSON.stringify(data),
+	                  'type': 'GET',
+	                  'processData': false,
+	                  'contentType': 'application/json',
+	                   success: function(data) {
+		                    updateIndicadorDatesValues(data);
+	                   },
+	                   error: function(data) {
+	                    console.log("ERROR");
+	                  },
+	              });
+	    	} else {
+	    		updateIndicadorDatesValues([]);
+	    	}
     	}
 
 
@@ -292,29 +296,6 @@
 			initFilters();
 		}
 
-		function objetivoChange(){
-			console.log("change objeetivo");
-			console.log(model.get('objetivo_selected'));
-            if (model.get('objetivo_selected') == -1){
-                model.set('meta_selected', -1,  { silent: true });
-                model.set('indicador_selected', -1,  { silent: true });
-            }
-		}
-
-		function metaChange(){
-			console.log("change meta");
-			console.log(model.get('meta_selected'));
-            if (model.get('meta_selected') != -1){
-                metaText = $('#three_select_meta option[value='+model.get('meta_selected')+']').text();
-                objetivoMeta = metaText.split('-')[0].split('.')[0];
-                console.log(objetivoMeta);
-                model.set('objetivo_selected', objetivoMeta,  { silent: true });
-                $('#three_select_objetivo option[value='+objetivoMeta+']').attr('selected','selected');
-            }
-            console.log(model.get('indicador_selected'));
-		}
-
-
 
     	function getMetaValFromCode(code){
     		console.log(code);
@@ -324,9 +305,15 @@
     		return $(option[0]).val();
     	}
 
-    	function reloadTree(objValue, metaValue, indValue){
 
-    	}
+		function metaChange(){
+            if (model.get('meta_selected') != -1){
+                metaText = $('#three_select_meta option[value='+model.get('meta_selected')+']').text();
+                objetivoMeta = metaText.split('-')[0].split('.')[0];
+                model.set('objetivo_selected', objetivoMeta,  { silent: true });
+                $('#three_select_objetivo option[value='+objetivoMeta+']').attr('selected','selected');
+            }
+		}
 
 		function indicadorChange(){
 			console.log("change indicador");
@@ -337,17 +324,20 @@
                 indicadorText = $('#three_select_indicador option:selected').text();
                 indicadorCode = indicadorText.split('-')[0].split('.');
                 console.log(indicadorCode);
-            	//model.set('objetivo_selected', indicadorCode[0], { silent: true });
-            	//$('#three_select_objetivo option[value='+indicadorCode[0]+']').attr('selected','selected');
+            	model.set('objetivo_selected', indicadorCode[0], { silent: true });
+            	/*$('#three_select_objetivo option[value='+indicadorCode[0]+']').attr('selected','selected');*/
 				//objetivoChange();
 				//$('#three_select_meta option[value=val2]').attr('selected','selected');
 				metaVal = getMetaValFromCode(indicadorCode[0]+'.'+indicadorCode[1]);
-                //model.set('meta_selected', metaVal);
+                model.set('meta_selected', metaVal, { silent: true });
                 //metaChange();
             }
-            //view.render();
+            view.render();
 			getIndicadorDates();
 		}
+
+
+
 
 
 
@@ -359,7 +349,7 @@
 	    		'indicadores': indicadores,
 	    		'add_global_option': true,
 	    	});
-	    	view = new ThreeSelectView({el: $("#selects") ,model:model, objetivoChangeCallback: objetivoChange,
+	    	view = new ThreeSelectView({el: $("#selects") ,model:model,
                 metaChangeCallback: metaChange, indicadorChangeCallback: indicadorChange});
     	}
 
