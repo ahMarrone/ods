@@ -326,7 +326,8 @@ class ExploraController extends Controller
         /* Si se desean filtrar los indicadores por meta seleccionada, descomentar y reemplazar  */
         // $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByFkidmeta($idMeta);
         $indice = 0;
-        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findBy(array('id' => $ids, 'visible' => true), array('codigo' => 'ASC'));
+        // $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findBy(array('id' => $ids, 'visible' => true), array('codigo' => 'ASC'));
+        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findVisible($ids);
         foreach ($indicadores as $i) {
             if ($id == $i->getId()) {
                 $idx = $indice;

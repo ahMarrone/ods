@@ -286,6 +286,7 @@
           /* Primer elemento de la lista de desgloses para una fecha definida */
           var desgloseSeleccionado = valoresIndicadoresDesgloses[fechaSeleccionada].id_desgloses[0];
           this.model.set('desgloseSeleccionado', desgloseSeleccionado);
+          $('#visualizeShortcut').attr("href", this.model.get("rutaRepresentacionNumerica") + '/' + idIndicadorSeleccionado);
         }
         
         /* Eventos a monitorizar */
@@ -344,6 +345,7 @@
           this.model.set("idxMetaSeleccionada", $(this.el).find('.selectMeta').val());
           this.model.set("idMetaSeleccionada", $(this.el).find('.selectMeta').children(':selected').attr('id'));
           this.model.set("idIndicadorSeleccionado", -1);
+          $('#visualizeShortcut').attr("href", this.model.get("rutaRepresentacionNumerica"));
           if (this.model.get("idMetaSeleccionada") != -1) {
             var idxMetaSeleccionada = this.model.get("idxMetaSeleccionada");
             var idObjetivoSeleccionado = this.model.get("metas")[idxMetaSeleccionada].id_objetivo;
@@ -435,6 +437,7 @@
                     var idxMeta = $(that.el).find('.selectMeta').val();
                     var idObjetivoSeleccionado = that.model.get("metas")[idxMeta].id_objetivo;
                     that.model.set("idObjetivoSeleccionado", idObjetivoSeleccionado);
+                    $('#visualizeShortcut').attr("href", that.model.get("rutaRepresentacionNumerica") + '/' + idIndicador);
 
                    },
                    error: function(data) {

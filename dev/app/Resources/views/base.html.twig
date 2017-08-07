@@ -68,14 +68,14 @@
                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                   {% if app.request.attributes.get('_route') == 'explora_initialize' %}
                     <!-- BTN Representación Numérica -->
-                    <li class="green"><a href="{{ path('admin_crud_valoresindicadores_visualize') }}">Representación Numérica</a></li>
+                    <li class="green"><a id="visualizeShortcut" href="{{ path('admin_crud_valoresindicadores_visualize') }}">Representación Numérica</a></li>
                   {% else %}
                     <!-- BTN Representación Georeferencial -->
                     <li class="green"><a href="{{ path('explora_initialize') }}">Representación Georeferencial</a></li>
                   {% endif %}
 
                   <!-- BTN Usuario -->
-                   <li id="menuPub" class="dropdown orange">
+                   <li class="dropdown orange">
                       <a href="#" class="dropdown-toggle orange" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ app.user.username }}<span class="caret"></span></a>
                       <ul class="dropdown-menu">
                         <li class="orange"><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
