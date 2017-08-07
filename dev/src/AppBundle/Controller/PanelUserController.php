@@ -65,8 +65,8 @@ class PanelUserController extends Controller
 
     private function getIndicadorCode($indicadorObject){
         return $indicadorObject->getFkidmeta()->getFkidobjetivo()->getCodigo() . "." . 
-               $indicadorObject->getFkidmeta()->getCodigo() . "." . 
-               $indicadorObject->getCodigo();
+               $indicadorObject->getFkidmeta()->getVisibleCodigo() . "." . 
+               $indicadorObject->getVisibleCodigo();
     }
 
 }
