@@ -45,7 +45,7 @@
             <tr>
                 <td>{{ indicadore.fkidmeta.id }}</td>
                 <td>{{ indicadore.id }}</td>
-                <td>{{indicadore.fkidmeta.fkidobjetivo.codigo}}.{{indicadore.fkidmeta.codigo}}.{{indicadore.codigo}}</td>                
+                <td>{{indicadore.fkidmeta.fkidobjetivo.codigo}}.{{indicadore.fkidmeta.getVisibleCodigo()}}.{{indicadore.getvisibleCodigo()}}</td>                
                 <td><a href="{{ path('admin_crud_indicadores_show', { 'id': indicadore.id }) }}">{{ indicadore.descripcion }}</a></td>
                 <td>{{ indicadore.tipo }}</td>
                 <td>{{ indicadore.valmin }}</td>

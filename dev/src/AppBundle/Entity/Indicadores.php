@@ -620,4 +620,22 @@ class Indicadores
         }
         return false;
     }
+
+    
+
+    
+    public function formatCodigo(){
+        $prefix = "0000";
+        if (!is_numeric(substr($this->getCodigo(),0,1))){
+            $prefix = "9999";
+        }
+        $newCodigo = $prefix . $this->getCodigo();
+        return $newCodigo;
+    }
+
+
+    public function getVisibleCodigo(){
+        return substr($this->getCodigo(),4);
+    }
+    
 }

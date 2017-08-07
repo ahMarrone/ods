@@ -104,6 +104,7 @@ class IndicadoresController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->addIndicadorMetadata($indicadore);
+            $indicadore->setCodigo($indicadore->formatCodigo());
             // Fechas
             /*$datetime = new \DateTime();
             $newDate = $datetime->createFromFormat('Y-m-d', '2015-01-01');
@@ -169,7 +170,7 @@ class IndicadoresController extends Controller
         $list = array();
         $metas =  $this->getDoctrine()->getRepository('AppBundle:Metas')->findAll();
         foreach ($metas as $m) {
-            array_push($list, array('id'=>$m->getId(),'desc'=>$m->getDescripcion(),'id_objetivo'=>$m->getFkidobjetivo()->getId(),'code'=>$m->getCodigo(), 'code_objetivo'=>$m->getFkidobjetivo()->getCodigo()));
+            array_push($list, array('id'=>$m->getId(),'desc'=>$m->getDescripcion(),'id_objetivo'=>$m->getFkidobjetivo()->getId(),'code'=>$m->getvisibleCodigo(), 'code_objetivo'=>$m->getFkidobjetivo()->getCodigo()));
         }
         return $list;
     }
@@ -231,6 +232,7 @@ class IndicadoresController extends Controller
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $params = $this->getRequest()->request->all();
+        $indicadore->setCodigo($indicadore->getVisibleCodigo());
         if (isset($params['id_meta_selected'])){
             $meta = $this->getDoctrine()->getRepository('AppBundle:Metas')->findOneById($params["id_meta_selected"]);
             $indicadore->setFkidmeta($meta);
@@ -259,7 +261,7 @@ class IndicadoresController extends Controller
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->addIndicadorMetadata($indicadore);
-
+            $indicadore->setCodigo($indicadore->formatCodigo());
             if ($indicadore->getFechametaintermedia() != NULL){
                 $indicadore->setFechametaintermedia($indicadore->formatYearToDB($indicadore->getFechametaintermedia()));
             }

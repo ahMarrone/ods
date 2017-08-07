@@ -69,7 +69,7 @@ class MetasType extends AbstractType
     public function validateNewMeta($meta, ExecutionContext $context)
     {
         $idObjetivo = $meta->getFkidobjetivo()->getId();
-        $codigo = $meta->getCodigo();
+        $codigo = $meta->formatCodigo();
         if (($this->last_code_used == null && $this->codeAlreadyUsed($idObjetivo, $codigo)) ||
            ($this->last_code_used != null && $this->last_code_used != $codigo && $this->codeAlreadyUsed($idObjetivo, $codigo)))
         {

@@ -126,7 +126,7 @@ class IndicadoresType extends AbstractType
     //      - que las fecha de meta final sea mayor a la fecha de meta intermedia
     public function validateNewIndicador($indicador, ExecutionContext $context){
         $idMeta = $indicador->getFkidmeta()->getId();
-        $codigo = $indicador->getCodigo();
+        $codigo = $indicador->formatCodigo();;
         if (($this->last_code_used == null && $this->codeAlreadyUsed($idMeta, $codigo)) ||
            ($this->last_code_used != null && $this->last_code_used != $codigo && $this->codeAlreadyUsed($idMeta, $codigo)))
         {
