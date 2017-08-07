@@ -633,7 +633,7 @@ DROP TABLE IF EXISTS `indicadores`;
 CREATE TABLE IF NOT EXISTS `indicadores` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `fkIdMeta` int(11) unsigned NOT NULL COMMENT 'clave foranea meta',
-  `codigo` varchar(4) COLLATE utf8_spanish_ci NOT NULL COMMENT 'código del indicador',
+  `codigo` varchar(8) COLLATE utf8_spanish_ci NOT NULL COMMENT 'código del indicador',
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion del indicador',
   `tipo` enum('porcentual','entero','real') COLLATE utf8_spanish_ci NOT NULL COMMENT 'tipo de indicador',
   `valMin` bigint(20) NOT NULL COMMENT 'valor minimo dentro del dominio',
@@ -662,7 +662,7 @@ CREATE TABLE IF NOT EXISTS `indicadores` (
 DROP TABLE IF EXISTS `metas`;
 CREATE TABLE IF NOT EXISTS `metas` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `codigo` varchar(4) COLLATE utf8_spanish_ci NOT NULL COMMENT 'código de la meta',
+  `codigo` varchar(8) COLLATE utf8_spanish_ci NOT NULL COMMENT 'código de la meta',
   `descripcion` varchar(5000) COLLATE utf8_spanish_ci NOT NULL COMMENT 'descripcion de la meta',
   `ambito` enum('N','P','D','L','R') COLLATE utf8_spanish_ci NOT NULL,
   `fkIdObjetivo` int(11) unsigned NOT NULL COMMENT 'clave foranea tabla objetivos',
