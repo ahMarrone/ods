@@ -429,7 +429,6 @@
         'indicador_selected': indicador_selected,
         'add_global_option': true,
     	});
-      console.log(objetivo_selected);
     	var view = new ThreeSelectView({el: $("#selects") ,model:model, metaChangeCallback: metaChange, indicadorChangeCallback: listenIndicadorChange});
 
 
@@ -442,6 +441,12 @@
       }
 
 
+      function resetModel(){
+        configModel.clear().set(configModel.defaults);
+        configView.render();
+      }
+
+
       function listenIndicadorChange() {
         if (model.get('indicador_selected') != null && model.get('indicador_selected') != -1){
                 indicadorText = $('#three_select_indicador option:selected').text();
@@ -450,14 +455,17 @@
                 metaVal = getMetaValFromCode(indicadorCode[0]+'.'+indicadorCode[1]);
                 model.set('meta_selected', metaVal, { silent: true });
         }
-        view.render();
+                view.render();
         if (model.get("indicador_selected") != -1){
           configModel.set('id_indicador',model.get("indicador_selected"));
           configView.loadIndicadorDates();
           if (configModel.get('desgloces_request_status') != -1){
               configView.loadDesglocesConfig();
           }
+        } else {
+          resetModel();
         }
+
       }
 
 

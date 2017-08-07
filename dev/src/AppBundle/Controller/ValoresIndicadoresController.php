@@ -91,7 +91,7 @@ class ValoresIndicadoresController extends Controller
                 'valoresindicadores' => $valoresindicadores,
                 'id_objetivo_selected' => $id_objetivo_selected,
                 'id_meta_selected' => $id_meta_selected,
-                'id_indicador_selected' => $id_indicador,
+                'id_indicador_selected' => $id_indicador_selected,
                 'preselected_date' => $preselectedDate,
                 'api_urls' => array(
                     'indicador_dates'=> $this->generateUrl('admin_crud_valoresindicadores_indicador_dates'),

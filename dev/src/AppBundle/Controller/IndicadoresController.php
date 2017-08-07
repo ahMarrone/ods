@@ -239,10 +239,9 @@ class IndicadoresController extends Controller
         $document_path_string = $indicadore->getDocumentPath();
         if ($document_path_string != NULL){
             $indicadore->setDocumentPath(
-                new File($this->getParameter('indicadores_technical_documents_directory').'/'.$indicadore->getDocumentPath())
+                new File($this->getParameter('indicadores_technical_documents_directory').'/'.$indicadore->getDocumentPath(), false)
             );
         }
-
         // Formateo fechas a 'yyyy' para visualizacion
         if ($indicadore->getFechametaintermedia() != NULL){
             $indicadore->setFechametaintermedia(explode('-',$indicadore->getFechametaintermedia())[0]);
