@@ -1,12 +1,13 @@
 {% extends 'base_panel_users.html.twig' %}
 
 {% block panel_body %}
+    {% if  show_breadcrumbs is defined and show_breadcrumbs == true %}
     <ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
         <li><a href="{{ path('admin_crud_desgloces_index') }}">Desgloses</a></li>
         <li class="active">Edición de desglose</a></li>
     </ol>
-
+    {% endif %}
      <div class="page-header">
           <h2>Editar Desglose</h2>
     </div>
@@ -18,9 +19,11 @@
     {{ form_end(edit_form) }}
 
 <div class="row">
+            {% if (render_delete) %}
             {{ form_start(delete_form) }}
                 <input class="col-md-1 btn btn-danger option-btn" type="submit" value="Eliminar">
             {{ form_end(delete_form) }}
+            {% endif %} 
 </div>
 
 <br><br><br><br><br><br><br><br>

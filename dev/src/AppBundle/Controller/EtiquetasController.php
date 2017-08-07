@@ -121,6 +121,7 @@ class EtiquetasController extends Controller
         ));
     }
 
+
     /**
      * Deletes a Etiquetas entity.
      *
@@ -134,9 +135,14 @@ class EtiquetasController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->remove($etiqueta);
-            $em->flush();
-            $request->getSession()->getFlashBag()->add('success', "La Etiqueta ha sido eliminada correctamente");
+            $configFechaDesglose = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfechadesgloces')->findByIddesgloce($etiqueta->getFkiddesgloce()->getId());
+            if (count($configFechaDesglose)){
+                $request->getSession()->getFlashBag()->add('warning', "No se puede eliminar la Etiqueta ya que su Desglose correspondiente tiene configuraciones de valores indicadores asociadas");
+            } else {
+                $em->remove($etiqueta);
+                $em->flush();
+                $request->getSession()->getFlashBag()->add('success', "La Etiqueta ha sido eliminada correctamente");
+            }   
         }
 
         return $this->redirectToRoute('admin_crud_etiquetas_index');

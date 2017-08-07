@@ -1,13 +1,13 @@
 {% extends 'base_panel_users.html.twig' %}
 
 {% block panel_body %}
-    
+    {% if  show_breadcrumbs is defined and show_breadcrumbs == true %} 
     <ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
         <li><a href="{{ path('admin_crud_indicadores_index') }}">Indicadores</a></li>
         <li class="active">Desgloses indicador</a></li>
     </ol>
-
+    {% endif %}
     <div class="page-header">
           <h2>Configuración de desgloses del indicador<small>{{ nombre_indicador }}</small></h2>
     </div>
@@ -55,8 +55,8 @@
                 </td>
                 <td>{{ config.cruzado ? "Si" : "No"}}</td>
                 <td>{{ config.cant_valores }}</td>
-                {{id_config}}
                 <td>
+                    <a class="btn btn-primary" title="Visualizar valores" href="{{ path('admin_crud_valoresindicadores_visualize_id_indicador_date', { 'id_indicador': indicador.id, 'date': config.fecha|date("Y") }) }}"><i class="fa fa-eye fa-fw" aria-hidden="true"></i></a>
                     <button type="button" class="btn btn-danger btnDeleteConfig" value="{{id_config}}" title="Eliminar" {{ config.cant_valores > 0  ? 'disabled disabled="disabled"' : ''  }} ><i class="fa fa-trash"></i></button>
                 </td>
             </tr>

@@ -1,13 +1,17 @@
 {% extends 'base_panel_users.html.twig' %}
 
 {% block panel_body %}
-    <ol class="breadcrumb">
-        <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
-        <li class="active">Objetivos</a></li>
-    </ol>
+    {% if  show_breadcrumbs is defined and show_breadcrumbs == true %}
+        <ol class="breadcrumb">
+            <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+            <li class="active">Objetivos</a></li>
+        </ol>
+    {% endif %}
+
     <div class="page-header">
           <h2>Objetivos</h2>
     </div>
+
 
  <table id="objetivosTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>

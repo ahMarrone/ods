@@ -20,11 +20,12 @@
 
 <div class="container">
 	<div class="row">
+     {% if  show_breadcrumbs is defined and show_breadcrumbs == true %} 
 		<ol class="breadcrumb">
 			<li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
 			<li class="active">Precarga de valores indicadores</a></li>
 		</ol>
-
+    {% endif %}
 		<div class="page-header">
 			<h2>Carga de valores indicadores</h2>
         </div>
@@ -110,11 +111,11 @@
                               <%= this.prepareLabelsListContent() %>
                             </ul>
                          </div>
-                    <%  } else if (model.desgloces_request_status == 0) { %>
+                    <%  } else if (model.desgloces_request_status == 0 && model.id_indicador != -1) { %>
                         <i class="fa fa-spinner fa-spin fa-fw"></i>
                      <% } else { %>
                         <div class="alert alert-warning col-md-12" role="alert">
-                        <b>Debe seleccionar un período para cargar la configuración de los desgloces</b>
+                        <b>Debe seleccionar un indicador y un período para cargar la configuración de los desgloces</b>
                         </div>
                       <% } %>
             </div>
@@ -285,23 +286,25 @@
                 var that = this;
                 this.model.set('desgloces_request_status',0);
                 that.model.set('date_selected',date);
-                $.ajax(url_config,{
-                  'data': data,
-                  'type': 'GET',
-                  'contentType': 'application/json',
-                   success: function(data) {
-                      that.model.set('desgloces_has_saved_config',data.has_saved_config);
-                      that.model.set('desgloces_enabled',data.desgloces_enabled);
-                      that.model.set('desgloces_cross',data.desgloces_cross);
-                      that.setLabelsList();
-                      that.updatePreloadDataForm();
-                   },
-                   error: function(data) {
-                   },
-                   complete: function() {
-                        that.model.set('desgloces_request_status', 1);      
-                   },
-              });
+                if (idIndicador != -1){
+                    $.ajax(url_config,{
+                      'data': data,
+                      'type': 'GET',
+                      'contentType': 'application/json',
+                       success: function(data) {
+                          that.model.set('desgloces_has_saved_config',data.has_saved_config);
+                          that.model.set('desgloces_enabled',data.desgloces_enabled);
+                          that.model.set('desgloces_cross',data.desgloces_cross);
+                          that.setLabelsList();
+                          that.updatePreloadDataForm();
+                       },
+                       error: function(data) {
+                       },
+                       complete: function() {
+                            that.model.set('desgloces_request_status', 1);      
+                       },
+                    });
+                }
             },
             setLabelsList: function(){
               var labelsFullList = {};
@@ -396,11 +399,20 @@
 
 
 
-        var api_urls = {{ api_urls|json_encode|raw}};
+    var api_urls = {{ api_urls|json_encode|raw}};
 
-        function getSpinnerHTML(){
-            return '<i class="fa fa-spinner fa-spin fa-fw">';
-        }
+    function getSpinnerHTML(){
+        return '<i class="fa fa-spinner fa-spin fa-fw">';
+    }
+
+    function metaChange(){
+      if (model.get('meta_selected') != -1){
+          metaText = $('#three_select_meta option[value='+model.get('meta_selected')+']').text();
+          objetivoMeta = metaText.split('-')[0].split('.')[0];
+          model.set('objetivo_selected', objetivoMeta,  { silent: true });
+          $('#three_select_objetivo option[value='+objetivoMeta+']').attr('selected','selected');
+      }
+    }
 
 
 
@@ -415,16 +427,37 @@
         'objetivo_selected': objetivo_selected,
         'meta_selected': meta_selected,
         'indicador_selected': indicador_selected,
+        'add_global_option': true,
     	});
-    	var view = new ThreeSelectView({el: $("#selects") ,model:model, indicadorChangeCallback: listenIndicadorChange});
+      console.log(objetivo_selected);
+    	var view = new ThreeSelectView({el: $("#selects") ,model:model, metaChangeCallback: metaChange, indicadorChangeCallback: listenIndicadorChange});
+
+
+
+      function getMetaValFromCode(code){
+        option = $('#three_select_meta option').filter(function() { 
+          return $(this).text().indexOf(code) === 0; 
+        });
+        return $(option[0]).val();
+      }
 
 
       function listenIndicadorChange() {
+        if (model.get('indicador_selected') != null && model.get('indicador_selected') != -1){
+                indicadorText = $('#three_select_indicador option:selected').text();
+                indicadorCode = indicadorText.split('-')[0].split('.');
+                model.set('objetivo_selected', indicadorCode[0], { silent: true });
+                metaVal = getMetaValFromCode(indicadorCode[0]+'.'+indicadorCode[1]);
+                model.set('meta_selected', metaVal, { silent: true });
+        }
+        view.render();
+        if (model.get("indicador_selected") != -1){
           configModel.set('id_indicador',model.get("indicador_selected"));
           configView.loadIndicadorDates();
           if (configModel.get('desgloces_request_status') != -1){
               configView.loadDesglocesConfig();
           }
+        }
       }
 
 
