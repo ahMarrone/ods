@@ -58,11 +58,28 @@ class ValoresIndicadoresController extends Controller
      * Ver valoresindicadores formato reporting
      *
      * @Route("/visualize", name="admin_crud_valoresindicadores_visualize")
+     * @Route("/visualize/{id_indicador}", requirements={"id_indicador":"\d+"}, name="admin_crud_valoresindicadores_visualize_id_indicador", defaults={"id_indicador" = -1})
+     * @Route("/visualize/{id_indicador}/{date}", requirements={"id_indicador":"\d+", "date":"\d{4}"}, name="admin_crud_valoresindicadores_visualize_id_indicador_date", defaults={"id_indicador" = -1, "date" = -1})
      * @Method("GET")
      */
     public function visualizeAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
+        $id_indicador_selected = $id_meta_selected = $id_objetivo_selected = -1;
+        $id_indicador = $request->get('id_indicador');
+        $preselectedDate = $request->get('date');
+        if (!$preselectedDate){
+            $preselectedDate = "0";
+        }
+        if ($id_indicador && $id_indicador > 0){
+            $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($id_indicador);
+            if ($indicador){
+                $id_indicador_selected = $id_indicador;
+                $id_meta_selected = $indicador->getFkidmeta()->getId();
+                $id_objetivo_selected = $indicador->getFkidmeta()->getFkidobjetivo()->getId();
+            }
+        }
+        $date = $request->get('date');
         $em = $this->getDoctrine()->getManager();
         list($objetivos, $metas, $indicadores) = $this->preparePreloadData();
         if (count($metas) && count($indicadores)){
@@ -72,6 +89,10 @@ class ValoresIndicadoresController extends Controller
                 'metas'=>$metas,
                 'indicadores'=>$indicadores,
                 'valoresindicadores' => $valoresindicadores,
+                'id_objetivo_selected' => $id_objetivo_selected,
+                'id_meta_selected' => $id_meta_selected,
+                'id_indicador_selected' => $id_indicador,
+                'preselected_date' => $preselectedDate,
                 'api_urls' => array(
                     'indicador_dates'=> $this->generateUrl('admin_crud_valoresindicadores_indicador_dates'),
                 )
@@ -88,7 +109,7 @@ class ValoresIndicadoresController extends Controller
     /**
      * Ver valoresindicadores formato reporting
      *
-     * @Route("/visualize/getdata", name="admin_crud_valoresindicadores_visualize_getdata")
+     * @Route("/visualize/data/getdata", name="admin_crud_valoresindicadores_visualize_getdata")
      * @Method("GET")
      */
     public function getVisualizeData(Request $request){
@@ -368,9 +389,9 @@ class ValoresIndicadoresController extends Controller
     public function preloadAction(Request $request){
         list($objetivos, $metas, $indicadores) = $this->preparePreloadData();
         if (count($metas) && count($indicadores)){
-            $id_objetivo_selected = $objetivos[0]["id"];
-            $id_meta_selected = $metas[0]["id"];
-            $id_indicador_selected = $indicadores[0]["id"];
+            //$id_objetivo_selected = $objetivos[0]["id"];
+            //$id_meta_selected = $metas[0]["id"];
+            //$id_indicador_selected = $indicadores[0]["id"];
             $user_indicador_selected = intval($request->get('id_indicador'));
             if ($user_indicador_selected){
                 $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($user_indicador_selected);
@@ -384,9 +405,9 @@ class ValoresIndicadoresController extends Controller
                 'objetivos'=>$objetivos,
                 'metas'=>$metas,
                 'indicadores'=>$indicadores,
-                'id_indicador_selected' => $id_indicador_selected,
-                'id_meta_selected' => $id_meta_selected,
-                'id_objetivo_selected' => $id_objetivo_selected,
+                'id_indicador_selected' => -1,
+                'id_meta_selected' => -1,
+                'id_objetivo_selected' => -1,
                 'api_urls' => array(
                     'indicador_dates'=> $this->generateUrl('admin_crud_valoresindicadores_indicador_dates'),
                     'indicador_desgloces_config' => $this->generateUrl('admin_crud_valoresindicadores_indicador_desgloces_config'),

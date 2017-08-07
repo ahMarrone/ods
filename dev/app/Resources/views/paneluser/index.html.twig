@@ -10,9 +10,11 @@
 {% block body %}
 
 	<div class="row">
-	<ol class="breadcrumb">
-  		<li class="active">Panel de usuario</li>
-	</ol>
+   {% if  show_breadcrumbs is defined and show_breadcrumbs == true %}
+      	<ol class="breadcrumb">
+        		<li class="active">Panel de usuario</li>
+      	</ol>
+  {% endif %}
 	</div>
 <div class="row">
 	<div class="panel-section"> 

@@ -10,10 +10,12 @@
 {% endblock %}
 
 {% block panel_body %}
+    {% if  show_breadcrumbs is defined and show_breadcrumbs == true %} 
     <ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
         <li class="active">Metas</a></li>
     </ol>
+    {% endif %}
 
    <form class="form-horizontal">
 		<div id="selects"></div>

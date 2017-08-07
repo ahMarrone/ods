@@ -1,11 +1,13 @@
 {% extends 'base_panel_users.html.twig' %}
 
 {% block panel_body %}
-        <ol class="breadcrumb">
+    {% if  show_breadcrumbs is defined and show_breadcrumbs == true %}     
+    <ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
         <li><a href="{{ path('admin_crud_metas_index') }}">Metas</a></li>
         <li class="active">Detalle de meta</a></li>
     </ol>
+    {% endif %}
       <div class="page-header">
           <h2>Detalle de Meta</h2>
     </div>

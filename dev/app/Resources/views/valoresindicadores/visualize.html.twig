@@ -15,11 +15,12 @@
 {% endblock %}
 
 {% block panel_body %}
-
+	 {% if  show_breadcrumbs is defined and show_breadcrumbs == true %} 
 	<ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
         <li class="active">Visualizar valores indicadores</a></li>
     </ol>
+    {% endif %}
     <div class="page-header">
           <h2>Visualizar valores de indicadores</h2>
     </div>
@@ -74,6 +75,10 @@
         var objetivos = {{ objetivos|json_encode|raw}};
         var metas = {{ metas|json_encode|raw}};
         var indicadores = {{ indicadores|json_encode|raw}};
+        var objetivo_selected = {{id_objetivo_selected}};
+        var meta_selected = {{id_meta_selected}};
+        var indicador_selected = {{id_indicador_selected}};
+        var preselected_date = {{preselected_date}};
 
         var view;
         var model;
@@ -113,7 +118,7 @@
     		table = $('#valoresindicadoresTable').DataTable({
     			dom: 'Bfrtip',
 				"ajax": {
-					"url": '/admin/crud/valoresindicadores/visualize/getdata',
+					"url": '/admin/crud/valoresindicadores/visualize/data/getdata',
 					"type": 'GET',
 					"data": function ( d ) {
 						return serializeFormData();
@@ -236,7 +241,6 @@
 
 
     	function updateIndicadorDatesValues(data){
-    		console.log(data);
     		var newDatesHTML = "";
     		for (i in data){
     			var ref = "<a class='btn btn-default loadIndicadorDate'>"+data[i]+"</a>  ";
@@ -244,12 +248,18 @@
     		}
     		$('#indicadorDatesWithData').html(newDatesHTML);
     		// Por defecto, pido datos del ultimo año disponible
-    		if (data.length){
-    			$('#dateValuePicker').val(data[data.length-1]);
-    			fetchvisualizeData();
+    		if (preselected_date && data.indexOf(preselected_date.toString()) != -1){
+    			$('#dateValuePicker').val(data[data.indexOf(preselected_date.toString())]);
+				fetchvisualizeData();
+				preselected_date = null;
     		} else {
-    			$('#dateValuePicker').val("");
-    		}
+	    		if (data.length){
+	    			$('#dateValuePicker').val(data[data.length-1]);
+	    			fetchvisualizeData();
+	    		} else {
+	    			$('#dateValuePicker').val("");
+	    		}
+	    	}
     	}
 
 
@@ -298,7 +308,6 @@
 
 
     	function getMetaValFromCode(code){
-    		console.log(code);
     		option = $('#three_select_meta option').filter(function() { 
     			return $(this).text().indexOf(code) === 0; 
     		});
@@ -316,21 +325,12 @@
 		}
 
 		function indicadorChange(){
-			console.log("change indicador");
-			console.log(model.get('objetivo_selected'));
-			console.log(model.get('meta_selected'));
-			console.log(model.get('indicador_selected'));
             if (model.get('indicador_selected') != null && model.get('indicador_selected') != -1){
                 indicadorText = $('#three_select_indicador option:selected').text();
                 indicadorCode = indicadorText.split('-')[0].split('.');
-                console.log(indicadorCode);
             	model.set('objetivo_selected', indicadorCode[0], { silent: true });
-            	/*$('#three_select_objetivo option[value='+indicadorCode[0]+']').attr('selected','selected');*/
-				//objetivoChange();
-				//$('#three_select_meta option[value=val2]').attr('selected','selected');
 				metaVal = getMetaValFromCode(indicadorCode[0]+'.'+indicadorCode[1]);
                 model.set('meta_selected', metaVal, { silent: true });
-                //metaChange();
             }
             view.render();
 			getIndicadorDates();
@@ -348,6 +348,9 @@
 	    		'metas': metas,
 	    		'indicadores': indicadores,
 	    		'add_global_option': true,
+	    		'objetivo_selected':objetivo_selected,
+	    		'meta_selected':meta_selected,
+	    		'indicador_selected': indicador_selected,
 	    	});
 	    	view = new ThreeSelectView({el: $("#selects") ,model:model,
                 metaChangeCallback: metaChange, indicadorChangeCallback: indicadorChange});

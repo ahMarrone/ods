@@ -88,7 +88,7 @@ class DesglocesController extends Controller
         $deleteForm = $this->createDeleteForm($desgloce);
         $editForm = $this->createForm('AppBundle\Form\DesglocesType', $desgloce);
         $editForm->handleRequest($request);
-
+        $renderDelete = ($desgloce->getId() == 0) ? false : true;
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($desgloce);
@@ -101,6 +101,7 @@ class DesglocesController extends Controller
             'desgloce' => $desgloce,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
+            'render_delete' => $renderDelete
         ));
     }
 
@@ -116,14 +117,23 @@ class DesglocesController extends Controller
         $form = $this->createDeleteForm($desgloce);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid() && $desgloce->getId() != 0) {
             $em = $this->getDoctrine()->getManager();
+            $etiquetasDesgloces = $em->getRepository('AppBundle:Etiquetas')->findByfkiddesgloce($desgloce->getId());
+            if (count($etiquetasDesgloces)) {
+                $request->getSession()->getFlashBag()->add('warning', "No se puede eliminar un Desglose que tiene Etiquetas asociadas");
+                return $this->redirectToRoute('admin_crud_desgloces_index');
+            }
+            $configFechaDesglose = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfechadesgloces')->findByIddesgloce($desgloce->getId());
+            if (count($configFechaDesglose)){
+                $request->getSession()->getFlashBag()->add('warning', "No se puede eliminar el Desglose porque existen configuraciones de valores indicadores asociadas al mismo");
+                return $this->redirectToRoute('admin_crud_desgloces_index');
+            }
             $em->remove($desgloce);
             $em->flush();
             $request->getSession()->getFlashBag()->add('success', "El Desglose ha sido eliminado correctamente");
+            return $this->redirectToRoute('admin_crud_desgloces_index');
         }
-
-        return $this->redirectToRoute('admin_crud_desgloces_index');
     }
 
     /**
