@@ -388,6 +388,7 @@ class ValoresIndicadoresController extends Controller
      */
     public function preloadAction(Request $request){
         list($objetivos, $metas, $indicadores) = $this->preparePreloadData();
+        $id_indicador_selected = $id_meta_selected = $id_objetivo_selected = -1;
         if (count($metas) && count($indicadores)){
             //$id_objetivo_selected = $objetivos[0]["id"];
             //$id_meta_selected = $metas[0]["id"];
@@ -405,9 +406,9 @@ class ValoresIndicadoresController extends Controller
                 'objetivos'=>$objetivos,
                 'metas'=>$metas,
                 'indicadores'=>$indicadores,
-                'id_indicador_selected' => -1,
-                'id_meta_selected' => -1,
-                'id_objetivo_selected' => -1,
+                'id_indicador_selected' => $id_indicador_selected,
+                'id_meta_selected' => $id_meta_selected,
+                'id_objetivo_selected' => $id_objetivo_selected,
                 'api_urls' => array(
                     'indicador_dates'=> $this->generateUrl('admin_crud_valoresindicadores_indicador_dates'),
                     'indicador_desgloces_config' => $this->generateUrl('admin_crud_valoresindicadores_indicador_desgloces_config'),

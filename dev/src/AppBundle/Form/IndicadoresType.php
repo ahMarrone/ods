@@ -42,6 +42,7 @@ class IndicadoresType extends AbstractType
             ->add('codigo', TextType::class, array(
                 'label' => 'Código del indicador', 'attr' => array(
                     'class' => 'col-sm-1',
+                    'maxlength' => 4
                 )                 
             ))                        
             ->add('descripcion', TextareaType::class , array('label'  => 'Descripción', 'attr' => array('maxlength' => 500, 'rows' => 4),))

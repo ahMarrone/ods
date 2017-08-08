@@ -74,22 +74,22 @@
 <script id="panelListWrapper" type="text/template">
 <nav class="navbar row second-navbar-panel">
   <div class="container-fluid">
-    <div class="">
-      <ul class="nav navbar-nav">
+    <div>
+      <ul class="nav navbar-nav navbar-form">
          <% if (this.collection.isRefLeft()) { %>
         <button id="newDataLoader" type="button" class="btn btn-default navbar-btn"><i class="fa fa-plus"></i>  Agregar ficha</button>
         <% }  %>
         <button id="saveNewDataLoaders" type="button" class="btn btn-success navbar-btn <% if (!this.collection.hasNewDataLoaders()) { %> disabled<% }  %>"><span class="fa fa-download"  ></span>  Guardar nuevos</button>
       </ul>
           <form class="navbar-form navbar-right" role="search">
-          <a id="goBackPreload" href="{{ path('admin_crud_valoresindicadores_preload_indicador', { 'id_indicador': indicador.id }) }}" type="button" class="btn btn-default navbar-btn"><span class="fa fa-arrow-left"  ></span>  Pantalla precarga</a>
+          <a id="goBackPreload" href="{{ path('admin_crud_valoresindicadores_preload_indicador', { 'id_indicador': indicador.id }) }}" type="button" class="btn btn-default navbar-btn pull-left"><span class="fa fa-arrow-left"  ></span>  Pantalla precarga</a>
           <% if (this.collection.ambito_indicador == 'D') { %>
-          <div class="form-group">
-              <select id="filterCardsSelect">
-                <%= this.collection.getFilterOptions() %>
-              </select>
-          </div>
-        <p class="navbar-text pull-right">Filtrar por provincia: </p>
+                  <div class="form-group">
+                      <select id="filterCardsSelect" class="form-control" style="margin-top: 8px;">
+                        <%= this.collection.getFilterOptions() %>
+                      </select>
+                  <p class="navbar-text pull-left">Filtrar por provincia: </p>
+                  </div>
           <% }  %>
           </form>
     </div><!-- /.navbar-collapse -->

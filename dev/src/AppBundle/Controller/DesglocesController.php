@@ -12,7 +12,7 @@ use AppBundle\Form\DesglocesType;
 /**
  * Desgloces controller.
  *
- * @Route("/admin/crud/desgloces")
+ * @Route("/admin/crud/desgloses")
  */
 class DesglocesController extends Controller
 {
