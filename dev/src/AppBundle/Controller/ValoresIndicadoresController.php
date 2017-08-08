@@ -64,7 +64,7 @@ class ValoresIndicadoresController extends Controller
      */
     public function visualizeAction(Request $request)
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
+        $this->denyAccessUnlessGranted('ROLE_USER', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $id_indicador_selected = $id_meta_selected = $id_objetivo_selected = -1;
         $id_indicador = $request->get('id_indicador');
         $preselectedDate = $request->get('date');
