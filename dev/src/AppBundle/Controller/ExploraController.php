@@ -267,7 +267,7 @@ class ExploraController extends Controller
                 $idx = $indice;
             }
             $meta = array('id'=>$m->getId(),
-                          'codigo'=>$m->getFkidobjetivo()->getCodigo() . "." . $m->getCodigo(),
+                          'codigo'=>$m->getFkidobjetivo()->getCodigo() . "." . $m->getVisibleCodigo(),
                           'descripcion'=>$m->getDescripcion(),
                           'id_objetivo'=>$m->getFkidobjetivo()->getId());
             array_push($list, $meta);
@@ -327,14 +327,15 @@ class ExploraController extends Controller
         // $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByFkidmeta($idMeta);
         $indice = 0;
         // $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findBy(array('id' => $ids, 'visible' => true), array('codigo' => 'ASC'));
-        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findVisible($ids);
+        // $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findVisible($ids);
+        $indicadores =  $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findAll(true, $ids);
         foreach ($indicadores as $i) {
             if ($id == $i->getId()) {
                 $idx = $indice;
             }
             $indicador = array(
                 'id'=>$i->getId(),
-                'codigo'=>$i->getFkidmeta()->getFkidobjetivo()->getCodigo() . "." . $i->getFkidmeta()->getCodigo() . "." . $i->getCodigo(),
+                'codigo'=>$i->getFkidmeta()->getFkidobjetivo()->getCodigo() . "." . $i->getFkidmeta()->getVisibleCodigo() . "." . $i->getVisibleCodigo(),
                 'descripcion'=>$i->getDescripcion(),
                 'id_meta'=>$i->getFkidmeta()->getId(),
                 'ambito'=>$i->getAmbito(),
