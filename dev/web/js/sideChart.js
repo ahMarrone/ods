@@ -175,7 +175,7 @@ var sideChartView = Backbone.View.extend({
 
         var chartDataRaw = {};
         var chartData = [];
-        var nulosPorAnio = {};
+        var aniosValidos = {};
         var aniosDefinidos = 0;
         var indiceEtiquetaSeleccionada = null;
         var i;
@@ -183,10 +183,12 @@ var sideChartView = Backbone.View.extend({
         _.each(valoresIndicadoresDesgloses, function(claves, fecha) {
             if (!(fecha in chartDataRaw)) {
                 chartDataRaw[fecha] = {};
-                nulosPorAnio[fecha] = 0;
             }
             _.each(claves.valoresRefGeografica, function(idsEtiquetas, idRefGeografica) {
                 if (idRefGeografica == idRefGeograficaActual) {
+                    if (!(aniosValidos[fecha])) {
+                        aniosValidos[fecha] = 1;
+                    }
                     _.each(idsEtiquetasActuales, function(id) {
                         if (id in idsEtiquetas) {
                             valor = idsEtiquetas[id];
@@ -194,7 +196,6 @@ var sideChartView = Backbone.View.extend({
                                 aniosDefinidos += 1;
                             }
                         } else {
-                            nulosPorAnio[fecha] += 1;
                             valor = null;
                         }
                         e = etiquetas[id].descripcion;
@@ -216,16 +217,15 @@ var sideChartView = Backbone.View.extend({
             });
 
             _.each(chartDataRaw, function(valoresPorEtiqueta, anio) {
-                if (nulosPorAnio[anio] == idsEtiquetasActuales.length) {
-                    return;
+                if (aniosValidos[anio]) {
+                    chartData[0].push(anio);
+                    i = 1;
+                    _.each(valoresPorEtiqueta, function(valor, id){
+                        chartData[i].push(valor);
+                        i++;
+                    });
                 }
-                chartData[0].push(anio);
-                i = 1;
-                _.each(valoresPorEtiqueta, function(valor, id){
-                    chartData[i].push(valor);
-                    i++;
-                });
-            });            
+            });       
             swapInArray(indiceEtiquetaSeleccionada, chartData.length - 1, chartData);
         } else {
             this.model.set('isChartAvailable', false);
