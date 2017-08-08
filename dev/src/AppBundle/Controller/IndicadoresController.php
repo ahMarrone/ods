@@ -321,9 +321,11 @@ class IndicadoresController extends Controller
             $this->deleteEntities($em,$configfechaEntity);
             $em->remove($indicadore);
             $em->flush();
+            if ($indicadore->getDocumentPath() != null && $indicadore->getDocumentPath() != "") {
+                unlink($this->getParameter('indicadores_technical_documents_directory') . "/" . $indicadore->getDocumentPath());
+            }
             $request->getSession()->getFlashBag()->add('success', "El indicador ha sido eliminado correctamente");
         }
-
         return $this->redirectToRoute('admin_crud_indicadores_index');
     }
 

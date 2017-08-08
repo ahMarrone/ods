@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Indicadores
+ * Indicadoresç
  */
 class Indicadores
 {
@@ -637,5 +637,5 @@ class Indicadores
     public function getVisibleCodigo(){
         return substr($this->getCodigo(),4);
     }
-    
+
 }
