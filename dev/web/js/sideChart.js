@@ -186,11 +186,11 @@ var sideChartView = Backbone.View.extend({
             }
             _.each(claves.valoresRefGeografica, function(idsEtiquetas, idRefGeografica) {
                 if (idRefGeografica == idRefGeograficaActual) {
-                    if (!(aniosValidos[fecha])) {
-                        aniosValidos[fecha] = 1;
-                    }
                     _.each(idsEtiquetasActuales, function(id) {
                         if (id in idsEtiquetas) {
+                            if (!(aniosValidos[fecha])) {
+                                aniosValidos[fecha] = 1;
+                            }
                             valor = idsEtiquetas[id];
                             if (id == idEtiquetaSeleccionada) {
                                 aniosDefinidos += 1;
