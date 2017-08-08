@@ -22,11 +22,11 @@ class DesglocesPorIndicadorController extends Controller
     /**
      * Poner qué hace!
      *
-     * @Route("/desglocesporindicador/{id_indicador}", requirements={"id_indicador":"\d+"}, name="admin_crud_desglocesporindicador_new")
+     * @Route("/desglosesporindicador/{id_indicador}", requirements={"id_indicador":"\d+"}, name="admin_crud_desglocesporindicador_new")
      * @Method("GET")
      */
     public function newAction(Request $request, $id_indicador){
-
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página');
         $etiquetas_desgloces = array();
         $desgloces_seleccionados = array();
         
@@ -104,10 +104,11 @@ class DesglocesPorIndicadorController extends Controller
     }
 
     /**
-   * @Route("/desglocesporindicador/delete/{id_indicador}/{id_config}", requirements={"id_indicador":"\d+", "id_config":"\d+"}, name="admin_crud_desglocesporindicador_delete"))
+   * @Route("/desglosesporindicador/delete/{id_indicador}/{id_config}", requirements={"id_indicador":"\d+", "id_config":"\d+"}, name="admin_crud_desglocesporindicador_delete"))
    *  @Method("GET")
    */
-    public function deleteAction(Request $request, $id_indicador, $id_config){ 
+    public function deleteAction(Request $request, $id_indicador, $id_config){
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página');
         $configToDelete = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadoresconfigfecha')
                                ->findOneById($id_config);
         if ($configToDelete){
