@@ -15,7 +15,7 @@
 	{% endif %}
     <div class="page-header">
           <h2>Valores de indicadores</h2>
-          <h2><small>{{indicador.fkidmeta.fkidobjetivo.codigo}}.{{indicador.fkidmeta.codigo}}.{{indicador.codigo}} - {{indicador.descripcion}}</small></h2>
+          <h2><small>{{indicador.fkidmeta.fkidobjetivo.codigo}}.{{indicador.fkidmeta.getVisibleCodigo()}}.{{indicador.getVisibleCodigo()}} - {{indicador.descripcion}}</small></h2>
     </div>
 
 
