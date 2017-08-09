@@ -66,28 +66,23 @@
                   <ul class="nav navbar-nav navbar-right">
 
                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                  {% if app.request.attributes.get('_route') == 'explora_initialize' %}
-                    <!-- BTN Representación Numérica -->
-                    <li class="green"><a id="visualizeShortcut" href="{{ path('admin_crud_valoresindicadores_visualize') }}">Representación Numérica</a></li>
-                  {% else %}
-                    <!-- BTN Representación Georeferencial -->
-                    <li class="green"><a href="{{ path('explora_initialize') }}">Representación Georeferencial</a></li>
-                  {% endif %}
-
+                  <!-- BTN Representación Georeferencial -->
+                  <li class="green"><a href="{{ path('explora_initialize') }}">Representación Georeferencial</a></li>
+                  <!-- BTN Representación Numérica -->
+                  <li class="yellow"><a id="visualizeShortcut" href="{{ path('admin_crud_valoresindicadores_visualize') }}">Representación Numérica</a></li>
                   <!-- BTN Usuario -->
-                   <li class="dropdown orange">
-                      <a href="#" class="dropdown-toggle orange" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ app.user.username }}<span class="caret"></span></a>
+                   <li class="dropdown lightblue">
+                      <a href="#" class="dropdown-toggle lightblue" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ app.user.username }}<span class="caret"></span></a>
                       <ul class="dropdown-menu">
-                        <li class="orange"><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
-                        <li class="orange"><a href="{{ path('fos_user_profile_show') }}">Perfil</a></li>
-                        <li class="orange"><a href="{{ asset('manual_usuario/ods_usermanual.pdf') }}">Manual de usuario</a></li>
-                        <li class="orange"><a href="{{ path('fos_user_security_logout') }}">Cerrar sesión</a></li>
-
+                        <li class="lightblue"><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
+                        <li class="lightblue"><a href="{{ path('fos_user_profile_show') }}">Perfil</a></li>
+                        <li class="lightblue"><a target="_blank" href="{{ asset('manual_usuario/ods_usermanual.pdf') }}">Manual de usuario</a></li>
+                        <li class="lightblue"><a href="{{ path('fos_user_security_logout') }}">Cerrar sesión</a></li>
                       </ul>
                     </li>
                 {% else %}
                   {% if app.request.attributes.get('_route') != 'fos_user_security_login' %}
-                  <li class="orange"><a href="{{ path('fos_user_security_login') }}">Iniciar sesión</a></li>
+                  <li class="lightblue"><a href="{{ path('fos_user_security_login') }}">Iniciar sesión</a></li>
                   {% endif %}
                 {% endif %}
 
