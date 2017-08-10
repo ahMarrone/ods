@@ -75,12 +75,16 @@ class ValoresindicadoresRepository extends EntityRepository
         return $query->getResult();
     }
 
-    public function getIndicadoresHasData(){
+    public function getIndicadoresHasData($idIndicador = -1){
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('c')
            ->from('AppBundle:Valoresindicadoresconfigfecha', 'c')
            ->innerJoin('AppBundle:Valoresindicadores', 'v', 'WITH', 'c.id = v.idvaloresindicadoresconfigfecha')
            ->groupBy('c.idindicador');
+        if ($idIndicador != -1){
+            $qb->where('c.idindicador = ?1');
+            $qb->setParameter(1,$idIndicador);
+        }
         $query = $qb->getQuery(); 
         return $query->getResult();
     }
