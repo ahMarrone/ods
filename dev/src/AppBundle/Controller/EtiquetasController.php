@@ -30,15 +30,18 @@ class EtiquetasController extends Controller
         if (isset($id_desgloce)){
             $desgloce = $em->getRepository('AppBundle:Desgloces')->findOneById($id_desgloce);
             $etiquetas = $em->getRepository('AppBundle:Etiquetas')->findByfkiddesgloce($id_desgloce);
+            $desgloce_selected = $id_desgloce;
             $titulo_desgloces = $desgloce->getDescripcion();
         } else {
             $etiquetas = $em->getRepository('AppBundle:Etiquetas')->findAll();
+            $desgloce_selected = 1;
             $titulo_desgloces = "TODOS";
         }
 
         return $this->render('etiquetas/index.html.twig', array(
             'etiquetas' => $etiquetas,
             'titulo_desgloces' => $titulo_desgloces,
+            'desglose_selected' => $desgloce_selected
         ));
     }
 
@@ -53,6 +56,10 @@ class EtiquetasController extends Controller
         $em = $this->getDoctrine()->getManager();
         $id_desglose = intval($request->get('id_desglose'));
         $desglose = null;
+        if ($id_desglose == 0){
+            $request->getSession()->getFlashBag()->add('warning', "No se puede agregar una Etiqueta al Desglose seleccionado.");
+            return $this->redirectToRoute('admin_crud_etiquetas_index');
+        }
         if ($id_desglose != -1){
             $desglose = $em->getRepository('AppBundle:Desgloces')->findOneById($id_desglose);
         }

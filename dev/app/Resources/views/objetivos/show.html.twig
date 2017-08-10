@@ -25,7 +25,7 @@
 <div class="row">
             <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_objetivos_index') }}">Volver</a>
             {% if is_granted('ROLE_ADMIN') %}
-              <a class="col-md-1 btn btn-success option-btn"  href="{{ path('admin_crud_objetivos_edit', { 'id': objetivo.id }) }}">Editar</a>
+              <a class="col-md-1 btn btn-primary option-btn"  href="{{ path('admin_crud_objetivos_edit', { 'id': objetivo.id }) }}">Editar</a>
             {% endif %}
 </div>
 

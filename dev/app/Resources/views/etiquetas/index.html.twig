@@ -36,7 +36,7 @@
         </tbody>
     </table>
 
-    <a class="btn btn-success" href="{{ path('admin_crud_etiquetas_new') }}">Nueva</a>
+    <a class="btn btn-success" href="{{ path('admin_crud_etiquetas_new', {'id_desglose': desglose_selected }) }}" {{desglose_selected == 0 ? "disabled disabled='disabled'" : ""}}>Nueva</a>
 
 <script type="text/javascript">
     $(document).ready(function() {

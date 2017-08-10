@@ -61,5 +61,10 @@ estilo_ods.css:2229
   margin-right: 1px;
 }
 
+table tbody tr td {
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
 
 
