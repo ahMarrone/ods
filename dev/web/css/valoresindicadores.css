@@ -22,3 +22,8 @@
 select[class*="span"] {
     margin-bottom: 0;
 }
+
+.tableRow {
+    word-wrap: break-word;
+    word-break: break-all;
+}
