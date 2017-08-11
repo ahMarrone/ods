@@ -57,6 +57,16 @@ estilo_ods.css:2229
   background-color: rgba(245, 245, 245, 0.37);
 }
 
+
+.breadcrumb{
+  margin-bottom:8px;
+}
+
+.page-header{
+  margin-top:10px;
+  padding-bottom: 3px;
+}
+
 .option-btn{
   margin-right: 1px;
 }
