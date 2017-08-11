@@ -66,5 +66,18 @@ table tbody tr td {
     word-break: break-all;
 }
 
+.btnNewEntityHeader{
+  margin-left: 5px;
+  text-transform: capitalize;
+}
 
 
+.subLabel{
+  padding-left: 5px;
+}
+
+.alertFormBox{
+  color: #000;
+  background-color: rgba(245, 245, 245, 0.22);
+  margin-bottom: 5px;
+}

@@ -5,7 +5,7 @@ var template_highlight_dates = [
         '<div class="row">',
             '<div id="highlightDatesCalendar" class="col-md-3" name="highlight_dates">',
             '</div>',
-            '<div class="alert alert-info col-md-6" role="alert"><b>Fechas destacadas (máx. 5): </b>',
+            '<div class="col-md-6" role="alert"><b>Fechas destacadas (máx. 5): </b>',
             '<ul>',
             '<% _.each(model.get("dates"), function( date, i){ %>',
                 '<li><%= date.split("-")[0] %></li>',

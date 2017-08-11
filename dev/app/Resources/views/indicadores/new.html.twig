@@ -32,24 +32,110 @@
     </div>
 
     {{ form_start(form) }}
+    
+    
+        <div class="alert alert-info well alertFormBox">
+            <div>
+               <div id="selects"></div>
+            </div>
 
-        <div>
-           <div id="selects"></div>
+    		{{ form_row(form.codigo) }}
+            {{ form_row(form.descripcion) }}
         </div>
 
-		
-		{{ form_widget(form) }}
-                    
+        <div class="alert alert-info well alertFormBox">
 
-         <div>
+		<div class="form-group">
+
+            <label class="col-sm-2 control-label required subLabel">Ámbito</label>
+            <div class="   col-sm-1">
+                <div id="indicadores_ambito">
+                    <div class="radio">
+                        <label class="required"><input type="radio" id="indicadores_ambito_0" name="indicadores[ambito]" required="required" value="N"> Nacional</label>
+                    </div>
+                    <div class="radio">
+                        <label class="required"><input type="radio" id="indicadores_ambito_1" name="indicadores[ambito]" required="required" value="P"> Provincial</label>
+                    </div>
+                    <div class="radio">
+                        <label class="required"><input type="radio" id="indicadores_ambito_2" name="indicadores[ambito]" required="required" value="D"> Departamental</label>
+                    </div>
+                </div>
+            </div>
+
+            <label class="col-sm-2 control-label required subLabel">Tipo</label>
+            <div class="   col-sm-1">
+                <div id="indicadores_tipo">
+                    <div class="radio">
+                        <label class="required"><input type="radio" id="indicadores_tipo_0" name="indicadores[tipo]" required="required" value="porcentual"> Porcentual</label>
+                    </div>
+                    <div class="radio">
+                        <label class="required"><input type="radio" id="indicadores_tipo_1" name="indicadores[tipo]" required="required" value="entero"> Entero</label>
+                    </div>
+                    <div class="radio">
+                        <label class="required"><input type="radio" id="indicadores_tipo_2" name="indicadores[tipo]" required="required" value="real"> Real</label>
+                    </div>
+                </div>
+            </div>
+
+            
+            <label class="col-sm-2 control-label required">Visible</label>
+            <div class="  col-sm-1">
+                <div id="indicadores_visible">
+                    <div class="radio">
+                        <label class="required"><input type="radio" id="indicadores_visible_0" name="indicadores[visible]" required="required" value="1"> Si</label>
+                    </div>
+                    <div class="radio">
+                        <label class="required"><input type="radio" id="indicadores_visible_1" name="indicadores[visible]" required="required" value="0"> No</label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        {{ form_row(form.valmin) }}
+        {{ form_row(form.valmax) }}
+        
+        </div>
+
+        <div class="alert alert-info well alertFormBox">
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="indicadores_fechametaintermedia">Año meta intermedia</label>
+                <div class="col-sm-2 expected-value-datepicker "><input type="text" id="indicadores_fechametaintermedia" name="indicadores[fechametaintermedia]" class="col-sm-2 expected-value-datepicker form-control">
+                </div>
+
+                <label class="col-sm-2 control-label" for="indicadores_valoresperadometaintermedia">Valor esperado meta intermedia</label>
+                <div class="col-sm-2 expected-value-input input-user-entry"><input type="text" id="indicadores_valoresperadometaintermedia" name="indicadores[valoresperadometaintermedia]" class="col-sm-2 expected-value-input input-user-entry form-control" step="1">
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="indicadores_fechametafinal">Año meta final</label>
+                <div class="col-sm-2 expected-value-datepicker"><input type="text" id="indicadores_fechametafinal" name="indicadores[fechametafinal]" class="col-sm-2 expected-value-datepicker form-control"></div>
+
+                <label class="col-sm-2 control-label" for="indicadores_valoresperadometafinal">Valor esperado meta final</label>
+                <div class="col-sm-2 expected-value-input input-user-entry"><input type="text" id="indicadores_valoresperadometafinal" name="indicadores[valoresperadometafinal]" class="col-sm-2 expected-value-input input-user-entry form-control" step="1"></div>
+
+            </div>
+        </div>
+
+        <div class="alert alert-info well alertFormBox">
            <div id="highlightDatesControl"></div>
         </div>
 
+
+        <div class="alert alert-info well alertFormBox">
+            {{ form_row(form.documentpath) }}
+        </div>
+
         <hr>
-        
+        {{ form_row(form.fkidmeta) }}
+        {{ form_row(form.last_code_used) }}
+        {{ form_widget(form._token) }}
 
         <input class="col-md-1 col-md-offset-2 btn btn-success option-btn" type="submit" value="Guardar" />
-    {{ form_end(form) }}
+    </form>
 
 <div class="row">
 <a class="col-md-1 btn btn-primary option-btn" href="{{ path('admin_crud_indicadores_index') }}">Volver</a>

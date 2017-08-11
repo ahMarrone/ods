@@ -101,7 +101,7 @@ class IndicadoresController extends Controller
         ));
 
         $form->handleRequest($request);
-
+        //echo var_dump($form->getErrors());
         if ($form->isSubmitted() && $form->isValid()) {
             $this->addIndicadorMetadata($indicadore);
             $indicadore->setCodigo($indicadore->formatCodigo());
@@ -252,7 +252,6 @@ class IndicadoresController extends Controller
         $indicadore->setFechametafinal(explode('-',$indicadore->getFechametafinal())[0]);
         }
         $indicadoresHasData = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')->getIndicadoresHasData($indicadore->getId());
-        echo count($indicadoresHasData);
         $enableEditAmbito =  (count($indicadoresHasData)) ? false : true;
         $editForm = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore, array(
                 'scopes_enabled' => array('N'=>$enableEditAmbito,'P'=>$enableEditAmbito,'D'=>$enableEditAmbito), // en modo edicion, no se puede cambiar el ambito del indicador

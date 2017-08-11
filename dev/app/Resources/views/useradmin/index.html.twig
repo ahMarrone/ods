@@ -9,7 +9,8 @@
 {% endif %}
 
      <div class="page-header">
-          <h2>Administrar Usuarios</h2>
+          <h2>Administrar Usuarios               
+    <a class="btn btn-success btnNewEntityHeader" href="{{ path('fos_user_registration_register') }}">Nuevo</a></h2>
     </div>
 
 <table id="usuariosTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -53,8 +54,6 @@
         {% endfor %}
         </tbody>
     </table>
-            
-    <a class="btn btn-success" href="{{ path('fos_user_registration_register') }}">Nuevo</a>
 
 <script type="text/javascript">
     $(document).ready(function() {

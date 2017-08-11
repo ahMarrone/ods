@@ -8,7 +8,10 @@
     </ol>
     {% endif %}
     <div class="page-header">
-          <h2>Desgloses</h2>
+          <h2>Desgloses   
+    {% if is_granted('ROLE_ADMIN') %}
+     <a class="btn btn-success btnNewEntityHeader" href="{{ path('admin_crud_desgloces_new') }}">Nuevo</a>
+    {% endif %} </h2>
     </div>
 
     <table id="desglocesTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -35,10 +38,6 @@
         {% endfor %}
         </tbody>
     </table>
-
-    {% if is_granted('ROLE_ADMIN') %}
-     <a class="btn btn-success" href="{{ path('admin_crud_desgloces_new') }}">Nuevo</a>
-    {% endif %} 
 
 <script type="text/javascript">
     $(document).ready(function() {
