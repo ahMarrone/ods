@@ -113,28 +113,45 @@ class ValoresIndicadoresController extends Controller
      * @Method("GET")
      */
     public function getVisualizeData(Request $request){
-        $id_indicador = $fecha = null;
+        $id_objetivo = $id_meta = $id_indicador = $fecha = null;
+        $indicadoresList = null;
         $response = array("data"=>array());
         $get_params = $request->query->all();
+        if (isset($get_params["id_objetivo"])){
+            $id_objetivo = intval($get_params["id_objetivo"]);
+        };
+        if (isset($get_params["id_meta"])){
+            $id_meta = intval($get_params["id_meta"]);
+        };
         if (isset($get_params["id_indicador"])){
             $id_indicador = intval($get_params["id_indicador"]);
         };
         if (isset($get_params["fecha"])){
             $fecha = $get_params["fecha"];
         };
-        if ($id_indicador != null && $fecha != null){
-            $response["data"] = $this->requestVisualizeData($id_indicador, $this->formatDateToDB($fecha));
+        if ($id_objetivo == -1){ // Si el objetivo es -1 pido todos los indicadores!
+            $indicadoresList = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findAll();
+        } elseif ($id_meta == -1){ // Si la meta es -1 pido todos los indicadores del objetivo correspondiente
+            $indicadoresList = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->getAllIndicadoresFromObjetivo($id_objetivo);
+        } elseif ($id_indicador == -1){ // Retorno todos los indicadores de esa meta
+            $indicadoresList = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findByFkidmeta($id_meta);
+        } else {
+            $indicadoresList = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findById($id_indicador);
+        }
+        if ($indicadoresList != null && $fecha != null){
+            $response["data"] = $this->requestVisualizeData($indicadoresList, $this->formatDateToDB($fecha));
             //$response["data"] = array(array(3),array(4),array(5)); 
         }
         return new JsonResponse($response);
     }
 
 
-    private function requestVisualizeData($idIndicador, $fecha){
+    private function requestVisualizeData($indicadoresList, $fecha){
         $data = array();
         $em = $this->getDoctrine()->getManager();
-        $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
-        if ($indicador){
+        //$indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
+        foreach ($indicadoresList as $indicador) {
+            $idIndicador = $indicador->getId();
             $ambitoIndicador = $indicador->getAmbito();
             $configfechaEntity = $em->getRepository('AppBundle:Valoresindicadoresconfigfecha')->findBy(array(
                 'idindicador' => $idIndicador,
@@ -165,6 +182,7 @@ class ValoresIndicadoresController extends Controller
                 $usedEtiquetas[$valor->getIdetiqueta()] = $newEtiquetaLabel;
                 $aprobado = $valor->getAprobado() ? "Si" : "No";
                 $tmp_data = $this->bindDataToVisualize(
+                    $indicador,
                     $valor->getIdrefgeografica()->getDescripcion(), 
                     $parent,
                     $newEtiquetaLabel,
@@ -181,6 +199,7 @@ class ValoresIndicadoresController extends Controller
                     if (!in_array($idEtiqueta, $refData["used_labels"])){
                         $parent = $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findOneById($refData["parent"])->getDescripcion();
                         $tmp_data = $this->bindDataToVisualize(
+                            $indicador,
                             $refData["desc"], 
                             $parent,
                             $descEtiqueta,
@@ -191,20 +210,6 @@ class ValoresIndicadoresController extends Controller
                     }
                 }
             }
-            /*foreach ($regGeograficasWithoutData as $key => $refData) {
-                foreach ($usedEtiquetas as $idEtiqueta => $descEtiqueta) {
-                    $parent = $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findOneById($refData["parent"])->getDescripcion();
-                    $tmp_data = $this->bindDataToVisualize(
-                        $refData["desc"], 
-                        $parent,
-                        $descEtiqueta,
-                        "SIN VALOR",
-                        "-"
-                    );
-                    array_push($data, $tmp_data);
-                }
-            }*/
-
         }
         return $data;
     }
@@ -219,69 +224,13 @@ class ValoresIndicadoresController extends Controller
     }
 
 
-    /*private function requestVisualizeData($idIndicador, $fecha){
-        $data = array();
-        $em = $this->getDoctrine()->getManager();
-        $indicador = $this->getDoctrine()->getRepository('AppBundle:Indicadores')->findOneById($idIndicador);
-        if ($indicador){
-            $ambitoIndicador = $indicador->getAmbito();
-            $configfechaEntity = $em->getRepository('AppBundle:Valoresindicadoresconfigfecha')->findBy(array(
-                'idindicador' => $idIndicador,
-                'fecha' => $fecha
-            ));
-            $valoresindicadores = $em->getRepository('AppBundle:Valoresindicadores')->findByIdvaloresindicadoresconfigfecha($configfechaEntity);
-            $regGeograficasWithoutData = $this->filterRefGeograficas($indicador->getAmbito());
-            //echo var_dump($regGeograficasWithoutData);
-            $mapEtiquetas = $this->getKeyValueEtiquetas($em->getRepository('AppBundle:Etiquetas')->findAll());
-            $usedEtiquetas = array();
-            $refGeogMemoize = array();
-            $indicadorEtiquetas = array();
-            // PIDO DATOS EXISTENTES
-            foreach ($valoresindicadores as $valor) {
-                // achico universo de refgeograficas con datos sin cargar
-                unset($regGeograficasWithoutData[$valor->getIdrefgeografica()->getId()]);
-                if ($ambitoIndicador == 'N'){
-                    $parent = "-";
-                } else if ($ambitoIndicador == 'P') {
-                    $parent = 'PAIS';
-                } else {
-                    $refParent = $this->getAgrupamientoRefGeografica($valor->getIdrefgeografica()->getId());
-                    $parent = $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findOneById($refParent->getId2())->getDescripcion();
-                }
-                $newEtiquetaLabel = $this->mapEtiquetaKeyToString($mapEtiquetas,$valor->getIdetiqueta());
-                $usedEtiquetas[$valor->getIdetiqueta()] = $newEtiquetaLabel;
-                $aprobado = $valor->getAprobado() ? "Si" : "No";
-                $tmp_data = $this->bindDataToVisualize(
-                    $valor->getIdrefgeografica()->getDescripcion(), 
-                    $parent,
-                    $newEtiquetaLabel,
-                    $valor->getValor(),
-                    $aprobado
-                );
-                array_push($data, $tmp_data);
-            }
-            // INSERTO DATOS FALTANTES
-            //  (ref. geog en los cuales no se han cargado datos)
-            foreach ($regGeograficasWithoutData as $key => $refData) {
-                foreach ($usedEtiquetas as $idEtiqueta => $descEtiqueta) {
-                    $parent = $this->getDoctrine()->getRepository('AppBundle:Refgeografica')->findOneById($refData["parent"])->getDescripcion();
-                    $tmp_data = $this->bindDataToVisualize(
-                        $refData["desc"], 
-                        $parent,
-                        $descEtiqueta,
-                        "SIN VALOR",
-                        "-"
-                    );
-                    array_push($data, $tmp_data);
-                }
-            }
+    private function getFullCode($indicador){
+        return $indicador->getFkidmeta()->getFkidobjetivo()->getCodigo() .".".$indicador->getFkidmeta()->getVisibleCodigo().".".$indicador->getvisibleCodigo();
+    }
 
-        }
-        return $data;
-    }*/
-
-    private function bindDataToVisualize($refDesc, $parent, $descEtiqueta, $value, $aprobado){
+    private function bindDataToVisualize($indicador, $refDesc, $parent, $descEtiqueta, $value, $aprobado){
         $bindedData = array();
+        array_push($bindedData, $this->getFullCode($indicador) . " - " . $indicador->getDescripcion());
         array_push($bindedData, $refDesc);
         array_push($bindedData, $parent);
         array_push($bindedData, $descEtiqueta);

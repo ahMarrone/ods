@@ -35,7 +35,7 @@ class IndicadoresType extends AbstractType
         $this->indicador = $builder->getData();
         $tipoSeleccionado = $options['data']->getTipo();
         $ambitoSeleccionado = $options['data']->getAmbito();
-        $this->enabledChoices = $options['scopes_enabled'];
+        $this->scoped_enabled = $options['scopes_enabled'];
         $this->last_code_used = $options['last_code_used'];
         $builder
             ->add('fkidmeta','hidden',array('mapped'=>false))
@@ -69,13 +69,10 @@ class IndicadoresType extends AbstractType
                 'choices' => array('Nacional' => 'N', 'Provincial' => 'P', 'Departamental' => 'D'), 
                 //'data' => $ambitoSeleccionado, 
                 'choices_as_values' => true,
-                'choice_attr' => function($key, $val, $index) {
-                            $disabled = !$this->enabledChoices[$key];
-                            if ($key == $this->indicador->getAmbito()){
-                                return [];
-                            }
-                            return $disabled ? ['disabled' => 'disabled'] : [];
-                 },
+            ))
+            ->add('scoped_enabled', HiddenType::class, array(
+                'empty_data' => $this->scoped_enabled,
+                'mapped'=> false
             ))
             ->add('visible', ChoiceType::class, array(
                 'choices'  => array(
@@ -127,9 +124,9 @@ class IndicadoresType extends AbstractType
     //      - que las fecha de meta final sea mayor a la fecha de meta intermedia
     public function validateNewIndicador($indicador, ExecutionContext $context){
         $idMeta = $indicador->getFkidmeta()->getId();
-        $codigo = $indicador->formatCodigo();;
+        $codigo = $indicador->formatCodigo($indicador->getCodigo());
         if (($this->last_code_used == null && $this->codeAlreadyUsed($idMeta, $codigo)) ||
-           ($this->last_code_used != null && $this->last_code_used != $codigo && $this->codeAlreadyUsed($idMeta, $codigo)))
+           ($this->last_code_used != null && $indicador->formatCodigo($this->last_code_used)  != $codigo && $this->codeAlreadyUsed($idMeta, $codigo)))
         {
             $context->addViolationAt('codigo', 'El código de indicador para esta meta ya está utilizado!');
         }
@@ -167,7 +164,7 @@ class IndicadoresType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'AppBundle\Entity\Indicadores',
             'allow_extra_fields' => true,
-            'scopes_enabled' => array(),
+            'scopes_enabled' => true,
             'last_code_used' => null,
             'constraints' => array(
                new Assert\Callback(array($this, 'validateNewIndicador'))

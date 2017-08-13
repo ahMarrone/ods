@@ -81,7 +81,7 @@ class MetasController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $this->addMetaMetadata($meta);
             $meta->setAmbito('N');
-            $meta->setCodigo($meta->formatCodigo());
+            $meta->setCodigo($meta->formatCodigo($meta->getCodigo()));
             $em = $this->getDoctrine()->getManager();
             $em->persist($meta);
             $em->flush();
@@ -133,12 +133,12 @@ class MetasController extends Controller
         if ($idObjetivo){
             $em = $this->getDoctrine()->getManager();
             $connection = $em->getConnection();
-            $statement = $connection->prepare("SELECT MAX(codigo) FROM metas WHERE codigo like '0000%' AND fkIdObjetivo = :idobjetivo");
+            $statement = $connection->prepare("SELECT MAX(CONVERT(SUBSTR(codigo,5), UNSIGNED INTEGER)) as max_code FROM metas WHERE codigo like '0000%' AND fkIdObjetivo = :idobjetivo");
             $statement->bindValue('idobjetivo', $idObjetivo);
             $statement->execute();
             $results = $statement->fetchAll();
             if ($results){
-                $highest_id = $results[0]["MAX(codigo)"] + 1;
+                $highest_id = $results[0]["max_code"] + 1;
             }
         }
         return array("next_meta_code" => $highest_id);
@@ -164,7 +164,7 @@ class MetasController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $meta->setCodigo($meta->formatCodigo());
+            $meta->setCodigo($meta->formatCodigo($meta->getCodigo()));
             $this->addMetaMetadata($meta);
             $em->persist($meta);
             $em->flush();

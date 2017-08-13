@@ -131,6 +131,7 @@
 
         <hr>
         {{ form_row(form.fkidmeta) }}
+        {{ form_row(form.fechasdestacadas) }}
         {{ form_row(form.last_code_used) }}
         {{ form_widget(form._token) }}
 
@@ -242,6 +243,7 @@
 
         $('form[name="indicadores"]').submit(function() {
             // Seteo fechas destacadas en el formulario
+            console.log(modelHighlightDates.getFormattedDates());
             $('#indicadores_fechasdestacadas').val(modelHighlightDates.getFormattedDates());
         });
 

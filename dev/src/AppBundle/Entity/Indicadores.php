@@ -624,12 +624,12 @@ class Indicadores
     
 
     
-    public function formatCodigo(){
+    public function formatCodigo($codigo){
         $prefix = "0000";
-        if (!is_numeric(substr($this->getCodigo(),0,1))){
+        if (!is_numeric(substr($codigo,0,1))){
             $prefix = "9999";
         }
-        $newCodigo = $prefix . $this->getCodigo();
+        $newCodigo = $prefix . $codigo;
         return $newCodigo;
     }
 

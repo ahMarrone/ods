@@ -96,15 +96,13 @@ class IndicadoresController extends Controller
             $indicadore->setFkidmeta($meta);
         }
         $form = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore, array(
-            'scopes_enabled' => $this->getEnabledScopes(),
             'entity_manager' => $this->getDoctrine()->getManager(),
         ));
 
         $form->handleRequest($request);
-        //echo var_dump($form->getErrors());
         if ($form->isSubmitted() && $form->isValid()) {
             $this->addIndicadorMetadata($indicadore);
-            $indicadore->setCodigo($indicadore->formatCodigo());
+            $indicadore->setCodigo($indicadore->formatCodigo($indicadore->getCodigo()));
             // Fechas
             /*$datetime = new \DateTime();
             $newDate = $datetime->createFromFormat('Y-m-d', '2015-01-01');
@@ -140,6 +138,7 @@ class IndicadoresController extends Controller
         return $this->render('indicadores/new.html.twig', array(
             'indicadore' => $indicadore,
             'form' => $form->createView(),
+            'scopes_enabled' => true,
             'objetivos' => $this->getObjetivosPreload(),
             'metas' => $this->getMetasPreload(),
             'api_urls' => array('get_next_indicador_code'=> $this->generateUrl('admin_crud_indicadores_get_next_indicador_code'))
@@ -195,12 +194,12 @@ class IndicadoresController extends Controller
         if ($idMeta){
             $em = $this->getDoctrine()->getManager();
             $connection = $em->getConnection();
-            $statement = $connection->prepare("SELECT MAX(codigo) FROM indicadores WHERE CONVERT(codigo, unsigned integer) > 0 AND fkIdMeta = :idmeta");
+            $statement = $connection->prepare("SELECT MAX(CONVERT(SUBSTR(codigo,5), UNSIGNED INTEGER)) as max_code FROM indicadores WHERE codigo like '0000%'  AND fkIdMeta = :idmeta");
             $statement->bindValue('idmeta', $idMeta);
             $statement->execute();
             $results = $statement->fetchAll();
             if ($results){
-                $highest_id = $results[0]["MAX(codigo)"] + 1;
+                $highest_id = $results[0]["max_code"] + 1;
             }
         }
         return array("next_indicador_code" => $highest_id);
@@ -254,7 +253,6 @@ class IndicadoresController extends Controller
         $indicadoresHasData = $this->getDoctrine()->getRepository('AppBundle:Valoresindicadores')->getIndicadoresHasData($indicadore->getId());
         $enableEditAmbito =  (count($indicadoresHasData)) ? false : true;
         $editForm = $this->createForm('AppBundle\Form\IndicadoresType', $indicadore, array(
-                'scopes_enabled' => array('N'=>$enableEditAmbito,'P'=>$enableEditAmbito,'D'=>$enableEditAmbito), // en modo edicion, no se puede cambiar el ambito del indicador
                 'last_code_used' => $indicadore->getCodigo(),
                 'entity_manager' => $this->getDoctrine()->getManager(),
             )
@@ -263,7 +261,7 @@ class IndicadoresController extends Controller
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->addIndicadorMetadata($indicadore);
-            $indicadore->setCodigo($indicadore->formatCodigo());
+            $indicadore->setCodigo($indicadore->formatCodigo($indicadore->getCodigo()));
             if ($indicadore->getFechametaintermedia() != NULL){
                 $indicadore->setFechametaintermedia($indicadore->formatYearToDB($indicadore->getFechametaintermedia()));
             }
@@ -294,6 +292,7 @@ class IndicadoresController extends Controller
         return $this->render('indicadores/edit.html.twig', array(
             'indicadore' => $indicadore,
             'edit_form' => $editForm->createView(),
+            'scopes_enabled' => $enableEditAmbito,
             'delete_form' => $deleteForm->createView(),
             'objetivos' => $this->getObjetivosPreload(),
             'metas' => $this->getMetasPreload(),

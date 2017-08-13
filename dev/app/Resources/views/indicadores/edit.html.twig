@@ -34,27 +34,119 @@
      <div class="page-header">
           <h2>Editar Indicador</h2>
     </div>
-
     {{ form_start(edit_form) }}
 
-        <div>
-           <div id="selects"></div>
+        <div class="alert alert-info well alertFormBox">
+            <div>
+               <div id="selects"></div>
+            </div>
+
+            {{ form_row(edit_form.codigo) }}
+            {{ form_row(edit_form.descripcion) }}
         </div>
 
-        {{ form_widget(edit_form) }}
+        <div class="alert alert-info well alertFormBox">
 
-        {% if document_path_string %}
-         <a class="btn btn-warning col-md-offset-2" target="_blank" title="Ver documento técnico" href="{{ asset('uploads/indicadores/' ~ document_path_string) }}"><i class="fa fa-file-pdf-o fa-fw" aria-hidden="true"></i>  Ver documento técnico existente</a>
-         {% endif %}
+        <div class="form-group">
+            
+            <label class="col-sm-2 control-label required subLabel">Ámbito</label>
+            <div class="   col-sm-1">
+                <div id="indicadores_ambito">
+                    <div class="radio">
+                        <label class="required"><input type="radio" id="indicadores_ambito_0" name="indicadores[ambito]" required="required" {{edit_form.vars.value.ambito == "N" ? "checked='checked'": ""}}  {{scopes_enabled ? : "disabled='disabled'"}} value="N"> Nacional</label>
+                    </div>
+                    <div class="radio">
+                        <label class="required"><input type="radio" id="indicadores_ambito_1" name="indicadores[ambito]" required="required" {{edit_form.vars.value.ambito == "P" ? "checked='checked'": ""}} {{scopes_enabled ? : "disabled='disabled'"}} value="P"> Provincial</label>
+                    </div>
+                    <div class="radio">
+                        <label class="required"><input type="radio" id="indicadores_ambito_2" name="indicadores[ambito]" required="required" {{edit_form.vars.value.ambito == "D" ? "checked='checked'": ""}} {{scopes_enabled ? : "disabled='disabled'"}} value="D"> Departamental</label>
+                    </div>
+                </div>
+            </div>
 
-        <div style="margin-top:40px;">
+            <label class="col-sm-2 control-label required subLabel">Tipo</label>
+            <div class="   col-sm-1">
+                <div id="indicadores_tipo">
+                    <div class="radio">
+                        <label class="required"><input type="radio" id="indicadores_tipo_0" name="indicadores[tipo]" required="required" {{edit_form.vars.value.tipo == "porcentual" ? "checked='checked'": ""}} value="porcentual"> Porcentual</label>
+                    </div>
+                    <div class="radio">
+                        <label class="required"><input type="radio" id="indicadores_tipo_1" name="indicadores[tipo]" required="required" {{edit_form.vars.value.tipo == "entero" ? "checked='checked'": ""}} value="entero"> Entero</label>
+                    </div>
+                    <div class="radio">
+                        <label class="required"><input type="radio" id="indicadores_tipo_2" name="indicadores[tipo]" required="required" {{edit_form.vars.value.tipo == "real" ? "checked='checked'": ""}} value="real"> Real</label>
+                    </div>
+                </div>
+            </div>
+
+            
+            <label class="col-sm-2 control-label required">Visible</label>
+            <div class="  col-sm-1">
+                <div id="indicadores_visible">
+                    <div class="radio">
+                        <label class="required"><input type="radio" id="indicadores_visible_0" name="indicadores[visible]" required="required" {{edit_form.vars.value.visible  ? "checked='checked'": ""}} value="1"> Si</label>
+                    </div>
+                    <div class="radio">
+                        <label class="required"><input type="radio" id="indicadores_visible_1" name="indicadores[visible]" required="required" {{edit_form.vars.value.visible  ? "": "checked='checked'"}} value="0"> No</label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        {{ form_row(edit_form.valmin) }}
+        {{ form_row(edit_form.valmax) }}
+
+        </div>
+
+
+        <div class="alert alert-info well alertFormBox">
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="indicadores_fechametaintermedia">Año meta intermedia</label>
+                <div class="col-sm-2 expected-value-datepicker "><input type="text" id="indicadores_fechametaintermedia" name="indicadores[fechametaintermedia]" class="col-sm-2 expected-value-datepicker form-control" value="{{edit_form.vars.value.fechametaintermedia}}">
+                </div>
+
+                <label class="col-sm-2 control-label" for="indicadores_valoresperadometaintermedia">Valor esperado meta intermedia</label>
+                <div class="col-sm-2 expected-value-input input-user-entry"><input type="text" id="indicadores_valoresperadometaintermedia" name="indicadores[valoresperadometaintermedia]" class="col-sm-2 expected-value-input input-user-entry form-control" value="{{edit_form.vars.value.valoresperadometaintermedia}}" step="1">
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="indicadores_fechametafinal">Año meta final</label>
+                <div class="col-sm-2 expected-value-datepicker"><input type="text" id="indicadores_fechametafinal" name="indicadores[fechametafinal]" class="col-sm-2 expected-value-datepicker form-control" value="{{edit_form.vars.value.fechametafinal}}"></div>
+
+                <label class="col-sm-2 control-label" for="indicadores_valoresperadometafinal">Valor esperado meta final</label>
+                <div class="col-sm-2 expected-value-input input-user-entry"><input type="text" id="indicadores_valoresperadometafinal" name="indicadores[valoresperadometafinal]" class="col-sm-2 expected-value-input input-user-entry form-control" value="{{edit_form.vars.value.valoresperadometafinal}}" step="1"></div>
+
+            </div>
+        </div>
+
+        <div class="alert alert-info well alertFormBox">
            <div id="highlightDatesControl"></div>
         </div>
 
+       
+
+        
+        <div class="alert alert-info well alertFormBox">
+            {{ form_row(edit_form.documentpath) }}
+                    {% if document_path_string %}
+         <a class="btn btn-warning col-md-offset-2" target="_blank" title="Ver documento técnico" href="{{ asset('uploads/indicadores/' ~ document_path_string) }}"><i class="fa fa-file-pdf-o fa-fw" aria-hidden="true"></i>  Ver documento técnico existente</a>
+         {% endif %}
+        </div>
+     
+    
+
         <hr>
+        {{ form_row(edit_form.fkidmeta) }}
+        {{ form_row(edit_form.fechasdestacadas) }}
+        {{ form_row(edit_form.last_code_used) }}
+        {{ form_widget(edit_form._token) }}
 
         <input class="col-md-1 col-md-offset-2 btn btn-success option-btn" type="submit" value="Guardar" />
-    {{ form_end(edit_form) }}
+    </form>
 
 <div class="row">
 {{ form_start(delete_form) }}
@@ -166,6 +258,7 @@
 
         $('form[name="indicadores"]').submit(function() {
             // Seteo fechas destacadas en el formulario
+            console.log(modelHighlightDates.getFormattedDates());
             $('#indicadores_fechasdestacadas').val(modelHighlightDates.getFormattedDates());
         });
 

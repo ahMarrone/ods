@@ -42,4 +42,17 @@ class IndicadoresRepository extends EntityRepository
                 return $query->getResult();
                 // return $this->findBy(array(), array('codigo' => 'ASC'));
             }
+
+
+
+        public function getAllIndicadoresFromObjetivo($idObjetivo){
+            return $this->getEntityManager()
+                ->createQuery(
+                    'SELECT i FROM AppBundle:Indicadores i INNER JOIN AppBundle:Metas m WITH i.fkidmeta = m.id where m.fkidobjetivo = :idObjetivo'
+                )->setParameter('idObjetivo', $idObjetivo)
+                ->getResult();
+            
+        }
+
+
 }
