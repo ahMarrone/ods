@@ -93,7 +93,6 @@
 
 
 	function aproveDataRequest(data, rows){
-		console.log(data);
 		var url = api_urls.aproveData;
 		$.ajax(url,{
           'data': JSON.stringify(data),
@@ -166,8 +165,6 @@
 	$.fn.dataTable.ext.buttons.selectVisibles = {
 	    text: 'Seleccionar visibles',
 	    action: function ( e, dt, node, config ) {
-	    	console.log("select");
-	    	console.log(node);
 	    	table.rows( { page: 'current' } ).select();
 	    }
 	};
