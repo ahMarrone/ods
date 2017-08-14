@@ -1,11 +1,12 @@
 {% trans_default_domain 'FOSUserBundle' %}
 
-
+    {% if  show_breadcrumbs is defined and show_breadcrumbs == true %} 
 	<ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
         <li><a href="{{ path('admin_users_index') }}">Usuarios</a></li>
         <li class="active">Registro de usuario</a></li>
     </ol>
+    {% endif %}
 
 <div class="page-header">
           <h2>Registro de usuario</h2>

@@ -1,11 +1,14 @@
 {% trans_default_domain 'FOSUserBundle' %}
-<ol class="breadcrumb">
+
+{% if  show_breadcrumbs is defined and show_breadcrumbs == true %} 
+	<ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
         {% if is_granted('ROLE_SUPER_ADMIN') %}
 			<li><a href="{{ path('admin_users_index') }}">Administrar usuarios</a></li>
         {% endif %}
         <li class="active">Perfil de usuario</a></li>
     </ol>
+{% endif %}
 
 	<div class="page-header">
 		<h2>Perfil de <span style="color:#034EA2">'{{ user.username }}'</div></h2>

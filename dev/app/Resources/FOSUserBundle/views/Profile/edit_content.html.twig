@@ -1,6 +1,6 @@
 {% trans_default_domain 'FOSUserBundle' %}
 
-
+    {% if  show_breadcrumbs is defined and show_breadcrumbs == true %} 
     <ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
         {% if is_granted('ROLE_SUPER_ADMIN') %}
@@ -9,6 +9,7 @@
         <li><a href="{{ path('fos_user_profile_show', {'id': user.id}) }}">Perfil de usuario</a></li>
         <li class="active">Editar perfil</a></li>
     </ol>
+    {% endif %}
 
 	<div class="page-header">
 		<h2>Editar perfil de <span style="color:#034EA2">'{{ user.username }}'</div></h2>

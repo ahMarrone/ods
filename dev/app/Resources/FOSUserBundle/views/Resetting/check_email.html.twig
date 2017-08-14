@@ -5,6 +5,8 @@
 {% block fos_user_content %}
 
 {% if app.user %}
+
+	{% if  show_breadcrumbs is defined and show_breadcrumbs == true %} 
     <ol class="breadcrumb">
         <li><a href="{{ path('paneluser_index') }}">Panel de usuario</a></li>
         {% if is_granted('ROLE_SUPER_ADMIN') %}
@@ -12,6 +14,7 @@
         {% endif %}
         <li class="active"> Reestablecer Contraseña</a></li>
     </ol>
+    {% endif %}
 {% else %}
 <br>
 {% endif %}
