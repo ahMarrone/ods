@@ -373,10 +373,10 @@
 	    		'objetivo_selected':objetivo_selected,
 	    		'meta_selected':meta_selected,
 	    		'indicador_selected': indicador_selected,
+	    		'select_indicador_null_legend':"TODOS",
 	    	});
 	    	view = new ThreeSelectView({el: $("#selects") ,model:model,
                 metaChangeCallback: metaChange, indicadorChangeCallback: indicadorChange});
-	    	$('#three_select_indicador option[value="-1"]').text("<TODOS>");
     	}
 
 

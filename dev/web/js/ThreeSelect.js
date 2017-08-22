@@ -47,7 +47,7 @@ var template_select = [
         '		<div class="col-sm-10">',
     	'			<select id="three_select_indicador" class="form-control selectThree" name="id_indicador_selected">',
         '               <% if (model.get("add_global_option")) {%>',
-        '                   <option title="< Seleccione un indicador >" value="-1" <% if (model.get("meta_selected") == null || model.get("meta_selected") == -1) { %> selected <% }  %> >&#60; Seleccione un indicador &#62;</option>',                    
+        '                   <option title="< Seleccione un indicador >" value="-1" <% if (model.get("meta_selected") == null || model.get("meta_selected") == -1) { %> selected <% }  %> >&#60; <%= model.get("select_indicador_null_legend") %> &#62;</option>',                    
         '               <% } %>',
         '				<% _.each(model.get("indicadores"), function( indicador, i){ %>',
         '				<% if ( (model.get("objetivo_selected") == -1) || (model.get("meta_selected") == -1 &&  indicador.code_objetivo == model.get("objetivo_selected")) || (indicador.id_meta == model.get("meta_selected")) ){ %>',
@@ -73,6 +73,7 @@ var ThreeSelectData = Backbone.Model.extend({
 		'objetivos':[],
 		'metas':[],
 		'indicadores':[],
+        'select_indicador_null_legend':"Seleccione un indicador"
 	},
     getMaxTrim: function(){
         return 130;
