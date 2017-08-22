@@ -93,7 +93,7 @@ class IndicadoresController extends Controller
         $indicadore = new Indicadores();
         $id_meta = intval($request->get('id_meta'));
         $em = $this->getDoctrine()->getManager(); 
-        if ($id_meta == 0){
+        if ($id_meta == -1){
             $objetivo_seleccionado = -1;
             $meta_seleccionada = -1;
         } else {

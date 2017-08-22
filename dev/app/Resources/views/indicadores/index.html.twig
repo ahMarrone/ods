@@ -204,7 +204,7 @@
         function updateNewIndicadorButton(){
             meta_selected = $('#three_select_meta').val();
             var postf = (meta_selected == -1) ? "" : "/"+meta_selected;
-            var url = api_urls.new_indicador + postf;
+            var url = api_urls.new_indicador + "?id_meta=" + meta_selected;
             $(".btnNewEntityHeader").attr("href", url);
         }
 
