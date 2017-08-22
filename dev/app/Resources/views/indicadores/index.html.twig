@@ -24,7 +24,7 @@
     <div class="page-header">
           <h2>Indicadores  
     {% if is_granted('ROLE_ADMIN') %}
-        <a class="btn btn-success btnNewEntityHeader"  href="{{ path('admin_crud_indicadores_new') }}">Nuevo</a>
+        <a class="btn btn-success btnNewEntityHeader"  href="{{ path('admin_crud_indicadores_new', { 'id_meta': meta_seleccionada }) }}">Nuevo</a>
     {% endif %}</h2>
     </div>
 
