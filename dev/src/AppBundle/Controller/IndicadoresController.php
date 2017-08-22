@@ -61,7 +61,8 @@ class IndicadoresController extends Controller
                 'objetivo_seleccionado' => $objetivo_seleccionado,
                 'meta_seleccionada' => $meta_seleccionada,
                 'indicador_has_data' => $indicadoresHasData,
-                'data_to_approve' => $dataToApprove         
+                'data_to_approve' => $dataToApprove ,
+                'api_urls' => array('new_indicador'=> $this->generateUrl('admin_crud_indicadores_new'))        
             ));
         } else {
             $request->getSession()
@@ -84,12 +85,22 @@ class IndicadoresController extends Controller
      * Creates a new Indicadores entity.
      *
      * @Route("/new", name="admin_crud_indicadores_new")
+     * @Route("/new/{id_meta}", requirements={"id_meta":"\d+"}, name="admin_crud_indicadores_new_idmeta", defaults={"id_meta" = -1})
      * @Method({"GET", "POST"})
      */
-    public function newAction(Request $request)
-    {
+    public function newAction(Request $request){    
         $this->denyAccessUnlessGranted('ROLE_ADMIN', $this->getUser(), 'No tiene permisos para ingresar a esta página!');
         $indicadore = new Indicadores();
+        $id_meta = intval($request->get('id_meta'));
+        $em = $this->getDoctrine()->getManager(); 
+        if ($id_meta == 0){
+            $objetivo_seleccionado = -1;
+            $meta_seleccionada = -1;
+        } else {
+            $meta = $em->getRepository('AppBundle:Metas')->findOneById($id_meta);
+            $meta_seleccionada = $meta->getId();
+            $objetivo_seleccionado = $meta->getFkidobjetivo()->getId();
+        }
         $params = $this->getRequest()->request->all();
         if (isset($params['id_meta_selected'])){
             $meta = $this->getDoctrine()->getRepository('AppBundle:Metas')->findOneById($params["id_meta_selected"]);
@@ -138,6 +149,8 @@ class IndicadoresController extends Controller
         return $this->render('indicadores/new.html.twig', array(
             'indicadore' => $indicadore,
             'form' => $form->createView(),
+            'id_objetivo_selected' => $objetivo_seleccionado,
+            'id_meta_selected' => $meta_seleccionada,
             'scopes_enabled' => true,
             'objetivos' => $this->getObjetivosPreload(),
             'metas' => $this->getMetasPreload(),

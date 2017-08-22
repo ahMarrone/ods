@@ -152,6 +152,9 @@
         var objetivos = {{ objetivos|json_encode|raw}};
         var metas = {{ metas|json_encode|raw}};
 
+        var objetivo_selected = {{id_objetivo_selected}};
+        var meta_selected = {{id_meta_selected}};
+
         var modelThreeSelect = null;
         var viewThreeSelect = null;
 
@@ -162,7 +165,8 @@
             modelThreeSelect = new ThreeSelectData({
                 'objetivos': objetivos,
                 'metas': metas,
-                'objetivo_selected': objetivos[0]['id']
+                'objetivo_selected':objetivo_selected,
+                'meta_selected':meta_selected,
             });
             viewThreeSelect = new ThreeSelectView({el: $("#selects"), model:modelThreeSelect,
             metaChangeCallback: getNextIndicadorCode

@@ -70,7 +70,7 @@
   
                             {% endif %}
                             {% if indicador_has_data[indicadore.id] is defined %}
-                            <a class="btn btn-default" title="Ver en mapa" href="{{ path('explora_initialize', { 'id': indicadore.id }) }}"><i class="fa fa-map fa-fw" aria-hidden="true"></i></a>
+                                <a class="btn btn-default" title="Ver en mapa" href="{{ path('explora_initialize', { 'id': indicadore.id }) }}" target="_blank"><i class="fa fa-map fa-fw" aria-hidden="true"></i></a>
                             {% endif %}
                 </td>
             </tr>
@@ -89,6 +89,7 @@
 
         var objetivo_selected = {{ objetivo_seleccionado }};
         var meta_selected = {{ meta_seleccionada }};
+        var api_urls = {{ api_urls|json_encode|raw }}
 
         function initTable(){
             table = $('#indicadoresTable').DataTable({
@@ -186,6 +187,7 @@
         }
 
         function filterTableIndicadores(){
+
             meta_selected = $('#three_select_meta').val();
             objetivo_selected = $('#three_select_objetivo').val();
             if (meta_selected != -1){
@@ -198,6 +200,20 @@
             table.draw();
         }
 
+
+        function updateNewIndicadorButton(){
+            meta_selected = $('#three_select_meta').val();
+            var postf = (meta_selected == -1) ? "" : "/"+meta_selected;
+            var url = api_urls.new_indicador + postf;
+            $(".btnNewEntityHeader").attr("href", url);
+        }
+
+
+        function metaHasChanged(){
+            updateNewIndicadorButton();
+            filterTableIndicadores();
+        }
+
         function initThreeSelect(){
             modelThreeSelect = new ThreeSelectData({
                 'objetivos': objetivos,
@@ -208,7 +224,7 @@
             });
             viewThreeSelect = new ThreeSelectView({el: $("#selects"), model:modelThreeSelect,
                 objetivo_selected: objetivo_selected, meta_selected: meta_selected,
-                metaChangeCallback: filterTableIndicadores,
+                metaChangeCallback: metaHasChanged,
             });
         }
 
