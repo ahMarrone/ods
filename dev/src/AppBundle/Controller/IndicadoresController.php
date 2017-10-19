@@ -270,8 +270,16 @@ class IndicadoresController extends Controller
                 'entity_manager' => $this->getDoctrine()->getManager(),
             )
         );
+        // Si el indicador contiene datos, el formulario mostrara el ambito como disabled,
+        // y aqui seteo el mismo como el valor que tenia previamente
+        if ($indicadoresHasData){
+            $em = $this->getDoctrine()->getManager();
+            $previousInd = $em->getRepository('AppBundle:Indicadores')->findOneById($indicadore->getId());
+            $indicador_data = $request->request->get('indicadores');
+            $indicador_data["ambito"] = $previousInd->getAmbito();
+            $request->request->set('indicadores', $indicador_data);
+        }
         $editForm->handleRequest($request);
-
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->addIndicadorMetadata($indicadore);
             $indicadore->setCodigo($indicadore->formatCodigo($indicadore->getCodigo()));
@@ -294,9 +302,11 @@ class IndicadoresController extends Controller
             } else {
                 $indicadore->setDocumentPath($document_path_string);
             }
+            
             //
             $em = $this->getDoctrine()->getManager();
             $em->persist($indicadore);
+
             $em->flush();
             $this->get('app.utils.scopes_service')->addEditSuccessToRequest($request);
             return $this->redirectToRoute('admin_crud_indicadores_index');
