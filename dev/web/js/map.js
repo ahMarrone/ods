@@ -182,10 +182,10 @@ function getColor(v, e=[]) {
         // color = '#ffffff';
         color = '#eeeeee';
     } else {
-        color = v > e[4] ? colors[4] :
-        color = v > e[3] ? colors[3] :
-        color = v > e[2] ? colors[2] :
-        color = v > e[1] ? colors[1] :
+        color = v >= e[4] ? colors[4] :
+        color = v >= e[3] ? colors[3] :
+        color = v >= e[2] ? colors[2] :
+        color = v >= e[1] ? colors[1] :
                            colors[0] ;
         // color = v > 80 ? '#045a8d' :
         //         v > 60 ? '#2b8cbe' : 

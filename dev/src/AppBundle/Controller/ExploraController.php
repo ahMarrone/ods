@@ -306,7 +306,7 @@ class ExploraController extends Controller
     private function buildScale($tipo, $minimo, $maximo) {
         $lenght = 5;
         $scale = array();
-        $step = floor(($maximo - $minimo) / $lenght);
+        $step = ($maximo - $minimo) / $lenght;
         $scale[0] = floatval($minimo);
         for ($i = 1; $i < $lenght; $i++) { 
             $scale[$i] = $scale[$i-1] + $step;

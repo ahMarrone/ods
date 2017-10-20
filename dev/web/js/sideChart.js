@@ -134,7 +134,7 @@ var templateSideChart = [
             '<tbody>',
                 '<tr>',
                     '<% _.each(model.get("indicador").escala, function(value, i){ %>',
-                    '<td class="legend-color" style="background-color:<%= _.getColor(value + 1, model.get("indicador").escala) %>;"></td>',
+                    '<td class="legend-color" style="background-color:<%= _.getColor(value, model.get("indicador").escala) %>;"></td>',
                     '<% }); %>',
                 '</tr>',
                 '<tr>',
