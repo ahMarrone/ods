@@ -22,29 +22,17 @@ function expandSideChart(descripcion, refGeografica) {
 
 }
 
-
- function getFormattedValue(number) {
-    if (number){
-        var parts=number.toString().split(",");
-        var out = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (parts[1] ? "," + parts[1] : "");
-        out.toString();
-    } else {
-        out = null;
-    }
-    return out;
-}
-
 function plot(chartData, descripcionEtiquetaSeleccionada, tipo, el) {
 
     var size;
     var padding;
     if (el == 'infobox-line-chart') {
         size = {height: 160, width: 250};
-        padding = {top: 5, right: 10, /*bottom: 0,*/ left: 20};
+        padding = {top: 5, right: 10, /*bottom: 0,*/ left: 34};
         grid = {y: { show: false }}
     } else { // (el == 'modal-line-chart')
         size = {height: 240, width: 480}
-        padding = {top: 5, right: 10, /*bottom: 0,*/ left: 30};
+        padding = {top: 5, right: 10, /*bottom: 0,*/ left: 40};
         grid = {y: { show: true }}
     }
 
@@ -135,10 +123,10 @@ var templateSideChart = [
         '<% _.each(model.get("indicador").fechasMetas, function(item, i){ %>',
             '<% if (i != 0) { %> - <% } %>',
             '<% if (model.get("indicador").tipo != "entero" ) { %>',
-                'Meta <%= item[0] %>: <%= item[1].toFixed(2).replace(".", ",") %>',
+                'Meta <%= item[0] %>: <%= model.getFormattedValue(item[1].toFixed(2).replace(".", ",")) %>',
                 '<% if (model.get("indicador").tipo == "porcentual" ) { %> % <% } %>',
             '<% } else { %>',
-                'Meta <%= item[0] %>: <%= item[1] %>',
+                'Meta <%= item[0] %>: <%= model.getFormattedValue(item[1]) %>',
             '<% } %>',
         '<% }); %>',
     '</div>',
@@ -173,9 +161,12 @@ var sideChartModel = Backbone.Model.extend({
         'isChartAvailable': false
     },
     getFormattedValue: function(number) {
-        var parts=number.toString().split(",");
-        var out = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (parts[1] ? "," + parts[1] : "");
-        return out;
+        if (number !== undefined){
+            var parts=number.toString().split(",");
+            var out = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (parts[1] ? "," + parts[1] : "");
+            return out;
+        }
+        return null;
     }
 });
 
