@@ -73,12 +73,12 @@ estilo_ods.css:2229
 
 table tbody tr td {
     word-wrap: break-word;
-    word-break: break-all;
+    /*/word-break: break-all;*/
 }
 
 dl > dd{
     word-wrap: break-word;
-    word-break: break-all;
+    /*word-break: break-all;*/
 }
 
 .btnNewEntityHeader{
