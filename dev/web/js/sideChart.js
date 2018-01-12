@@ -22,6 +22,18 @@ function expandSideChart(descripcion, refGeografica) {
 
 }
 
+
+ function getFormattedValue(number) {
+    if (number){
+        var parts=number.toString().split(",");
+        var out = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (parts[1] ? "," + parts[1] : "");
+        out.toString();
+    } else {
+        out = null;
+    }
+    return out;
+}
+
 function plot(chartData, descripcionEtiquetaSeleccionada, tipo, el) {
 
     var size;
@@ -50,9 +62,11 @@ function plot(chartData, descripcionEtiquetaSeleccionada, tipo, el) {
             format: {
                 value: function(value) {
                     valueFormatted = value;
+                    var decFormat = ",.0f";
                     if (tipo != "entero") {
-                        valueFormatted = d3.format(",.2f")(value).replace('.', ' ').replace(/,/g, '.').replace(' ', ',');
-                    }
+                        decFormat= ",.2f";
+                    };
+                    valueFormatted = d3.format(decFormat)(value).replace('.', ' ').replace(/,/g, '.').replace(' ', ',');
                     if (tipo == "porcentual") { valueFormatted += ' %' }
                     return valueFormatted;
                 }
@@ -101,12 +115,13 @@ var templateSideChart = [
     '<% if ( model.get("isChartAvailable") ) { %>',
     '<div id="infobox-line-chart" class="c3 line-chart"></div>',
     '<% } else { %>',
-        '<% if (model.get("layerProperties").value) { %>',
+        '<% if (model.get("layerProperties").value !== undefined) { %>',
     '<div class="indicador-valor" style="color: <%= _.getColor(model.get("layerProperties").value, model.get("indicador").escala) %>">',
+            
             '<% if (model.get("indicador").tipo != "entero" ) { %>',
-                '<%= model.get("layerProperties").value.toFixed(2).replace(".", ",") %>',
+                '<%= model.getFormattedValue(model.get("layerProperties").value.toFixed(2).replace(".", ",")) %>',
             '<% } else { %>',
-                '<%= model.get("layerProperties").value %>',
+                '<%= model.getFormattedValue(model.get("layerProperties").value) %>',
             '<% } %>',
             '<% if (model.get("indicador").tipo == "porcentual" ) { %> % <% } %>',
     '</div>',
@@ -139,7 +154,7 @@ var templateSideChart = [
                 '</tr>',
                 '<tr>',
                     '<% _.each(model.get("indicador").escala, function(value, i){ %>',
-                    '<td class="legend-breaks" width="10%"><%= value %></td>',
+                    '<td class="legend-breaks" width="10%"><%= model.getFormattedValue(value) %></td>',
                 '<% }); %>',
                 '<tr>',
             '</tbody>',
@@ -156,8 +171,15 @@ var sideChartModel = Backbone.Model.extend({
         'idsEtiquetasActuales' : [],
         'idEtiquetaSeleccionada': null,
         'isChartAvailable': false
+    },
+    getFormattedValue: function(number) {
+        var parts=number.toString().split(",");
+        var out = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (parts[1] ? "," + parts[1] : "");
+        return out;
     }
 });
+
+
 
 var sideChartView = Backbone.View.extend({
     initialize: function() {

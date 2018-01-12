@@ -52,8 +52,8 @@ function update(data={}, idEtiquetaSeleccionada=null, idsEtiquetasActuales=[]) {
     tiles[ambitoIndicador].eachLayer(function (layer) {
         idRefGeografica = layer.feature.properties.id;
         valor = undefined;
-        if (data[idRefGeografica]) {
-            if (data[idRefGeografica][idEtiquetaSeleccionada])
+        if (idRefGeografica in data) {
+            if (idEtiquetaSeleccionada in data[idRefGeografica])
                 valor = data[idRefGeografica][idEtiquetaSeleccionada];
         }
         layer.feature.properties['value'] = valor;
@@ -216,7 +216,6 @@ function highlightFeature(event) {
             map.addControl(sideChartControl);
             sideChartView.setElement($('.infobox'));
         }
-
         sideChartModel.set('layerProperties', layer.feature.properties);
     }
 }

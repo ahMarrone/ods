@@ -88,8 +88,17 @@
 	$(document).ready(function() {
 
 	var api_urls = {{ api_urls|json_encode|raw}};
+	var data_type = {{ data_type|json_encode|raw}};
 
 	var globalModal = 'globalModal';
+
+
+	function getPrecision(){
+		if (data_type == "entero"){
+			return 0;
+		}
+			return 6;
+	}
 
 
 	function aproveDataRequest(data, rows){
@@ -218,6 +227,7 @@
             	"targets":[8],
             	"className": "dt-right",
             	"width": "10%",
+            	render: $.fn.dataTable.render.number( '.', ',', getPrecision())
             },
         ],
         "order": [[ 9, "asc" ]],

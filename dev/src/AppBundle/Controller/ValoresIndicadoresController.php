@@ -46,6 +46,7 @@ class ValoresIndicadoresController extends Controller
                 'valoresindicadores' => $valoresindicadores,
                 'etiquetas'=> $etiquetas,
                 'indicador' => $indicador,
+                'data_type' => $indicador->getTipo(),
                 'api_urls' => array('aproveData'=> $this->generateUrl('admin_crud_valoresindicadores_aproveData'))
             ));
         } else {
@@ -186,7 +187,8 @@ class ValoresIndicadoresController extends Controller
                     $valor->getIdrefgeografica()->getDescripcion(), 
                     $parent,
                     $newEtiquetaLabel,
-                    $valor->getValor(),
+                    //$valor->getValor(),
+                    number_format($valor->getValor(), ($indicador->getTipo() == "entero") ? 0 : 6, ',', '.'),
                     $aprobado
                 );
                 array_push($data, $tmp_data);
