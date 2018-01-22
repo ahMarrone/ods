@@ -62,7 +62,7 @@ function update(data={}, idEtiquetaSeleccionada=null, idsEtiquetasActuales=[]) {
 }
 
 function mapMe(geoJsonNacion, geoJsonProvincias, geoJsonDepartamentos) {
-    var base = L.tileLayer.wms('http://wms.ign.gob.ar/geoserver/wms?', {layers: 'ign:capabaseargenmap_gwc', attribution: '<a href="http://www.ign.gob.ar/">IGN</a>'});
+    var base = L.tileLayer.wms('http://wms.ign.gob.ar/geoserver/wms?', {layers: 'capabaseargenmap', attribution: '<a href="http://www.ign.gob.ar/">IGN</a>'});
 
     // var base = L.tileLayer.wms('http://wms.ign.gob.ar/geoserver/wms?', {layers: 'capabaseargenmap', attribution: '<a href="http://www.ign.gob.ar/">IGN</a>'});
     var tileNacion = L.geoJson(geoJsonNacion, {onEachFeature: onEachFeature, style: style});
